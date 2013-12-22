@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ember Starter Kit</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+  <script src="js/libs/jquery-1.10.2.js"></script>
+  <script src="js/libs/handlebars-v1.1.2.js"></script>
+  <script src="js/libs/bootstrap.js"></script>
+  <script src="js/libs/ember.js"></script>
+  <script src="js/libs/ember-data.js"></script>
+  <script src="js/application.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/models/store.js"></script>
+  <script src="js/models/stream.js"></script>
+  
+  <script type="text/x-handlebars" data-template-name="streams">
+    <ul id="stream-list">
+      {{#each}}
+        <li>
+          {{name}}
+        </li>
+      {{/each}}
+    </ul>
+  </script>
+</body>
+</html>
