@@ -1,8 +1,8 @@
 App.File = DS.Model.extend({
   name: DS.attr('string'),
   content: DS.attr('string'),
-  loaded: DS.attr('boolean'),
-  stream: DS.hasMany('stream')
+  opened: DS.attr('boolean'),
+  stream: DS.hasMany('stream', {async: true})
 });
 
 App.Stream = DS.Model.extend({
@@ -14,14 +14,14 @@ App.File.FIXTURES = [
     id: 1,
     name: 'test.stromx',
     content: '',
-    loaded: true,
+    opened: true,
     stream: [1]
   },
   {
     id: 2,
     name: 'hough.stromx',
     content: '',
-    loaded: false,
+    opened: false,
     stream: []
   }
 ];
