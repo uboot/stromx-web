@@ -1,5 +1,7 @@
 App.Router.map(function () {
-  this.resource('files', { path: '/' });
+  this.resource('files', { path: '/' }, function() {
+    this.route('add');
+  })
 });
 
 App.FilesRoute = Ember.Route.extend({

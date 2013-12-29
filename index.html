@@ -14,17 +14,26 @@
   <script src="js/libs/snap.svg.js"></script>
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
+  <script src="js/views/upload_file.js"></script>
   
   <script type="text/x-handlebars" data-template-name="files">
     <ul id="file-list">
       {{#each}}
         <li>
-          {{name}}
+          {{name}}, {{content}}
         </li>
       {{/each}}
     </ul>
+      
+    {{outlet}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="files/add">
+    File: {{view App.UploadFile valueBinding="name" content=content}}
+    <button {{action 'addFile'}}>Save</button>
   </script>
 </body>
 </html>
