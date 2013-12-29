@@ -14,6 +14,7 @@
   <script src="js/libs/snap.svg.js"></script>
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
@@ -21,9 +22,10 @@
   
   <script type="text/x-handlebars" data-template-name="files">
     <ul id="file-list">
-      {{#each}}
+      {{#each itemController="file"}}
         <li>
-          {{name}}, {{content}}
+          {{name}}
+          <a {{action "remove"}}>Remove</a>
         </li>
       {{/each}}
     </ul>
