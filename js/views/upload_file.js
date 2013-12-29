@@ -1,3 +1,5 @@
+// TODO: attribute to http://stackoverflow.com/a/19910677
+
 App.UploadFile = Ember.TextField.extend({
     tagName: 'input',
     type: 'file',
