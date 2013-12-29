@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Ember Starter Kit</title>
+<title>stromx-web</title>
   <link rel="stylesheet" href="css/bootstrap.css">
 </head>
 <body>
@@ -11,13 +11,14 @@
   <script src="js/libs/bootstrap.js"></script>
   <script src="js/libs/ember.js"></script>
   <script src="js/libs/ember-data.js"></script>
+  <script src="js/libs/snap.svg.js"></script>
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
   <script src="js/models/store.js"></script>
-  <script src="js/models/stream.js"></script>
+  <script src="js/models/model.js"></script>
   
-  <script type="text/x-handlebars" data-template-name="streams">
-    <ul id="stream-list">
+  <script type="text/x-handlebars" data-template-name="files">
+    <ul id="file-list">
       {{#each}}
         <li>
           {{name}}

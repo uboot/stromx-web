@@ -1,9 +1,9 @@
 App.Router.map(function () {
-  this.resource('streams', { path: '/' });
+  this.resource('files', { path: '/' });
 });
 
-App.StreamsRoute = Ember.Route.extend({
+App.FilesRoute = Ember.Route.extend({
   model: function () {
-    return this.store.find('stream');
+    return this.store.find('file');
   }
 });
