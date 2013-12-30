@@ -15,7 +15,6 @@
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
   <script src="js/controllers/file_controller.js"></script>
-  <script src="js/controllers/files_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
@@ -26,8 +25,12 @@
       {{#each itemController="file"}}
         <li>
           {{name}}
-          <a {{action "open"}}>Open</a>
-          <a {{action "remove"}}>Remove</a>
+          {{#if opened}}
+            <a {{action "close"}}>Close</a>
+          {{else}}
+            <a {{action "open"}}>Open</a>
+            <a {{action "remove"}}>Remove</a>
+          {{/if}}
         </li>
       {{/each}}
     </ul>
