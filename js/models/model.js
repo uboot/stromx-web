@@ -15,7 +15,7 @@ App.File.FIXTURES = [
     name: 'test.stromx',
     content: '',
     opened: true,
-    stream: [1]
+    stream: [2]
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ App.File.FIXTURES = [
 
 App.Stream.FIXTURES = [
   {
-    id: 1,
+    id: 2,
     name: 'Stream one'
   }
 ];
