@@ -16,6 +16,7 @@
   <script src="js/router.js"></script>
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
+  <script src="js/controllers/stream_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
   <script src="js/views/upload_file.js"></script>
@@ -42,6 +43,11 @@
   <script type="text/x-handlebars" data-template-name="files/add">
     File: {{view App.UploadFile valueBinding="name" content=content}}
     <button {{action 'addFile'}}>Save</button>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="stream">
+    {{name}}
+    <a {{action "close"}}>Close</a>
   </script>
 </body>
 </html>

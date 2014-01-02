@@ -6,7 +6,8 @@ App.File = DS.Model.extend({
 });
 
 App.Stream = DS.Model.extend({
-  name: DS.attr('string')
+  name: DS.attr('string'),
+  file: DS.belongsTo('file', {async: true})
 });
 
 App.File.FIXTURES = [
@@ -29,6 +30,7 @@ App.File.FIXTURES = [
 App.Stream.FIXTURES = [
   {
     id: 2,
-    name: 'Stream one'
+    name: 'Stream one',
+    file: 1
   }
 ];
