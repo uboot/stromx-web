@@ -27,7 +27,9 @@
         <li>
           {{name}}
           {{#if opened}}
-            {{#linkTo 'stream' this.stream.firstObject}}Show{{/linkTo}}
+            {{#each stream}}
+              {{#link-to 'stream' this}}Show{{/link-to}}
+            {{/each}}
             <a {{action "close"}}>Close</a>
           {{else}}
             <a {{action "open"}}>Open</a>
