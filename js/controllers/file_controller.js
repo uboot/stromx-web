@@ -3,19 +3,17 @@ App.FileController = Ember.ObjectController.extend({
     remove: function () {
         var file = this.get('model')
         file.deleteRecord()
-//         file.save()
+        file.save()
     },
     open: function () {
         this.set('opened', true)
         var file = this.get('model')
-        file.save().then( function() { 
-          file.reloadHasManys() 
-        })
+        file.save()
     },
     close: function () {
         this.set('opened', false)
         var file = this.get('model')
-//         file.save()
+        file.save()
     }
   }
 });
