@@ -10,6 +10,8 @@ App.File = DS.Model.extend({
 App.Stream = DS.Model.extend({
   name: DS.attr('string'),
 //   file: DS.belongsTo('file')
+  active: DS.attr('boolean'),
+  paused: DS.attr('boolean')
 });
 
 App.File.FIXTURES = [
@@ -33,11 +35,15 @@ App.Stream.FIXTURES = [
   {
     id: 2,
     name: 'Stream one',
-    file: 1
+    file: 1,
+    active: false,
+    paused: false
   },
   {
     id: 3,
     name: 'Stream two',
-    file: 1
+    file: 1,
+    active: false,
+    paused: false
   }
 ];

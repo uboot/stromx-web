@@ -47,7 +47,16 @@
 
   <script type="text/x-handlebars" data-template-name="stream">
     {{name}}
-    <a {{action "close"}}>Close</a>
+    {{#if paused}}
+      <a {{action "resume"}}>Resume</a>
+    {{/if}}
+    {{#if active}}
+      <a {{action "stop"}}>Stop</a>
+      <a {{action "pause"}}>Pause</a>
+    {{else}}
+      <a {{action "close"}}>Close</a>
+      <a {{action "start"}}>Start</a>
+    {{/if}}
   </script>
 </body>
 </html>
