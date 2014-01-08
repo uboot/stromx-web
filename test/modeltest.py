@@ -13,7 +13,8 @@ class FilesTest(unittest.TestCase):
         self.__files = model.Files("temp")
 
     def testData(self):
-        self.assertEqual("", self.__files.data)
+        self.assertEqual({'files': [{'id': '0', 'name': 'parallel.stromx'}]},
+                         self.__files.data)
         
     def tearDown(self):
         shutil.rmtree("temp", True)
