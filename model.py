@@ -38,6 +38,7 @@ class File(object):
         self.__index = str(index)
         self.__name = name
         self.__opened = False
+        self.__stream = None
         
     @property
     def data(self):
@@ -57,4 +58,4 @@ class File(object):
         os.remove(path)
         
     def put(self, data):
-        self.__opened = data["opened"]
+        self.__opened = data["file"]["opened"]
