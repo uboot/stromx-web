@@ -3,7 +3,6 @@
 import tornado.escape
 import tornado.ioloop
 import tornado.web
-import tornado.websocket
 
 import model
 
@@ -16,6 +15,8 @@ class FilesHandler(tornado.web.RequestHandler):
     def get(self, index = None):  
         if index == None:
             json = tornado.escape.json_encode(_files.data)
+        else:
+            json = tornado.escape.json_encode(_files[index].data)
         self.write(json)
     
     def delete(self, index):
@@ -25,6 +26,12 @@ class FilesHandler(tornado.web.RequestHandler):
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
         f = _files.post(data)
+        json = tornado.escape.json_encode(f)
+        self.write(json)   
+    
+    def put(self, index):
+        data = tornado.escape.json_decode(self.request.body)
+        f = _files.put(index, data)
         json = tornado.escape.json_encode(f)
         self.write(json)   
 

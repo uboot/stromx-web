@@ -12,6 +12,9 @@ class Files(object):
     @property
     def data(self):
         return {"files": [f.data for f in self.__files.values()]}
+    
+    def __getitem__(self, index):
+        return self.__files[index]
         
     def delete(self, index):
         f = self.__files[index]
@@ -24,6 +27,9 @@ class Files(object):
         self.__files[f.index] = f
         self.__index += 1
         return f.data
+    
+    def put(self, index, data):
+        pass
         
 class File(object):
     def __init__(self, index, name):
