@@ -15,7 +15,13 @@ class StreamsHandler(tornado.web.RequestHandler):
             json = tornado.escape.json_encode(_streams.data)
         else:
             json = tornado.escape.json_encode(_streams[index].data)
-        self.write(json)
+        self.write(json) 
+    
+    def put(self, index):
+        data = tornado.escape.json_decode(self.request.body)
+        stream = _streams.put(index, data)
+        json = tornado.escape.json_encode(stream)
+        self.write(json)  
   
 class FilesHandler(tornado.web.RequestHandler):
     def get(self, index = None):  

@@ -38,7 +38,7 @@ class Files(object):
     
     def put(self, index, data):
         f = self[index]
-        f.put(data)
+        f.put(data["file"])
         return {"file": [f.data]}
         
 class File(object):
@@ -67,10 +67,12 @@ class File(object):
         os.remove(path)
         
     def put(self, data):
-        self.__opened = data["file"]["opened"]
+        self.__opened = data["opened"]
         
         if self.__opened:
             self.__stream = self.__files.streams.addStream(self)
+        else:
+            self.__stream = None
         
 class Streams(object):
     def __init__(self):
@@ -89,6 +91,11 @@ class Streams(object):
         self.__streams[stream.index] = stream
         self.__index += 1
         return stream
+    
+    def put(self, index, data):
+        stream = self[index]
+        stream.put(data["stream"])
+        return {"stream": [stream.data]}
         
 class Stream(object):
     def __init__(self, index, streamFile):
@@ -109,3 +116,8 @@ class Stream(object):
     @property
     def index(self):
         return self.__index
+    
+    def put(self, data):
+        self.__name = data["name"]
+        self.__active = data["active"]
+        self.__paused = data["paused"]
