@@ -6,14 +6,35 @@ import unittest
 
 import model
 
-_parallelFile = {'id': '0', 'name': 'parallel.stromx', 'opened': False,
-                 'stream': []}
-_openedFile = {'id': '0', 'name': 'parallel.stromx', 'opened': True,
-               'stream': ['0']}
-_testFile = {'id': '1', 'name': 'test.stromx', 'opened': False,
-             'stream': []}
+_parallelFile = {
+    'id': '0',
+    'name': 'parallel.stromx',
+    'content': '',
+    'opened': False,
+    'stream': []
+}
 
-_stream = {'id': '0', 'name': 'TestName', 'file': '0'}
+_openedFile = {'id': '0', 
+    'name': 'parallel.stromx', 
+    'content': '',
+    'opened': True, 
+    'stream': ['0']
+}
+
+_testFile = {'id': '1', 
+    'name': 'test.stromx', 
+    'content': '', 
+    'opened': False,
+    'stream': []
+}
+
+_stream = {
+    'id': '0',
+    'name': 'TestName',
+    'active': False,
+    'paused': False,
+    'file': '0'
+}
 
 class FilesTest(unittest.TestCase):
     def setUp(self):

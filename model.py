@@ -52,8 +52,11 @@ class File(object):
     @property
     def data(self):
         streamIds = [self.__stream.index] if self.__stream else []
-        return {"id": self.__index, "name": self.__name,
-                "opened": self.__opened, "stream": streamIds}
+        return {"id": self.__index,
+                "name": self.__name, 
+                "content": "",
+                "opened": self.__opened, 
+                "stream": streamIds}
         
     @property
     def index(self):
@@ -92,10 +95,15 @@ class Stream(object):
         self.__index = str(index)
         self.__name = "TestName"
         self.__file = streamFile
+        self.__active = False
+        self.__paused = False
         
     @property
     def data(self):
-        return {"id": self.__index, "name": self.__name,
+        return {"id": self.__index,
+                "name": self.__name,
+                "active": self.__active,
+                "paused": self.__paused,
                 "file": self.__file.index}
         
     @property
