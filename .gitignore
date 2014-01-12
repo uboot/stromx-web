@@ -1,4 +1,4 @@
-
+*.vpp~*
 *.pyc
 .project
 .pydevproject
