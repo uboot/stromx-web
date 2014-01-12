@@ -6,10 +6,16 @@ import tornado.web
 
 import model
 
-_files = model.Files('files')
+_streams = model.Streams()
+_files = model.Files('files', _streams)
 
 class StreamsHandler(tornado.web.RequestHandler):
-    pass
+    def get(self, index = None):  
+        if index == None:
+            json = tornado.escape.json_encode(_streams.data)
+        else:
+            json = tornado.escape.json_encode(_streams[index].data)
+        self.write(json)
   
 class FilesHandler(tornado.web.RequestHandler):
     def get(self, index = None):  
@@ -41,6 +47,7 @@ if __name__ == "__main__":
             (r"/", tornado.web.RedirectHandler, {"url": "/static/index.html"}),
             (r"/files", FilesHandler),
             (r"/files/([0-9]+)", FilesHandler),
+            (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler)
         ],
         static_path="static"
