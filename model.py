@@ -2,6 +2,8 @@
 
 import os
 
+import stromx.runtime
+
 class Files(object):
     def __init__(self, directory, streams):
         self.__directory = directory
@@ -38,8 +40,7 @@ class Files(object):
     
     def put(self, index, data):
         f = self[index]
-        f.put(data["file"])
-        return {"file": [f.data]}
+        return {"file": [f.put(data["file"])]}
         
 class File(object):
     def __init__(self, files, index, name):
@@ -73,6 +74,8 @@ class File(object):
             self.__stream = self.__files.streams.addStream(self)
         else:
             self.__stream = None
+            
+        return self.data
         
 class Streams(object):
     def __init__(self):
@@ -94,8 +97,7 @@ class Streams(object):
     
     def put(self, index, data):
         stream = self[index]
-        stream.put(data["stream"])
-        return {"stream": [stream.data]}
+        return {"stream": [stream.put(data["stream"])]}
         
 class Stream(object):
     def __init__(self, index, streamFile):
@@ -104,6 +106,9 @@ class Stream(object):
         self.__file = streamFile
         self.__active = False
         self.__paused = False
+        
+        factory = stromx.runtime.Factory()
+        stromx.runtime.register(factory)
         
     @property
     def data(self):
@@ -121,3 +126,9 @@ class Stream(object):
         self.__name = data["name"]
         self.__active = data["active"]
         self.__paused = data["paused"]
+        
+        if not self.__active:
+            self.__paused = False
+            
+        return self.data
+        

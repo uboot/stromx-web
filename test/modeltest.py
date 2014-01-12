@@ -69,5 +69,11 @@ class FilesTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree("temp", True)
         
+class StreamsTest(unittest.TestCase):
+    def setUp(self):
+        self.__streams = model.Streams()
+        
+        
+        
 if __name__ == '__main__':
     unittest.main()
