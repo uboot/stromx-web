@@ -68,7 +68,7 @@ class File(object):
         os.remove(path)
         
     def put(self, data):
-        self.__opened = data["opened"]
+        self.__opened = data.get("opened", self.__opened)
         
         if self.__opened:
             self.__stream = self.__files.streams.addStream(self)
@@ -102,7 +102,7 @@ class Streams(object):
 class Stream(object):
     def __init__(self, index, streamFile):
         self.__index = str(index)
-        self.__name = "TestName"
+        self.__name = ""
         self.__file = streamFile
         self.__active = False
         self.__paused = False
@@ -123,9 +123,9 @@ class Stream(object):
         return self.__index
     
     def put(self, data):
-        self.__name = data["name"]
-        self.__active = data["active"]
-        self.__paused = data["paused"]
+        self.__name = data.get("name", self.__name)
+        self.__active = data.get("active", self.__active)
+        self.__paused = data.get("paused", self.__paused)
         
         if not self.__active:
             self.__paused = False

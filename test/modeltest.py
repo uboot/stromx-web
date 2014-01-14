@@ -30,7 +30,7 @@ _testFile = {'id': '1',
 
 _stream = {
     'id': '0',
-    'name': 'TestName',
+    'name': '',
     'active': False,
     'paused': False,
     'file': '0'
@@ -71,9 +71,23 @@ class FilesTest(unittest.TestCase):
         
 class StreamsTest(unittest.TestCase):
     def setUp(self):
+        shutil.rmtree("temp", True)
+        shutil.copytree("data", "temp")
+        
         self.__streams = model.Streams()
+        self.__streamFile = model.File(None, 0, "parallel.stromx")
         
+    def testAddStream(self):
+        self.__streams.addStream(self.__streamFile)
+        self.assertEqual({'streams': [_stream]}, self.__streams.data)
         
+    def testPutActivate(self):
+        self.__streams.addStream(self.__streamFile)
+        self.__streams.put("0", {'stream': {'active': True}})
+        self.assertTrue(self.__streams.data['streams'][0]['active'])
+        
+    def tearDown(self):
+        shutil.rmtree("temp", True)
         
 if __name__ == '__main__':
     unittest.main()
