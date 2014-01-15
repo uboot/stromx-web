@@ -87,7 +87,20 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set("0", {'stream': {'active': True}})
         self.assertTrue(self.__streams.data['streams'][0]['active'])
         
-    def testSetPaused(self):
+    def testSetDeactivate(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set("0", {'stream': {'active': True}})
+        self.__streams.set("0", {'stream': {'active': False}})
+        self.assertFalse(self.__streams.data['streams'][0]['active'])
+        self.__streams.set("0", {'stream': {'active': False}})
+        
+    def testSetDeactivateTwice(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set("0", {'stream': {'active': True}})
+        self.__streams.set("0", {'stream': {'active': False}})
+        self.__streams.set("0", {'stream': {'active': False}})
+        
+    def testSetPause(self):
         self.__streams.add(self.__streamFile)
         self.__streams.set("0", {'stream': {'active': True}})
         self.__streams.set("0", {'stream': {'paused': True}})

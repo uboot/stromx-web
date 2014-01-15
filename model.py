@@ -108,7 +108,6 @@ class Stream(object):
         self.__index = str(index)
         self.__name = ""
         self.__file = streamFile
-        self.__active = False
         self.__paused = False
         
         factory = stromx.runtime.Factory()
@@ -125,6 +124,19 @@ class Stream(object):
                 "file": self.__file.index}
         
     @property
+    def __active(self):
+        status = self.__stream.status()
+        return (status == stromx.runtime.Stream.Status.ACTIVE or
+                status == stromx.runtime.Stream.Status.PAUSED)
+        
+    @__active.setter
+    def __active(self, value):
+        if value and not self.__active:
+            self.__stream.start()
+        else:
+            self.__stream.stop()
+        
+    @property
     def index(self):
         return self.__index
     
@@ -132,9 +144,6 @@ class Stream(object):
         self.__name = data.get("name", self.__name)
         self.__active = data.get("active", self.__active)
         self.__paused = data.get("paused", self.__paused)
-        
-        if not self.__active:
-            self.__paused = False
             
         return self.data
         
