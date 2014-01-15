@@ -37,13 +37,13 @@ class FilesHandler(tornado.web.RequestHandler):
         
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        f = _files.post(data)
+        f = _files.add(data)
         json = tornado.escape.json_encode(f)
         self.write(json)   
     
     def put(self, index):
         data = tornado.escape.json_decode(self.request.body)
-        f = _files.put(index, data)
+        f = _files.set(index, data)
         json = tornado.escape.json_encode(f)
         self.write(json)   
 

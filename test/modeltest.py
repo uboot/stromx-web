@@ -56,13 +56,13 @@ class FilesTest(unittest.TestCase):
         self.assertEqual(_parallelFile, 
                          self.__files["0"].data)
         
-    def testPutOpen(self):
-        f = self.__files.put("0", {'file': {'opened': True}})
+    def testSetOpen(self):
+        f = self.__files.set("0", {'file': {'opened': True}})
         self.assertEqual({'file': [_openedFile]}, f)
         self.assertEqual(_stream, self.__streams["0"].data)
         
-    def testPost(self):
-        self.__files.post({'file': {'name': 'test.stromx'}})
+    def testAdd(self):
+        self.__files.add({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.__files.data)
         
@@ -77,13 +77,13 @@ class StreamsTest(unittest.TestCase):
         self.__streams = model.Streams()
         self.__streamFile = model.File(None, 0, "parallel.stromx")
         
-    def testAddStream(self):
-        self.__streams.addStream(self.__streamFile)
+    def testAdd(self):
+        self.__streams.add(self.__streamFile)
         self.assertEqual({'streams': [_stream]}, self.__streams.data)
         
-    def testPutActivate(self):
-        self.__streams.addStream(self.__streamFile)
-        self.__streams.put("0", {'stream': {'active': True}})
+    def testSetActivate(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set("0", {'stream': {'active': True}})
         self.assertTrue(self.__streams.data['streams'][0]['active'])
         
     def tearDown(self):
