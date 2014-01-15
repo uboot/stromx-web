@@ -62,6 +62,10 @@ class File(object):
     @property
     def index(self):
         return self.__index
+    
+    @property
+    def path(self):
+        return os.path.join(self.__files.directory, self.__name)
 
     def delete(self):
         path = os.path.join(self.__files.directory, self.__name)
@@ -109,6 +113,8 @@ class Stream(object):
         
         factory = stromx.runtime.Factory()
         stromx.runtime.register(factory)
+        reader = stromx.runtime.XmlReader()
+        self.__stream = reader.readStream(streamFile.path, factory)
         
     @property
     def data(self):

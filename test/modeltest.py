@@ -75,7 +75,8 @@ class StreamsTest(unittest.TestCase):
         shutil.copytree("data", "temp")
         
         self.__streams = model.Streams()
-        self.__streamFile = model.File(None, 0, "parallel.stromx")
+        files = model.Files("temp", self.__streams)
+        self.__streamFile = files["0"]
         
     def testAdd(self):
         self.__streams.add(self.__streamFile)
