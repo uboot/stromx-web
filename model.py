@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import base64
 
 import stromx.runtime
 
@@ -34,6 +35,12 @@ class Files(object):
         
     def add(self, data):
         f = File(self, self.__index, data["file"]["name"])
+        
+        content = data["file"].get("content", "")
+        if content != "":
+            with file(f.path, 'w') as streamFile:
+                streamFile.write(base64.decodestring(content))
+                
         self.__files[f.index] = f
         self.__index += 1
         return f.data
@@ -108,7 +115,6 @@ class Stream(object):
         self.__index = str(index)
         self.__name = ""
         self.__file = streamFile
-        self.__paused = False
         
         factory = stromx.runtime.Factory()
         stromx.runtime.register(factory)
@@ -119,22 +125,36 @@ class Stream(object):
     def data(self):
         return {"id": self.__index,
                 "name": self.__name,
-                "active": self.__active,
-                "paused": self.__paused,
+                "active": self.active,
+                "paused": self.paused,
                 "file": self.__file.index}
         
     @property
-    def __active(self):
+    def active(self):
         status = self.__stream.status()
-        return (status == stromx.runtime.Stream.Status.ACTIVE or
-                status == stromx.runtime.Stream.Status.PAUSED)
+        return status == stromx.runtime.Stream.Status.ACTIVE
         
-    @__active.setter
-    def __active(self, value):
-        if value and not self.__active:
+    @active.setter
+    def active(self, value):
+        status = self.__stream.status()
+        if value and status == stromx.runtime.Stream.Status.INACTIVE:
             self.__stream.start()
-        else:
+        
+        if not value:
             self.__stream.stop()
+        
+    @property
+    def paused(self):
+        status = self.__stream.status()
+        return status == stromx.runtime.Stream.Status.PAUSED
+    
+    @paused.setter
+    def paused(self, value):
+        if value and self.active:
+            self.__stream.pause()
+        
+        if not value and self.paused:
+            self.__stream.resume()
         
     @property
     def index(self):
@@ -142,8 +162,8 @@ class Stream(object):
     
     def set(self, data):
         self.__name = data.get("name", self.__name)
-        self.__active = data.get("active", self.__active)
-        self.__paused = data.get("paused", self.__paused)
+        self.active = data.get("active", self.active)
+        self.paused = data.get("paused", self.paused)
             
         return self.data
         

@@ -6,6 +6,37 @@ import unittest
 
 import model
 
+_content = (
+"""
+data:;base64,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
+AAA==
+""")
+
 _parallelFile = {
     'id': '0',
     'name': 'parallel.stromx',
@@ -61,10 +92,17 @@ class FilesTest(unittest.TestCase):
         self.assertEqual({'file': [_openedFile]}, f)
         self.assertEqual(_stream, self.__streams["0"].data)
         
-    def testAdd(self):
+    def testAddEmpty(self):
         self.__files.add({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.__files.data)
+        self.assertFalse(os.path.exists("temp/test.stromx"))
+        
+    def testAdd(self):
+        self.__files.add({'file': {'name': 'test.stromx', 'content': _content}})
+        self.assertEqual({'files': [_testFile, _parallelFile]},
+                         self.__files.data)
+        self.assertTrue(os.path.exists("temp/test.stromx"))
         
     def tearDown(self):
         shutil.rmtree("temp", True)
@@ -105,6 +143,13 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set("0", {'stream': {'active': True}})
         self.__streams.set("0", {'stream': {'paused': True}})
         self.assertTrue(self.__streams.data['streams'][0]['paused'])
+        
+    def testSetResume(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set("0", {'stream': {'active': True}})
+        self.__streams.set("0", {'stream': {'paused': True}})
+        self.__streams.set("0", {'stream': {'paused': False}})
+        self.assertFalse(self.__streams.data['streams'][0]['paused'])
         
     def tearDown(self):
         shutil.rmtree("temp", True)
