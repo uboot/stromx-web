@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import filecmp
 import os
 import shutil
 import unittest
@@ -103,6 +104,7 @@ class FilesTest(unittest.TestCase):
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.__files.data)
         self.assertTrue(os.path.exists("temp/test.stromx"))
+        self.assertTrue(filecmp.cmp("temp/parallel.stromx", "temp/test.stromx"))
         
     def tearDown(self):
         shutil.rmtree("temp", True)
