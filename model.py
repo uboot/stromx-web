@@ -2,6 +2,7 @@
 
 import os
 import base64
+import re
 
 import stromx.runtime
 
@@ -37,6 +38,7 @@ class Files(object):
         f = File(self, self.__index, data["file"]["name"])
         
         content = data["file"].get("content", "")
+        content = re.sub("data:*;base64,", "", content, re.MULTILINE)
         if content != "":
             with file(f.path, 'w') as streamFile:
                 streamFile.write(base64.decodestring(content))
