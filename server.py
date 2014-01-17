@@ -19,7 +19,7 @@ class StreamsHandler(tornado.web.RequestHandler):
     
     def put(self, index):
         data = tornado.escape.json_decode(self.request.body)
-        stream = _streams.put(index, data)
+        stream = _streams.set(index, data)
         json = tornado.escape.json_encode(stream)
         self.write(json)  
   

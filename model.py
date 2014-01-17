@@ -167,7 +167,7 @@ class Stream(object):
     
     @name.setter
     def name(self, value):
-        self.__stream.setName(value)
+        self.__stream.setName(str(value))
     
     def set(self, data):
         self.name = data.get("name", self.name)
