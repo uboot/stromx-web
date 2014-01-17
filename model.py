@@ -147,6 +147,7 @@ class Stream(object):
         
         if not value:
             self.__stream.stop()
+            self.__stream.join()
         
     @property
     def paused(self):
