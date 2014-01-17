@@ -153,6 +153,11 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set("0", {'stream': {'paused': False}})
         self.assertFalse(self.__streams.data['streams'][0]['paused'])
         
+    def testSetName(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set("0", {'stream': {'name': 'New name'}})
+        self.assertEqual('New name', self.__streams.data['streams'][0]['name'])
+        
     def tearDown(self):
         shutil.rmtree("temp", True)
         
