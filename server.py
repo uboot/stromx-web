@@ -47,7 +47,7 @@ class FilesHandler(tornado.web.RequestHandler):
         json = tornado.escape.json_encode(f)
         self.write(json)   
 
-if __name__ == "__main__":
+def start():
     application = tornado.web.Application(
         [
             (r"/", tornado.web.RedirectHandler, {"url": "/static/index.html"}),
@@ -60,3 +60,6 @@ if __name__ == "__main__":
     )
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
+    
+if __name__ == "__main__":
+    start()
