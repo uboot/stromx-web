@@ -99,6 +99,13 @@ class File(object):
         else:
             self.__stream = None
             
+        newName = data.get("name", self.name)
+        if self.name != newName:
+            newPath = os.path.join(self.__files.directory, newName)
+            if os.path.exists(self.path):
+                os.rename(self.path, newPath)
+            self.__name = newName
+            
         return self.data
         
 class Streams(object):
