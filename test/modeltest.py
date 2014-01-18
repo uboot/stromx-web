@@ -83,7 +83,11 @@ class FilesTest(unittest.TestCase):
         self.__files.delete("0")
         self.assertEqual({'files': []}, self.__files.data)
         self.assertFalse(os.path.exists("temp/parallel.stromx"))
-        
+    
+    def testDeleteEmptyFile(self):
+        self.__files.add({'file': {'name': 'test.stromx'}})
+        self.__files.delete("1")
+            
     def testGetItem(self):
         self.assertEqual(_parallelFile, 
                          self.__files["0"].data)
@@ -105,6 +109,11 @@ class FilesTest(unittest.TestCase):
                          self.__files.data)
         self.assertTrue(os.path.exists("temp/test.stromx"))
         self.assertTrue(filecmp.cmp("temp/parallel.stromx", "temp/test.stromx"))
+        
+    def testAddDuplicate(self):
+        self.__files.add({'file': {'name': 'parallel.stromx'}})
+        self.assertEqual({'files': [_parallelFile]}, self.__files.data)
+        self.assertFalse(os.path.exists("temp/parallel.stromx"))
         
     def tearDown(self):
         shutil.rmtree("temp", True)

@@ -31,17 +31,28 @@ class Files(object):
         
     def delete(self, index):
         f = self[index]
-        f.delete()
+        if os.path.exists(f.path):
+            os.remove(f.path)
         self.__files.pop(index)
         
     def add(self, data):
-        f = File(self, self.__index, data["file"]["name"])
+        filename = data["file"]["name"]
+        duplicates = [f for f in self.__files.values() if f.name == filename]
+        assert(len(duplicates) <= 1)
+        
+        if len(duplicates):
+            f = duplicates[0]
+        else:         
+            f = File(self, self.__index, data["file"]["name"])
         
         content = data["file"].get("content", "")
         content = re.sub("data:*;base64,", "", content, re.MULTILINE)
         if content != "":
             with file(f.path, 'w') as streamFile:
                 streamFile.write(base64.decodestring(content))
+        else:
+            if os.path.exists(f.path):
+                os.remove(f.path)
                 
         self.__files[f.index] = f
         self.__index += 1
@@ -75,10 +86,10 @@ class File(object):
     @property
     def path(self):
         return os.path.join(self.__files.directory, self.__name)
-
-    def delete(self):
-        path = os.path.join(self.__files.directory, self.__name)
-        os.remove(path)
+    
+    @property
+    def name(self):
+        return self.__name
         
     def set(self, data):
         self.__opened = data.get("opened", self.__opened)
@@ -137,7 +148,9 @@ class Stream(object):
     @property
     def active(self):
         status = self.__stream.status()
-        return status == stromx.runtime.Stream.Status.ACTIVE
+        return (status == stromx.runtime.Stream.Status.ACTIVE or
+                status == stromx.runtime.Stream.Status.DEACTIVATING or
+                status == stromx.runtime.Stream.Status.PAUSED)
         
     @active.setter
     def active(self, value):
@@ -159,7 +172,8 @@ class Stream(object):
         if value and self.active:
             self.__stream.pause()
         
-        if not value and self.paused:
+        status = self.__stream.status()
+        if not value and status == stromx.runtime.Stream.Status.PAUSED:
             self.__stream.resume()
             
     @property
