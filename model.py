@@ -134,6 +134,7 @@ class Stream(object):
     def __init__(self, index, streamFile):
         self.__index = str(index)
         self.__file = streamFile
+        self.__saved = True
         
         factory = stromx.runtime.Factory()
         stromx.runtime.register(factory)
@@ -144,6 +145,7 @@ class Stream(object):
     def data(self):
         return {"id": self.__index,
                 "name": self.name,
+                "saved": self.saved,
                 "active": self.active,
                 "paused": self.paused,
                 "file": self.__file.index}
@@ -189,12 +191,32 @@ class Stream(object):
     
     @name.setter
     def name(self, value):
-        self.__stream.setName(str(value))
+        if self.name != str(value):
+            self.__stream.setName(str(value))
+            self.__saved = False
+        
+    @property
+    def saved(self):
+        return self.__saved
+    
+    @saved.setter
+    def saved(self, value):
+        # it makes no sense to mark a clean (i.e. non-dirty) file as dirty
+        if not value:
+            return
+        
+        # the file should be saved
+        if not self.saved:
+            writer = stromx.runtime.XmlWriter()
+            writer.writeStream(self.__file.path, self.__stream)
+            self.__saved = True
+            
     
     def set(self, data):
         self.name = data.get("name", self.name)
         self.active = data.get("active", self.active)
         self.paused = data.get("paused", self.paused)
+        self.saved = data.get("saved", self.saved)
             
         return self.data
         

@@ -71,6 +71,7 @@ _testFile = {'id': '1',
 _stream = {
     'id': '0',
     'name': '',
+    'saved': True,
     'active': False,
     'paused': False,
     'file': '0'
@@ -176,10 +177,20 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set('0', {'stream': {'paused': False}})
         self.assertFalse(self.__streams.data['streams'][0]['paused'])
         
+    def testSetSaved(self):
+        self.__streams.add(self.__streamFile)
+        self.__streams.set('0', {'stream': {'name': 'New name'}})
+        self.__streams.set('0', {'stream': {'saved': True}})
+        
+        self.__streamFile.set({'opened': False})
+        self.__streamFile.set({'opened': True})
+        self.assertEqual('New name', self.__streams.data['streams'][0]['name'])
+        
     def testSetName(self):
         self.__streams.add(self.__streamFile)
         self.__streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.__streams.data['streams'][0]['name'])
+        self.assertEqual(False, self.__streams.data['streams'][0]['saved'])
         
     def tearDown(self):
         shutil.rmtree('temp', True)
