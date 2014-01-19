@@ -136,10 +136,13 @@ class Stream(object):
         self.__file = streamFile
         self.__saved = True
         
-        factory = stromx.runtime.Factory()
-        stromx.runtime.register(factory)
-        reader = stromx.runtime.XmlReader()
-        self.__stream = reader.readStream(streamFile.path, factory)
+        if os.path.exists(streamFile.path):
+            factory = stromx.runtime.Factory()
+            stromx.runtime.register(factory)
+            reader = stromx.runtime.XmlReader()
+            self.__stream = reader.readStream(streamFile.path, factory)
+        else:
+            self.__stream = stromx.runtime.Stream()
         
     @property
     def data(self):
@@ -210,7 +213,6 @@ class Stream(object):
             writer = stromx.runtime.XmlWriter()
             writer.writeStream(self.__file.path, self.__stream)
             self.__saved = True
-            
     
     def set(self, data):
         self.name = data.get("name", self.name)

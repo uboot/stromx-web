@@ -68,6 +68,13 @@ _testFile = {'id': '1',
     'stream': []
 }
 
+_noFile = {'id': '1', 
+    'name': 'nothing.stromx', 
+    'content': '', 
+    'opened': False,
+    'stream': []
+}
+
 _stream = {
     'id': '0',
     'name': '',
@@ -145,6 +152,18 @@ class StreamsTest(unittest.TestCase):
     def testAdd(self):
         self.__streams.add(self.__streamFile)
         self.assertEqual({'streams': [_stream]}, self.__streams.data)
+        
+    def testAddNoFile(self):
+        files = model.Files('temp', self.__streams)
+        files.add({'file': _noFile})
+        self.__streams.add(files['1'])
+        
+    def testAddInvalidFile(self):
+        with file('temp/invalid.stromx', 'w') as f:
+            f.write("nonsense")
+            
+        files = model.Files('temp', self.__streams)
+        self.__streams.add(files['0'])
         
     def testSetActivate(self):
         self.__streams.add(self.__streamFile)
