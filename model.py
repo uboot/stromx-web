@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import os
 import base64
+import datetime
+import os
 import re
 
 import stromx.runtime
@@ -221,4 +222,39 @@ class Stream(object):
         self.saved = data.get("saved", self.saved)
             
         return self.data
+        
+class Errors(object):
+    def __init__(self):
+        self.__errors = dict()
+        self.__index = 0
+        
+    @property
+    def data(self):
+        return {"errors": [e.data for e in self.__errors.values()]}
+    
+    def __getitem__(self, index):
+        return self.__errors[index]
+        
+    def add(self, description):
+        error = Error(self.__index, description)
+        self.__errors[error.index] = error
+        self.__index += 1
+        return error
+        
+class Error(object):
+    def __init__(self, index, description):
+        self.__index = str(index)
+        self.__time = datetime.datetime.now()
+        self.__description = description
+        
+    @property
+    def data(self):
+        return {"id": self.__index,
+                "time": self.__time.isoformat(),
+                "description": self.__description}
+        
+    @property
+    def index(self):
+        return self.__index
+        
         

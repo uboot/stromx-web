@@ -214,5 +214,14 @@ class StreamsTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree('temp', True)
         
+class ErrorsTest(unittest.TestCase):
+    def setUp(self):
+        self.__errors = model.Errors()
+        
+    def testAdd(self):
+        self.__errors.add('An error happened')
+        self.assertEqual('An error happened',
+                         self.__errors.data['errors'][0]['description'])
+        
 if __name__ == '__main__':
     unittest.main()
