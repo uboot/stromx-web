@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>stromx-web</title>
   <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <script src="js/libs/jquery-1.10.2.js"></script>
@@ -24,23 +25,26 @@
   
   <script type="text/x-handlebars" data-template-name="index">
     <div class="container">
+      <h1>Files</h1>
       {{outlet}}
 
-      <ul>
+      {{#if length}}
+      <div class="well">
         {{#each itemController="error"}}
-          <li>
-            {{time}}
-            {{description}}
-          </li>
+          <p>{{time}}: {{description}}</p>
         {{/each}}
-      </ul>
+      </div>
+      {{/if}}
     </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="files">
-    <ul>
+    <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+    <ul class="list-group" id="file-list">
       {{#each itemController="file"}}
-        <li>
+        <li class="list-group-item">
           {{name}}
           {{#each stream}}
             {{#link-to 'stream' this}}Show{{/link-to}}
@@ -52,7 +56,10 @@
         </li>
       {{/each}}
     </ul>
-      
+    </div>
+    <div class="col-sm-2"></div>
+    </div>
+    
     {{outlet}}
   </script>
 
