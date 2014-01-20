@@ -14,6 +14,7 @@
   <script src="js/libs/snap.svg.js"></script>
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/controllers/error_controller.js"></script>
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/controllers/stream_controller.js"></script>
@@ -22,16 +23,18 @@
   <script src="js/views/upload_file.js"></script>
   
   <script type="text/x-handlebars" data-template-name="index">
-    {{outlet}}
+    <div class="container">
+      {{outlet}}
 
-    <ul>
-      {{#each}}
-        <li>
-          {{time}}
-          {{description}}
-        </li>
-      {{/each}}
-    </ul>
+      <ul>
+        {{#each itemController="error"}}
+          <li>
+            {{time}}
+            {{description}}
+          </li>
+        {{/each}}
+      </ul>
+    </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="files">
