@@ -21,8 +21,21 @@
   <script src="js/models/model.js"></script>
   <script src="js/views/upload_file.js"></script>
   
+  <script type="text/x-handlebars" data-template-name="index">
+    {{outlet}}
+
+    <ul>
+      {{#each}}
+        <li>
+          {{time}}
+          {{description}}
+        </li>
+      {{/each}}
+    </ul>
+  </script>
+
   <script type="text/x-handlebars" data-template-name="files">
-    <ul id="file-list">
+    <ul>
       {{#each itemController="file"}}
         <li>
           {{name}}
