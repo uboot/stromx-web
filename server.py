@@ -8,6 +8,7 @@ import model
 
 _streams = model.Streams()
 _files = model.Files('files', _streams)
+_errors = model.Errors()
 
 class StreamsHandler(tornado.web.RequestHandler):
     def get(self, index = None):  
@@ -45,6 +46,14 @@ class FilesHandler(tornado.web.RequestHandler):
         data = tornado.escape.json_decode(self.request.body)
         f = _files.set(index, data)
         json = tornado.escape.json_encode(f)
+        self.write(json) 
+
+class ErrorsHandler(tornado.web.RequestHandler):
+    def get(self, index = None):  
+        if index == None:
+            json = tornado.escape.json_encode(_errors.data)
+        else:
+            json = tornado.escape.json_encode(_errors[index].data)
         self.write(json)   
 
 def start():
@@ -54,7 +63,9 @@ def start():
             (r"/files", FilesHandler),
             (r"/files/([0-9]+)", FilesHandler),
             (r"/streams", StreamsHandler),
-            (r"/streams/([0-9]+)", StreamsHandler)
+            (r"/streams/([0-9]+)", StreamsHandler),
+            (r"/errors", ErrorsHandler),
+            (r"/errors/([0-9]+)", ErrorsHandler)
         ],
         static_path="static"
     )

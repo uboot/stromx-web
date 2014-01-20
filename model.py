@@ -240,6 +240,9 @@ class Errors(object):
         self.__errors[error.index] = error
         self.__index += 1
         return error
+    
+    def clear(self):
+        self.__errors.clear()
         
 class Error(object):
     def __init__(self, index, description):

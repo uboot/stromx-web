@@ -223,5 +223,10 @@ class ErrorsTest(unittest.TestCase):
         self.assertEqual('An error happened',
                          self.__errors.data['errors'][0]['description'])
         
+    def testClear(self):
+        self.__errors.add('An error happened')
+        self.__errors.clear()
+        self.assertEqual([], self.__errors.data['errors'])
+        
 if __name__ == '__main__':
     unittest.main()
