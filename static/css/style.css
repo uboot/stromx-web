@@ -1,3 +1,11 @@
 #file-list li {
   font-size: 24px;
 }
+
+h1 { 
+  text-align: center
+}
+
+#stream-buttons {
+  text-align: center
+}
