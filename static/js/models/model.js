@@ -30,7 +30,7 @@ App.File.FIXTURES = [
     name: 'hough.stromx',
     content: '',
     opened: false,
-    stream: []
+    stream: [3]
   }
 ];
 
@@ -45,6 +45,7 @@ App.Stream.FIXTURES = [
   {
     id: 3,
     name: 'Stream two',
+    file: 2,
     active: false,
     paused: false
   }

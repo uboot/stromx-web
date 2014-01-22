@@ -1,19 +1,19 @@
 App.Router.map(function () {
   this.resource('files', { path: '/'}, function() {
     this.route('add');
-    this.resource('streams', function() {
-      this.resource('stream', { path: '/:stream_id' })
-    });
+  })
+  this.resource('streams', function() {
+    this.resource('stream', { path: '/:stream_id' })
   });
 });
 
-App.FilesRoute = Ember.Route.extend({
+App.ApplicationRoute = Ember.Route.extend({
   model: function () {
     return this.store.find('error');
   }
 });
 
-App.FilesIndexRoute = Ember.Route.extend({
+App.FilesRoute = Ember.Route.extend({
   model: function () {
     return this.store.find('file');
   }
