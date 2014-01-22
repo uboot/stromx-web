@@ -1,11 +1,15 @@
-#file-list li {
+#file-list > li {
+  font-size: 24px;
+}
+
+#file-list > a {
   font-size: 24px;
 }
 
 h1 { 
-  text-align: center
+  text-align: center;
 }
 
-#stream-buttons {
-  text-align: center
+.center-buttons {
+  text-align: center;
 }

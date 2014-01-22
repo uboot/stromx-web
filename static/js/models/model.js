@@ -32,7 +32,7 @@ App.File.FIXTURES = [
     name: 'hough.stromx',
     content: '',
     opened: false,
-    stream: [3]
+    stream: []
   }
 ];
 

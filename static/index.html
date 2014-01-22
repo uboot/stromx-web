@@ -44,20 +44,34 @@
     <div class="col-sm-8">
     <ul class="list-group" id="file-list">
       {{#each itemController="file"}}
-        <li class="list-group-item">
-          {{name}}
-          {{#each stream}}
-            {{#link-to 'stream' this class="pull-right"}}Show{{/link-to}}
-          {{/each}}
-          {{#if closed}}
+        {{#if closed}}
+          <li class="list-group-item">
+            {{name}}
             <span class="pull-right">
-            <a {{action "open"}}>Open</a>
-            <a {{action "remove"}}>Remove</a>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  Action <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a {{action "open"}}>Open</a></li>
+                  <li><a {{action "rename"}}>Rename</a></li>
+                  <li><a {{action "remove"}}>Remove</a></li>
+                </ul>
+              </div>
             </span>
-          {{/if}}
-        </li>
+          </li>
+        {{else}}
+          {{#each s in stream}}
+            {{#link-to 'stream' s class="list-group-item"}}{{name}}{{/link-to}}
+          {{/each}}
+          </li>
+        {{/if}}
       {{/each}}
     </ul>
+    <p class="center-buttons" >
+      <button type="button" class="btn btn-default">New File</button>
+      <button type="button" class="btn btn-default">Upload File</button>
+    </p>
     </div>
     <div class="col-sm-2"></div>
     </div>
@@ -72,13 +86,14 @@
 
   <script type="text/x-handlebars" data-template-name="stream">
     <h1>{{name}}</h1>
-    <p id="stream-buttons">
-    {{#if paused}}
-      <a {{action "resume"}}>Resume</a>
-    {{/if}}
+    <p class="center-buttons">
     {{#if active}}
+      {{#if paused}}
+        <a {{action "resume" }} class="btn btn-default">Resume</a>
+      {{else}}
+        <button {{action "pause"}} class="btn btn-default">Pause</button>
+      {{/if}}
       <button {{action "stop"}} class="btn btn-default">Stop</button>
-      <button {{action "pause"}} class="btn btn-default">Pause</button>
     {{else}}
       <button {{action "close"}} class="btn btn-default">Close</button>
       <button {{action "start"}} class="btn btn-default">Start</button>
