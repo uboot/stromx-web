@@ -1,15 +1,8 @@
-#file-list > li {
-  font-size: 24px;
-}
-
-#file-list > a {
-  font-size: 24px;
-}
-
 h1 { 
   text-align: center;
 }
 
-.center-buttons {
+.stromx-center-buttons {
   text-align: center;
+  height: 50px;
 }
