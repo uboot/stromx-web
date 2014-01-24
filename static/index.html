@@ -42,7 +42,7 @@
     <div class="stromx-center-buttons">
       <div class="btn-group">
         <button type="button" class="btn btn-default">New File</button>
-        <button type="button" class="btn btn-default">Upload File</button>
+        {{#link-to 'files.add' type="button" class="btn btn-default"}}Upload File{{/link-to}}
       </div>
     </div>
     <div class="row">
@@ -52,7 +52,6 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Last Changed</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -64,8 +63,6 @@
                 {{name}}
               </td>
               <td>
-              </td>
-              <td>
                 {{#if closed}}
                   Closed
                 {{else}}
@@ -75,24 +72,26 @@
               <td>
                 {{#if closed}}
                   <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                       Action <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                       <li><a {{action "open"}}>Open</a></li>
                       <li><a {{action "rename"}}>Rename</a></li>
                       <li><a {{action "remove"}}>Remove</a></li>
+                      <li><a {{bind-attr href=url}}>Download</a></li>
                     </ul>
                   </div>
                 {{else}}
                   <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                       Action <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                       {{#each stream}}
                         <li>{{#link-to 'stream' this}}Show{{/link-to}}</li>
                       {{/each}}
+                      <li><a {{bind-attr href=url}}>Download</a></li>
                     </ul>
                   </div>
                 {{/if}}
@@ -115,24 +114,43 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="stream">
-    <h1>{{name}}</h1>
+    <h1>Stream</h1>
     <div class="stromx-center-buttons">
-      <div class="btn-group">
-        {{#if active}}
-          {{#if paused}}
+      {{#if active}}   
+        {{#if paused}}   
+          <div class="btn-group">
             <button type="button" {{action "resume" }} class="btn btn-default">Resume</button>
-          {{else}}
+            <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
+          </div>
+        {{else}}     
+          <div class="btn-group">
             <button type="button" {{action "pause"}} class="btn btn-default">Pause</button>
-          {{/if}}
-          <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-        {{else}}
-          <button type="button" {{action "close"}} class="btn btn-default">Close</button>
-          <button type="button" {{action "start"}} class="btn btn-default">Start</button>
+            <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
+          </div>
         {{/if}}
-      </div>
+      {{else}}     
+        <div class="btn-group">
+          <button type="button" {{action "start"}} class="btn btn-default">Start</button>
+          <button type="button" {{action "close"}} class="btn btn-default">Close</button>
+        </div>
+      {{/if}}
     </div>
-    <p class="center-buttons">
-    </p>
+    <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-2"></div>
+    </div>
   </script>
 </body>
 </html>

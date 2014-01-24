@@ -3,6 +3,7 @@
 import tornado.escape
 import tornado.ioloop
 import tornado.web
+import tornado.websocket
 
 import model
 
@@ -47,14 +48,24 @@ class FilesHandler(tornado.web.RequestHandler):
         f = _files.set(index, data)
         json = tornado.escape.json_encode(f)
         self.write(json) 
-
-class ErrorsHandler(tornado.web.RequestHandler):
-    def get(self, index = None):  
-        if index == None:
-            json = tornado.escape.json_encode(_errors.data)
-        else:
-            json = tornado.escape.json_encode(_errors[index].data)
-        self.write(json)   
+        
+class ErrorsHandler(tornado.websocket.WebSocketHandler):
+    def open(self):
+        _errors.errorHandlers.append[self.sendError]
+        print "opened"
+    
+    def on_close(self):
+        _errors.errorHandlers.remove(self.sendError)
+        print "closed"
+        
+    def doSend(self, error):
+        json = tornado.escape.json_encode({"error": [error.data]})
+        self.write_message(json)
+        print "send:", json
+        
+    def sendError(self, error):
+        loop = tornado.ioloop.IOLoop.instance()
+        loop.add_callback(self.doSend, error)
 
 def start():
     application = tornado.web.Application(
@@ -65,7 +76,9 @@ def start():
             (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler),
             (r"/errors", ErrorsHandler),
-            (r"/errors/([0-9]+)", ErrorsHandler)
+            (r"/errors/([0-9]+)", ErrorsHandler),
+            (r"/download/(.*)", tornado.web.StaticFileHandler,
+             {"path": "files"}),
         ],
         static_path="static"
     )

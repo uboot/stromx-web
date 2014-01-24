@@ -216,17 +216,17 @@ class StreamsTest(unittest.TestCase):
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
+        self.__lastError = None
         self.__errors = model.Errors()
         
+    def storeError(self, error):
+        self.__lastError = error
+        
     def testAdd(self):
+        self.__errors.errorHandlers.append(self.storeError)
         self.__errors.add('An error happened')
         self.assertEqual('An error happened',
-                         self.__errors.data['errors'][0]['description'])
-        
-    def testClear(self):
-        self.__errors.add('An error happened')
-        self.__errors.clear()
-        self.assertEqual([], self.__errors.data['errors'])
+                         self.__lastError.data['description'])
         
 if __name__ == '__main__':
     unittest.main()

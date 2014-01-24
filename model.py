@@ -225,24 +225,23 @@ class Stream(object):
         
 class Errors(object):
     def __init__(self):
-        self.__errors = dict()
+        self.__errorHandlers = []
         self.__index = 0
         
     @property
-    def data(self):
-        return {"errors": [e.data for e in self.__errors.values()]}
+    def errorHandlers(self):
+        return self.__errorHandlers
     
-    def __getitem__(self, index):
-        return self.__errors[index]
+    @errorHandlers.setter
+    def errorHandlers(self, value):
+        self.__errorHandlers = value
         
     def add(self, description):
         error = Error(self.__index, description)
-        self.__errors[error.index] = error
         self.__index += 1
+        for handler in self.__errorHandlers:
+            handler(error)
         return error
-    
-    def clear(self):
-        self.__errors.clear()
         
 class Error(object):
     def __init__(self, index, description):

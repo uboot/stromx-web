@@ -1,5 +1,8 @@
 App.FileController = Ember.ObjectController.extend({
   closed: Ember.computed.not('opened'),
+  url: function(key, value) {
+    return '../download/' + this.get('name')
+  }.property(name),
   actions: {
     remove: function () {
         var file = this.get('model')
