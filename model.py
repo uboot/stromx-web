@@ -7,6 +7,13 @@ import re
 
 import stromx.runtime
 
+class ModelException(Exception):
+    def __init__(self, value):
+        self.value = value
+        
+    def __str__(self):
+        return repr(self.value)
+
 class Files(object):
     def __init__(self, directory, streams):
         self.__directory = directory
@@ -169,7 +176,10 @@ class Stream(object):
     def active(self, value):
         status = self.__stream.status()
         if value and status == stromx.runtime.Stream.Status.INACTIVE:
-            self.__stream.start()
+            try:
+                self.__stream.start()
+            except stromx.runtime.Exception as e:
+                raise ModelException(e.what())
         
         if not value:
             self.__stream.stop()
@@ -225,9 +235,14 @@ class Stream(object):
         
 class Errors(object):
     def __init__(self):
+        self.__errors = dict()
         self.__errorHandlers = []
         self.__index = 0
         
+    @property
+    def data(self):
+        return {"errors": [e.data for e in self.__errors.values()]}
+    
     @property
     def errorHandlers(self):
         return self.__errorHandlers
@@ -235,13 +250,20 @@ class Errors(object):
     @errorHandlers.setter
     def errorHandlers(self, value):
         self.__errorHandlers = value
+      
+    def __getitem__(self, index):
+        return self.__errors[index]  
         
     def add(self, description):
         error = Error(self.__index, description)
+        self.__errors[error.index] = error
         self.__index += 1
         for handler in self.__errorHandlers:
             handler(error)
         return error
+   
+    def clear(self):
+        self.__errors.clear()
         
 class Error(object):
     def __init__(self, index, description):

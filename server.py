@@ -45,7 +45,10 @@ class FilesHandler(tornado.web.RequestHandler):
     
     def put(self, index):
         data = tornado.escape.json_decode(self.request.body)
-        f = _files.set(index, data)
+        try:
+            f = _files.set(index, data)
+        except model.ModelException as error:
+            _errors.add(str(error))
         json = tornado.escape.json_encode(f)
         self.write(json) 
         
@@ -76,7 +79,6 @@ def start():
             (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler),
             (r"/errors", ErrorsHandler),
-            (r"/errors/([0-9]+)", ErrorsHandler),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),
         ],
