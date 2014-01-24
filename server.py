@@ -16,7 +16,7 @@ class StreamsHandler(tornado.web.RequestHandler):
         if index == None:
             json = tornado.escape.json_encode(_streams.data)
         else:
-            json = tornado.escape.json_encode(_streams[index].data)
+            json = tornado.escape.json_encode({"stream": [_streams[index].data]})
         self.write(json) 
     
     def put(self, index):
@@ -30,7 +30,7 @@ class FilesHandler(tornado.web.RequestHandler):
         if index == None:
             json = tornado.escape.json_encode(_files.data)
         else:
-            json = tornado.escape.json_encode(_files[index].data)
+            json = tornado.escape.json_encode({"file": [_files[index].data]})
         self.write(json)
     
     def delete(self, index):
@@ -45,16 +45,21 @@ class FilesHandler(tornado.web.RequestHandler):
     
     def put(self, index):
         data = tornado.escape.json_decode(self.request.body)
-        try:
-            f = _files.set(index, data)
-        except model.ModelException as error:
-            _errors.add(str(error))
+        f = _files.set(index, data)
         json = tornado.escape.json_encode(f)
         self.write(json) 
         
-class ErrorsHandler(tornado.websocket.WebSocketHandler):
+class ErrorsHandler(tornado.web.RequestHandler):
+    def get(self, index = None):  
+        if index == None:
+            json = tornado.escape.json_encode(_errors.data)
+        else:
+            json = tornado.escape.json_encode(_errors[index].data)
+        self.write(json)   
+    
+class ErrorSocket(tornado.websocket.WebSocketHandler):
     def open(self):
-        _errors.errorHandlers.append[self.sendError]
+        _errors.errorHandlers.append(self.sendError)
         print "opened"
     
     def on_close(self):
@@ -79,6 +84,8 @@ def start():
             (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler),
             (r"/errors", ErrorsHandler),
+            (r"/errors/([0-9]+)", ErrorsHandler),
+            (r"/error_socket", ErrorSocket),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),
         ],

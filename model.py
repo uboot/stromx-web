@@ -7,13 +7,6 @@ import re
 
 import stromx.runtime
 
-class ModelException(Exception):
-    def __init__(self, value):
-        self.value = value
-        
-    def __str__(self):
-        return repr(self.value)
-
 class Files(object):
     def __init__(self, directory, streams):
         self.__directory = directory
@@ -176,10 +169,7 @@ class Stream(object):
     def active(self, value):
         status = self.__stream.status()
         if value and status == stromx.runtime.Stream.Status.INACTIVE:
-            try:
-                self.__stream.start()
-            except stromx.runtime.Exception as e:
-                raise ModelException(e.what())
+            self.__stream.start()
         
         if not value:
             self.__stream.stop()
