@@ -105,17 +105,17 @@ class FilesTest(unittest.TestCase):
         self.__files.delete('1')
             
     def testGetItem(self):
-        self.assertEqual(_parallelFile, 
+        self.assertEqual({'file': _parallelFile}, 
                          self.__files['0'].data)
         
     def testSetOpen(self):
         f = self.__files.set('0', {'file': {'opened': True}})
-        self.assertEqual({'file': [_openedFile]}, f)
-        self.assertEqual(_stream, self.__streams['0'].data)
+        self.assertEqual({'file': _openedFile}, f)
+        self.assertEqual({'stream':_stream}, self.__streams['0'].data)
         
     def testSetName(self):
         f = self.__files.set('0', {'file': {'name': 'renamed.stromx'}})
-        self.assertEqual({'file': [_renamedFile]}, f)
+        self.assertEqual({'file': _renamedFile}, f)
         self.assertTrue(os.path.exists('temp/renamed.stromx'))
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
@@ -201,8 +201,8 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set('0', {'stream': {'name': 'New name'}})
         self.__streams.set('0', {'stream': {'saved': True}})
         
-        self.__streamFile.set({'opened': False})
-        self.__streamFile.set({'opened': True})
+        self.__streamFile.set({'file': {'opened': False}})
+        self.__streamFile.set({'file': {'opened': True}})
         self.assertEqual('New name', self.__streams.data['streams'][0]['name'])
         
     def testSetName(self):
@@ -226,7 +226,7 @@ class ErrorsTest(unittest.TestCase):
         self.__errors.errorHandlers.append(self.storeError)
         self.__errors.add('An error happened')
         self.assertEqual('An error happened',
-                         self.__lastError.data['description'])         
+                         self.__lastError.data['error']['description'])         
         self.assertEqual('An error happened',
                          self.__errors.data['errors'][0]['description'])
         

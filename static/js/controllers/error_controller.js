@@ -17,10 +17,12 @@ App.ApplicationController = Ember.ArrayController.extend({
       var payload = JSON.parse(event.data)
       store.pushPayload('error', payload)
       Ember.run.next(function() {
-        store.find('error', payload.error[0].id).then(function(error) {
+        store.find('error', payload.error.id).then(function(error) {
           controller.pushObject(error)
         })
       })
     }
-  }
+  },
+  sortProperties: ['time'],
+  sortAscending: false
 });

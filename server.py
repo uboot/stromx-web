@@ -16,7 +16,7 @@ class StreamsHandler(tornado.web.RequestHandler):
         if index == None:
             json = tornado.escape.json_encode(_streams.data)
         else:
-            json = tornado.escape.json_encode({"stream": [_streams[index].data]})
+            json = tornado.escape.json_encode(_streams[index].data)
         self.write(json) 
     
     def put(self, index):
@@ -31,7 +31,7 @@ class FilesHandler(tornado.web.RequestHandler):
         if index == None:
             json = tornado.escape.json_encode(_files.data)
         else:
-            json = tornado.escape.json_encode({"file": [_files[index].data]})
+            json = tornado.escape.json_encode(_files[index].data)
         self.write(json)
     
     def delete(self, index):
@@ -66,7 +66,7 @@ class ErrorSocket(tornado.websocket.WebSocketHandler):
         _errors.errorHandlers.remove(self.sendError)
         
     def doSend(self, error):
-        json = tornado.escape.json_encode({"error": [error.data]})
+        json = tornado.escape.json_encode(error.data)
         self.write_message(json)
         
     def sendError(self, error):
@@ -81,8 +81,6 @@ def start():
             (r"/files/([0-9]+)", FilesHandler),
             (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler),
-            (r"/errors", ErrorsHandler),
-            (r"/errors/([0-9]+)", ErrorsHandler),
             (r"/error_socket", ErrorSocket),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),

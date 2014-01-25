@@ -17,7 +17,7 @@ class Files(object):
                         
     @property
     def data(self):
-        return {"files": [f.data for f in self.__files.values()]}
+        return {"files": [f.data["file"] for f in self.__files.values()]}
     
     @property
     def directory(self):
@@ -61,7 +61,8 @@ class Files(object):
     
     def set(self, index, data):
         f = self[index]
-        return {"file": [f.set(data["file"])]}
+        f.set(data)
+        return f.data
         
 class File(object):
     def __init__(self, files, index, name):
@@ -74,11 +75,12 @@ class File(object):
     @property
     def data(self):
         streamIds = [self.__stream.index] if self.__stream else []
-        return {"id": self.__index,
-                "name": self.__name, 
-                "content": "",
-                "opened": self.__opened, 
-                "stream": streamIds}
+        return {"file":
+                {"id": self.__index,
+                 "name": self.__name, 
+                 "content": "",
+                 "opened": self.__opened, 
+                 "stream": streamIds}}
         
     @property
     def index(self):
@@ -93,14 +95,15 @@ class File(object):
         return self.__name
         
     def set(self, data):
-        self.__opened = data.get("opened", self.__opened)
+        properties = data["file"]
+        self.__opened = properties.get("opened", self.__opened)
         
         if self.__opened:
             self.__stream = self.__files.streams.add(self)
         else:
             self.__stream = None
             
-        newName = data.get("name", self.name)
+        newName = properties.get("name", self.name)
         if self.name != newName:
             newPath = os.path.join(self.__files.directory, newName)
             if os.path.exists(self.path):
@@ -116,7 +119,7 @@ class Streams(object):
         
     @property
     def data(self):
-        return {"streams": [s.data for s in self.__streams.values()]}
+        return {"streams": [s.data["stream"] for s in self.__streams.values()]}
     
     def __getitem__(self, index):
         return self.__streams[index]
@@ -129,7 +132,7 @@ class Streams(object):
     
     def set(self, index, data):
         stream = self[index]
-        return {"stream": [stream.set(data["stream"])]}
+        return stream.set(data)
         
 class Stream(object):
     def __init__(self, index, streamFile):
@@ -147,12 +150,13 @@ class Stream(object):
         
     @property
     def data(self):
-        return {"id": self.__index,
-                "name": self.name,
-                "saved": self.saved,
-                "active": self.active,
-                "paused": self.paused,
-                "file": self.__file.index}
+        return {"stream":
+                {"id": self.__index,
+                 "name": self.name,
+                 "saved": self.saved,
+                 "active": self.active,
+                 "paused": self.paused,
+                 "file": self.__file.index}}
         
     @property
     def index(self):
@@ -216,10 +220,11 @@ class Stream(object):
             self.__saved = True
     
     def set(self, data):
-        self.name = data.get("name", self.name)
-        self.active = data.get("active", self.active)
-        self.paused = data.get("paused", self.paused)
-        self.saved = data.get("saved", self.saved)
+        properties = data["stream"]
+        self.name = properties.get("name", self.name)
+        self.active = properties.get("active", self.active)
+        self.paused = properties.get("paused", self.paused)
+        self.saved = properties.get("saved", self.saved)
             
         return self.data
         
@@ -231,7 +236,7 @@ class Errors(object):
         
     @property
     def data(self):
-        return {"errors": [e.data for e in self.__errors.values()]}
+        return {"errors": [e.data["error"] for e in self.__errors.values()]}
     
     @property
     def errorHandlers(self):
@@ -263,9 +268,10 @@ class Error(object):
         
     @property
     def data(self):
-        return {"id": self.__index,
-                "time": self.__time.isoformat(),
-                "description": self.__description}
+        return {"error":
+                {"id": self.__index,
+                 "time": self.__time.isoformat(),
+                 "description": self.__description}}
         
     @property
     def index(self):
