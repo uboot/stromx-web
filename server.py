@@ -61,16 +61,13 @@ class ErrorsHandler(tornado.web.RequestHandler):
 class ErrorSocket(tornado.websocket.WebSocketHandler):
     def open(self):
         _errors.errorHandlers.append(self.sendError)
-        print "opened"
     
     def on_close(self):
         _errors.errorHandlers.remove(self.sendError)
-        print "closed"
         
     def doSend(self, error):
         json = tornado.escape.json_encode({"error": [error.data]})
         self.write_message(json)
-        print "send:", json
         
     def sendError(self, error):
         loop = tornado.ioloop.IOLoop.instance()
