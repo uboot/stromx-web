@@ -19,6 +19,7 @@
   <script src="js/controllers/error_controller.js"></script>
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
+  <script src="js/controllers/filesNew_controller.js"></script>
   <script src="js/controllers/stream_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
@@ -42,13 +43,14 @@
     <h1>Files</h1>
     <div class="stromx-center-buttons">
       <div class="btn-group">
-        <button type="button" class="btn btn-default">New File</button>
+        {{#link-to 'files.new' type="button" class="btn btn-default"}}New File{{/link-to}}
         {{#link-to 'files.add' type="button" class="btn btn-default"}}Upload File{{/link-to}}
       </div>
     </div>
     <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-8">
+      {{outlet}}
       <table class="table">
         <thead>
           <tr>
@@ -105,13 +107,31 @@
     </div>
     <div class="col-sm-2"></div>
     </div>
-    
-    {{outlet}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="files/add">
-    File: {{view App.UploadFile valueBinding="name" content=content}}
-    <button {{action 'addFile'}}>Save</button>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="form-group">
+          <label for="uploadFile">File</label>
+          {{view App.UploadFile valueBinding="name" content=content id="uploadFile"}}
+          <p class="help-block">Choose a valid stromx file.</p>
+        </div>
+        <button {{action 'addFile'}} type="submit" class="btn btn-default">Save</button>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="files/new">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="form-group">
+          <label for="newFile">Filename</label>
+          {{input valueBinding="name" class="form-control" placeholder="Enter filename" id="newFile"}}
+        </div>
+        <button {{action 'newFile'}} type="submit" class="btn btn-default">Save</button>
+      </div>
+    </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="stream">
