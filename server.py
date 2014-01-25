@@ -24,6 +24,7 @@ class StreamsHandler(tornado.web.RequestHandler):
         stream = _streams.set(index, data)
         json = tornado.escape.json_encode(stream)
         self.write(json)  
+        _errors.add("test")
   
 class FilesHandler(tornado.web.RequestHandler):
     def get(self, index = None):  

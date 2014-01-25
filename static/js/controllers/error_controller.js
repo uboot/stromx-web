@@ -8,6 +8,7 @@ App.ErrorController = Ember.ObjectController.extend({
 
 App.ApplicationController = Ember.ArrayController.extend({
   init: function() {
+    this._super()
     var url = 'ws://' + window.location.host + '/error_socket'
     var ws = new WebSocket(url);
     var store = this.store
@@ -21,5 +22,5 @@ App.ApplicationController = Ember.ArrayController.extend({
         })
       })
     }
-  },
+  }
 });
