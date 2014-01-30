@@ -7,9 +7,43 @@ import re
 
 import stromx.runtime 
 
+class Errors(object):
+    def __init__(self):
+        self.__errorHandlers = []
+        self.__index = 0
+    
+    @property
+    def errorHandlers(self):
+        return self.__errorHandlers
+        
+    def add(self, description):
+        error = Error(self.__index, description)
+        self.__index += 1
+        for handler in self.__errorHandlers:
+            handler(error)
+        return error
+        
+class Error(object):
+    def __init__(self, index, description):
+        self.__index = str(index)
+        self.__time = datetime.datetime.now()
+        self.__description = description
+        
+    @property
+    def data(self):
+        return {"error":
+                {"id": self.__index,
+                 "time": self.__time.isoformat(),
+                 "description": self.__description}}
+        
+    @property
+    def index(self):
+        return self.__index
+    
 class Objects(object):
     def __init__(self):
         self.__objects = dict()
+        self.__errors = Errors()
         
     @property
     def objects(self):
@@ -18,6 +52,10 @@ class Objects(object):
     @objects.setter
     def objects(self, value):
         self.__objects = value
+        
+    @property
+    def errors(self):
+        return self.__errors
     
     def __getitem__(self, index):
         return self.__objects[index]
@@ -233,51 +271,5 @@ class Stream(object):
         self.saved = properties.get("saved", self.saved)
             
         return self.data
-        
-class Errors(Objects):
-    def __init__(self):
-        super(Errors, self).__init__()
-        self.__errorHandlers = []
-        self.__index = 0
-        
-    @property
-    def data(self):
-        return {"errors": [e.data["error"] for e in self.objects.values()]}
-    
-    @property
-    def errorHandlers(self):
-        return self.__errorHandlers
-    
-    @errorHandlers.setter
-    def errorHandlers(self, value):
-        self.__errorHandlers = value
-        
-    def add(self, description):
-        error = Error(self.__index, description)
-        self.objects[error.index] = error
-        self.__index += 1
-        for handler in self.__errorHandlers:
-            handler(error)
-        return error
-   
-    def clear(self):
-        self.objects.clear()
-        
-class Error(object):
-    def __init__(self, index, description):
-        self.__index = str(index)
-        self.__time = datetime.datetime.now()
-        self.__description = description
-        
-    @property
-    def data(self):
-        return {"error":
-                {"id": self.__index,
-                 "time": self.__time.isoformat(),
-                 "description": self.__description}}
-        
-    @property
-    def index(self):
-        return self.__index
 
         
