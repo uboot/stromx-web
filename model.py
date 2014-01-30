@@ -5,19 +5,40 @@ import datetime
 import os
 import re
 
-import stromx.runtime
+import stromx.runtime 
 
-class Files(object):
+class Objects(object):
+    def __init__(self):
+        self.__objects = dict()
+        
+    @property
+    def objects(self):
+        return self.__objects
+    
+    @objects.setter
+    def objects(self, value):
+        self.__objects = value
+    
+    def __getitem__(self, index):
+        return self.__objects[index]
+    
+    def set(self, index, data):
+        obj = self[index]
+        obj.set(data)
+        return obj.data
+    
+class Files(Objects):
     def __init__(self, directory, streams):
+        super(Files, self).__init__()
         self.__directory = directory
         self.__streams = streams
-        self.__files = {str(index): File(self, index, name) for index, name 
+        self.objects = {str(index): File(self, index, name) for index, name 
                         in enumerate(os.listdir(directory))}
-        self.__index = len(self.__files)
+        self.__index = len(self.objects)
                         
     @property
     def data(self):
-        return {"files": [f.data["file"] for f in self.__files.values()]}
+        return {"files": [f.data["file"] for f in self.objects.values()]}
     
     @property
     def directory(self):
@@ -26,19 +47,16 @@ class Files(object):
     @property
     def streams(self):
         return self.__streams
-    
-    def __getitem__(self, index):
-        return self.__files[index]
         
     def delete(self, index):
         f = self[index]
         if os.path.exists(f.path):
             os.remove(f.path)
-        self.__files.pop(index)
+        self.objects.pop(index)
         
     def add(self, data):
         filename = data["file"]["name"]
-        duplicates = [f for f in self.__files.values() if f.name == filename]
+        duplicates = [f for f in self.objects.values() if f.name == filename]
         assert(len(duplicates) <= 1)
         
         if len(duplicates):
@@ -55,13 +73,8 @@ class Files(object):
             if os.path.exists(f.path):
                 os.remove(f.path)
                 
-        self.__files[f.index] = f
+        self.objects[f.index] = f
         self.__index += 1
-        return f.data
-    
-    def set(self, index, data):
-        f = self[index]
-        f.set(data)
         return f.data
         
 class File(object):
@@ -112,27 +125,20 @@ class File(object):
             
         return self.data
         
-class Streams(object):
+class Streams(Objects):
     def __init__(self):
-        self.__streams = dict()
+        super(Streams, self).__init__()
         self.__index = 0
         
     @property
     def data(self):
-        return {"streams": [s.data["stream"] for s in self.__streams.values()]}
-    
-    def __getitem__(self, index):
-        return self.__streams[index]
+        return {"streams": [s.data["stream"] for s in self.objects.values()]}
         
     def add(self, streamFile):
         stream = Stream(self.__index, streamFile)
-        self.__streams[stream.index] = stream
+        self.objects[stream.index] = stream
         self.__index += 1
         return stream
-    
-    def set(self, index, data):
-        stream = self[index]
-        return stream.set(data)
         
 class Stream(object):
     def __init__(self, index, streamFile):
@@ -228,15 +234,15 @@ class Stream(object):
             
         return self.data
         
-class Errors(object):
+class Errors(Objects):
     def __init__(self):
-        self.__errors = dict()
+        super(Errors, self).__init__()
         self.__errorHandlers = []
         self.__index = 0
         
     @property
     def data(self):
-        return {"errors": [e.data["error"] for e in self.__errors.values()]}
+        return {"errors": [e.data["error"] for e in self.objects.values()]}
     
     @property
     def errorHandlers(self):
@@ -245,20 +251,17 @@ class Errors(object):
     @errorHandlers.setter
     def errorHandlers(self, value):
         self.__errorHandlers = value
-      
-    def __getitem__(self, index):
-        return self.__errors[index]  
         
     def add(self, description):
         error = Error(self.__index, description)
-        self.__errors[error.index] = error
+        self.objects[error.index] = error
         self.__index += 1
         for handler in self.__errorHandlers:
             handler(error)
         return error
    
     def clear(self):
-        self.__errors.clear()
+        self.objects.clear()
         
 class Error(object):
     def __init__(self, index, description):
@@ -276,5 +279,5 @@ class Error(object):
     @property
     def index(self):
         return self.__index
-        
+
         
