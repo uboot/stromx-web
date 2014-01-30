@@ -16,5 +16,11 @@ App.ApplicationController = Ember.ArrayController.extend({
     }
   },
   sortProperties: ['time'],
-  sortAscending: false
+  sortAscending: false,
+  
+  actions: {
+    clearErrors: function() {
+      this.get('model').clear()
+    }
+  }
 });

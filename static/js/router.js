@@ -10,7 +10,7 @@ App.Router.map(function () {
 
 // App.ApplicationRoute = Ember.Route.extend({
 //   model: function () {
-//     return this.store.modelFor('error');
+//     return this.store.find('error');
 //   }
 // });
 
