@@ -216,11 +216,8 @@ class StreamsTest(unittest.TestCase):
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
-        shutil.rmtree('temp', True)
-        shutil.copytree('data', 'temp')
-        
         self.__lastError = None
-        self.__errors = model.Model('temp').errors
+        self.__errors = model.Errors()
         
     def storeError(self, error):
         self.__lastError = error
@@ -230,9 +227,6 @@ class ErrorsTest(unittest.TestCase):
         self.__errors.add('An error happened')
         self.assertEqual('An error happened',
                          self.__lastError.data['error']['description'])
-        
-    def tearDown(self):
-        shutil.rmtree('temp', True)
         
 if __name__ == '__main__':
     unittest.main()

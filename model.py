@@ -11,7 +11,7 @@ class Model(object):
     def __init__(self, directory):
         self.__files = Files(directory, self)
         self.__streams = Streams(self)
-        self.__errors = Errors(self)
+        self.__errors = Errors()
     
     @property
     def files(self):
@@ -26,7 +26,7 @@ class Model(object):
         return self.__errors
     
 class Items(object):
-    def __init__(self, model):
+    def __init__(self, model = None):
         self.__items = dict()
         self.__index = 0
         self.__model = model
@@ -60,7 +60,7 @@ class Items(object):
         self.__items.pop(index)
             
 class Item(object):
-    def __init__(self, model):
+    def __init__(self, model = None):
         self.__index = ""
         self.__model = model
         
@@ -274,8 +274,8 @@ class Stream(Item):
         return self.data
 
 class Errors(Items):
-    def __init__(self, model):
-        super(Errors, self).__init__(model)
+    def __init__(self):
+        super(Errors, self).__init__()
         self.__errorHandlers = []
         
     @property
@@ -291,7 +291,7 @@ class Errors(Items):
         self.__errorHandlers = value
         
     def add(self, description):
-        error = Error(description, self.model)
+        error = Error(description)
         self.addItem(error)
         for handler in self.__errorHandlers:
             handler(error)
@@ -301,8 +301,8 @@ class Errors(Items):
         self.items.clear()
         
 class Error(Item):
-    def __init__(self, description, model):
-        super(Error, self).__init__(model)
+    def __init__(self, description):
+        super(Error, self).__init__()
         self.__time = datetime.datetime.now()
         self.__description = str(description)
         
