@@ -160,6 +160,7 @@ class File(Item):
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
         else:
+            self.model.streams.deleteItem(self.__stream.index)
             self.__stream = None
             self.__opened = False
     
