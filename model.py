@@ -147,21 +147,18 @@ class File(Item):
 class Streams(Items):
     def __init__(self):
         super(Streams, self).__init__()
-        self.__index = 0
         
     @property
     def data(self):
         return {"streams": [s.data["stream"] for s in self.items.values()]}
         
     def add(self, streamFile):
-        stream = Stream(self.__index, streamFile)
-        self.items[stream.index] = stream
-        self.__index += 1
+        stream = Stream(streamFile)
+        self.addItem(stream)
         return stream
         
-class Stream(object):
-    def __init__(self, index, streamFile):
-        self.__index = str(index)
+class Stream(Item):
+    def __init__(self, streamFile):
         self.__file = streamFile
         self.__saved = True
         
@@ -179,16 +176,12 @@ class Stream(object):
     @property
     def data(self):
         return {"stream":
-                {"id": self.__index,
+                {"id": self.index,
                  "name": self.name,
                  "saved": self.saved,
                  "active": self.active,
                  "paused": self.paused,
                  "file": self.__file.index}}
-        
-    @property
-    def index(self):
-        return self.__index
         
     @property
     def active(self):
@@ -281,9 +274,8 @@ class Errors(Items):
         self.__errorHandlers = value
         
     def add(self, description):
-        error = Error(self.__index, description)
-        self.items[error.index] = error
-        self.__index += 1
+        error = Error(description)
+        self.addItem(error)
         for handler in self.__errorHandlers:
             handler(error)
         return error
@@ -291,22 +283,17 @@ class Errors(Items):
     def clear(self):
         self.items.clear()
         
-class Error(object):
-    def __init__(self, index, description):
-        self.__index = str(index)
+class Error(Item):
+    def __init__(self, description):
         self.__time = datetime.datetime.now()
         self.__description = str(description)
         
     @property
     def data(self):
         return {"error":
-                {"id": self.__index,
+                {"id": self.index,
                  "time": self.__time.isoformat(),
                  "description": self.__description}}
-        
-    @property
-    def index(self):
-        return self.__index
 
 errors = Errors()
         
