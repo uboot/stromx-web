@@ -58,6 +58,12 @@ class Items(object):
             
     def deleteItem(self, index):
         self.__items.pop(index)
+        
+    def add(self, data):
+        raise NotImplemented
+        
+    def delete(self, index):
+        raise NotImplemented
             
 class Item(object):
     def __init__(self, model = None):
@@ -75,6 +81,9 @@ class Item(object):
     @index.setter
     def index(self, value):
         self.__index = str(value)
+        
+    def set(self, data):
+        raise NotImplemented
         
 class Files(Items):
     @property
@@ -171,12 +180,13 @@ class Streams(Items):
         return {"streams": [s.data["stream"] for s in self.items.values()]}
         
     def add(self, streamFile):
-        stream = Stream(streamFile)
+        stream = Stream(streamFile, self.model)
         self.addItem(stream)
         return stream
         
 class Stream(Item):
-    def __init__(self, streamFile):
+    def __init__(self, streamFile, model):
+        super(Stream, self).__init__(model)
         self.__file = streamFile
         self.__saved = True
         
@@ -187,7 +197,7 @@ class Stream(Item):
             try:
                 self.__stream = reader.readStream(str(streamFile.path), factory)
             except stromx.runtime.Exception as e:
-                self.model.errors.add(e)
+                self.model.errors.addError(e)
         else:
             self.__stream = stromx.runtime.Stream()
         
@@ -215,7 +225,7 @@ class Stream(Item):
             try:
                 self.__stream.start()
             except stromx.runtime.Exception as e:
-                self.model.errors.add(e)
+                self.model.errors.addError(e)
         
         if not value:
             self.__stream.stop()
@@ -262,7 +272,7 @@ class Stream(Item):
                 writer.writeStream(self.__file.path, self.__stream)
                 self.__saved = True
             except stromx.runtime.Exception as e:
-                self.model.errors.add(e)
+                self.model.errors.addError(e)
     
     def set(self, data):
         properties = data["stream"]
@@ -290,7 +300,7 @@ class Errors(Items):
     def errorHandlers(self, value):
         self.__errorHandlers = value
         
-    def add(self, description):
+    def addError(self, description):
         error = Error(description)
         self.addItem(error)
         for handler in self.__errorHandlers:

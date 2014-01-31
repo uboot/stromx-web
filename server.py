@@ -8,16 +8,18 @@ import tornado.websocket
 
 import model
 
-_streams = model.Streams()
-_files = model.Files('files', _streams)
+_model = model.Model('files')
+_streams = _model.streams
+_files = _model.files
+_errors = _model.errors
 
-class StreamsHandler(tornado.web.RequestHandler):
+class ItemsHandler(tornado.web.RequestHandler):
     def get(self, index = None):
         try:
             if index == None:
-                json = tornado.escape.json_encode(_streams.data)
+                json = tornado.escape.json_encode(self.items.data)
             else:
-                json = tornado.escape.json_encode(_streams[index].data)
+                json = tornado.escape.json_encode(self.items[index].data)
             self.write(json) 
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
@@ -25,51 +27,37 @@ class StreamsHandler(tornado.web.RequestHandler):
     def put(self, index):
         try:
             data = tornado.escape.json_decode(self.request.body)
-            stream = _streams.set(index, data)
-            json = tornado.escape.json_encode(stream)
+            item = self.items.set(index, data)
+            json = tornado.escape.json_encode(item)
             self.write(json)  
-        except KeyError:
-            self.set_status(httplib.NOT_FOUND)
-  
-class FilesHandler(tornado.web.RequestHandler):
-    def get(self, index = None):  
-        try:
-            if index == None:
-                json = tornado.escape.json_encode(_files.data)
-            else:
-                json = tornado.escape.json_encode(_files[index].data)
-            self.write(json)
-        except KeyError:
-            self.set_status(httplib.NOT_FOUND)
-    
-    def delete(self, index):
-        try:
-            _files.delete(index)
-            self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
         
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        f = _files.add(data)
-        json = tornado.escape.json_encode(f)
-        self.write(json)   
+        item = self.items.add(data)
+        json = tornado.escape.json_encode(item)
+        self.write(json)  
     
-    def put(self, index):
+    def delete(self, index):
         try:
-            data = tornado.escape.json_decode(self.request.body)
-            f = _files.set(index, data)
-            json = tornado.escape.json_encode(f)
-            self.write(json)
+            self.items.delete(index)
+            self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
+
+class StreamsHandler(ItemsHandler):
+    items = _streams
+  
+class FilesHandler(ItemsHandler):
+    items = _files
     
 class ErrorSocket(tornado.websocket.WebSocketHandler):
     def open(self):
-        model.errors.errorHandlers.append(self.sendError)
+        _errors.errorHandlers.append(self.sendError)
     
     def on_close(self):
-        model.errors.errorHandlers.remove(self.sendError)
+        _errors.errorHandlers.remove(self.sendError)
         
     def doSend(self, error):
         json = tornado.escape.json_encode(error.data)

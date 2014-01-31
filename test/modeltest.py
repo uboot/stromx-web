@@ -224,7 +224,7 @@ class ErrorsTest(unittest.TestCase):
         
     def testAdd(self):
         self.__errors.errorHandlers.append(self.storeError)
-        self.__errors.add('An error happened')
+        self.__errors.addError('An error happened')
         self.assertEqual('An error happened',
                          self.__lastError.data['error']['description'])
         
