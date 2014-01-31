@@ -137,13 +137,39 @@ class File(Item):
         
     @property
     def data(self):
-        streamIds = [self.__stream.index] if self.__stream else []
         return {"file":
                 {"id": self.index,
                  "name": self.name, 
-                 "content": "",
-                 "opened": self.__opened, 
-                 "stream": streamIds}}
+                 "content": self.content,
+                 "opened": self.opened, 
+                 "stream": self.stream}}
+    
+    @property
+    def opened(self):
+        return self.__opened
+    
+    @opened.setter
+    def opened(self, value):
+        if self.__opened == value:
+            return
+        
+        if value:
+            try:
+                self.__stream = self.model.streams.add(self)
+                self.__opened = True
+            except stromx.runtime.Exception as e:
+                self.model.errors.addError(e)
+        else:
+            self.__stream = None
+            self.__opened = False
+    
+    @property
+    def stream(self):
+        return [self.__stream.index] if self.__stream else []
+    
+    @property
+    def content(self):
+        return ""
     
     @property
     def path(self):
@@ -155,12 +181,7 @@ class File(Item):
         
     def set(self, data):
         properties = data["file"]
-        self.__opened = properties.get("opened", self.__opened)
-        
-        if self.__opened:
-            self.__stream = self.model.streams.add(self)
-        else:
-            self.__stream = None
+        self.opened = properties.get("opened", self.__opened)
             
         newName = properties.get("name", self.name)
         if self.name != newName:
@@ -194,10 +215,7 @@ class Stream(Item):
             factory = stromx.runtime.Factory()
             stromx.runtime.register(factory)
             reader = stromx.runtime.XmlReader()
-            try:
-                self.__stream = reader.readStream(str(streamFile.path), factory)
-            except stromx.runtime.Exception as e:
-                self.model.errors.addError(e)
+            self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
             self.__stream = stromx.runtime.Stream()
         
@@ -209,8 +227,12 @@ class Stream(Item):
                  "saved": self.saved,
                  "active": self.active,
                  "paused": self.paused,
-                 "file": self.__file.index}}
+                 "file": self.file}}
         
+    @property
+    def file(self):
+        return self.__file.index
+    
     @property
     def active(self):
         status = self.__stream.status()
@@ -317,10 +339,18 @@ class Error(Item):
         self.__description = str(description)
         
     @property
+    def time(self):
+        return self.__time.isoformat()
+    
+    @property
+    def description(self):
+        return self.__description
+        
+    @property
     def data(self):
         return {"error":
                 {"id": self.index,
-                 "time": self.__time.isoformat(),
-                 "description": self.__description}}
+                 "time": self.time,
+                 "description": self.description}}
 
         

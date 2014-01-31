@@ -14,6 +14,9 @@ App.FileController = Ember.ObjectController.extend({
         var that = this
         var file = this.get('model')
         file.save().then( function(file) {
+          if (! file.get('opened'))
+            return
+            
           return file.get('stream')
         }).then( function(stream) {
           if (stream)
