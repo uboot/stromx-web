@@ -179,17 +179,19 @@ class File(Item):
     @property
     def name(self):
         return self.__name
+    
+    @name.setter
+    def name(self, name):
+        if self.__name != name:
+            newPath = os.path.join(self.model.files.directory, name)
+            if os.path.exists(self.path):
+                os.rename(self.path, newPath)
+            self.__name = name
         
     def set(self, data):
         properties = data["file"]
-        self.opened = properties.get("opened", self.__opened)
-            
-        newName = properties.get("name", self.name)
-        if self.name != newName:
-            newPath = os.path.join(self.model.files.directory, newName)
-            if os.path.exists(self.path):
-                os.rename(self.path, newPath)
-            self.__name = newName
+        self.opened = properties.get("opened", self.opened)
+        self.name = properties.get("name", self.name)
             
         return self.data
         
