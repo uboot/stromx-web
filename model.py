@@ -7,38 +7,62 @@ import re
 
 import stromx.runtime 
 
-class Objects(object):
+class Items(object):
     def __init__(self):
-        self.__objects = dict()
+        self.__items = dict()
+        self.__index = 0
         
     @property
-    def objects(self):
-        return self.__objects
+    def items(self):
+        return self.__items
     
-    @objects.setter
-    def objects(self, value):
-        self.__objects = value
+    @items.setter
+    def items(self, value):
+        self.__items = value
     
     def __getitem__(self, index):
-        return self.__objects[index]
+        return self.__items[index]
     
     def set(self, index, data):
         obj = self[index]
         obj.set(data)
         return obj.data
     
-class Files(Objects):
+    def addItem(self, item):
+        item.index = self.__index
+        self.__items[str(self.__index)] =  item
+        self.__index += 1
+    
+    def addItems(self, items):
+        for item in items:
+            self.addItem(item)
+            
+    def deleteItem(self, index):
+        self.__items.pop(index)
+            
+class Item(object):
+    def __init__(self):
+        self.__index = ""
+        
+    @property
+    def index(self):
+        return self.__index
+    
+    @index.setter
+    def index(self, value):
+        self.__index = str(value)
+        
+class Files(Items):
     def __init__(self, directory, streams):
         super(Files, self).__init__()
         self.__directory = directory
         self.__streams = streams
-        self.objects = {str(index): File(self, index, name) for index, name 
-                        in enumerate(os.listdir(directory))}
-        self.__index = len(self.objects)
+        files = [File(self, name) for name in os.listdir(directory)]
+        self.addItems(files)
                         
     @property
     def data(self):
-        return {"files": [f.data["file"] for f in self.objects.values()]}
+        return {"files": [f.data["file"] for f in self.items.values()]}
     
     @property
     def directory(self):
@@ -52,17 +76,18 @@ class Files(Objects):
         f = self[index]
         if os.path.exists(f.path):
             os.remove(f.path)
-        self.objects.pop(index)
+        self.deleteItem(index)
         
     def add(self, data):
         filename = data["file"]["name"]
-        duplicates = [f for f in self.objects.values() if f.name == filename]
+        duplicates = [f for f in self.items.values() if f.name == filename]
         assert(len(duplicates) <= 1)
         
         if len(duplicates):
             f = duplicates[0]
         else:         
-            f = File(self, self.__index, data["file"]["name"])
+            f = File(self, data["file"]["name"])
+            self.addItem(f)
         
         content = data["file"].get("content", "")
         content = re.sub("data:*;base64,", "", content, re.MULTILINE)
@@ -73,14 +98,12 @@ class Files(Objects):
             if os.path.exists(f.path):
                 os.remove(f.path)
                 
-        self.objects[f.index] = f
-        self.__index += 1
         return f.data
         
-class File(object):
-    def __init__(self, files, index, name):
+class File(Item):
+    def __init__(self, files, name):
+        super(File, self).__init__()
         self.__files = files
-        self.__index = str(index)
         self.__name = name
         self.__opened = False
         self.__stream = None
@@ -89,15 +112,11 @@ class File(object):
     def data(self):
         streamIds = [self.__stream.index] if self.__stream else []
         return {"file":
-                {"id": self.__index,
-                 "name": self.__name, 
+                {"id": self.index,
+                 "name": self.name, 
                  "content": "",
                  "opened": self.__opened, 
                  "stream": streamIds}}
-        
-    @property
-    def index(self):
-        return self.__index
     
     @property
     def path(self):
@@ -125,18 +144,18 @@ class File(object):
             
         return self.data
         
-class Streams(Objects):
+class Streams(Items):
     def __init__(self):
         super(Streams, self).__init__()
         self.__index = 0
         
     @property
     def data(self):
-        return {"streams": [s.data["stream"] for s in self.objects.values()]}
+        return {"streams": [s.data["stream"] for s in self.items.values()]}
         
     def add(self, streamFile):
         stream = Stream(self.__index, streamFile)
-        self.objects[stream.index] = stream
+        self.items[stream.index] = stream
         self.__index += 1
         return stream
         
@@ -243,7 +262,7 @@ class Stream(object):
             
         return self.data
 
-class Errors(Objects):
+class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
         self.__errorHandlers = []
@@ -251,7 +270,7 @@ class Errors(Objects):
         
     @property
     def data(self):
-        return {"errors": [e.data["error"] for e in self.objects.values()]}
+        return {"errors": [e.data["error"] for e in self.items.values()]}
     
     @property
     def errorHandlers(self):
@@ -263,14 +282,14 @@ class Errors(Objects):
         
     def add(self, description):
         error = Error(self.__index, description)
-        self.objects[error.index] = error
+        self.items[error.index] = error
         self.__index += 1
         for handler in self.__errorHandlers:
             handler(error)
         return error
    
     def clear(self):
-        self.objects.clear()
+        self.items.clear()
         
 class Error(object):
     def __init__(self, index, description):
