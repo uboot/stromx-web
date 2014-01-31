@@ -7,18 +7,37 @@ import re
 
 import stromx.runtime 
 
+class Model(object):
+    def __init__(self, directory):
+        self.__files = Files(directory, self)
+        self.__streams = Streams(self)
+        self.__errors = Errors(self)
+    
+    @property
+    def files(self):
+        return self.__files
+    
+    @property
+    def streams(self):
+        return self.__streams
+    
+    @property
+    def errors(self):
+        return self.__errors
+    
 class Items(object):
-    def __init__(self):
+    def __init__(self, model):
         self.__items = dict()
         self.__index = 0
+        self.__model = model
+        
+    @property
+    def model(self):
+        return self.__model
         
     @property
     def items(self):
         return self.__items
-    
-    @items.setter
-    def items(self, value):
-        self.__items = value
     
     def __getitem__(self, index):
         return self.__items[index]
@@ -41,8 +60,13 @@ class Items(object):
         self.__items.pop(index)
             
 class Item(object):
-    def __init__(self):
+    def __init__(self, model):
         self.__index = ""
+        self.__model = model
+        
+    @property
+    def model(self):
+        return self.__model
         
     @property
     def index(self):
@@ -53,13 +77,6 @@ class Item(object):
         self.__index = str(value)
         
 class Files(Items):
-    def __init__(self, directory, streams):
-        super(Files, self).__init__()
-        self.__directory = directory
-        self.__streams = streams
-        files = [File(self, name) for name in os.listdir(directory)]
-        self.addItems(files)
-                        
     @property
     def data(self):
         return {"files": [f.data["file"] for f in self.items.values()]}
@@ -68,9 +85,11 @@ class Files(Items):
     def directory(self):
         return self.__directory
     
-    @property
-    def streams(self):
-        return self.__streams
+    def __init__(self, directory, model):
+        super(Files, self).__init__(model)
+        self.__directory = directory
+        files = [File(name, self.model) for name in os.listdir(directory)]
+        self.addItems(files)
         
     def delete(self, index):
         f = self[index]
@@ -86,7 +105,7 @@ class Files(Items):
         if len(duplicates):
             f = duplicates[0]
         else:         
-            f = File(self, data["file"]["name"])
+            f = File(data["file"]["name"], self.model)
             self.addItem(f)
         
         content = data["file"].get("content", "")
@@ -101,9 +120,8 @@ class Files(Items):
         return f.data
         
 class File(Item):
-    def __init__(self, files, name):
-        super(File, self).__init__()
-        self.__files = files
+    def __init__(self, name, model):
+        super(File, self).__init__(model)
         self.__name = name
         self.__opened = False
         self.__stream = None
@@ -120,7 +138,7 @@ class File(Item):
     
     @property
     def path(self):
-        return os.path.join(self.__files.directory, self.__name)
+        return os.path.join(self.model.files.directory, self.__name)
     
     @property
     def name(self):
@@ -131,13 +149,13 @@ class File(Item):
         self.__opened = properties.get("opened", self.__opened)
         
         if self.__opened:
-            self.__stream = self.__files.streams.add(self)
+            self.__stream = self.model.streams.add(self)
         else:
             self.__stream = None
             
         newName = properties.get("name", self.name)
         if self.name != newName:
-            newPath = os.path.join(self.__files.directory, newName)
+            newPath = os.path.join(self.model.files.directory, newName)
             if os.path.exists(self.path):
                 os.rename(self.path, newPath)
             self.__name = newName
@@ -145,8 +163,8 @@ class File(Item):
         return self.data
         
 class Streams(Items):
-    def __init__(self):
-        super(Streams, self).__init__()
+    def __init__(self, model):
+        super(Streams, self).__init__(model)
         
     @property
     def data(self):
@@ -169,7 +187,7 @@ class Stream(Item):
             try:
                 self.__stream = reader.readStream(str(streamFile.path), factory)
             except stromx.runtime.Exception as e:
-                errors.add(e)
+                self.model.errors.add(e)
         else:
             self.__stream = stromx.runtime.Stream()
         
@@ -197,7 +215,7 @@ class Stream(Item):
             try:
                 self.__stream.start()
             except stromx.runtime.Exception as e:
-                errors.add(e)
+                self.model.errors.add(e)
         
         if not value:
             self.__stream.stop()
@@ -244,7 +262,7 @@ class Stream(Item):
                 writer.writeStream(self.__file.path, self.__stream)
                 self.__saved = True
             except stromx.runtime.Exception as e:
-                errors.add(e)
+                self.model.errors.add(e)
     
     def set(self, data):
         properties = data["stream"]
@@ -256,10 +274,9 @@ class Stream(Item):
         return self.data
 
 class Errors(Items):
-    def __init__(self):
-        super(Errors, self).__init__()
+    def __init__(self, model):
+        super(Errors, self).__init__(model)
         self.__errorHandlers = []
-        self.__index = 0
         
     @property
     def data(self):
@@ -274,7 +291,7 @@ class Errors(Items):
         self.__errorHandlers = value
         
     def add(self, description):
-        error = Error(description)
+        error = Error(description, self.model)
         self.addItem(error)
         for handler in self.__errorHandlers:
             handler(error)
@@ -284,7 +301,8 @@ class Errors(Items):
         self.items.clear()
         
 class Error(Item):
-    def __init__(self, description):
+    def __init__(self, description, model):
+        super(Error, self).__init__(model)
         self.__time = datetime.datetime.now()
         self.__description = str(description)
         
@@ -295,5 +313,4 @@ class Error(Item):
                  "time": self.__time.isoformat(),
                  "description": self.__description}}
 
-errors = Errors()
         

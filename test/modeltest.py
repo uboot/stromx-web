@@ -88,9 +88,9 @@ class FilesTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data', 'temp')
-            
-        self.__streams = model.Streams()
-        self.__files = model.Files('temp', self.__streams)
+        
+        self.__files = model.Model('temp').files
+        self.__streams = self.__files.model.streams
 
     def testData(self):
         self.assertEqual({'files': [_parallelFile]}, self.__files.data)
@@ -145,16 +145,16 @@ class StreamsTest(unittest.TestCase):
         shutil.rmtree('temp', True)
         shutil.copytree('data', 'temp')
         
-        self.__streams = model.Streams()
-        files = model.Files('temp', self.__streams)
-        self.__streamFile = files['0']
+        self.__model = model.Model('temp')
+        self.__streams = self.__model.streams
+        self.__streamFile = self.__model.files['0']
         
     def testAdd(self):
         self.__streams.add(self.__streamFile)
         self.assertEqual({'streams': [_stream]}, self.__streams.data)
         
     def testAddNoFile(self):
-        files = model.Files('temp', self.__streams)
+        files = self.__model.files
         files.add({'file': _noFile})
         self.__streams.add(files['1'])
         
@@ -216,8 +216,11 @@ class StreamsTest(unittest.TestCase):
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
+        shutil.rmtree('temp', True)
+        shutil.copytree('data', 'temp')
+        
         self.__lastError = None
-        self.__errors = model.Errors()
+        self.__errors = model.Model('temp').errors
         
     def storeError(self, error):
         self.__lastError = error
@@ -227,6 +230,9 @@ class ErrorsTest(unittest.TestCase):
         self.__errors.add('An error happened')
         self.assertEqual('An error happened',
                          self.__lastError.data['error']['description'])
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
         
 if __name__ == '__main__':
     unittest.main()
