@@ -66,10 +66,20 @@ class Items(object):
         raise NotImplemented
             
 class Item(object):
+    properties = []
+    
     def __init__(self, model = None):
         self.__index = ""
         self.__model = model
         
+    @property
+    def data(self):
+        classType = self.__class__
+        props = {prop: self.__getattribute__(prop) for prop in self.properties}
+        props['id'] = self.index
+        name = classType.__name__.lower()
+        return {name: props}
+           
     @property
     def model(self):
         return self.__model
@@ -129,20 +139,13 @@ class Files(Items):
         return f.data
         
 class File(Item):
+    properties = ["content", "opened", "stream", "name"]
+    
     def __init__(self, name, model):
         super(File, self).__init__(model)
         self.__name = name
         self.__opened = False
         self.__stream = None
-        
-    @property
-    def data(self):
-        return {"file":
-                {"id": self.index,
-                 "name": self.name, 
-                 "content": self.content,
-                 "opened": self.opened, 
-                 "stream": self.stream}}
     
     @property
     def opened(self):
@@ -209,6 +212,8 @@ class Streams(Items):
         return stream
         
 class Stream(Item):
+    properties = ["name", "saved", "active", "paused", "file"]
+    
     def __init__(self, streamFile, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
@@ -221,16 +226,6 @@ class Stream(Item):
             self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
             self.__stream = stromx.runtime.Stream()
-        
-    @property
-    def data(self):
-        return {"stream":
-                {"id": self.index,
-                 "name": self.name,
-                 "saved": self.saved,
-                 "active": self.active,
-                 "paused": self.paused,
-                 "file": self.file}}
         
     @property
     def file(self):
@@ -336,6 +331,8 @@ class Errors(Items):
         self.items.clear()
         
 class Error(Item):
+    properties = ["time", "description"]
+    
     def __init__(self, description):
         super(Error, self).__init__()
         self.__time = datetime.datetime.now()
@@ -348,12 +345,5 @@ class Error(Item):
     @property
     def description(self):
         return self.__description
-        
-    @property
-    def data(self):
-        return {"error":
-                {"id": self.index,
-                 "time": self.time,
-                 "description": self.description}}
 
         
