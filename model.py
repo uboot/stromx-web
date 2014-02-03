@@ -32,6 +32,12 @@ class Items(object):
         self.__model = model
         
     @property
+    def data(self):
+        name = self.__class__.__name__.lower()
+        itemList = [item.data.values()[0] for item in self.items.values()]
+        return {name: itemList}
+        
+    @property
     def model(self):
         return self.__model
         
@@ -74,10 +80,9 @@ class Item(object):
         
     @property
     def data(self):
-        classType = self.__class__
         props = {prop: self.__getattribute__(prop) for prop in self.properties}
         props['id'] = self.index
-        name = classType.__name__.lower()
+        name = self.__class__.__name__.lower()
         return {name: props}
            
     @property
@@ -96,10 +101,6 @@ class Item(object):
         raise NotImplemented
         
 class Files(Items):
-    @property
-    def data(self):
-        return {"files": [f.data["file"] for f in self.items.values()]}
-    
     @property
     def directory(self):
         return self.__directory
@@ -202,10 +203,6 @@ class Streams(Items):
     def __init__(self, model):
         super(Streams, self).__init__(model)
         
-    @property
-    def data(self):
-        return {"streams": [s.data["stream"] for s in self.items.values()]}
-        
     def add(self, streamFile):
         stream = Stream(streamFile, self.model)
         self.addItem(stream)
@@ -307,10 +304,6 @@ class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
         self.__errorHandlers = []
-        
-    @property
-    def data(self):
-        return {"errors": [e.data["error"] for e in self.items.values()]}
     
     @property
     def errorHandlers(self):
