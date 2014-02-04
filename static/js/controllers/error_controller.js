@@ -1,5 +1,5 @@
 App.ErrorController = Ember.ObjectController.extend({  
-  time: function(key, value) {
+  time: function() {
     var model = this.get('model')
     time = model.get('time')
     return time.toLocaleTimeString()

@@ -11,7 +11,8 @@ App.Stream = DS.Model.extend({
   name: DS.attr('string'),
   file: DS.belongsTo('file'),
   active: DS.attr('boolean'),
-  paused: DS.attr('boolean')
+  paused: DS.attr('boolean'),
+  operators: DS.hasMany('operator', {async: true})
 });
 
 App.Error = DS.Model.extend({
@@ -67,14 +68,16 @@ App.Stream.FIXTURES = [
     name: 'Stream one',
     file: 1,
     active: false,
-    paused: false
+    paused: false,
+    operators: [0, 1, 2]
   },
   {
     id: 3,
     name: 'Stream two',
     file: 2,
     active: false,
-    paused: false
+    paused: false,
+    operators: []
   }
 ];
 
@@ -111,7 +114,7 @@ App.Operator.FIXTURES = [
     parameters: [1]
   },
   {
-    id: 1,
+    id: 2,
     name: 'Blur the image',
     status: 'none',
     type: 'Blur',

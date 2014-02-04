@@ -17,6 +17,7 @@
   <script src="js/router.js"></script>
   <script src="js/controllers/application_controller.js"></script>
   <script src="js/controllers/error_controller.js"></script>
+  <script src="js/controllers/operator_controller.js"></script>
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/controllers/filesNew_controller.js"></script>
@@ -165,8 +166,23 @@
           <tr>
             <th>Operator</th>
             <th>Type</th>
+            <th>Type</th>
           </tr>
         </thead>
+          {{#each operators itemController="operator"}}
+            <tr>
+              <td>
+                {{name}}
+              </td>
+              <td>
+                {{fullType}}
+              </td>
+              <td>
+                {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+              </td>
+            </tr>
+          </tr>
+          {{/each}}
         <tbody>
         </tbody>
       </table>
