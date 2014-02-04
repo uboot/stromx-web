@@ -18,6 +18,7 @@
   <script src="js/controllers/application_controller.js"></script>
   <script src="js/controllers/error_controller.js"></script>
   <script src="js/controllers/operator_controller.js"></script>
+  <script src="js/controllers/parameter_controller.js"></script>
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/controllers/filesNew_controller.js"></script>
@@ -166,7 +167,7 @@
           <tr>
             <th>Operator</th>
             <th>Type</th>
-            <th>Type</th>
+            <th></th>
           </tr>
         </thead>
           {{#each operators itemController="operator"}}
@@ -179,6 +180,42 @@
               </td>
               <td>
                 {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+              </td>
+            </tr>
+          </tr>
+          {{/each}}
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-2"></div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="operator">
+    <h1>Operator</h1>
+
+    <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+            <th></th>
+          </tr>
+        </thead>
+          {{#each parameters itemController="parameter"}}
+            <tr>
+              <td>
+                {{title}}
+              </td>
+              <td>
+                {{value}}
+              </td>
+              <td>
+                <button type="button" class="btn btn-default btn-xs">Edit</button>
               </td>
             </tr>
           </tr>

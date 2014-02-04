@@ -34,7 +34,6 @@ App.Parameter = DS.Model.extend({
   type: DS.attr('string'),
   valueString: DS.attr('string'),
   valueNumber: DS.attr('number'),
-  valueBoolean: DS.attr('boolean'),
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
   descriptions: DS.hasMany('EnumDescription', {async: true})
@@ -131,7 +130,6 @@ App.Parameter.FIXTURES = [
     type: 'int',
     valueString: '',
     valueNumber: 50123,
-    valueBoolean: false,
     minimum: 49152,
     maximum: 65535,
     descriptions: []
@@ -139,10 +137,9 @@ App.Parameter.FIXTURES = [
   {
     id: 2,
     title: 'Data flow',
-    type: 'int',
+    type: 'enum',
     valueString: '',
-    valueNumber: 0,
-    valueBoolean: false,
+    valueNumber: 2,
     minimum: 0,
     maximum: 0,
     descriptions: [0, 1, 2]
