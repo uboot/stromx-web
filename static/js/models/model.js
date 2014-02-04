@@ -19,6 +19,31 @@ App.Error = DS.Model.extend({
   description: DS.attr('string')
 });
 
+App.Operator = DS.Model.extend({
+  name: DS.attr('string'),
+  status: DS.attr('string'),
+  type: DS.attr('string'),
+  package: DS.attr('string'),
+  version: DS.attr('string'),
+  parameters: DS.hasMany('parameter', {async: true})
+});
+
+App.Parameter = DS.Model.extend({
+  title: DS.attr('string'),
+  type: DS.attr('string'),
+  valueString: DS.attr('string'),
+  valueNumber: DS.attr('number'),
+  valueBoolean: DS.attr('boolean'),
+  minimum: DS.attr('number'),
+  maximum: DS.attr('number'),
+  descriptions: DS.hasMany('EnumDescription', {async: true})
+});
+
+App.EnumDescription = DS.Model.extend({
+  value: DS.attr('number'),
+  title: DS.attr('string')
+});
+
 App.File.FIXTURES = [
   {
     id: 1,
@@ -63,5 +88,78 @@ App.Error.FIXTURES = [
     id: 2,
     time: new Date('2014-01-20T13:00:00+00:00'),
     description: "Failed to initialize blur operator"
+  }
+];
+
+App.Operator.FIXTURES = [
+  {
+    id: 0,
+    name: 'Generate numbers',
+    status: 'initialized',
+    type: 'Counter',
+    package: 'runtime',
+    version: '0.3.0',
+    parameters: []
+  },
+  {
+    id: 1,
+    name: 'Send numbers',
+    status: 'initialized',
+    type: 'Send',
+    package: 'runtime',
+    version: '0.3.0',
+    parameters: [1]
+  },
+  {
+    id: 1,
+    name: 'Blur the image',
+    status: 'none',
+    type: 'Blur',
+    package: 'cv::imgproc',
+    version: '0.0.1',
+    parameters: [2]
+  }
+];
+
+App.Parameter.FIXTURES = [
+  {
+    id: 1,
+    title: 'Port',
+    type: 'int',
+    valueString: '',
+    valueNumber: 50123,
+    valueBoolean: false,
+    minimum: 49152,
+    maximum: 65535,
+    descriptions: []
+  },
+  {
+    id: 2,
+    title: 'Data flow',
+    type: 'int',
+    valueString: '',
+    valueNumber: 0,
+    valueBoolean: false,
+    minimum: 0,
+    maximum: 0,
+    descriptions: [0, 1, 2]
+  }
+];
+
+App.EnumDescription.FIXTURES = [
+  {
+    id: 0,
+    value: 0,
+    title: 'Manual'
+  },
+  {
+    id: 1,
+    value: 1,
+    title: 'Allocate'
+  },
+  {
+    id: 2,
+    value: 2,
+    title: 'In place'
   }
 ];
