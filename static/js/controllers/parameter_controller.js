@@ -14,7 +14,9 @@ App.ParameterController = Ember.ObjectController.extend({
       return ''
   }.property('valueString', 'valueNumber', 'type'),
   
+  // cf. http://stackoverflow.com/questions/20623027/rendering-resolved-promise-value-in-ember-handlebars-template
   updateEnumTitle: function(enumValue) {
+    var value = enumValue
     var title = this.get('descriptions').then( function(value){
       return value.find( function(item, index, enumerable) {
          return item.get('value') == enumValue
@@ -23,11 +25,12 @@ App.ParameterController = Ember.ObjectController.extend({
       return obj.get('title')
     })
     
-    that = this
+    var that = this
     title.then( function(title) {
       that.set('value', title)
+      value = title
     })
     
-    return enumValue
+    return value
   }
 });
