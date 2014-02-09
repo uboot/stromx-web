@@ -170,6 +170,7 @@
             <th></th>
           </tr>
         </thead>
+        <tbody>
           {{#each operators itemController="operator"}}
             <tr>
               <td>
@@ -184,7 +185,6 @@
             </tr>
           </tr>
           {{/each}}
-        <tbody>
         </tbody>
       </table>
     </div>
@@ -201,26 +201,55 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Parameter</th>
+            <th>Property</th>
             <th>Value</th>
-            <th></th>
           </tr>
         </thead>
+        <tbody>
+          <tr>
+            <td>
+              Type
+            </td>
+            <td>
+              {{fullType}}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Version
+            </td>
+            <td>
+              {{version}}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Status
+            </td>
+            <td>
+              {{status}}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Name
+            </td>
+            <td>
+              {{name}} <button type="button" class="btn btn-default btn-xs">Edit</button>
+            </td>
+          </tr>
+        </tr>
           {{#each parameters itemController="parameter"}}
             <tr>
               <td>
                 {{title}}
               </td>
               <td>
-                {{value}}
-              </td>
-              <td>
-                <button type="button" class="btn btn-default btn-xs">Edit</button>
+                {{value}} <button type="button" class="btn btn-default btn-xs">Edit</button>
               </td>
             </tr>
           </tr>
           {{/each}}
-        <tbody>
         </tbody>
       </table>
     </div>
