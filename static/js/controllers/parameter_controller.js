@@ -1,4 +1,10 @@
 App.ParameterController = Ember.ObjectController.extend({  
+  isEditing: false,
+  
+  isEnum: function() {
+    return this.get('type') == 'enum'
+  }.property('type'),
+  
   value: function(key, value) {
     if (arguments.length > 1) {
       return value
@@ -32,5 +38,14 @@ App.ParameterController = Ember.ObjectController.extend({
     })
     
     return value
+  },
+  
+  actions: {
+    editValue: function() {
+      this.set('isEditing', true)
+    }, 
+    saveValue: function() {
+      this.set('isEditing', false)
+    }
   }
 });
