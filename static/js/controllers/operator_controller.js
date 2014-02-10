@@ -8,11 +8,22 @@ App.OperatorController = Ember.ObjectController.extend({
     
     if (status == 'none')
       return 'Not initialized'
-    else if (type == 'initialized')
+    else if (status == 'initialized')
       return 'Initialized'
-    else if (type == 'active')
+    else if (status == 'active')
       return 'Active'
     else
       return 'Not defined'
-  }.property('status')
+  }.property('status'),
+  
+  isEditingName: false,
+  
+  actions: {
+    editName: function() {
+      this.set('isEditingName', true)
+    }, 
+    saveName: function() {
+      this.set('isEditingName', false)
+    }
+  }
 });
