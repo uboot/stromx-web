@@ -247,15 +247,8 @@
               <td>    
                 {{#if isEditing}}
                   {{#if isEnum}}
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="#">{{value}}<span class="caret"></span></button>   
-                
-                        <ul id="menu1" class="dropdown-menu" role="menu">
-                          {{#each descriptions}}
-                            <li role="presentation"><a role="menuitem" tabindex="-1">{{title}}</a></li>
-                          {{/each}}
-                        </ul>
-                    </div>
+                    {{view Ember.Select content=descriptions optionValuePath="content.value" optionLabelPath="content.title" value=valueNumber}}
+                    <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
                   {{else}}
                     <input class='edit'> <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
                   {{/if}}
