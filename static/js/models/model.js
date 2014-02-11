@@ -32,8 +32,8 @@ App.Operator = DS.Model.extend({
 App.Parameter = DS.Model.extend({
   title: DS.attr('string'),
   type: DS.attr('string'),
-  valueString: DS.attr('string'),
-  valueNumber: DS.attr('number'),
+  stringValue: DS.attr('string'),
+  numberValue: DS.attr('number'),
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
   descriptions: DS.hasMany('EnumDescription', {async: true})
@@ -119,7 +119,16 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2]
+    parameters: [2, 3]
+  },
+  {
+    id: 3,
+    name: 'Receive remote images',
+    status: 'none',
+    type: 'Receive',
+    package: 'runtime',
+    version: '0.0.1',
+    parameters: [4]
   }
 ];
 
@@ -128,8 +137,8 @@ App.Parameter.FIXTURES = [
     id: 1,
     title: 'Port',
     type: 'int',
-    valueString: '',
-    valueNumber: 50123,
+    stringValue: '',
+    numberValue: 50123,
     minimum: 49152,
     maximum: 65535,
     descriptions: []
@@ -138,11 +147,31 @@ App.Parameter.FIXTURES = [
     id: 2,
     title: 'Data flow',
     type: 'enum',
-    valueString: '',
-    valueNumber: 2,
+    stringValue: '',
+    numberValue: 2,
     minimum: 0,
     maximum: 0,
     descriptions: [0, 1, 2]
+  },
+  {
+    id: 3,
+    title: 'Kernel size',
+    type: 'float',
+    stringValue: '',
+    numberValue: 2.5,
+    minimum: 0,
+    maximum: 0,
+    descriptions: []
+  },
+  {
+    id: 4,
+    title: 'Host',
+    type: 'string',
+    stringValue: 'localhost',
+    numberValue: 0,
+    minimum: 0,
+    maximum: 0,
+    descriptions: []
   }
 ];
 

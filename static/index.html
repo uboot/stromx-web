@@ -254,13 +254,13 @@
                 {{#if isEditing}}
                   {{#if isEnum}}
                     {{view Ember.Select content=descriptions optionValuePath="content.value" 
-                      optionLabelPath="content.title" value=valueNumber}}
+                      optionLabelPath="content.title" value=numberValue}}
                   {{else}}
-                    {{input value=valueNumber}}
+                    {{input value=editValue}}
                   {{/if}}
                   <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
                 {{else}}
-                  {{value}} 
+                  {{displayValue}} 
                   <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
                 {{/if}}
               </td>
