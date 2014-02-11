@@ -236,7 +236,8 @@
             </td>
             <td>
               {{#if isEditingName}}
-                {{input focus-out="saveName" insert-newline="saveName" value=name}}
+                {{input value=name}}
+                <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
               {{else}}
                 {{name}} 
                 <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
@@ -250,16 +251,17 @@
                 {{title}}
               </td>
               <td>    
-                {{#if isEnum}}
-                  {{view Ember.Select content=descriptions optionValuePath="content.value" 
-                    optionLabelPath="content.title" value=valueNumber}}
-                {{else}}
-                  {{#if isEditing}}
-                    {{input focus-out="saveValue" insert-newline="saveValue" value=valueNumber}}
+                {{#if isEditing}}
+                  {{#if isEnum}}
+                    {{view Ember.Select content=descriptions optionValuePath="content.value" 
+                      optionLabelPath="content.title" value=valueNumber}}
                   {{else}}
-                    {{value}} 
-                    <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                    {{input value=valueNumber}}
                   {{/if}}
+                  <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
+                {{else}}
+                  {{value}} 
+                  <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
                 {{/if}}
               </td>
             </tr>
