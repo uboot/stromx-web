@@ -5,6 +5,8 @@ import os
 import shutil
 import unittest
 
+import stromx.runtime
+
 import model
 
 _content = (
@@ -213,6 +215,33 @@ class StreamsTest(unittest.TestCase):
         
     def tearDown(self):
         shutil.rmtree('temp', True)
+        
+class OperatorTest(unittest.TestCase):
+    def setUp(self):
+        self.__model = model.Model()
+        kernel = stromx.runtime.Counter()
+        stromxOp = stromx.runtime.Operator(kernel)
+        stromxOp.setName('Name')
+        self.__operator = model.Operator(stromxOp, self.__model)
+    
+    def testGetName(self):
+        self.assertEqual('Name', self.__operator.data['operator']['name'])
+        
+    def testSetName(self):
+        self.__operator.set({'operator': {'name': 'New name'}})
+        self.assertEqual('New name', self.__operator.data['operator']['name'])
+        
+    def testData(self):
+        data = {'operator': {'id': '0', 
+                             'name': 'New name',
+                             'package': 'runtime',
+                             'type': 'Counter',
+                             'status': 'none',
+                             'version': '0.3.0'}}
+        self.assertEqual(data, self.__operator.data)
+    
+    def tearDown(self):
+        self.__stream = None
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):

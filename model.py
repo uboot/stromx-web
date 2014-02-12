@@ -8,7 +8,7 @@ import re
 import stromx.runtime 
 
 class Model(object):
-    def __init__(self, directory):
+    def __init__(self, directory = ""):
         self.__files = Files(directory, self)
         self.__streams = Streams(self)
         self.__errors = Errors()
@@ -66,10 +66,10 @@ class Items(object):
         self.__items.pop(index)
         
     def add(self, data):
-        raise NotImplemented
+        raise NotImplementedError()
         
     def delete(self, index):
-        raise NotImplemented
+        raise NotImplementedError()
             
 class Item(object):
     properties = []
@@ -98,7 +98,7 @@ class Item(object):
         self.__index = str(value)
         
     def set(self, data):
-        raise NotImplemented
+        raise NotImplementedError()
         
 class Files(Items):
     @property
@@ -108,7 +108,9 @@ class Files(Items):
     def __init__(self, directory, model):
         super(Files, self).__init__(model)
         self.__directory = directory
-        files = [File(name, self.model) for name in os.listdir(directory)]
+        files = []
+        if directory != "":
+            files = [File(name, self.model) for name in os.listdir(directory)]
         self.addItems(files)
         
     def delete(self, index):
@@ -299,7 +301,57 @@ class Stream(Item):
         self.saved = properties.get("saved", self.saved)
             
         return self.data
-
+        
+class Operators(Items):
+    def __init__(self, model):
+        super(Operators, self).__init__(model)
+        
+    def add(self, op):
+        operator = Operator(op, self.model)
+        self.addItem(operator)
+        return operator
+    
+class Operator(Item):
+    properties = ["name", "status", "type", "package", "version", "parameters"]
+    
+    def __init__(self, op, model):
+        super(Operator, self).__init__(model)
+        self.__op = op
+        
+    @property
+    def name(self):
+        return self.__op.name()
+    
+    @name.setter
+    def name(self, value):
+        self.__op.setName(value)
+        
+    @property
+    def status(self):
+        pass
+        
+    @property
+    def type(self):
+        pass
+        
+    @property
+    def package(self):
+        pass
+        
+    @property
+    def version(self):
+        pass
+        
+    @property
+    def parameters(self):
+        pass
+        
+    def set(self, data):
+        properties = data["operator"]
+        self.name = properties.get("name", self.name)
+            
+        return self.data
+        
 class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
