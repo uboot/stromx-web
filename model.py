@@ -12,6 +12,7 @@ class Model(object):
         self.__files = Files(directory, self)
         self.__streams = Streams(self)
         self.__errors = Errors()
+        self.__operators = Operators(self)
     
     @property
     def files(self):
@@ -24,6 +25,10 @@ class Model(object):
     @property
     def errors(self):
         return self.__errors
+    
+    @property
+    def operators(self):
+        return self.__operators
     
 class Items(object):
     def __init__(self, model = None):
