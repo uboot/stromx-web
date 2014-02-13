@@ -328,23 +328,32 @@ class Operator(Item):
         
     @property
     def status(self):
-        pass
+        if self.__op.status() == stromx.runtime.Operator.Status.NONE:
+            return 'none'
+        elif self.__op.status() == stromx.runtime.Operator.Status.INITIALIZED:
+            return 'initialized'
+        elif self.__op.status() == stromx.runtime.Operator.Status.ACTIVE:
+            return 'active'
+        else:
+            return 'undefined'
         
     @property
     def type(self):
-        pass
+        return self.__op.info().type()
         
     @property
     def package(self):
-        pass
+        return self.__op.info().package()
         
     @property
     def version(self):
-        pass
+        version = self.__op.info().version()
+        return '{0}.{1}.{2}'.format(version.major(), version.minor(),
+                                    version.revision())
         
     @property
     def parameters(self):
-        pass
+        return []
         
     def set(self, data):
         properties = data["operator"]

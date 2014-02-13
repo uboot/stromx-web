@@ -219,10 +219,11 @@ class StreamsTest(unittest.TestCase):
 class OperatorTest(unittest.TestCase):
     def setUp(self):
         self.__model = model.Model()
+        self.__operators = model.Operators(self.__model)
         kernel = stromx.runtime.Counter()
         stromxOp = stromx.runtime.Operator(kernel)
         stromxOp.setName('Name')
-        self.__operator = model.Operator(stromxOp, self.__model)
+        self.__operator = self.__operators.add(stromxOp)
     
     def testGetName(self):
         self.assertEqual('Name', self.__operator.data['operator']['name'])
@@ -233,11 +234,12 @@ class OperatorTest(unittest.TestCase):
         
     def testData(self):
         data = {'operator': {'id': '0', 
-                             'name': 'New name',
-                             'package': 'runtime',
+                             'name': 'Name',
+                             'package': 'Runtime',
                              'type': 'Counter',
                              'status': 'none',
-                             'version': '0.3.0'}}
+                             'version': '0.1.0',
+                             'parameters': []}}
         self.assertEqual(data, self.__operator.data)
     
     def tearDown(self):
