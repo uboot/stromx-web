@@ -13,6 +13,7 @@ class Model(object):
         self.__streams = Streams(self)
         self.__errors = Errors()
         self.__operators = Operators(self)
+        self.__parameters = Parameters(self)
     
     @property
     def files(self):
@@ -29,6 +30,10 @@ class Model(object):
     @property
     def operators(self):
         return self.__operators
+    
+    @property
+    def parameters(self):
+        return self.__parameters
     
 class Items(object):
     def __init__(self, model = None):
@@ -161,7 +166,7 @@ class File(Item):
         
         if value:
             try:
-                self.__stream = self.model.streams.add(self)
+                self.__stream = self.model.streams.addFile(self)
                 self.__opened = True
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
@@ -210,7 +215,7 @@ class Streams(Items):
     def __init__(self, model):
         super(Streams, self).__init__(model)
         
-    def add(self, streamFile):
+    def addFile(self, streamFile):
         stream = Stream(streamFile, self.model)
         self.addItem(stream)
         return stream
@@ -233,7 +238,7 @@ class Stream(Item):
             self.__stream = stromx.runtime.Stream()
             
         for op in self.__stream.operators():
-            self.__operators.append(self.model.operators.add(op))
+            self.__operators.append(self.model.operators.addStromxOp(op))
         
     @property
     def file(self):
@@ -320,10 +325,7 @@ class Stream(Item):
             self.model.operators.delete(op.index)
         
 class Operators(Items):
-    def __init__(self, model):
-        super(Operators, self).__init__(model)
-        
-    def add(self, op):
+    def addStromxOp(self, op):
         operator = Operator(op, self.model)
         self.addItem(operator)
         return operator
@@ -334,6 +336,10 @@ class Operator(Item):
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
         self.__op = op
+        self.__parameters = []
+        for param in self.__op.info().parameters():
+            parameter = self.model.parameters.addStromxParameter(param)
+            self.__parameters.append(parameter)
         
     @property
     def name(self):
@@ -370,13 +376,24 @@ class Operator(Item):
         
     @property
     def parameters(self):
-        return []
+        return [op.index for op in self.__parameters]
         
     def set(self, data):
         properties = data["operator"]
         self.name = properties.get("name", self.name)
             
         return self.data
+    
+class Parameters(Items):
+    def addStromxParameter(self, param):
+        parameter = Parameter(param, self.model)
+        self.addItem(parameter)
+        return parameter
+    
+class Parameter(Item):
+    def __init__(self, param, model):
+        super(Parameter, self).__init__(model)
+        self.__param = param
         
 class Errors(Items):
     def __init__(self):

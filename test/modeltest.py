@@ -164,14 +164,14 @@ class StreamsTest(unittest.TestCase):
         self.streamFile = self.model.files['0']
         
     def testAdd(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators.items))
         
     def testAddNoFile(self):
         files = self.model.files
         files.add({'file': _noFile})
-        self.streams.add(files['1'])
+        self.streams.addFile(files['1'])
         
 #     def testAddInvalidFile(self):
 #         with file('temp/invalid.stromx', 'w') as f:
@@ -181,38 +181,38 @@ class StreamsTest(unittest.TestCase):
 #         self.streams.add(files['0'])
         
     def testSetActivate(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.assertTrue(self.streams.data['streams'][0]['active'])
         
     def testSetDeactivate(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
         self.streams.set('0', {'stream': {'active': False}})
         
     def testSetDeactivateTwice(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.streams.set('0', {'stream': {'active': False}})
         
     def testSetPause(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'paused': True}})
         self.assertTrue(self.streams.data['streams'][0]['paused'])
         
     def testSetResume(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'paused': True}})
         self.streams.set('0', {'stream': {'paused': False}})
         self.assertFalse(self.streams.data['streams'][0]['paused'])
         
     def testSetSaved(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.streams.set('0', {'stream': {'saved': True}})
         
@@ -221,13 +221,13 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         
     def testSetName(self):
-        self.streams.add(self.streamFile)
+        self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):
-        stream = self.streams.add(self.streamFile)
+        stream = self.streams.addFile(self.streamFile)
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators.items)  
         
@@ -239,10 +239,10 @@ class OperatorsTest(unittest.TestCase):
         self.model = model.Model()
         self.operators = self.model.operators
         
-        kernel = stromx.runtime.Counter()
+        kernel = stromx.runtime.Receive()
         stromxOp = stromx.runtime.Operator(kernel)
         stromxOp.setName('Name')
-        self.model.operators.add(stromxOp)
+        self.model.operators.addStromxOp(stromxOp)
         
     def testSetName(self):
         self.operators.set('0', {'operator': {'name': 'New name'}})
@@ -253,11 +253,12 @@ class OperatorsTest(unittest.TestCase):
         data = {'operator': {'id': '0', 
                              'name': 'Name',
                              'package': 'Runtime',
-                             'type': 'Counter',
+                             'type': 'Receive',
                              'status': 'none',
                              'version': '0.1.0',
-                             'parameters': []}}
+                             'parameters': ['0', '1']}}
         self.assertEqual(data, self.operators['0'].data)
+        self.assertEqual(2, len(self.model.parameters.items))
     
     def tearDown(self):
         self.__stream = None
