@@ -83,7 +83,8 @@ _stream = {
     'saved': True,
     'active': False,
     'paused': False,
-    'file': '0'
+    'file': '0',
+    'operators': ['0', '1', '2', '3', '4']
 }
 
 class FilesTest(unittest.TestCase):
@@ -105,15 +106,26 @@ class FilesTest(unittest.TestCase):
     def testDeleteEmptyFile(self):
         self.__files.add({'file': {'name': 'test.stromx'}})
         self.__files.delete('1')
+    
+    def testDeleteOpenedFile(self):
+        self.__files.set('0', {'file': {'opened': True}})
+        self.__files.delete('0')
+        self.assertEqual({'streams': []}, self.__streams.data)
             
     def testGetItem(self):
         self.assertEqual({'file': _parallelFile}, 
                          self.__files['0'].data)
         
-    def testSetOpen(self):
+    def testSetOpenTrue(self):
         f = self.__files.set('0', {'file': {'opened': True}})
         self.assertEqual({'file': _openedFile}, f)
         self.assertEqual({'stream':_stream}, self.__streams['0'].data)
+        
+    def testSetOpenFalse(self):
+        self.__files.set('0', {'file': {'opened': True}})
+        f = self.__files.set('0', {'file': {'opened': False}})
+        self.assertEqual(False, f['file']['opened'])
+        self.assertEqual({'streams': []}, self.__streams.data)
         
     def testSetName(self):
         f = self.__files.set('0', {'file': {'name': 'renamed.stromx'}})
@@ -216,20 +228,20 @@ class StreamsTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree('temp', True)
         
-class OperatorTest(unittest.TestCase):
+class OperatorsTest(unittest.TestCase):
     def setUp(self):
         self.__model = model.Model()
+        self.__operators = self.__model.operators
+        
         kernel = stromx.runtime.Counter()
         stromxOp = stromx.runtime.Operator(kernel)
         stromxOp.setName('Name')
-        self.__operator = self.__model.operators.add(stromxOp)
-    
-    def testGetName(self):
-        self.assertEqual('Name', self.__operator.data['operator']['name'])
+        self.__model.operators.add(stromxOp)
         
     def testSetName(self):
-        self.__operator.set({'operator': {'name': 'New name'}})
-        self.assertEqual('New name', self.__operator.data['operator']['name'])
+        self.__operators.set('0', {'operator': {'name': 'New name'}})
+        self.assertEqual('New name',
+                         self.__operators['0'].data['operator']['name'])
         
     def testData(self):
         data = {'operator': {'id': '0', 
@@ -239,7 +251,7 @@ class OperatorTest(unittest.TestCase):
                              'status': 'none',
                              'version': '0.1.0',
                              'parameters': []}}
-        self.assertEqual(data, self.__operator.data)
+        self.assertEqual(data, self.__operators['0'].data)
     
     def tearDown(self):
         self.__stream = None

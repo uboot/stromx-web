@@ -66,14 +66,12 @@ class Items(object):
     def addItems(self, items):
         for item in items:
             self.addItem(item)
-            
-    def deleteItem(self, index):
-        self.__items.pop(index)
-        
-    def add(self, data):
-        raise NotImplementedError()
         
     def delete(self, index):
+        item = self.__items.pop(index)
+        item.delete()
+        
+    def add(self, data):
         raise NotImplementedError()
             
 class Item(object):
@@ -105,6 +103,9 @@ class Item(object):
     def set(self, data):
         raise NotImplementedError()
         
+    def delete(self):
+        pass
+        
 class Files(Items):
     @property
     def directory(self):
@@ -117,12 +118,6 @@ class Files(Items):
         if directory != "":
             files = [File(name, self.model) for name in os.listdir(directory)]
         self.addItems(files)
-        
-    def delete(self, index):
-        f = self[index]
-        if os.path.exists(f.path):
-            os.remove(f.path)
-        self.deleteItem(index)
         
     def add(self, data):
         filename = data["file"]["name"]
@@ -171,7 +166,7 @@ class File(Item):
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
         else:
-            self.model.streams.deleteItem(self.__stream.index)
+            self.model.streams.delete(self.__stream.index)
             self.__stream = None
             self.__opened = False
     
@@ -199,6 +194,11 @@ class File(Item):
                 os.rename(self.path, newPath)
             self.__name = name
         
+    def delete(self):
+        self.opened = False
+        if os.path.exists(self.path):
+            os.remove(self.path)
+        
     def set(self, data):
         properties = data["file"]
         self.opened = properties.get("opened", self.opened)
@@ -216,12 +216,13 @@ class Streams(Items):
         return stream
         
 class Stream(Item):
-    properties = ["name", "saved", "active", "paused", "file"]
+    properties = ["name", "saved", "active", "paused", "file", "operators"]
     
     def __init__(self, streamFile, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
         self.__saved = True
+        self.__operators = []
         
         if os.path.exists(streamFile.path):
             factory = stromx.runtime.Factory()
@@ -230,6 +231,9 @@ class Stream(Item):
             self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
             self.__stream = stromx.runtime.Stream()
+            
+        for op in self.__stream.operators():
+            self.__operators.append(self.model.operators.add(op))
         
     @property
     def file(self):
@@ -297,6 +301,10 @@ class Stream(Item):
                 self.__saved = True
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
+    
+    @property
+    def operators(self):
+        return [op.index for op in self.__operators]
     
     def set(self, data):
         properties = data["stream"]
