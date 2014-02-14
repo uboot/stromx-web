@@ -106,7 +106,16 @@ class Item(object):
         self.__index = str(value)
         
     def set(self, data):
-        raise NotImplementedError()
+        name = self.__class__.__name__.lower()
+        properties = data[name]
+        
+        for key in properties:
+            try:
+                self.__setattr__(key, properties[key])
+            except AttributeError:
+                pass
+            
+        return self.data
         
     def delete(self):
         pass
@@ -203,13 +212,6 @@ class File(Item):
         self.opened = False
         if os.path.exists(self.path):
             os.remove(self.path)
-        
-    def set(self, data):
-        properties = data["file"]
-        self.opened = properties.get("opened", self.opened)
-        self.name = properties.get("name", self.name)
-            
-        return self.data
         
 class Streams(Items):
     def __init__(self, model):
@@ -311,15 +313,6 @@ class Stream(Item):
     def operators(self):
         return [op.index for op in self.__operators]
     
-    def set(self, data):
-        properties = data["stream"]
-        self.name = properties.get("name", self.name)
-        self.active = properties.get("active", self.active)
-        self.paused = properties.get("paused", self.paused)
-        self.saved = properties.get("saved", self.saved)
-            
-        return self.data
-    
     def delete(self):
         for op in self.__operators:
             self.model.operators.delete(op.index)
@@ -377,12 +370,6 @@ class Operator(Item):
     @property
     def parameters(self):
         return [op.index for op in self.__parameters]
-        
-    def set(self, data):
-        properties = data["operator"]
-        self.name = properties.get("name", self.name)
-            
-        return self.data
     
 class Parameters(Items):
     def addStromxParameter(self, param):

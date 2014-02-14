@@ -87,6 +87,41 @@ _stream = {
     'operators': ['0', '1', '2', '3', '4']
 }
 
+class DummyItems(model.Items):
+    pass
+
+class DummyItem(model.Item):
+    properties = ['read', 'write']
+    
+    def __init__(self):
+        self.__write = 0
+    
+    @property
+    def read(self):
+        return 0
+    
+    @property
+    def write(self):
+        return self.__write
+    
+    @write.setter
+    def write(self, value):
+        self.__write = value
+    
+    
+class ItemTest(unittest.TestCase):
+    def setUp(self):
+        self.items = DummyItems()
+        self.item = DummyItem()
+        self.items.addItem(self.item)
+        
+    def testData(self):
+        self.assertEqual({'dummyitem': {'read': 0, 'write': 0, 'id': '0'}},
+                         self.item.data)
+        
+    def testSet(self):
+        self.item.set({'dummyitem': {'read': 0, 'write': 0}})
+
 class FilesTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
