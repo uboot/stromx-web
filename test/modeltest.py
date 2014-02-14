@@ -166,6 +166,7 @@ class StreamsTest(unittest.TestCase):
     def testAdd(self):
         self.__streams.add(self.__streamFile)
         self.assertEqual({'streams': [_stream]}, self.__streams.data)
+        self.assertEqual(5, len(self.__model.operators.items))
         
     def testAddNoFile(self):
         files = self.__model.files
@@ -224,6 +225,11 @@ class StreamsTest(unittest.TestCase):
         self.__streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.__streams.data['streams'][0]['name'])
         self.assertEqual(False, self.__streams.data['streams'][0]['saved'])
+        
+    def testDelete(self):
+        stream = self.__streams.add(self.__streamFile)
+        self.__streams.delete(stream.index)
+        self.assertEqual(dict(), self.__model.operators.items)  
         
     def tearDown(self):
         shutil.rmtree('temp', True)

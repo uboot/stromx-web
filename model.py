@@ -314,6 +314,10 @@ class Stream(Item):
         self.saved = properties.get("saved", self.saved)
             
         return self.data
+    
+    def delete(self):
+        for op in self.__operators:
+            self.model.operators.delete(op.index)
         
 class Operators(Items):
     def __init__(self, model):
