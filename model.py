@@ -378,6 +378,9 @@ class Parameters(Items):
         return parameter
     
 class Parameter(Item):
+    properties = ['title', 'type', 'stringValue', 'numberValue', 'minimum',
+                  'maximum', 'descriptions']
+    
     def __init__(self, param, model):
         super(Parameter, self).__init__(model)
         self.__param = param
