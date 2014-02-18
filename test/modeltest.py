@@ -174,7 +174,7 @@ class FilesTest(unittest.TestCase):
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
-    def testaddData(self):
+    def testAddData(self):
         self.files.addData({'file': {'name': 'test.stromx', 'content': _content}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
@@ -198,7 +198,7 @@ class StreamsTest(unittest.TestCase):
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
-    def testaddData(self):
+    def testAddData(self):
         self.streams.addFile(self.streamFile)
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators.items))
@@ -277,12 +277,12 @@ class OperatorsTest(unittest.TestCase):
         kernel = stromx.runtime.Receive()
         stromxOp = stromx.runtime.Operator(kernel)
         stromxOp.setName('Name')
-        self.model.operators.addStromxOp(stromxOp)
+        self.operator = self.operators.addStromxOp(stromxOp)
         
     def testSetName(self):
         self.operators.set('0', {'operator': {'name': 'New name'}})
         self.assertEqual('New name',
-                         self.operators['0'].data['operator']['name'])
+                         self.operator.data['operator']['name'])
         
     def testData(self):
         data = {'operator': {'id': '0', 
@@ -292,11 +292,25 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'none',
                              'version': '0.1.0',
                              'parameters': ['0', '1']}}
-        self.assertEqual(data, self.operators['0'].data)
+        self.assertEqual(data, self.operator.data)
         self.assertEqual(2, len(self.model.parameters.items))
     
     def tearDown(self):
         self.__stream = None
+        
+class ParametersTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        self.parameters = self.model.parameters
+        
+        kernel = stromx.runtime.Receive()
+        stromxOp = stromx.runtime.Operator(kernel)
+        param = stromxOp.info().parameters()[0]
+        self.parameter = self.parameters.addStromxParameter(param)
+        
+    def testData(self):
+        data = {}
+        self.assertEqual(data, self.parameter.data)
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
@@ -306,7 +320,7 @@ class ErrorsTest(unittest.TestCase):
     def storeError(self, error):
         self.lastError = error
         
-    def testaddData(self):
+    def testAddData(self):
         self.errors.errorHandlers.append(self.storeError)
         self.errors.addError('An error happened')
         self.assertEqual('An error happened',

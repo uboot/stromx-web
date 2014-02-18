@@ -385,6 +385,40 @@ class Parameter(Item):
         super(Parameter, self).__init__(model)
         self.__param = param
         
+    @property
+    def title(self):
+        return self.__param.title()
+    
+    @property
+    def type(self):
+        variant = self.__param.variant()
+        if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+            return 'float'
+        elif variant.isVariant(stromx.runtime.DataVariant.INT):
+            return 'int'
+        elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+            return 'string'
+        
+    @property
+    def stringValue(self):
+        pass
+        
+    @property
+    def numberValue(self):
+        pass
+        
+    @property
+    def minimum(self):
+        pass
+        
+    @property
+    def maximum(self):
+        pass
+        
+    @property
+    def descriptions(self):
+        pass
+        
 class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
