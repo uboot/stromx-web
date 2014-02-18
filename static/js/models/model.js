@@ -36,6 +36,7 @@ App.Parameter = DS.Model.extend({
   numberValue: DS.attr('number'),
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
+  state: DS.attr('string'),
   descriptions: DS.hasMany('EnumDescription', {async: true})
 });
 
@@ -119,7 +120,7 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2, 3]
+    parameters: [2, 3, 4]
   },
   {
     id: 3,
@@ -128,7 +129,7 @@ App.Operator.FIXTURES = [
     type: 'Receive',
     package: 'runtime',
     version: '0.0.1',
-    parameters: [4]
+    parameters: [5]
   }
 ];
 
@@ -141,6 +142,7 @@ App.Parameter.FIXTURES = [
     numberValue: 50123,
     minimum: 49152,
     maximum: 65535,
+    state: 'current',
     descriptions: []
   },
   {
@@ -151,6 +153,7 @@ App.Parameter.FIXTURES = [
     numberValue: 2,
     minimum: 0,
     maximum: 0,
+    state: 'current',
     descriptions: [0, 1, 2]
   },
   {
@@ -161,16 +164,29 @@ App.Parameter.FIXTURES = [
     numberValue: 2.5,
     minimum: 0,
     maximum: 0,
+    state: 'current',
     descriptions: []
   },
   {
     id: 4,
+    title: 'Coefficient',
+    type: 'float',
+    stringValue: '',
+    numberValue: 2.5,
+    minimum: 0,
+    maximum: 0,
+    state: 'timedOut',
+    descriptions: []
+  },
+  {
+    id: 5,
     title: 'Host',
     type: 'string',
     stringValue: 'localhost',
     numberValue: 0,
     minimum: 0,
     maximum: 0,
+    state: 'current',
     descriptions: []
   }
 ];

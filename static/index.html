@@ -260,8 +260,12 @@
                   {{/if}}
                   <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
                 {{else}}
+                  {{#if timedOut}}
+                    <em>Access timed out</em>
+                  {{else}}
                   {{displayValue}} 
-                  <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                    <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                  {{/if}}
                 {{/if}}
               </td>
             </tr>

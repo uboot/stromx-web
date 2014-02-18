@@ -17,6 +17,10 @@ App.ParameterController = Ember.ObjectController.extend({
     return this.get('type') == 'float'
   }.property('type'),
                                                         
+  timedOut: function() {
+    return this.get('state') == 'timedOut'
+  }.property('state'),
+                                                        
   editValue:  function(key, value) {
     if (arguments.length > 1) {
       if (this.get('isInt')) {
@@ -48,6 +52,7 @@ App.ParameterController = Ember.ObjectController.extend({
     if (arguments.length > 1) {
       return value
     }
+    
     if (this.get('isInt'))
       return this.get('numberValue')
     else if (this.get('isFloat'))
