@@ -76,7 +76,7 @@ class Items(object):
         item = self.__items.pop(index)
         item.delete()
         
-    def add(self, data):
+    def addData(self, data):
         raise NotImplementedError()
             
 class Item(object):
@@ -133,7 +133,7 @@ class Files(Items):
             files = [File(name, self.model) for name in os.listdir(directory)]
         self.addItems(files)
         
-    def add(self, data):
+    def addData(self, data):
         filename = data["file"]["name"]
         duplicates = [f for f in self.items.values() if f.name == filename]
         assert(len(duplicates) <= 1)

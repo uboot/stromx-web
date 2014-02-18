@@ -35,7 +35,7 @@ class ItemsHandler(tornado.web.RequestHandler):
         
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        item = self.items.add(data)
+        item = self.items.addData(data)
         json = tornado.escape.json_encode(item)
         self.write(json)  
     

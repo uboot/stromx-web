@@ -139,7 +139,7 @@ class FilesTest(unittest.TestCase):
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
     
     def testDeleteEmptyFile(self):
-        self.files.add({'file': {'name': 'test.stromx'}})
+        self.files.addData({'file': {'name': 'test.stromx'}})
         self.files.delete('1')
     
     def testDeleteOpenedFile(self):
@@ -169,20 +169,20 @@ class FilesTest(unittest.TestCase):
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
     def testAddEmpty(self):
-        self.files.add({'file': {'name': 'test.stromx'}})
+        self.files.addData({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
-    def testAdd(self):
-        self.files.add({'file': {'name': 'test.stromx', 'content': _content}})
+    def testaddData(self):
+        self.files.addData({'file': {'name': 'test.stromx', 'content': _content}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('temp/parallel.stromx', 'temp/test.stromx'))
         
     def testAddDuplicate(self):
-        self.files.add({'file': {'name': 'parallel.stromx'}})
+        self.files.addData({'file': {'name': 'parallel.stromx'}})
         self.assertEqual({'files': [_parallelFile]}, self.files.data)
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
@@ -198,14 +198,14 @@ class StreamsTest(unittest.TestCase):
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
-    def testAdd(self):
+    def testaddData(self):
         self.streams.addFile(self.streamFile)
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators.items))
         
     def testAddNoFile(self):
         files = self.model.files
-        files.add({'file': _noFile})
+        files.addData({'file': _noFile})
         self.streams.addFile(files['1'])
         
 #     def testAddInvalidFile(self):
@@ -213,7 +213,7 @@ class StreamsTest(unittest.TestCase):
 #             f.write("nonsense")
 #             
 #         files = model.Files('temp', self.streams)
-#         self.streams.add(files['0'])
+#         self.streams.addData(files['0'])
         
     def testSetActivate(self):
         self.streams.addFile(self.streamFile)
@@ -306,7 +306,7 @@ class ErrorsTest(unittest.TestCase):
     def storeError(self, error):
         self.lastError = error
         
-    def testAdd(self):
+    def testaddData(self):
         self.errors.errorHandlers.append(self.storeError)
         self.errors.addError('An error happened')
         self.assertEqual('An error happened',
