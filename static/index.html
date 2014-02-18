@@ -262,8 +262,9 @@
                 {{else}}
                   {{#if timedOut}}
                     <em>Access timed out</em>
+                    <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
                   {{else}}
-                  {{displayValue}} 
+                    {{displayValue}} 
                     <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
                   {{/if}}
                 {{/if}}

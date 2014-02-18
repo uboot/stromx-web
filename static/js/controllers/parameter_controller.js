@@ -93,6 +93,10 @@ App.ParameterController = Ember.ObjectController.extend({
       this.set('isEditing', false)
       var model = this.get('model')
       model.save()
+    },
+    reload: function() {
+      var model = this.get('model')
+      model.reload()
     }
   }
 });
