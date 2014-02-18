@@ -29,7 +29,13 @@
   
   <script type="text/x-handlebars" data-template-name="application">
     <div class="container">
-      {{outlet}}
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+          {{outlet}}
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
 
       {{#if length}}
       <div class="well">
@@ -50,66 +56,60 @@
         {{#link-to 'files.add' type="button" class="btn btn-default"}}Upload File{{/link-to}}
       </div>
     </div>
-    <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-      {{outlet}}
-      <table class="table">
-        <thead>
+    {{outlet}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each itemController="file"}}
           <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th></th>
+            <td>
+              {{name}}
+            </td>
+            <td>
+              {{#if closed}}
+                Closed
+              {{else}}
+                Loaded
+              {{/if}}
+            </td>
+            <td>
+              {{#if closed}}
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    Action <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a {{action "open"}}>Open</a></li>
+                    <li><a {{action "rename"}}>Rename</a></li>
+                    <li><a {{action "remove"}}>Remove</a></li>
+                    <li><a {{bind-attr href=url}}>Download</a></li>
+                  </ul>
+                </div>
+              {{else}}
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    Action <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    {{#each stream}}
+                      <li>{{#link-to 'stream' this}}Show{{/link-to}}</li>
+                    {{/each}}
+                    <li><a {{bind-attr href=url}}>Download</a></li>
+                  </ul>
+                </div>
+              {{/if}}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {{#each itemController="file"}}
-            <tr>
-              <td>
-                {{name}}
-              </td>
-              <td>
-                {{#if closed}}
-                  Closed
-                {{else}}
-                  Loaded
-                {{/if}}
-              </td>
-              <td>
-                {{#if closed}}
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                      Action <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a {{action "open"}}>Open</a></li>
-                      <li><a {{action "rename"}}>Rename</a></li>
-                      <li><a {{action "remove"}}>Remove</a></li>
-                      <li><a {{bind-attr href=url}}>Download</a></li>
-                    </ul>
-                  </div>
-                {{else}}
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                      Action <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      {{#each stream}}
-                        <li>{{#link-to 'stream' this}}Show{{/link-to}}</li>
-                      {{/each}}
-                      <li><a {{bind-attr href=url}}>Download</a></li>
-                    </ul>
-                  </div>
-                {{/if}}
-              </td>
-            </tr>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-    <div class="col-sm-2"></div>
-    </div>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
   </script>
 
   <script type="text/x-handlebars" data-template-name="files/add">
@@ -159,124 +159,112 @@
         </div>
       {{/if}}
     </div>
-    <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-      <table class="table">
-        <thead>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Operator</th>
+          <th>Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each operators itemController="operator"}}
           <tr>
-            <th>Operator</th>
-            <th>Type</th>
-            <th></th>
+            <td>
+              {{name}}
+            </td>
+            <td>
+              {{fullType}}
+            </td>
+            <td>
+              {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {{#each operators itemController="operator"}}
-            <tr>
-              <td>
-                {{name}}
-              </td>
-              <td>
-                {{fullType}}
-              </td>
-              <td>
-                {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
-              </td>
-            </tr>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-    <div class="col-sm-2"></div>
-    </div>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
   </script>
 
   <script type="text/x-handlebars" data-template-name="operator">
     <h1>Operator</h1>
 
-    <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-      <table class="table">
-        <thead>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            Type
+          </td>
+          <td>
+            {{fullType}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Version
+          </td>
+          <td>
+            {{version}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Status
+          </td>
+          <td>
+            {{status}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Name
+          </td>
+          <td>
+            {{#if isEditingName}}
+              {{input value=name}}
+              <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+            {{else}}
+              {{name}} 
+              <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
+            {{/if}}
+          </td>
+        </tr>
+      </tr>
+        {{#each parameters itemController="parameter"}}
           <tr>
-            <th>Property</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
             <td>
-              Type
+              {{title}}
             </td>
-            <td>
-              {{fullType}}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Version
-            </td>
-            <td>
-              {{version}}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Status
-            </td>
-            <td>
-              {{status}}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Name
-            </td>
-            <td>
-              {{#if isEditingName}}
-                {{input value=name}}
-                <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+            <td>    
+              {{#if isEditing}}
+                {{#if isEnum}}
+                  {{view Ember.Select content=descriptions optionValuePath="content.value" 
+                    optionLabelPath="content.title" value=numberValue}}
+                {{else}}
+                  {{input value=editValue}}
+                {{/if}}
+                <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
               {{else}}
-                {{name}} 
-                <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
+                {{#if timedOut}}
+                  <em>Access timed out</em>
+                  <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+                {{else}}
+                  {{displayValue}} 
+                  <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                {{/if}}
               {{/if}}
             </td>
           </tr>
         </tr>
-          {{#each parameters itemController="parameter"}}
-            <tr>
-              <td>
-                {{title}}
-              </td>
-              <td>    
-                {{#if isEditing}}
-                  {{#if isEnum}}
-                    {{view Ember.Select content=descriptions optionValuePath="content.value" 
-                      optionLabelPath="content.title" value=numberValue}}
-                  {{else}}
-                    {{input value=editValue}}
-                  {{/if}}
-                  <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
-                {{else}}
-                  {{#if timedOut}}
-                    <em>Access timed out</em>
-                    <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
-                  {{else}}
-                    {{displayValue}} 
-                    <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
-                  {{/if}}
-                {{/if}}
-              </td>
-            </tr>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-    <div class="col-sm-2"></div>
-    </div>
+        {{/each}}
+      </tbody>
+    </table>
   </script>
 </body>
 </html>
