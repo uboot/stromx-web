@@ -256,7 +256,9 @@
                   <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
                 {{else}}
                   {{displayValue}} 
-                  <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                  {{#if writable}}
+                    <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                  {{/if}}
                 {{/if}}
               {{/if}}
             </td>
