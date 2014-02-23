@@ -331,7 +331,8 @@ class Operator(Item):
         self.__op = op
         self.__parameters = []
         for param in self.__op.info().parameters():
-            parameter = self.model.parameters.addStromxParameter(param)
+            parameter = self.model.parameters.addStromxParameter(self.__op,
+                                                                 param)
             self.__parameters.append(parameter)
         
     @property
@@ -372,18 +373,19 @@ class Operator(Item):
         return [op.index for op in self.__parameters]
     
 class Parameters(Items):
-    def addStromxParameter(self, param):
-        parameter = Parameter(param, self.model)
+    def addStromxParameter(self, op, param):
+        parameter = Parameter(op, param, self.model)
         self.addItem(parameter)
         return parameter
     
 class Parameter(Item):
     properties = ['title', 'type', 'stringValue', 'numberValue', 'minimum',
-                  'maximum', 'descriptions']
+                  'maximum', 'writable', 'descriptions']
     
-    def __init__(self, param, model):
+    def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
         self.__param = param
+        self.__op = op
         
     @property
     def title(self):
@@ -396,12 +398,18 @@ class Parameter(Item):
             return 'float'
         elif variant.isVariant(stromx.runtime.DataVariant.INT):
             return 'int'
+        elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+            return 'int'
         elif variant.isVariant(stromx.runtime.DataVariant.STRING):
             return 'string'
         
     @property
     def stringValue(self):
-        pass
+        variant = self.__param.variant()
+        if variant.isVariant(stromx.runtime.DataVariant.STRING):
+            return ''
+        else:
+            return ''
         
     @property
     def numberValue(self):
@@ -413,6 +421,10 @@ class Parameter(Item):
         
     @property
     def maximum(self):
+        pass
+    
+    @property
+    def writable(self):
         pass
         
     @property

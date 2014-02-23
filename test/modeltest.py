@@ -306,7 +306,7 @@ class ParametersTest(unittest.TestCase):
         kernel = stromx.runtime.Receive()
         stromxOp = stromx.runtime.Operator(kernel)
         param = stromxOp.info().parameters()[0]
-        self.parameter = self.parameters.addStromxParameter(param)
+        self.parameter = self.parameters.addStromxParameter(stromxOp, param)
         
     def testData(self):
         data = {}

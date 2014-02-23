@@ -37,6 +37,7 @@ App.Parameter = DS.Model.extend({
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
   state: DS.attr('string'),
+  writable: DS.attr('boolean'),
   descriptions: DS.hasMany('EnumDescription', {async: true})
 });
 
@@ -120,7 +121,7 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2, 3, 4]
+    parameters: [2, 3, 4, 6]
   },
   {
     id: 3,
@@ -143,6 +144,7 @@ App.Parameter.FIXTURES = [
     minimum: 49152,
     maximum: 65535,
     state: 'current',
+    writable: true,
     descriptions: []
   },
   {
@@ -154,6 +156,7 @@ App.Parameter.FIXTURES = [
     minimum: 0,
     maximum: 0,
     state: 'current',
+    writable: true,
     descriptions: [0, 1, 2]
   },
   {
@@ -165,6 +168,7 @@ App.Parameter.FIXTURES = [
     minimum: 0,
     maximum: 0,
     state: 'current',
+    writable: true,
     descriptions: []
   },
   {
@@ -176,6 +180,19 @@ App.Parameter.FIXTURES = [
     minimum: 0,
     maximum: 0,
     state: 'timedOut',
+    writable: true,
+    descriptions: []
+  },
+  {
+    id: 6,
+    title: 'Offset',
+    type: 'float',
+    stringValue: '',
+    numberValue: 4.5,
+    minimum: 0,
+    maximum: 0,
+    state: 'current',
+    writable: false,
     descriptions: []
   },
   {
@@ -187,6 +204,7 @@ App.Parameter.FIXTURES = [
     minimum: 0,
     maximum: 0,
     state: 'current',
+    writable: true,
     descriptions: []
   }
 ];
