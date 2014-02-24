@@ -331,6 +331,9 @@ class Operator(Item):
         self.__op = op
         self.__parameters = []
         for param in self.__op.info().parameters():
+            if not _parameterIsReadable(op, param):
+                continue
+            
             parameter = self.model.parameters.addStromxParameter(self.__op,
                                                                  param)
             self.__parameters.append(parameter)
@@ -407,25 +410,46 @@ class Parameter(Item):
     def stringValue(self):
         variant = self.__param.variant()
         if variant.isVariant(stromx.runtime.DataVariant.STRING):
-            return ''
+            data = self.__op.getParameter(self.__param.id())
+            return str(data.get())
         else:
             return ''
         
     @property
     def numberValue(self):
-        pass
+        variant = self.__param.variant()
+        if variant.isVariant(stromx.runtime.DataVariant.INT):
+            data = self.__op.getParameter(self.__param.id())
+            return int(data.get())
+        elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+            data = self.__op.getParameter(self.__param.id())
+            return float(data.get())
+        else:
+            return 0
         
     @property
     def minimum(self):
-        pass
+        value = self.__param.min()
+        if value.isVariant(stromx.runtime.DataVariant.INT):
+            return int(value.get())
+        elif value.isVariant(stromx.runtime.DataVariant.FLOAT):
+            return float(value.get())
+        else:
+            return 0
         
     @property
     def maximum(self):
-        pass
+        value = self.__param.max()
+        if value.isVariant(stromx.runtime.DataVariant.INT):
+            return int(value.get())
+        elif value.isVariant(stromx.runtime.DataVariant.FLOAT):
+            return float(value.get())
+        else:
+            return 0
     
     @property
     def writable(self):
-        pass
+        return _parameterIsWritable(self.__op, self.__param)
         
     @property
     def descriptions(self):
@@ -470,4 +494,40 @@ class Error(Item):
     def description(self):
         return self.__description
 
+def _parameterIsReadable(op, param):
+    status = op.status()
+    accessMode = param.accessMode()
+    
+    AccessMode = stromx.runtime.Parameter.AccessMode
+    Status = stromx.runtime.Operator.Status
+    
+    if accessMode == AccessMode.NONE_READ:
+        return True
+    elif accessMode == AccessMode.NONE_WRITE:
+        return True
+    elif accessMode == AccessMode.INITIALIZED_READ and status != Status.NONE:
+        return True
+    elif accessMode == AccessMode.INITIALIZED_WRITE and status != Status.NONE:
+        return True
+    elif accessMode == AccessMode.ACTIVATED_WRITE and status != Status.NONE:
+        return True
+    else:
+        return False
+
+def _parameterIsWritable(op, param):
+    status = op.status()
+    accessMode = param.accessMode()
+    
+    AccessMode = stromx.runtime.Parameter.AccessMode
+    Status = stromx.runtime.Operator.Status
+    
+    if accessMode == AccessMode.NONE_WRITE and status == Status.NONE:
+        return True
+    elif (accessMode == AccessMode.INITIALIZED_WRITE and 
+          status == Status.INITIALIZED):
+        return True
+    elif accessMode == AccessMode.ACTIVATED_WRITE and status != Status.NONE:
+        return True
+    else:
+        return False
         

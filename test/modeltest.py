@@ -275,7 +275,9 @@ class OperatorsTest(unittest.TestCase):
         self.operators = self.model.operators
         
         kernel = stromx.runtime.Receive()
-        stromxOp = stromx.runtime.Operator(kernel)
+        self.stream = stromx.runtime.Stream()
+        stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        self.stream.initializeOperator(stromxOp)
         stromxOp.setName('Name')
         self.operator = self.operators.addStromxOp(stromxOp)
         
@@ -289,11 +291,25 @@ class OperatorsTest(unittest.TestCase):
                              'name': 'Name',
                              'package': 'Runtime',
                              'type': 'Receive',
-                             'status': 'none',
+                             'status': 'initialized',
                              'version': '0.1.0',
                              'parameters': ['0', '1']}}
         self.assertEqual(data, self.operator.data)
-        self.assertEqual(2, len(self.model.parameters.items))
+        
+    def testDataDeinitialized(self):
+        kernel = stromx.runtime.Receive()
+        self.stream = stromx.runtime.Stream()
+        stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        op = self.operators.addStromxOp(stromxOp)
+        
+        data = {'operator': {'id': '1', 
+                             'name': '',
+                             'package': 'Runtime',
+                             'type': 'Receive',
+                             'status': 'none',
+                             'version': '0.1.0',
+                             'parameters': []}}
+        self.assertEqual(data, op.data)
     
     def tearDown(self):
         self.__stream = None
@@ -304,13 +320,37 @@ class ParametersTest(unittest.TestCase):
         self.parameters = self.model.parameters
         
         kernel = stromx.runtime.Receive()
-        stromxOp = stromx.runtime.Operator(kernel)
-        param = stromxOp.info().parameters()[0]
-        self.parameter = self.parameters.addStromxParameter(stromxOp, param)
+        self.stream = stromx.runtime.Stream()
+        self.stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        self.stream.initializeOperator(self.stromxOp)
         
-    def testData(self):
-        data = {}
-        self.assertEqual(data, self.parameter.data)
+    def testDataUrl(self):
+        stromxParam = self.stromxOp.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.stromxOp, stromxParam)
+        data = {'parameter': {'descriptions': None,
+                               'id': '0',
+                               'maximum': 0,
+                               'minimum': 0,
+                               'numberValue': 0,
+                               'stringValue': 'localhost',
+                               'title': 'URL',
+                               'type': 'string',
+                               'writable': True}}
+        self.assertEqual(data, param.data)
+        
+    def testDataPort(self):
+        stromxParam = self.stromxOp.info().parameters()[1]
+        param = self.parameters.addStromxParameter(self.stromxOp, stromxParam)
+        data = {'parameter': {'descriptions': None,
+                              'id': '0',
+                              'maximum': 65535,
+                              'minimum': 49152,
+                              'numberValue': 49152,
+                              'stringValue': '',
+                              'title': 'TCP port',
+                              'type': 'int',
+                              'writable': True}}
+        self.assertEqual(data, param.data)
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
