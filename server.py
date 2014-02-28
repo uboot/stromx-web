@@ -9,9 +9,6 @@ import tornado.websocket
 import model
 
 _model = model.Model('files')
-_streams = _model.streams
-_files = _model.files
-_errors = _model.errors
 
 class ItemsHandler(tornado.web.RequestHandler):
     def get(self, index = None):
@@ -47,17 +44,23 @@ class ItemsHandler(tornado.web.RequestHandler):
             self.set_status(httplib.NOT_FOUND)
 
 class StreamsHandler(ItemsHandler):
-    items = _streams
+    items = _model.streams
   
 class FilesHandler(ItemsHandler):
-    items = _files
+    items = _model.files
+  
+class OperatorsHandler(ItemsHandler):
+    items = _model.operators
+  
+class ParametersHandler(ItemsHandler):
+    items = _model.parameters
     
 class ErrorSocket(tornado.websocket.WebSocketHandler):
     def open(self):
-        _errors.errorHandlers.append(self.sendError)
+        _model.errors.errorHandlers.append(self.sendError)
     
     def on_close(self):
-        _errors.errorHandlers.remove(self.sendError)
+        _model.errors.errorHandlers.remove(self.sendError)
         
     def doSend(self, error):
         json = tornado.escape.json_encode(error.data)
@@ -75,6 +78,10 @@ def start():
             (r"/files/([0-9]+)", FilesHandler),
             (r"/streams", StreamsHandler),
             (r"/streams/([0-9]+)", StreamsHandler),
+            (r"/operators", OperatorsHandler),
+            (r"/operators/([0-9]+)", OperatorsHandler),
+            (r"/parameters", ParametersHandler),
+            (r"/parameters/([0-9]+)", ParametersHandler),
             (r"/error_socket", ErrorSocket),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),
