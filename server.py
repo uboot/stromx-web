@@ -54,6 +54,9 @@ class OperatorsHandler(ItemsHandler):
   
 class ParametersHandler(ItemsHandler):
     items = _model.parameters
+  
+class EnumDescriptionsHandler(ItemsHandler):
+    items = _model.enumDescriptions
     
 class ErrorSocket(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -82,6 +85,8 @@ def start():
             (r"/operators/([0-9]+)", OperatorsHandler),
             (r"/parameters", ParametersHandler),
             (r"/parameters/([0-9]+)", ParametersHandler),
+            (r"/enumdescriptions", EnumDescriptionsHandler),
+            (r"/enumdescriptions/([0-9]+)", EnumDescriptionsHandler),
             (r"/error_socket", ErrorSocket),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),

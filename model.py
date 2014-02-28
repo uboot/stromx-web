@@ -5,6 +5,7 @@ import datetime
 import os
 import re
 
+import stromx.cvsupport 
 import stromx.runtime 
 
 class Model(object):
@@ -14,6 +15,7 @@ class Model(object):
         self.__errors = Errors()
         self.__operators = Operators(self)
         self.__parameters = Parameters(self)
+        self.__enumDescriptions = EnumDescriptions(self)
     
     @property
     def files(self):
@@ -34,6 +36,10 @@ class Model(object):
     @property
     def parameters(self):
         return self.__parameters
+    
+    @property
+    def enumDescriptions(self):
+        return self.__enumDescriptions
     
 class Items(object):
     def __init__(self, model = None):
@@ -234,6 +240,7 @@ class Stream(Item):
         if os.path.exists(streamFile.path):
             factory = stromx.runtime.Factory()
             stromx.runtime.register(factory)
+            stromx.cvsupport.register(factory)
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
@@ -389,6 +396,15 @@ class Parameter(Item):
         super(Parameter, self).__init__(model)
         self.__param = param
         self.__op = op
+        self.__descriptions = []
+        for desc in self.__param.descriptions():
+            if not _parameterIsReadable(op, param):
+                continue
+            
+            description = (
+                self.model.enumDescriptions.addStromxEnumDescription(desc)
+            )
+            self.__descriptions.append(description)
         
     @property
     def title(self):
@@ -453,7 +469,29 @@ class Parameter(Item):
         
     @property
     def descriptions(self):
-        pass
+        return [desc.index for desc in self.__descriptions]
+        return self.__descriptions
+    
+class EnumDescriptions(Items):
+    def addStromxEnumDescription(self, desc):
+        description = EnumDescription(desc, self.model)
+        self.addItem(description)
+        return description
+    
+class EnumDescription(Item):
+    properties = ['value', 'title']
+    
+    def __init__(self, desc, model):
+        super(EnumDescription, self).__init__(model)
+        self.__desc = desc
+        
+    @property
+    def value(self):
+        return self.__desc.value().get()
+    
+    @property
+    def title(self):
+        return self.__desc.title()
         
 class Errors(Items):
     def __init__(self):

@@ -5,6 +5,7 @@ import os
 import shutil
 import unittest
 
+import stromx.cvsupport
 import stromx.runtime
 
 import model
@@ -324,13 +325,16 @@ class ParametersTest(unittest.TestCase):
         self.receive = self.stream.addOperator(kernel)
         kernel = stromx.runtime.Fork()
         self.fork = self.stream.addOperator(kernel)
+        kernel = stromx.cvsupport.DummyCamera()
+        self.dummyCamera = self.stream.addOperator(kernel)
         self.stream.initializeOperator(self.fork)
         self.stream.initializeOperator(self.receive)
+        self.stream.initializeOperator(self.dummyCamera)
         
     def testDataUrl(self):
         stromxParam = self.receive.info().parameters()[0]
         param = self.parameters.addStromxParameter(self.receive, stromxParam)
-        data = {'parameter': {'descriptions': None,
+        data = {'parameter': {'descriptions': [],
                               'id': '0',
                               'maximum': 0,
                               'minimum': 0,
@@ -344,7 +348,7 @@ class ParametersTest(unittest.TestCase):
     def testDataPort(self):
         stromxParam = self.receive.info().parameters()[1]
         param = self.parameters.addStromxParameter(self.receive, stromxParam)
-        data = {'parameter': {'descriptions': None,
+        data = {'parameter': {'descriptions': [],
                               'id': '0',
                               'maximum': 65535,
                               'minimum': 49152,
@@ -355,10 +359,10 @@ class ParametersTest(unittest.TestCase):
                               'writable': True}}
         self.assertEqual(data, param.data)
         
-    def testDataWriteable(self):
+    def testDataNumberOfOutputs(self):
         stromxParam = self.fork.info().parameters()[0]
         param = self.parameters.addStromxParameter(self.fork, stromxParam)
-        data = {'parameter': {'descriptions': None,
+        data = {'parameter': {'descriptions': [],
                               'id': '0',
                               'maximum': 4,
                               'minimum': 2,
@@ -368,6 +372,40 @@ class ParametersTest(unittest.TestCase):
                               'type': 'int',
                               'writable': False}}
         self.assertEqual(data, param.data)
+        
+    def testDataPixelType(self):
+        stromxParam = self.dummyCamera.info().parameters()[1]
+        param = self.parameters.addStromxParameter(self.dummyCamera,
+                                                   stromxParam)
+        data = {'parameter': {'descriptions': ['0', '1', '2'],
+                              'id': '0',
+                              'maximum': 0,
+                              'minimum': 0,
+                              'numberValue': 0,
+                              'stringValue': '',
+                              'title': 'Trigger mode',
+                              'type': 'int',
+                              'writable': True}}
+        self.assertEqual(data, param.data)
+        
+class EnumDescriptionsTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        self.enumDescriptions = self.model.enumDescriptions
+        
+        self.stream = stromx.runtime.Stream()
+        kernel = stromx.cvsupport.DummyCamera()
+        dummyCamera = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(dummyCamera)
+        pixelType = dummyCamera.info().parameters()[1]
+        self.manual = pixelType.descriptions()[0]
+        
+    def testData(self):
+        desc = self.enumDescriptions.addStromxEnumDescription(self.manual)
+        data = {'enumdescription': {'id': '0', 
+                                    'title': 'Software trigger', 
+                                    'value': 0}}
+        self.assertEqual(data, desc.data)
         
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
