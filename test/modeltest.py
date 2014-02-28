@@ -319,28 +319,31 @@ class ParametersTest(unittest.TestCase):
         self.model = model.Model()
         self.parameters = self.model.parameters
         
-        kernel = stromx.runtime.Receive()
         self.stream = stromx.runtime.Stream()
-        self.stromxOp = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.stromxOp)
+        kernel = stromx.runtime.Receive()
+        self.receive = self.stream.addOperator(kernel)
+        kernel = stromx.runtime.Fork()
+        self.fork = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.fork)
+        self.stream.initializeOperator(self.receive)
         
     def testDataUrl(self):
-        stromxParam = self.stromxOp.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.stromxOp, stromxParam)
+        stromxParam = self.receive.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.receive, stromxParam)
         data = {'parameter': {'descriptions': None,
-                               'id': '0',
-                               'maximum': 0,
-                               'minimum': 0,
-                               'numberValue': 0,
-                               'stringValue': 'localhost',
-                               'title': 'URL',
-                               'type': 'string',
-                               'writable': True}}
+                              'id': '0',
+                              'maximum': 0,
+                              'minimum': 0,
+                              'numberValue': 0,
+                              'stringValue': 'localhost',
+                              'title': 'URL',
+                              'type': 'string',
+                              'writable': True}}
         self.assertEqual(data, param.data)
         
     def testDataPort(self):
-        stromxParam = self.stromxOp.info().parameters()[1]
-        param = self.parameters.addStromxParameter(self.stromxOp, stromxParam)
+        stromxParam = self.receive.info().parameters()[1]
+        param = self.parameters.addStromxParameter(self.receive, stromxParam)
         data = {'parameter': {'descriptions': None,
                               'id': '0',
                               'maximum': 65535,
@@ -350,6 +353,20 @@ class ParametersTest(unittest.TestCase):
                               'title': 'TCP port',
                               'type': 'int',
                               'writable': True}}
+        self.assertEqual(data, param.data)
+        
+    def testDataWriteable(self):
+        stromxParam = self.fork.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.fork, stromxParam)
+        data = {'parameter': {'descriptions': None,
+                              'id': '0',
+                              'maximum': 4,
+                              'minimum': 2,
+                              'numberValue': 2,
+                              'stringValue': '',
+                              'title': 'Number of outputs',
+                              'type': 'int',
+                              'writable': False}}
         self.assertEqual(data, param.data)
         
 class ErrorsTest(unittest.TestCase):
