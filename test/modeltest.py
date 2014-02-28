@@ -276,7 +276,7 @@ class OperatorsTest(unittest.TestCase):
         
         kernel = stromx.runtime.Receive()
         self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        stromxOp = self.stream.addOperator(kernel)
         self.stream.initializeOperator(stromxOp)
         stromxOp.setName('Name')
         self.operator = self.operators.addStromxOp(stromxOp)
@@ -299,7 +299,7 @@ class OperatorsTest(unittest.TestCase):
     def testDataDeinitialized(self):
         kernel = stromx.runtime.Receive()
         self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        stromxOp = self.stream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp)
         
         data = {'operator': {'id': '1', 
@@ -321,7 +321,7 @@ class ParametersTest(unittest.TestCase):
         
         kernel = stromx.runtime.Receive()
         self.stream = stromx.runtime.Stream()
-        self.stromxOp = self.stream.addOperator(stromx.runtime.Operator(kernel))
+        self.stromxOp = self.stream.addOperator(kernel)
         self.stream.initializeOperator(self.stromxOp)
         
     def testDataUrl(self):
