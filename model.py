@@ -49,7 +49,7 @@ class Items(object):
         
     @property
     def data(self):
-        name = self.__class__.__name__.lower()
+        name = _resourceName(self.__class__.__name__)
         itemList = [item.data.values()[0] for item in self.items.values()]
         return {name: itemList}
         
@@ -96,7 +96,7 @@ class Item(object):
     def data(self):
         props = {prop: self.__getattribute__(prop) for prop in self.properties}
         props['id'] = self.index
-        name = self.__class__.__name__.lower()
+        name = _resourceName(self.__class__.__name__)
         return {name: props}
            
     @property
@@ -112,7 +112,7 @@ class Item(object):
         self.__index = str(value)
         
     def set(self, data):
-        name = self.__class__.__name__.lower()
+        name = _resourceName(self.__class__.__name__)
         properties = data[name]
         
         for key in properties:
@@ -415,6 +415,8 @@ class Parameter(Item):
         variant = self.__param.variant()
         if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
             return 'float'
+        if variant.isVariant(stromx.runtime.DataVariant.ENUM):
+            return 'enum'
         elif variant.isVariant(stromx.runtime.DataVariant.INT):
             return 'int'
         elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
@@ -531,6 +533,12 @@ class Error(Item):
     @property
     def description(self):
         return self.__description
+    
+def _resourceName(name):
+    if len(name) == 0:
+        return name
+    else:
+        return name[0].lower() + name[1:]
 
 def _parameterIsReadable(op, param):
     status = op.status()

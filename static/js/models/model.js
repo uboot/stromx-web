@@ -38,7 +38,7 @@ App.Parameter = DS.Model.extend({
   maximum: DS.attr('number'),
   state: DS.attr('string'),
   writable: DS.attr('boolean'),
-  descriptions: DS.hasMany('EnumDescription', {async: true})
+  descriptions: DS.hasMany('enumDescription', {async: true})
 });
 
 App.EnumDescription = DS.Model.extend({

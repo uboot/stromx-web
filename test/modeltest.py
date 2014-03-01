@@ -384,7 +384,7 @@ class ParametersTest(unittest.TestCase):
                               'numberValue': 0,
                               'stringValue': '',
                               'title': 'Trigger mode',
-                              'type': 'int',
+                              'type': 'enum',
                               'writable': True}}
         self.assertEqual(data, param.data)
         
