@@ -308,13 +308,12 @@ class Stream(Item):
             return
         
         # the file should be saved
-        if not self.saved:
-            writer = stromx.runtime.XmlWriter()
-            try:
-                writer.writeStream(self.__file.path, self.__stream)
-                self.__saved = True
-            except stromx.runtime.Exception as e:
-                self.model.errors.addError(e)
+        writer = stromx.runtime.XmlWriter()
+        try:
+            writer.writeStream(self.__file.path, self.__stream)
+            self.__saved = True
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
     
     @property
     def operators(self):
@@ -427,43 +426,66 @@ class Parameter(Item):
     @property
     def stringValue(self):
         variant = self.__param.variant()
-        if variant.isVariant(stromx.runtime.DataVariant.STRING):
-            data = self.__op.getParameter(self.__param.id())
-            return str(data.get())
-        else:
+        if not _isString(variant):
             return ''
+        
+        data = self.__op.getParameter(self.__param.id())
+        return _toPythonValue(variant, data)
+        
+    @stringValue.setter
+    def stringValue(self, value):
+        assert(type(value) == str or type(value) == unicode)
+        variant = self.__param.variant()
+        if not _isString(variant):
+            return ''
+        data = _toStromxData(variant, str(value))
+        
+        if data != None:
+            self.__op.setParameter(self.__param.id(), data)
         
     @property
     def numberValue(self):
         variant = self.__param.variant()
-        if variant.isVariant(stromx.runtime.DataVariant.INT):
-            data = self.__op.getParameter(self.__param.id())
-            return int(data.get())
-        elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
-            data = self.__op.getParameter(self.__param.id())
-            return float(data.get())
-        else:
+        if not _isNumber(variant):
             return 0
+        
+        data = self.__op.getParameter(self.__param.id())
+        return _toPythonValue(variant, data)
+        
+    @numberValue.setter
+    def numberValue(self, value):
+        assert(type(value) == float or type(value) == int)
+        variant = self.__param.variant()
+        if not _isNumber(variant):
+            return ''
+        data = _toStromxData(variant, value)
+        
+        if data != None:
+            self.__op.setParameter(self.__param.id(), data)
         
     @property
     def minimum(self):
-        value = self.__param.min()
-        if value.isVariant(stromx.runtime.DataVariant.INT):
-            return int(value.get())
-        elif value.isVariant(stromx.runtime.DataVariant.FLOAT):
-            return float(value.get())
-        else:
+        variant = self.__param.variant()
+        if not _isNumber(variant):
             return 0
+        
+        data = self.__param.min()
+        value = _toPythonValue(variant, data)
+        if value == None:
+            return 0
+        return value
         
     @property
     def maximum(self):
-        value = self.__param.max()
-        if value.isVariant(stromx.runtime.DataVariant.INT):
-            return int(value.get())
-        elif value.isVariant(stromx.runtime.DataVariant.FLOAT):
-            return float(value.get())
-        else:
+        variant = self.__param.variant()
+        if not _isNumber(variant):
             return 0
+        
+        data = self.__param.max()
+        value = _toPythonValue(variant, data)
+        if value == None:
+            return 0
+        return value
     
     @property
     def writable(self):
@@ -576,4 +598,60 @@ def _parameterIsWritable(op, param):
         return True
     else:
         return False
+    
+def _isNumber(variant):
+    if variant.isVariant(stromx.runtime.DataVariant.INT):
+        return True
+    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+        return True
+    else:
+        return False
+    
+def _isString(variant):
+    if variant.isVariant(stromx.runtime.DataVariant.STRING):
+        return True
+    else:
+        return False
+    
+    
+def _toPythonValue(variant, data):
+    if data.variant().isVariant(stromx.runtime.DataVariant.NONE):
+        return None
+    
+    if variant.isVariant(stromx.runtime.DataVariant.INT):
+        return int(data.get())
+    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+        return float(data.get())
+    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+        return str(data.get())
+    else:
+        return 0
+       
+def _toStromxData(variant, value):
+    if variant.isVariant(stromx.runtime.DataVariant.BOOL):
+        return stromx.runtime.Bool(bool(value))
+    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
+        return stromx.runtime.Enum(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.UINT_8):
+        return stromx.runtime.UInt8(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.UINT_16):
+        return stromx.runtime.UInt16(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.UINT_32):
+        return stromx.runtime.UInt32(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.INT_8):
+        return stromx.runtime.Int8(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.INT_16):
+        return stromx.runtime.Int16(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.INT_32):
+        return stromx.runtime.Int32(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_32):
+        return stromx.runtime.Float32(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_64):
+        return stromx.runtime.Float64(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+        return stromx.runtime.String(value)
+    else:
+        return None
+    
+
         

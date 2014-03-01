@@ -117,11 +117,11 @@ class ItemTest(unittest.TestCase):
         self.items.addItem(self.item)
         
     def testData(self):
-        self.assertEqual({'dummyitem': {'read': 0, 'write': 0, 'id': '0'}},
+        self.assertEqual({'dummyItem': {'read': 0, 'write': 0, 'id': '0'}},
                          self.item.data)
         
     def testSet(self):
-        self.item.set({'dummyitem': {'read': 0, 'write': 0}})
+        self.item.set({'dummyItem': {'read': 0, 'write': 0}})
 
 class FilesTest(unittest.TestCase):
     def setUp(self):
@@ -345,6 +345,24 @@ class ParametersTest(unittest.TestCase):
                               'writable': True}}
         self.assertEqual(data, param.data)
         
+    def testSetUrl(self):
+        stromxParam = self.receive.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '127.0.0.1',
+                                 'numberValue': 0}})
+        paramId = stromxParam.id()
+        self.assertEqual('127.0.0.1', self.receive.getParameter(paramId).get())
+        
+    def testSetUrlUnicode(self):
+        stromxParam = self.receive.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': u'127.0.0.1',
+                                 'numberValue': 0}})
+        paramId = stromxParam.id()
+        self.assertEqual('127.0.0.1', self.receive.getParameter(paramId).get())
+        
     def testDataPort(self):
         stromxParam = self.receive.info().parameters()[1]
         param = self.parameters.addStromxParameter(self.receive, stromxParam)
@@ -359,6 +377,15 @@ class ParametersTest(unittest.TestCase):
                               'writable': True}}
         self.assertEqual(data, param.data)
         
+    def testSetPort(self):
+        stromxParam = self.receive.info().parameters()[1]
+        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '',
+                                 'numberValue': 50000}})
+        paramId = stromxParam.id()
+        self.assertEqual(50000, self.receive.getParameter(paramId).get())
+        
     def testDataNumberOfOutputs(self):
         stromxParam = self.fork.info().parameters()[0]
         param = self.parameters.addStromxParameter(self.fork, stromxParam)
@@ -372,6 +399,16 @@ class ParametersTest(unittest.TestCase):
                               'type': 'int',
                               'writable': False}}
         self.assertEqual(data, param.data)
+        
+    def testSetNumberOfOutputs(self):
+        self.stream.deinitializeOperator(self.fork)
+        stromxParam = self.fork.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.fork, stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '',
+                                 'numberValue': 3}})
+        paramId = stromxParam.id()
+        self.assertEqual(3, self.fork.getParameter(paramId).get())
         
     def testDataPixelType(self):
         stromxParam = self.dummyCamera.info().parameters()[1]
@@ -388,6 +425,16 @@ class ParametersTest(unittest.TestCase):
                               'writable': True}}
         self.assertEqual(data, param.data)
         
+    def testSetPixelType(self):
+        stromxParam = self.dummyCamera.info().parameters()[1]
+        param = self.parameters.addStromxParameter(self.dummyCamera,
+                                                   stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '',
+                                 'numberValue': 1}})
+        paramId = stromxParam.id()
+        self.assertEqual(1, self.dummyCamera.getParameter(paramId).get())
+        
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
@@ -402,7 +449,7 @@ class EnumDescriptionsTest(unittest.TestCase):
         
     def testData(self):
         desc = self.enumDescriptions.addStromxEnumDescription(self.manual)
-        data = {'enumdescription': {'id': '0', 
+        data = {'enumDescription': {'id': '0', 
                                     'title': 'Software trigger', 
                                     'value': 0}}
         self.assertEqual(data, desc.data)

@@ -12,6 +12,7 @@ App.Stream = DS.Model.extend({
   file: DS.belongsTo('file'),
   active: DS.attr('boolean'),
   paused: DS.attr('boolean'),
+  saved: DS.attr('boolean'),
   operators: DS.hasMany('operator', {async: true})
 });
 
