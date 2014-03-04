@@ -7,6 +7,7 @@ import re
 
 import stromx.cvsupport 
 import stromx.runtime 
+import stromx.test 
 
 class Model(object):
     def __init__(self, directory = ""):
@@ -241,6 +242,7 @@ class Stream(Item):
             factory = stromx.runtime.Factory()
             stromx.runtime.register(factory)
             stromx.cvsupport.register(factory)
+            stromx.test.register(factory)
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
