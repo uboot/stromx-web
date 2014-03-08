@@ -224,25 +224,26 @@ class Streams(Items):
     def __init__(self, model):
         super(Streams, self).__init__(model)
         
+        self.__factory = stromx.runtime.Factory()
+        stromx.runtime.register(self.__factory)
+        stromx.cvsupport.register(self.__factory)
+        stromx.test.register(self.__factory)
+        
     def addFile(self, streamFile):
-        stream = Stream(streamFile, self.model)
+        stream = Stream(streamFile, self.__factory, self.model)
         self.addItem(stream)
         return stream
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators"]
     
-    def __init__(self, streamFile, model):
+    def __init__(self, streamFile, factory, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
         self.__saved = True
         self.__operators = []
         
         if os.path.exists(streamFile.path):
-            factory = stromx.runtime.Factory()
-            stromx.runtime.register(factory)
-            stromx.cvsupport.register(factory)
-            stromx.test.register(factory)
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(str(streamFile.path), factory)
         else:
