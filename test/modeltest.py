@@ -393,9 +393,12 @@ class ParametersTest(unittest.TestCase):
         self.fork = self.stream.addOperator(kernel)
         kernel = stromx.cvsupport.DummyCamera()
         self.dummyCamera = self.stream.addOperator(kernel)
+        kernel = stromx.test.ExceptionOperator()
+        self.exceptionOperator = self.stream.addOperator(kernel)
         self.stream.initializeOperator(self.fork)
         self.stream.initializeOperator(self.receive)
         self.stream.initializeOperator(self.dummyCamera)
+        self.stream.initializeOperator(self.exceptionOperator)
         
     def testDataUrl(self):
         stromxParam = self.receive.info().parameters()[0]
@@ -500,6 +503,20 @@ class ParametersTest(unittest.TestCase):
                                  'numberValue': 1}})
         paramId = stromxParam.id()
         self.assertEqual(1, self.dummyCamera.getParameter(paramId).get())
+        
+    def testDataException(self):
+        stromxParam = self.exceptionOperator.info().parameters()[5]
+        param = self.parameters.addStromxParameter(self.exceptionOperator, 
+                                                   stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '',
+                                 'numberValue': 1}})
+        
+        stromxParam = self.exceptionOperator.info().parameters()[6]
+        param = self.parameters.addStromxParameter(self.exceptionOperator,
+                                                   stromxParam)
+        state = param.data['parameter']['state']
+        self.assertEqual('accessFailed', state)
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):

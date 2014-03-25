@@ -404,6 +404,7 @@ class Parameter(Item):
         super(Parameter, self).__init__(model)
         self.__param = param
         self.__op = op
+        self.__state = 'current'
         self.__descriptions = []
         for desc in self.__param.descriptions():
             if not _parameterIsReadable(op, param):
@@ -414,6 +415,10 @@ class Parameter(Item):
             )
             self.__descriptions.append(description)
         
+    @property
+    def state(self):
+        return self.__state
+    
     @property
     def title(self):
         return self.__param.title()
