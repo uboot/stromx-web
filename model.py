@@ -7,7 +7,6 @@ import re
 
 import stromx.cvsupport 
 import stromx.runtime 
-import stromx.test 
 
 class Model(object):
     def __init__(self, directory = ""):
@@ -64,6 +63,9 @@ class Items(object):
     
     def __getitem__(self, index):
         return self.__items[index]
+    
+    def __len__(self):
+        return len(self.__items)
     
     def set(self, index, data):
         obj = self[index]
@@ -137,7 +139,8 @@ class Files(Items):
         self.__directory = directory
         files = []
         if directory != "":
-            files = [File(name, self.model) for name in os.listdir(directory)]
+            files = [File(name, self.model) for name
+                     in sorted(os.listdir(directory))]
         self.addItems(files)
         
     def addData(self, data):
@@ -221,13 +224,16 @@ class File(Item):
             os.remove(self.path)
         
 class Streams(Items):
+    @property
+    def factory(self):
+        return self.__factory
+    
     def __init__(self, model):
         super(Streams, self).__init__(model)
         
         self.__factory = stromx.runtime.Factory()
         stromx.runtime.register(self.__factory)
         stromx.cvsupport.register(self.__factory)
-        stromx.test.register(self.__factory)
         
     def addFile(self, streamFile):
         stream = Stream(streamFile, self.__factory, self.model)

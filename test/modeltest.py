@@ -7,6 +7,7 @@ import unittest
 
 import stromx.cvsupport
 import stromx.runtime
+import stromx.test
 
 import model
 
@@ -151,7 +152,7 @@ class ItemTest(unittest.TestCase):
 class FilesTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
-        shutil.copytree('data', 'temp')
+        shutil.copytree('data/stream', 'temp')
         
         self.files = model.Model('temp').files
         self.streams = self.files.model.streams
@@ -205,7 +206,8 @@ class FilesTest(unittest.TestCase):
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
-        self.assertTrue(filecmp.cmp('data/parallel.stromx', 'temp/test.stromx'))
+        self.assertTrue(filecmp.cmp('data/stream/parallel.stromx',
+                                    'temp/test.stromx'))
         
     def testAddDuplicate(self):
         self.files.addData({'file': {'name': 'parallel.stromx'}})
@@ -218,18 +220,32 @@ class FilesTest(unittest.TestCase):
 class StreamsTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
-        shutil.copytree('data', 'temp')
+        
+    def setUpStream(self):
+        shutil.copytree('data/stream', 'temp')
         
         self.model = model.Model('temp')
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
+    def setUpException(self):
+        shutil.copytree('data/exception', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streams = self.model.streams
+        stromx.test.register(self.streams.factory)
+        self.activateFile = self.model.files['0']
+        self.deactivateFile = self.model.files['1']
+        self.deinitializeFile = self.model.files['2']
+        
     def testAddData(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators.items))
         
     def testAddNoFile(self):
+        self.setUpStream()
         files = self.model.files
         files.addData({'file': _noFile})
         self.streams.addFile(files['1'])
@@ -242,30 +258,52 @@ class StreamsTest(unittest.TestCase):
 #         self.streams.addData(files['0'])
         
     def testSetActivate(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.assertTrue(self.streams.data['streams'][0]['active'])
         
+    def testSetActivateFails(self):
+        self.setUpException()
+        self.streams.addFile(self.activateFile)
+        
+        self.streams.set('0', {'stream': {'active': True}})
+        self.assertFalse(self.streams.data['streams'][0]['active'])
+        self.assertEqual(1, len(self.model.errors))
+        
     def testSetDeactivate(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
         self.streams.set('0', {'stream': {'active': False}})
         
+    def testSetDeactivateFails(self):
+        self.setUpException()
+        self.streams.addFile(self.activateFile)
+        self.streams.set('0', {'stream': {'active': True}})
+        self.streams.set('0', {'stream': {'active': False}})
+        
+        self.assertFalse(self.streams.data['streams'][0]['active'])
+        self.assertEqual(1, len(self.model.errors))
+        
     def testSetDeactivateTwice(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.streams.set('0', {'stream': {'active': False}})
         
     def testSetPause(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'paused': True}})
         self.assertTrue(self.streams.data['streams'][0]['paused'])
         
     def testSetResume(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'paused': True}})
@@ -273,6 +311,7 @@ class StreamsTest(unittest.TestCase):
         self.assertFalse(self.streams.data['streams'][0]['paused'])
         
     def testSetSaved(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.streams.set('0', {'stream': {'saved': True}})
@@ -282,12 +321,14 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         
     def testSetName(self):
+        self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):
+        self.setUpStream()
         stream = self.streams.addFile(self.streamFile)
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators.items)  
