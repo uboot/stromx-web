@@ -398,7 +398,7 @@ class Parameters(Items):
     
 class Parameter(Item):
     properties = ['title', 'type', 'stringValue', 'numberValue', 'minimum',
-                  'maximum', 'writable', 'descriptions']
+                  'maximum', 'writable', 'descriptions', 'state']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -436,6 +436,8 @@ class Parameter(Item):
             return 'int'
         elif variant.isVariant(stromx.runtime.DataVariant.STRING):
             return 'string'
+        else:
+            return ''
         
     @property
     def stringValue(self):
