@@ -436,13 +436,17 @@ class Parameter(Item):
             return 'int'
         elif variant.isVariant(stromx.runtime.DataVariant.STRING):
             return 'string'
+        elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+            return 'image'
+        elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+            return 'matrix'
         else:
-            return ''
+            return 'none'
         
     @property
     def stringValue(self):
         variant = self.__param.variant()
-        if not _isString(variant):
+        if not _hasStringRepresentation(variant):
             return ''
         
         return self.__getParameter(variant)
@@ -452,7 +456,7 @@ class Parameter(Item):
         assert(type(value) == str or type(value) == unicode)
         variant = self.__param.variant()
         if not _isString(variant):
-            return ''
+            return
         data = _toStromxData(variant, str(value))
         self.__setParameter(data)
         
@@ -469,7 +473,7 @@ class Parameter(Item):
         assert(type(value) == float or type(value) == int)
         variant = self.__param.variant()
         if not _isNumber(variant):
-            return ''
+            return
         data = _toStromxData(variant, value)
         self.__setParameter(data)
         
@@ -643,6 +647,15 @@ def _isString(variant):
     else:
         return False
     
+def _hasStringRepresentation(variant):
+    if variant.isVariant(stromx.runtime.DataVariant.STRING):
+        return True
+    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+        return True
+    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+        return True
+    else:
+        return False
     
 def _toPythonValue(variant, data):
     if data.variant().isVariant(stromx.runtime.DataVariant.NONE):
@@ -654,6 +667,10 @@ def _toPythonValue(variant, data):
         return float(data.get())
     elif variant.isVariant(stromx.runtime.DataVariant.STRING):
         return str(data.get())
+    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+        return "{0} x {1}".format(data.width(), data.height())
+    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+        return "{0} x {1}".format(data.rows(), data.cols())
     else:
         return 0
        

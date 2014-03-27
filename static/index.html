@@ -255,9 +255,14 @@
                   <em>Access timed out</em>
                   <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
                 {{else}}
-                  {{displayValue}} 
-                  {{#if writable}}
-                    <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                  {{#if accessFailed}}
+                    <em>Access failed</em>
+                    <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+                  {{else}}
+                    {{displayValue}} 
+                    {{#if editable}}
+                      <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+                    {{/if}}
                   {{/if}}
                 {{/if}}
               {{/if}}

@@ -71,7 +71,7 @@ App.Stream.FIXTURES = [
     file: 1,
     active: false,
     paused: false,
-    operators: [0, 1, 2]
+    operators: [0, 1, 2, 4]
   },
   {
     id: 3,
@@ -122,7 +122,7 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2, 3, 4, 6]
+    parameters: [2, 3, 4, 6, 7]
   },
   {
     id: 3,
@@ -132,6 +132,15 @@ App.Operator.FIXTURES = [
     package: 'runtime',
     version: '0.0.1',
     parameters: [5]
+  },
+  {
+    id: 4,
+    name: 'Test operator',
+    status: 'none',
+    type: 'Test',
+    package: 'mypackage',
+    version: '0.0.1',
+    parameters: [8, 9]
   }
 ];
 
@@ -201,6 +210,42 @@ App.Parameter.FIXTURES = [
     title: 'Host',
     type: 'string',
     stringValue: 'localhost',
+    numberValue: 0,
+    minimum: 0,
+    maximum: 0,
+    state: 'current',
+    writable: true,
+    descriptions: []
+  },
+  {
+    id: 7,
+    title: 'Kernel type',
+    type: 'int',
+    stringValue: '',
+    numberValue: 4,
+    minimum: 0,
+    maximum: 0,
+    state: 'accessFailed',
+    writable: true,
+    descriptions: []
+  },
+  {
+    id: 8,
+    title: 'Matrix parameter',
+    type: 'matrix',
+    stringValue: '3 x 3 float',
+    numberValue: 0,
+    minimum: 0,
+    maximum: 0,
+    state: 'current',
+    writable: true,
+    descriptions: []
+  },
+  {
+    id: 9,
+    title: 'Strange type',
+    type: 'none',
+    stringValue: '',
     numberValue: 0,
     minimum: 0,
     maximum: 0,

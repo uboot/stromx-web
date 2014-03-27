@@ -16,9 +16,21 @@ App.ParameterController = Ember.ObjectController.extend({
   isFloat: function() {
     return this.get('type') == 'float'
   }.property('type'),
-                                                        
+  
   timedOut: function() {
     return this.get('state') == 'timedOut'
+  }.property('state'),
+                                                        
+  editable: function() {
+    var typeIsKnown = (this.get('isEnum') || 
+                       this.get('isString') || 
+                       this.get('isInt') || 
+                       this.get('isFloat'));
+    return this.get('writable') && typeIsKnown
+  }.property('writable', 'type'),
+                                                        
+  accessFailed: function() {
+    return this.get('state') == 'accessFailed' || this.get('state') == 'timedOut'
   }.property('state'),
                                                         
   editValue:  function(key, value) {
@@ -57,12 +69,10 @@ App.ParameterController = Ember.ObjectController.extend({
       return this.get('numberValue')
     else if (this.get('isFloat'))
       return this.get('numberValue')
-    else if (this.get('isString'))
-      return this.get('stringValue')
     else if (this.get('isEnum'))
       return this.updateEnumTitle(this.get('numberValue'))
     else
-      return ''
+      return this.get('stringValue')
   }.property('stringValue', 'numberValue', 'type'),
   
   // cf. http://stackoverflow.com/questions/20623027/rendering-resolved-promise-value-in-ember-handlebars-template
