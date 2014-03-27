@@ -408,6 +408,7 @@ class ParametersTest(unittest.TestCase):
                               'maximum': 0,
                               'minimum': 0,
                               'numberValue': 0,
+                              'state': 'current',
                               'stringValue': 'localhost',
                               'title': 'URL',
                               'type': 'string',
@@ -440,6 +441,7 @@ class ParametersTest(unittest.TestCase):
                               'maximum': 65535,
                               'minimum': 49152,
                               'numberValue': 49152,
+                              'state': 'current',
                               'stringValue': '',
                               'title': 'TCP port',
                               'type': 'int',
@@ -463,6 +465,7 @@ class ParametersTest(unittest.TestCase):
                               'maximum': 4,
                               'minimum': 2,
                               'numberValue': 2,
+                              'state': 'current',
                               'stringValue': '',
                               'title': 'Number of outputs',
                               'type': 'int',
@@ -488,6 +491,7 @@ class ParametersTest(unittest.TestCase):
                               'maximum': 0,
                               'minimum': 0,
                               'numberValue': 0,
+                              'state': 'current',
                               'stringValue': '',
                               'title': 'Trigger mode',
                               'type': 'enum',
@@ -498,25 +502,42 @@ class ParametersTest(unittest.TestCase):
         stromxParam = self.dummyCamera.info().parameters()[1]
         param = self.parameters.addStromxParameter(self.dummyCamera,
                                                    stromxParam)
-        param.set({'parameter': {'id': '0',
+        param.set({'parameter': {'id': '1',
                                  'stringValue': '',
                                  'numberValue': 1}})
         paramId = stromxParam.id()
         self.assertEqual(1, self.dummyCamera.getParameter(paramId).get())
         
     def testDataException(self):
-        stromxParam = self.exceptionOperator.info().parameters()[5]
-        param = self.parameters.addStromxParameter(self.exceptionOperator, 
-                                                   stromxParam)
-        param.set({'parameter': {'id': '0',
-                                 'stringValue': '',
-                                 'numberValue': 1}})
+        self.__activateExceptionOnParameter()
         
         stromxParam = self.exceptionOperator.info().parameters()[6]
         param = self.parameters.addStromxParameter(self.exceptionOperator,
                                                    stromxParam)
         state = param.data['parameter']['state']
         self.assertEqual('accessFailed', state)
+        self.assertEqual(1, len(self.model.errors))
+        
+    def testSetParameterException(self):
+        self.__activateExceptionOnParameter()
+        stromxParam = self.exceptionOperator.info().parameters()[6]
+        param = self.parameters.addStromxParameter(self.exceptionOperator,
+                                                   stromxParam)
+        
+        data = param.set({'parameter': {'id': '0',
+                                        'stringValue': '',
+                                        'numberValue': 1}})
+        state = data['parameter']['state']
+        self.assertEqual('accessFailed', state)
+        self.assertEqual(2, len(self.model.errors))
+        
+    def __activateExceptionOnParameter(self):
+        stromxParam = self.exceptionOperator.info().parameters()[5]
+        param = self.parameters.addStromxParameter(self.exceptionOperator, 
+                                                   stromxParam)
+        param.set({'parameter': {'id': '0',
+                                 'stringValue': '',
+                                 'numberValue': 1}})
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):

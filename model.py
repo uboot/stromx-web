@@ -445,8 +445,7 @@ class Parameter(Item):
         if not _isString(variant):
             return ''
         
-        data = self.__op.getParameter(self.__param.id())
-        return _toPythonValue(variant, data)
+        return self.__getParameter(variant)
         
     @stringValue.setter
     def stringValue(self, value):
@@ -455,9 +454,7 @@ class Parameter(Item):
         if not _isString(variant):
             return ''
         data = _toStromxData(variant, str(value))
-        
-        if data != None:
-            self.__op.setParameter(self.__param.id(), data)
+        self.__setParameter(data)
         
     @property
     def numberValue(self):
@@ -465,8 +462,7 @@ class Parameter(Item):
         if not _isNumber(variant):
             return 0
         
-        data = self.__op.getParameter(self.__param.id())
-        return _toPythonValue(variant, data)
+        return self.__getParameter(variant)
         
     @numberValue.setter
     def numberValue(self, value):
@@ -475,9 +471,7 @@ class Parameter(Item):
         if not _isNumber(variant):
             return ''
         data = _toStromxData(variant, value)
-        
-        if data != None:
-            self.__op.setParameter(self.__param.id(), data)
+        self.__setParameter(data)
         
     @property
     def minimum(self):
@@ -511,6 +505,26 @@ class Parameter(Item):
     def descriptions(self):
         return [desc.index for desc in self.__descriptions]
         return self.__descriptions
+    
+    def __getParameter(self, variant):
+        try:
+            data = self.__op.getParameter(self.__param.id())
+            self.__state = 'current'
+            value = _toPythonValue(variant, data)
+        except stromx.runtime.Exception as e:
+            self.__state = 'accessFailed'
+            value = ''
+            self.model.errors.addError(e)
+        return value
+        
+    def __setParameter(self, data):
+        if data == None:
+            return
+            
+        try:
+            self.__op.setParameter(self.__param.id(), data)
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
     
 class EnumDescriptions(Items):
     def addStromxEnumDescription(self, desc):
