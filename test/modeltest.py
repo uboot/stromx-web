@@ -395,10 +395,13 @@ class ParametersTest(unittest.TestCase):
         self.dummyCamera = self.stream.addOperator(kernel)
         kernel = stromx.test.ExceptionOperator()
         self.exceptionOperator = self.stream.addOperator(kernel)
+        kernel = stromx.runtime.Trigger()
+        self.trigger = self.stream.addOperator(kernel)
         self.stream.initializeOperator(self.fork)
         self.stream.initializeOperator(self.receive)
         self.stream.initializeOperator(self.dummyCamera)
         self.stream.initializeOperator(self.exceptionOperator)
+        self.stream.initializeOperator(self.trigger)
         
     def testDataUrl(self):
         stromxParam = self.receive.info().parameters()[0]
@@ -538,6 +541,12 @@ class ParametersTest(unittest.TestCase):
         param.set({'parameter': {'id': '0',
                                  'stringValue': '',
                                  'numberValue': 1}})
+        
+    def testDataTrigger(self):
+        stromxParam = self.trigger.info().parameters()[0]
+        param = self.parameters.addStromxParameter(self.trigger, stromxParam)
+        
+        self.assertEqual('trigger', param.data['parameter']['type'])
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):

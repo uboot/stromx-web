@@ -17,6 +17,14 @@ App.ParameterController = Ember.ObjectController.extend({
     return this.get('type') == 'float'
   }.property('type'),
   
+  isBool: function() {
+    return this.get('type') == 'bool'
+  }.property('type'),
+  
+  isTrigger: function() {
+    return this.get('type') == 'trigger'
+  }.property('type'),
+  
   timedOut: function() {
     return this.get('state') == 'timedOut'
   }.property('state'),
@@ -69,6 +77,8 @@ App.ParameterController = Ember.ObjectController.extend({
       return this.get('numberValue')
     else if (this.get('isFloat'))
       return this.get('numberValue')
+    else if (this.get('isBool'))
+      return this.get('numberValue') == 0 ? 'False' : 'True'
     else if (this.get('isEnum'))
       return this.updateEnumTitle(this.get('numberValue'))
     else
@@ -107,6 +117,11 @@ App.ParameterController = Ember.ObjectController.extend({
     reload: function() {
       var model = this.get('model')
       model.reload()
+    },
+    trigger: function() {
+      this.set('numberValue', 1)
+      var model = this.get('model')
+      model.save()
     }
   }
 });

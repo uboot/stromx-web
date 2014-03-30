@@ -266,6 +266,9 @@
                   {{/if}}
                 {{/if}}
               {{/if}}
+              {{#if isTrigger}}
+                <button type="button" {{action "trigger"}} class="btn btn-default btn-xs">Trigger</button>
+              {{/if}}
             </td>
           </tr>
         </tr>

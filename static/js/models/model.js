@@ -140,7 +140,7 @@ App.Operator.FIXTURES = [
     type: 'Test',
     package: 'mypackage',
     version: '0.0.1',
-    parameters: [8, 9]
+    parameters: [8, 9, 10]
   }
 ];
 
@@ -245,6 +245,18 @@ App.Parameter.FIXTURES = [
     id: 9,
     title: 'Strange type',
     type: 'none',
+    stringValue: '',
+    numberValue: 0,
+    minimum: 0,
+    maximum: 0,
+    state: 'current',
+    writable: true,
+    descriptions: []
+  },
+  {
+    id: 10,
+    title: 'Trigger',
+    type: 'trigger',
     stringValue: '',
     numberValue: 0,
     minimum: 0,

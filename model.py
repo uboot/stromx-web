@@ -428,12 +428,14 @@ class Parameter(Item):
         variant = self.__param.variant()
         if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
             return 'float'
+        if variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+            return 'trigger'
         if variant.isVariant(stromx.runtime.DataVariant.ENUM):
             return 'enum'
         elif variant.isVariant(stromx.runtime.DataVariant.INT):
             return 'int'
         elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
-            return 'int'
+            return 'bool'
         elif variant.isVariant(stromx.runtime.DataVariant.STRING):
             return 'string'
         elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
@@ -638,6 +640,8 @@ def _isNumber(variant):
         return True
     elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
         return True
+    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+        return True
     else:
         return False
     
@@ -667,6 +671,8 @@ def _toPythonValue(variant, data):
         return float(data.get())
     elif variant.isVariant(stromx.runtime.DataVariant.STRING):
         return str(data.get())
+    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+        return 0
     elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
         return "{0} x {1}".format(data.width(), data.height())
     elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
@@ -697,6 +703,8 @@ def _toStromxData(variant, value):
         return stromx.runtime.Float64(value)
     elif variant.isVariant(stromx.runtime.DataVariant.STRING):
         return stromx.runtime.String(value)
+    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+        return stromx.runtime.TriggerData()
     else:
         return None
     
