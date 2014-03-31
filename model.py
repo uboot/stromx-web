@@ -426,24 +426,7 @@ class Parameter(Item):
     @property
     def type(self):
         variant = self.__param.variant()
-        if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
-            return 'float'
-        if variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
-            return 'trigger'
-        if variant.isVariant(stromx.runtime.DataVariant.ENUM):
-            return 'enum'
-        elif variant.isVariant(stromx.runtime.DataVariant.INT):
-            return 'int'
-        elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
-            return 'bool'
-        elif variant.isVariant(stromx.runtime.DataVariant.STRING):
-            return 'string'
-        elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-            return 'image'
-        elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
-            return 'matrix'
-        else:
-            return 'none'
+        return _variantToType(variant)
         
     @property
     def stringValue(self):
@@ -669,6 +652,8 @@ def _toPythonValue(variant, data):
         return int(data.get())
     elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
         return float(data.get())
+    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+        return bool(data.get())
     elif variant.isVariant(stromx.runtime.DataVariant.STRING):
         return str(data.get())
     elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
@@ -708,5 +693,24 @@ def _toStromxData(variant, value):
     else:
         return None
     
+def _variantToType(variant):
+    if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+        return 'float'
+    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+        return 'trigger'
+    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
+        return 'enum'
+    elif variant.isVariant(stromx.runtime.DataVariant.INT):
+        return 'int'
+    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+        return 'bool'
+    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+        return 'string'
+    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+        return 'image'
+    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+        return 'matrix'
+    else:
+        return 'none'
 
         

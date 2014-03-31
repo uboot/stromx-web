@@ -395,13 +395,13 @@ class ParametersTest(unittest.TestCase):
         self.dummyCamera = self.stream.addOperator(kernel)
         kernel = stromx.test.ExceptionOperator()
         self.exceptionOperator = self.stream.addOperator(kernel)
-        kernel = stromx.runtime.Trigger()
-        self.trigger = self.stream.addOperator(kernel)
+        kernel = stromx.test.ParameterOperator()
+        self.parameterOperator = self.stream.addOperator(kernel)
         self.stream.initializeOperator(self.fork)
         self.stream.initializeOperator(self.receive)
         self.stream.initializeOperator(self.dummyCamera)
         self.stream.initializeOperator(self.exceptionOperator)
-        self.stream.initializeOperator(self.trigger)
+        self.stream.initializeOperator(self.parameterOperator)
         
     def testDataUrl(self):
         stromxParam = self.receive.info().parameters()[0]
@@ -543,10 +543,28 @@ class ParametersTest(unittest.TestCase):
                                  'numberValue': 1}})
         
     def testDataTrigger(self):
-        stromxParam = self.trigger.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.trigger, stromxParam)
+        stromxParam = self.parameterOperator.info().parameters()[8]
+        valueParam = self.parameters.addStromxParameter(self.parameterOperator,
+                                                        stromxParam)
+        stromxParam = self.parameterOperator.info().parameters()[9]
+        param = self.parameters.addStromxParameter(self.parameterOperator, 
+                                                   stromxParam)
         
         self.assertEqual('trigger', param.data['parameter']['type'])
+        self.assertEqual(0, valueParam.data['parameter']['numberValue'])
+        
+    def testSetTrigger(self):
+        stromxParam = self.parameterOperator.info().parameters()[8]
+        valueParam = self.parameters.addStromxParameter(self.parameterOperator,
+                                                        stromxParam)
+        stromxParam = self.parameterOperator.info().parameters()[9]
+        param = self.parameters.addStromxParameter(self.parameterOperator, 
+                                                   stromxParam)
+        
+        param.set({'parameter': {'id': '9',
+                                 'stringValue': '',
+                                 'numberValue': 1}})
+        self.assertEqual(1, valueParam.data['parameter']['numberValue'])
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):

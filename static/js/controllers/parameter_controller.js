@@ -37,6 +37,8 @@ App.ParameterController = Ember.ObjectController.extend({
     return this.get('writable') && typeIsKnown
   }.property('writable', 'type'),
                                                         
+  writeOnly: Ember.computed.not('writable'),
+                                                        
   accessFailed: function() {
     return this.get('state') == 'accessFailed' || this.get('state') == 'timedOut'
   }.property('state'),
@@ -66,7 +68,20 @@ App.ParameterController = Ember.ObjectController.extend({
       else
         return ''
     }
-  }.property('stringValue', 'numberValue', 'type'),
+  }.property('stringValue', 'numberValue', 'type'),      
+                                                        
+  boolValue:  function(key, value) {
+    if (arguments.length > 1) {
+      var v = value ? 1 : 0
+      this.set('numberValue', v)
+      var model = this.get('model')
+      model.save()
+      return value
+    }
+    else {
+      return this.get('numberValue') == 1
+    }
+  }.property('numberValue'),
   
   displayValue: function(key, value) {
     if (arguments.length > 1) {
@@ -77,8 +92,6 @@ App.ParameterController = Ember.ObjectController.extend({
       return this.get('numberValue')
     else if (this.get('isFloat'))
       return this.get('numberValue')
-    else if (this.get('isBool'))
-      return this.get('numberValue') == 0 ? 'False' : 'True'
     else if (this.get('isEnum'))
       return this.updateEnumTitle(this.get('numberValue'))
     else

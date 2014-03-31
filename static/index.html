@@ -269,6 +269,9 @@
               {{#if isTrigger}}
                 <button type="button" {{action "trigger"}} class="btn btn-default btn-xs">Trigger</button>
               {{/if}}
+              {{#if isBool}}
+                {{input type="checkbox" checked=boolValue disabled=writeOnly}}
+              {{/if}}
             </td>
           </tr>
         </tr>
