@@ -122,7 +122,7 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2, 3, 4, 6, 7]
+    parameters: [2, 3, 4, 6, 7, 12]
   },
   {
     id: 3,
@@ -166,7 +166,7 @@ App.Parameter.FIXTURES = [
     minimum: 0,
     maximum: 0,
     state: 'current',
-    writable: true,
+    writable: false,
     descriptions: [0, 1, 2]
   },
   {
@@ -276,7 +276,19 @@ App.Parameter.FIXTURES = [
     state: 'current',
     writable: true,
     descriptions: []
-  }
+  },
+  {
+    id: 12,
+    title: 'Kernel type',
+    type: 'enum',
+    stringValue: '',
+    numberValue: 3,
+    minimum: 0,
+    maximum: 0,
+    state: 'current',
+    writable: true,
+    descriptions: [3, 4, 5]
+  },
 ];
 
 App.EnumDescription.FIXTURES = [
@@ -294,5 +306,20 @@ App.EnumDescription.FIXTURES = [
     id: 2,
     value: 2,
     title: 'In place'
+  },
+  {
+    id: 3,
+    value: 2,
+    title: 'Square'
+  },
+  {
+    id: 4,
+    value: 3,
+    title: 'Circle'
+  },
+  {
+    id: 5,
+    value: 7,
+    title: 'Gaussian'
   }
 ];

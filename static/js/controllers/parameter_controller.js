@@ -28,23 +28,34 @@ App.ParameterController = Ember.ObjectController.extend({
   timedOut: function() {
     return this.get('state') == 'timedOut'
   }.property('state'),
+  
+  current: function() {
+    return this.get('state') == 'current'
+  }.property('state'),                                                        
                                                         
   editable: function() {
-    var typeIsKnown = (this.get('isEnum') || 
-                       this.get('isString') || 
+    var typeIsKnown = (this.get('isString') || 
                        this.get('isInt') || 
                        this.get('isFloat'));
-    return this.get('writable') && typeIsKnown
-  }.property('writable', 'type'),
+    return this.get('writable') && this.get('current') && typeIsKnown
+  }.property('writable', 'isString', 'isInt', 'isFloat', 'state'),
                                                         
   writeOnly: Ember.computed.not('writable'),
                                                         
   accessFailed: function() {
-    return this.get('state') == 'accessFailed' || this.get('state') == 'timedOut'
+    return this.get('state') == 'accessFailed'
   }.property('state'),
                                                         
   editValue:  function(key, value) {
-    if (arguments.length > 1) {
+    if (value === undefined) {
+      if (this.get('isInt') || this.get('isFloat'))
+        return this.get('numberValue')
+      else if (this.get('isString'))
+        return this.get('stringValue')
+      else
+        return ''
+    }
+    else {
       if (this.get('isInt')) {
         var v = parseInt(value)
         this.set('numberValue', v)
@@ -60,77 +71,62 @@ App.ParameterController = Ember.ObjectController.extend({
         return value
       }
     }
-    else {
-      if (this.get('isInt') || this.get('isFloat'))
-        return this.get('numberValue')
-      else if (this.get('isString'))
-        return this.get('stringValue')
-      else
-        return ''
-    }
   }.property('stringValue', 'numberValue', 'type'),      
                                                         
   boolValue:  function(key, value) {
-    if (arguments.length > 1) {
+    if (value === undefined) {
+      return this.get('numberValue') == 1
+    }
+    else {
       var v = value ? 1 : 0
       this.set('numberValue', v)
       var model = this.get('model')
       model.save()
       return value
     }
-    else {
-      return this.get('numberValue') == 1
-    }
   }.property('numberValue'),
-  
-  displayValue: function(key, value) {
-    if (arguments.length > 1) {
+                                                        
+  enumValue:  function(key, value) {
+    if (value === undefined) {
+      return this.get('numberValue')
+    }
+    else {
+      this.set('numberValue', value)
+      var model = this.get('model')
+      model.save()
       return value
     }
+  }.property('numberValue'),
+                                                        
+  displayValue: function(key, value) {
+    if (! this.get('current'))
+      return
     
     if (this.get('isInt'))
       return this.get('numberValue')
     else if (this.get('isFloat'))
       return this.get('numberValue')
-    else if (this.get('isEnum'))
-      return this.updateEnumTitle(this.get('numberValue'))
-    else
+    else 
       return this.get('stringValue')
+      
   }.property('stringValue', 'numberValue', 'type'),
-  
-  // cf. http://stackoverflow.com/questions/20623027/rendering-resolved-promise-value-in-ember-handlebars-template
-  updateEnumTitle: function(enumValue) {
-    var value = enumValue
-    var title = this.get('descriptions').then( function(value){
-      return value.find( function(item, index, enumerable) {
-         return item.get('value') == enumValue
-      })
-    }).then( function(obj) {
-      return obj.get('title')
-    })
-    
-    var that = this
-    title.then( function(title) {
-      that.set('displayValue', title)
-      value = title
-    })
-    
-    return value
-  },
   
   actions: {
     editValue: function() {
       this.set('isEditing', true)
     }, 
+    
     saveValue: function() {
       this.set('isEditing', false)
       var model = this.get('model')
       model.save()
     },
+    
     reload: function() {
       var model = this.get('model')
       model.reload()
     },
+    
     trigger: function() {
       this.set('numberValue', 1)
       var model = this.get('model')
