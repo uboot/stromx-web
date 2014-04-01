@@ -241,13 +241,14 @@
             <td>
               {{title}}
             </td>
-            <td>    
-              {{#if isEnum}}
-                {{view Ember.Select content=descriptions optionValuePath="content.value" 
-                  optionLabelPath="content.title" value=enumValue disabled=writeOnly}}
-              {{/if}}
+            <td>
               {{#if isEditing}}
-                {{input value=editValue}}
+                {{#if isEnum}}
+                  {{view Ember.Select value=enumValue content=descriptions optionValuePath="content.value" 
+                    optionLabelPath="content.title" disabled=writeOnly}}
+                {{else}}
+                  {{input value=editValue}}
+                {{/if}}
                 <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
               {{/if}}
               {{#if timedOut}}
@@ -266,7 +267,9 @@
               {{/if}}
               {{displayValue}} 
               {{#if editable}}
+              {{#unless isEditing}}
                 <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+              {{/unless}}
               {{/if}}
             </td>
           </tr>

@@ -35,6 +35,7 @@ App.ParameterController = Ember.ObjectController.extend({
                                                         
   editable: function() {
     var typeIsKnown = (this.get('isString') || 
+                       this.get('isEnum') || 
                        this.get('isInt') || 
                        this.get('isFloat'));
     return this.get('writable') && this.get('current') && typeIsKnown
@@ -99,17 +100,45 @@ App.ParameterController = Ember.ObjectController.extend({
   }.property('numberValue'),
                                                         
   displayValue: function(key, value) {
+    if (value !== undefined)
+      return value
+      
     if (! this.get('current'))
-      return
+      return ''
     
+    if (this.get('isEditing'))
+      return ''
+      
     if (this.get('isInt'))
       return this.get('numberValue')
     else if (this.get('isFloat'))
       return this.get('numberValue')
+    else if (this.get('isEnum'))
+      return this.updateEnumTitle(this.get('numberValue'))
     else 
       return this.get('stringValue')
       
-  }.property('stringValue', 'numberValue', 'type'),
+  }.property('stringValue', 'numberValue', 'type', 'isEditing'),   
+                                                        
+  // cf. http://stackoverflow.com/q/20623027
+  updateEnumTitle: function(enumValue) {
+    var value = enumValue
+    var title = this.get('descriptions').then( function(value){
+      return value.find( function(item, index, enumerable) {
+         return item.get('value') == enumValue
+      })
+    }).then( function(obj) {
+      return obj.get('title')
+    })
+    
+    var that = this
+    title.then( function(title) {
+      that.set('displayValue', title)
+      value = title
+    })
+    
+    return value
+  },
   
   actions: {
     editValue: function() {
