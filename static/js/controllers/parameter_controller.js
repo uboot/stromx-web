@@ -87,18 +87,6 @@ App.ParameterController = Ember.ObjectController.extend({
     }
   }.property('numberValue'),
                                                         
-  enumValue:  function(key, value) {
-    if (value === undefined) {
-      return this.get('numberValue')
-    }
-    else {
-      this.set('numberValue', value)
-      var model = this.get('model')
-      model.save()
-      return value
-    }
-  }.property('numberValue'),
-                                                        
   displayValue: function(key, value) {
     if (value !== undefined)
       return value

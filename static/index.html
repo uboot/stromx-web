@@ -118,9 +118,9 @@
         <div class="form-group">
           <label for="uploadFile">File</label>
           {{view App.UploadFile valueBinding="name" content=content id="uploadFile"}}
-          <p class="help-block">Choose a valid stromx file.</p>
+          <p class="help-block">Choose a stromx file.</p>
         </div>
-        <button {{action 'addFile'}} type="submit" class="btn btn-default">Save</button>
+        <button {{action 'addFile'}} type="submit" class="btn btn-default">Upload</button>
       </div>
     </div>
   </script>
@@ -244,7 +244,7 @@
             <td>
               {{#if isEditing}}
                 {{#if isEnum}}
-                  {{view Ember.Select value=enumValue content=descriptions optionValuePath="content.value" 
+                  {{view Ember.Select value=numberValue content=descriptions optionValuePath="content.value" 
                     optionLabelPath="content.title" disabled=writeOnly}}
                 {{else}}
                   {{input value=editValue}}
