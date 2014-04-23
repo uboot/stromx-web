@@ -250,12 +250,15 @@ class StreamsTest(unittest.TestCase):
         files.addData({'file': _noFile})
         self.streams.addFile(files['1'])
         
-#     def testAddInvalidFile(self):
-#         with file('temp/invalid.stromx', 'w') as f:
-#             f.write("nonsense")
-#             
-#         files = model.Files('temp', self.streams)
-#         self.streams.addData(files['0'])
+    def testAddInvalidFile(self):
+        os.mkdir('temp')
+        with file('temp/invalid.stromx', 'w') as f:
+            f.write("nonsense")
+             
+        self.model = model.Model('temp')
+        self.streams = self.model.streams
+        self.streamFile = self.model.files['0']
+        self.streams.addFile(self.streamFile)
         
     def testSetActivate(self):
         self.setUpStream()
