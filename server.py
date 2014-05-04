@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import httplib
+import os
 import tornado.escape
 import tornado.ioloop
 import tornado.web
@@ -77,6 +78,8 @@ class ErrorSocket(tornado.websocket.WebSocketHandler):
         loop.add_callback(self.doSend, error)
 
 def start():
+    serverDir = os.path.dirname(os.path.abspath(__file__))
+    staticDir = os.path.join(serverDir, "static")
     application = tornado.web.Application(
         [
             (r"/", tornado.web.RedirectHandler, {"url": "/static/index.html"}),
@@ -94,7 +97,7 @@ def start():
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),
         ],
-        static_path="static"
+        static_path = staticDir
     )
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
