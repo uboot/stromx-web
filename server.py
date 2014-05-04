@@ -9,9 +9,13 @@ import tornado.websocket
 
 import model
 
-_model = model.Model('files')
-
 class ItemsHandler(tornado.web.RequestHandler):
+    def __init__(self):
+        self.items = None
+    
+    def initialize(self, items):
+        self.items = items
+        
     def get(self, index = None):
         try:
             if index == None:
@@ -43,31 +47,16 @@ class ItemsHandler(tornado.web.RequestHandler):
             self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
-
-class StreamsHandler(ItemsHandler):
-    items = _model.streams
-  
-class FilesHandler(ItemsHandler):
-    items = _model.files
-  
-class OperatorsHandler(ItemsHandler):
-    items = _model.operators
-  
-class ParametersHandler(ItemsHandler):
-    items = _model.parameters
-  
-class EnumDescriptionsHandler(ItemsHandler):
-    items = _model.enumDescriptions
-    
-    def get(self, index = None):
-        return super(EnumDescriptionsHandler, self).get(index)
     
 class ErrorSocket(tornado.websocket.WebSocketHandler):
+    def initialize(self, errors):
+        self.errors = errors
+        
     def open(self):
-        _model.errors.errorHandlers.append(self.sendError)
+        self.errors.errorHandlers.append(self.sendError)
     
     def on_close(self):
-        _model.errors.errorHandlers.remove(self.sendError)
+        self.errors.errorHandlers.remove(self.sendError)
         
     def doSend(self, error):
         json = tornado.escape.json_encode(error.data)
@@ -77,23 +66,30 @@ class ErrorSocket(tornado.websocket.WebSocketHandler):
         loop = tornado.ioloop.IOLoop.instance()
         loop.add_callback(self.doSend, error)
 
+
 def start():
+    appModel = model.Model('files')
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
     application = tornado.web.Application(
         [
-            (r"/", tornado.web.RedirectHandler, {"url": "/static/index.html"}),
-            (r"/files", FilesHandler),
-            (r"/files/([0-9]+)", FilesHandler),
-            (r"/streams", StreamsHandler),
-            (r"/streams/([0-9]+)", StreamsHandler),
-            (r"/operators", OperatorsHandler),
-            (r"/operators/([0-9]+)", OperatorsHandler),
-            (r"/parameters", ParametersHandler),
-            (r"/parameters/([0-9]+)", ParametersHandler),
-            (r"/enumDescriptions", EnumDescriptionsHandler),
-            (r"/enumDescriptions/([0-9]+)", EnumDescriptionsHandler),
-            (r"/error_socket", ErrorSocket),
+            (r"/", tornado.web.RedirectHandler,
+             {"url": "/static/index.html"}),
+            (r"/files", ItemsHandler, dict(items = appModel.files)),
+            (r"/files/([0-9]+)", ItemsHandler, dict(items = appModel.files)),
+            (r"/streams", ItemsHandler, dict(items = appModel.streams)),
+            (r"/streams/([0-9]+)", ItemsHandler, dict(items = appModel.streams)),
+            (r"/operators", ItemsHandler, dict(items = appModel.operators)),
+            (r"/operators/([0-9]+)", ItemsHandler,
+             dict(items = appModel.operators)),
+            (r"/parameters", ItemsHandler, dict(items = appModel.parameters)),
+            (r"/parameters/([0-9]+)", ItemsHandler,
+             dict(items = appModel.parameters)),
+            (r"/enumDescriptions", ItemsHandler, 
+             dict(items = appModel.enumDescriptions)),
+            (r"/enumDescriptions/([0-9]+)", ItemsHandler,
+             dict(items = appModel.enumDescriptions)),
+            (r"/error_socket", ErrorSocket, dict(errors = appModel.errors)),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": "files"}),
         ],
