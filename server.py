@@ -67,8 +67,8 @@ class ErrorSocket(tornado.websocket.WebSocketHandler):
         loop.add_callback(self.doSend, error)
 
 
-def start():
-    appModel = model.Model('files')
+def start(files):
+    appModel = model.Model(files)
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
     application = tornado.web.Application(
@@ -91,7 +91,7 @@ def start():
              dict(items = appModel.enumDescriptions)),
             (r"/error_socket", ErrorSocket, dict(errors = appModel.errors)),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
-             {"path": "files"}),
+             {"path": files}),
         ],
         static_path = staticDir
     )
@@ -99,4 +99,4 @@ def start():
     tornado.ioloop.IOLoop.instance().start()
     
 if __name__ == "__main__":
-    start()
+    start("files")
