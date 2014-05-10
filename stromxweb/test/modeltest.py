@@ -189,6 +189,19 @@ class FilesTest(unittest.TestCase):
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual({'streams': []}, self.streams.data)
         
+    def testSetOpenFails(self):
+        shutil.rmtree('temp', True)
+        os.mkdir('temp')
+        with file('temp/invalid.stromx', 'w') as f:
+            f.write("nonsense")
+        self.files = model.Model('temp').files
+        self.streams = self.files.model.streams
+             
+        f = self.files.set('0', {'file': {'opened': True}})
+        
+        self.assertEqual(False, f['file']['opened'])
+        self.assertEqual(1, len(self.files.model.errors))
+        
     def testSetName(self):
         f = self.files.set('0', {'file': {'name': 'renamed.stromx'}})
         self.assertEqual({'file': _renamedFile}, f)
@@ -249,16 +262,6 @@ class StreamsTest(unittest.TestCase):
         files = self.model.files
         files.addData({'file': _noFile})
         self.streams.addFile(files['1'])
-        
-    def testAddInvalidFile(self):
-        os.mkdir('temp')
-        with file('temp/invalid.stromx', 'w') as f:
-            f.write("nonsense")
-             
-        self.model = model.Model('temp')
-        self.streams = self.model.streams
-        self.streamFile = self.model.files['0']
-        self.streams.addFile(self.streamFile)
         
     def testSetActivate(self):
         self.setUpStream()
