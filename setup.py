@@ -17,5 +17,5 @@ setup(name='stromx-web',
                                   'static/js/libs/*',
                                   'static/js/models/*',
                                   'static/js/views/*']},
-      requires=['tornado(>=1.0)']
+      requires=['tornado(>=3.0)']
 )
