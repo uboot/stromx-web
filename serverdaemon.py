@@ -3,8 +3,8 @@ import daemon
 from stromxweb import start
 
 context = daemon.DaemonContext(
-    working_directory=''
+    working_directory='files'
 )
 
 with context:
-    start(".")
+    start('.')
