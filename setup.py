@@ -19,6 +19,6 @@ setup(name='stromx-web',
       url='http://www.stromx.org',
       packages=['stromxweb'],
       package_data={'stromxweb': static_files},
-      scripts=['scripts/stromx_server_run.py'],
-      requires=['tornado(>=3.0)']
+      scripts=['scripts/stromx_server_start.py'],
+      requires=['tornado(>=3.0)', 'daemon(>=1.5)']
 )

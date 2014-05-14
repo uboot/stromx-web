@@ -94,5 +94,6 @@ def start(files):
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
     
-if __name__ == "__main__":
-    start("files")
+def stop():
+    ioLoop = tornado.ioloop.IOLoop.instance()
+    ioLoop.add_callback(ioLoop.stop)
