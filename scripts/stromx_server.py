@@ -8,14 +8,16 @@ import stromxweb
 def stopServer(signum, frame):
     stromxweb.stop()
 
-signal.signal(signal.SIGTERM, stopServer)
-
 class App():
     def __init__(self):
         self.pidfile_path =  '/tmp/stromxweb.pid'
         self.pidfile_timeout = 5
-        
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/dev/tty'
+        self.stderr_path = '/dev/tty'
+ 
     def run(self):
+        signal.signal(signal.SIGTERM, stopServer)
         stromxweb.start('/tmp/stromx-web')
 
 app = App()
