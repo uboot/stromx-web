@@ -155,7 +155,7 @@ class Files(Items):
             self.addItem(f)
         
         content = data["file"].get("content", "")
-        content = re.sub("data:*;base64,", "", content, re.MULTILINE)
+        content = re.sub("data:.*;base64,", "", content, re.MULTILINE)
         if content != "":
             with file(f.path, 'w') as streamFile:
                 streamFile.write(base64.decodestring(content))
