@@ -319,7 +319,7 @@ class Stream(Item):
         # the file should be saved
         writer = stromx.runtime.XmlWriter()
         try:
-            writer.writeStream(self.__file.path, self.__stream)
+            writer.writeStream(str(self.__file.path), self.__stream)
             self.__saved = True
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)

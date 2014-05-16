@@ -61,7 +61,7 @@ class ErrorSocket(tornado.websocket.WebSocketHandler):
         
     def sendError(self, error):
         loop = tornado.ioloop.IOLoop.instance()
-        loop.add_callback(self.doSend, error)
+        loop.add_callback(lambda: self.doSend(error))
 
 def start(files):
     appModel = model.Model(files)
