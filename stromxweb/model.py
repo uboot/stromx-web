@@ -5,7 +5,6 @@ import datetime
 import os
 import re
 
-import stromx.cvsupport 
 import stromx.runtime 
 
 class Model(object):
@@ -233,7 +232,8 @@ class Streams(Items):
         
         self.__factory = stromx.runtime.Factory()
         stromx.runtime.register(self.__factory)
-        stromx.cvsupport.register(self.__factory)
+        
+        _registerExtraPackages(self.__factory)
         
     def addFile(self, streamFile):
         stream = Stream(streamFile, self.__factory, self.model)
@@ -713,4 +713,34 @@ def _variantToType(variant):
     else:
         return 'none'
 
+def _registerExtraPackages(factory):
+        try:
+            import stromx.cvsupport as cvsupport
+            cvsupport.register(factory)
+        except ImportError:
+            pass
+        
+        try:
+            import stromx.cvimgproc as cvimgproc
+            cvimgproc.register(factory)
+        except ImportError:
+            pass
+        
+        try:
+            import stromx.cvcore as cvcore
+            cvcore.register(factory)
+        except ImportError:
+            pass
+        
+        try:
+            import stromx.cvhighgui as cvhighgui
+            cvhighgui.register(factory)
+        except ImportError:
+            pass
+        
+        try:
+            import stromx.raspi as raspi
+            raspi.register(factory)
+        except ImportError:
+            pass
         
