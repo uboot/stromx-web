@@ -15,6 +15,7 @@
   <script src="js/libs/snap.svg.js"></script>
   <script src="js/application.js"></script>
   <script src="js/router.js"></script>
+  <script src="js/components/modalDialog_component.js"></script>
   <script src="js/controllers/application_controller.js"></script>
   <script src="js/controllers/error_controller.js"></script>
   <script src="js/controllers/operator_controller.js"></script>
@@ -26,7 +27,6 @@
   <script src="js/controllers/stream_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
-  <script src="js/views/removeFileModal_view.js"></script>
   <script src="js/views/uploadFile_view.js"></script>
   
   <script type="text/x-handlebars" data-template-name="application">
@@ -282,20 +282,26 @@
     </table>
   </script>
 
-  <script type="text/x-handlebars" data-template-name="removeFileModal" controller="file">
+  <script type="text/x-handlebars" data-template-name="removeFileModal">
+    {{#modal-dialog title="Remove file" acceptText="Remove" cancelText="No" accept="accept" cancel="cancel"}}
+      Do you really want to remove {{name}}?
+    {{/modal-dialog}}
+  </script>
+
+  <script type="text/x-handlebars" id="components/modal-dialog">
     <div class="modal fade">
       <div class="modal-dialog modal-sm">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" {{action "cancel"}}>×</button>
-            <h4 class="modal-title">Remove file</h4>
+            <h4 class="modal-title">{{title}}</h4>
           </div>
           <div class="modal-body">
-            Do you really want to remove {{name}}?
+            {{yield}}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" {{action "cancel" target="view"}}>No</button>
-            <button type="button" class="btn btn-primary" {{action "accept" target="view"}}>Remove</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" {{action "cancel"}}>{{cancelText}}</button>
+            <button type="button" class="btn btn-primary" {{action "accept"}}>{{acceptText}}</button>
           </div>
         </div>
       </div>
