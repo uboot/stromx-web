@@ -1,2 +1,2 @@
-App.ApplicationAdapter = DS.RESTAdapter.extend()
-// App.ApplicationAdapter = DS.FixtureAdapter.extend()
+// App.ApplicationAdapter = DS.RESTAdapter.extend()
+App.ApplicationAdapter = DS.FixtureAdapter.extend()
