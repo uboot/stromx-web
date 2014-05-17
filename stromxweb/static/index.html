@@ -283,19 +283,21 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="removeFileModal" controller="file">
-   <div class="modal fade">
-     <div class="modal-dialog modal-sm">
-       <div class="modal-header">
-         <button type="button" class="close" data-dismiss="modal" {{action "cancel"}}>×</button>
-         <h4 class="modal-title">Remove file</h4>
-       </div>
-       <div class="modal-content">
-         Do you really want to remove {{name}}?
-       </div>
-       <div class="modal-footer">
-         <button type="button" class="btn btn-default" data-dismiss="modal" {{action "cancel" target="view"}}>No</button>
-         <button type="button" class="btn btn-primary" {{action "accept" target="view"}}>Remove</button>
-       </div>
+    <div class="modal fade">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" {{action "cancel"}}>×</button>
+            <h4 class="modal-title">Remove file</h4>
+          </div>
+          <div class="modal-body">
+            Do you really want to remove {{name}}?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" {{action "cancel" target="view"}}>No</button>
+            <button type="button" class="btn btn-primary" {{action "accept" target="view"}}>Remove</button>
+          </div>
+        </div>
       </div>
     </div>
   </script>
