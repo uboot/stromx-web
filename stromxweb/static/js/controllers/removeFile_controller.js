@@ -1,4 +1,4 @@
-App.RemoveFileModalController = App.FileController.extend({  
+App.RemoveFileController = App.FileController.extend({  
   actions: {
     accept: function() {
         this.send("remove")

@@ -23,7 +23,7 @@
   <script src="js/controllers/file_controller.js"></script>
   <script src="js/controllers/filesAdd_controller.js"></script>
   <script src="js/controllers/filesNew_controller.js"></script>
-  <script src="js/controllers/removeFileModal_controller.js"></script>
+  <script src="js/controllers/removeFile_controller.js"></script>
   <script src="js/controllers/stream_controller.js"></script>
   <script src="js/models/store.js"></script>
   <script src="js/models/model.js"></script>
@@ -90,7 +90,7 @@
                   <ul class="dropdown-menu" role="menu">
                     <li><a {{action "open"}}>Open</a></li>
                     <li><a {{action "rename"}}>Rename</a></li>
-                    <li><a {{action "showModal" "removeFileModal" this}}>Remove</a></li>
+                    <li><a {{action "showModal" "removeFile" this}}>Remove</a></li>
                     <li><a {{bind-attr href=url}}>Download</a></li>
                   </ul>
                 </div>
@@ -282,7 +282,7 @@
     </table>
   </script>
 
-  <script type="text/x-handlebars" data-template-name="removeFileModal">
+  <script type="text/x-handlebars" data-template-name="removeFile">
     {{#modal-dialog title="Remove file" acceptText="Remove" cancelText="No" accept="accept" cancel="cancel"}}
       Do you really want to remove {{name}}?
     {{/modal-dialog}}
