@@ -1,0 +1,1 @@
+Stromxweb.ApplicationAdapter = DS.FixtureAdapter;
