@@ -1,7 +1,19 @@
-Stromxweb.ApplicationRoute = Ember.Route.extend({
-    // admittedly, this should be in IndexRoute and not in the
-    // top level ApplicationRoute; we're in transition... :-)
-    model: function () {
-        return ['red', 'yellow', 'blue'];
+App.ApplicationRoute = Ember.Route.extend({
+  actions: {
+    showModal: function(modal, model) {
+      var controller = this.controllerFor(modal);
+      controller.set('model', model)
+      return this.render(modal, {
+        into: 'application',
+        outlet: 'modal',
+        controller: controller
+      });
+    },
+    closeModal: function() {
+      return this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
     }
+  }
 });

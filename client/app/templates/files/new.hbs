@@ -1,0 +1,9 @@
+ <div class="panel panel-default">
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="newFile">Filename</label>
+      {{input valueBinding="name" class="form-control" placeholder="Enter filename" id="newFile"}}
+    </div>
+    <button {{action 'newFile'}} type="submit" class="btn btn-default">Save</button>
+  </div>
+</div>

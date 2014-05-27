@@ -1,0 +1,61 @@
+<h1>Files</h1>
+<div class="stromx-center-buttons">
+  <div class="btn-group">
+    {{#link-to 'files.new' type="button" class="btn btn-default"}}New File{{/link-to}}
+    {{#link-to 'files.add' type="button" class="btn btn-default"}}Upload File{{/link-to}}
+  </div>
+</div>
+{{outlet}}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each itemController="file"}}
+      <tr>
+        <td>
+          {{name}}
+        </td>
+        <td>
+          {{#if closed}}
+            Closed
+          {{else}}
+            Loaded
+          {{/if}}
+        </td>
+        <td>
+          {{#if closed}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                Action <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a {{action "open"}}>Open</a></li>
+                <li><a {{action "rename"}}>Rename</a></li>
+                <li><a {{action "showModal" "removeFile" this}}>Remove</a></li>
+                <li><a {{bind-attr href=url}}>Download</a></li>
+              </ul>
+            </div>
+          {{else}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                Action <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                {{#each stream}}
+                  <li>{{#link-to 'stream' this}}Show{{/link-to}}</li>
+                {{/each}}
+                <li><a {{bind-attr href=url}}>Download</a></li>
+              </ul>
+            </div>
+          {{/if}}
+        </td>
+      </tr>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
