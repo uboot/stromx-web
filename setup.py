@@ -2,12 +2,17 @@
 
 from distutils.core import setup
 import os
+import shutil
+
+if os.path.exists('stromxweb/static'):
+    shutil.rmtree('stromxweb/static')
+shutil.copytree('client/dist', 'stromxweb/static')
 
 static_files = []
 
 for root, dirs, files in os.walk('stromxweb/static', ):
     relative_root = os.path.relpath(root, 'stromxweb')
-    paths = [os.path.join(relative_root, file) for file in files]
+    paths = [os.path.join(relative_root, f) for f in files]
     static_files.extend(paths)
 
 print static_files
