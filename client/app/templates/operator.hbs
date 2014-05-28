@@ -1,0 +1,90 @@
+<h1>Operator</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        Type
+      </td>
+      <td>
+        {{fullType}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Version
+      </td>
+      <td>
+        {{version}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Status
+      </td>
+      <td>
+        {{status}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Name
+      </td>
+      <td>
+        {{#if isEditingName}}
+          {{input value=name}}
+          <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+        {{else}}
+          {{name}} 
+          <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
+        {{/if}}
+      </td>
+    </tr>
+  </tr>
+    {{#each parameters itemController="parameter"}}
+      <tr>
+        <td>
+          {{title}}
+        </td>
+        <td>
+          {{#if isEditing}}
+            {{#if isEnum}}
+              {{view Ember.Select value=numberValue content=descriptions optionValuePath="content.value" 
+                optionLabelPath="content.title" disabled=writeOnly}}
+            {{else}}
+              {{input value=editValue}}
+            {{/if}}
+            <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
+          {{/if}}
+          {{#if timedOut}}
+            <em>Access timed out</em>
+            <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+          {{/if}}
+          {{#if accessFailed}}
+            <em>Access failed</em>
+            <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+          {{/if}}
+          {{#if isTrigger}}
+            <button type="button" {{action "trigger"}} class="btn btn-default btn-xs">Trigger</button>
+          {{/if}}
+          {{#if isBool}}
+            {{input type="checkbox" checked=boolValue disabled=writeOnly}}
+          {{/if}}
+          {{displayValue}} 
+          {{#if editable}}
+          {{#unless isEditing}}
+            <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+          {{/unless}}
+          {{/if}}
+        </td>
+      </tr>
+    </tr>
+    {{/each}}
+  </tbody>
+</table> 
