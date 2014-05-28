@@ -1,3 +1,5 @@
+/* global App */
+
 // TODO: attribute to http://stackoverflow.com/a/19910677
 
 App.UploadFileView = Ember.TextField.extend({

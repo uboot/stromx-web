@@ -1,3 +1,5 @@
+/* global App */
+
 App.Parameter = DS.Model.extend({
   title: DS.attr('string'),
   type: DS.attr('string'),

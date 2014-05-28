@@ -1,3 +1,5 @@
+/* global App */
+
 App.Error = DS.Model.extend({
   time: DS.attr('date'),
   description: DS.attr('string')

@@ -1,3 +1,5 @@
+/* global App */
+
 App.EnumDescription = DS.Model.extend({
   value: DS.attr('number'),
   title: DS.attr('string')
