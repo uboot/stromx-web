@@ -6,7 +6,9 @@ App.Operator = DS.Model.extend({
   type: DS.attr('string'),
   package: DS.attr('string'),
   version: DS.attr('string'),
-  parameters: DS.hasMany('parameter', {async: true})
+  parameters: DS.hasMany('parameter', {async: true}),
+  x: DS.attr('number'),
+  y: DS.attr('number')
 });
 
 App.Operator.FIXTURES = [
@@ -17,7 +19,9 @@ App.Operator.FIXTURES = [
     type: 'Counter',
     package: 'runtime',
     version: '0.3.0',
-    parameters: []
+    parameters: [],
+    x: 20,
+    y: 20
   },
   {
     id: 1,
@@ -26,7 +30,9 @@ App.Operator.FIXTURES = [
     type: 'Send',
     package: 'runtime',
     version: '0.3.0',
-    parameters: [1]
+    parameters: [1],
+    x: 80,
+    y: 20
   },
   {
     id: 2,
@@ -35,7 +41,9 @@ App.Operator.FIXTURES = [
     type: 'Blur',
     package: 'cv::imgproc',
     version: '0.0.1',
-    parameters: [2, 3, 4, 6, 7, 12]
+    parameters: [2, 3, 4, 6, 7, 12],
+    x: 120,
+    y: 20
   },
   {
     id: 3,
@@ -44,7 +52,9 @@ App.Operator.FIXTURES = [
     type: 'Receive',
     package: 'runtime',
     version: '0.0.1',
-    parameters: [5]
+    parameters: [5],
+    x: 20,
+    y: 80
   },
   {
     id: 4,
@@ -53,6 +63,8 @@ App.Operator.FIXTURES = [
     type: 'Test',
     package: 'mypackage',
     version: '0.0.1',
-    parameters: [8, 9, 10, 11]
+    parameters: [8, 9, 10, 11],
+    x: 60,
+    y: 80
   }
 ];
