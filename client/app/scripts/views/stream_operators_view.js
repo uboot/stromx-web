@@ -2,6 +2,8 @@
 
 App.StreamOperatorsView = Ember.CollectionView.extend({
   itemViewClass: Ember.View.extend({
+    opRect: null,
+    
     didInsertElement: function() {
       var paper = Snap('#svg');
       var name = this.content.get('name');
@@ -14,6 +16,14 @@ App.StreamOperatorsView = Ember.CollectionView.extend({
         stroke: "#000",
         strokeWidth: 2
       });
+      this.set('opRect', opRect);
+    },
+    
+    willDestroyElement: function() {
+      var opRect = this.get('opRect');
+      if (opRect)
+        opRect.remove();
+      this.set('opRect', null);
     }
   })
 }); 
