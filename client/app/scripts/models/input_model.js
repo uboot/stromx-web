@@ -2,23 +2,27 @@
 
 App.Input = DS.Model.extend({
   title: DS.attr('string'),
-  output: DS.hasMany('output', {async: true})
+  sourceOperator: DS.hasMany('operator', {async: true}),
+  sourceId: DS.attr('number')
 });
 
 App.Input.FIXTURES = [
   {
     id: 1,
     title: 'Input image',
-    output: []
+    sourceOperator: [],
+    sourceId: -1
   },
   {
     id: 2,
     title: 'Number',
-    output: [2]
+    sourceOperator: [0],
+    sourceId: 0
   },
   {
     id: 3,
     title: 'Destination image',
-    output: []
+    sourceOperator: [],
+    sourceId: -1
   }
 ];

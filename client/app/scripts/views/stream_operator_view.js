@@ -14,7 +14,7 @@ App.StreamOperatorView = Ember.View.extend({
     translation.translate(x, y);
     group.transform(translation);
     var name = this.content.get('name');
-    var opName = paper.text(0, 60, name);
+    var opName = paper.text(0, 65, name);
     var opRect = paper.rect(0, 0, 50, 50, 5, 5);
     opRect.attr({
       class: 'stromx-svg-operator',
@@ -25,10 +25,10 @@ App.StreamOperatorView = Ember.View.extend({
     group.add(opName, opRect);
     that = this;
     this.content.get('outputs').then(function(connectors) {
-      that.createConnectors(group, connectors, 'output');
+      that.createOutputs(group, connectors);
     });
     this.content.get('inputs').then(function(connectors) {
-      that.createConnectors(group, connectors, 'input');
+      that.createInputs(group, connectors);
     });
   },
   
@@ -39,19 +39,62 @@ App.StreamOperatorView = Ember.View.extend({
     this.set('opRect', null);
   },
   
-  createConnectors: function(group, connectors, type) {
-    var x = -10
-    if (type ==='output')
-      x = 50;
-    
+  createInputs: function(group, connectors) {
+    var numInputs = connectors.get('length');
+    var offset = 30 - 10 * numInputs;
+    var i = 0;
+      
+    connectors.map(function(connector) {
+      var connectorRect = group.rect(-10, offset + 20 * i, 10, 10);
+      connectorRect.attr({
+        class: 'stromx-svg-input'
+      });
+      
+      var inputPos = {
+        x: -5,
+        y: offset + 20 * i + 5
+      };
+      var sourceId = connector.get('sourceId');
+      connector.get('sourceOperator').then(function(operator){
+        operator.map(function(operator){
+          operator.get('outputs').then(function(outputs){
+            var numOutputs = outputs.get('length');
+            var offset = 30 - 10 * numOutputs;
+            var outputPos = {
+              x: 55,
+              y: offset + 20 * sourceId + 5
+            };
+            var transform = new Snap.Matrix();
+            transform.translate(operator.get('x'), operator.get('y'));
+            var targetTransform = group.transform().globalMatrix;
+            transform.add(targetTransform.invert());
+            var localOutputPos = {
+              x: transform.x(outputPos.x, outputPos.y),
+              y: transform.y(outputPos.x, outputPos.y)
+            };
+            var line = group.line(inputPos.x, inputPos.y,
+                                  localOutputPos.x, localOutputPos.y);
+            line.attr({
+              strokeWidth: 2,
+              stroke: "#000"
+            });
+          });
+        });
+      });
+      
+      i++;
+    });
+  },
+  
+  createOutputs: function(group, connectors) {
     var num = connectors.get('length');
     var offset = 30 - 10 * num;
     var i = 0;
       
     connectors.map(function(connector) {
-      var connectorRect = group.rect(x, offset + 20 * i, 10, 10);
+      var connectorRect = group.rect(50, offset + 20 * i, 10, 10);
       connectorRect.attr({
-        class: 'stromx-svg-' + type
+        class: 'stromx-svg-output'
       });
       i++;
     });

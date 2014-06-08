@@ -1,24 +1,20 @@
 /* global App */
 
 App.Output = DS.Model.extend({
-  title: DS.attr('string'),
-  inputs: DS.hasMany('input', {async: true})
+  title: DS.attr('string')
 });
 
 App.Output.FIXTURES = [
   {
     id: 1,
-    title: 'Output image',
-    inputs: []
+    title: 'Output image'
   },
   {
     id: 2,
-    title: 'Generated number',
-    inputs: [2]
+    title: 'Generated number'
   },
   {
     id: 3,
-    title: 'Received image',
-    inputs: []
+    title: 'Received image'
   }
 ];
