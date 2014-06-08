@@ -33,10 +33,10 @@ App.StreamOperatorView = Ember.View.extend({
   },
   
   willDestroyElement: function() {
-    var opRect = this.get('opRect');
-    if (opRect)
-      opRect.remove();
-    this.set('opRect', null);
+    var group = this.get('group');
+    if (group)
+      group.remove();
+    this.set('group', null);
   },
   
   createInputs: function(group, connectors) {
