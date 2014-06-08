@@ -21,4 +21,4 @@ App.Input.FIXTURES = [
     title: 'Destination image',
     output: []
   }
-]
+];

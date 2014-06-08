@@ -21,4 +21,4 @@ App.Output.FIXTURES = [
     title: 'Received image',
     inputs: []
   }
-]
+];
