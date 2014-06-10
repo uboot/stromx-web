@@ -64,7 +64,7 @@ App.Operator.FIXTURES = [
     x: 40,
     y: 160,
     inputs: [],
-    outputs: []
+    outputs: [3]
   },
   {
     id: 4,
