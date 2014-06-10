@@ -1,6 +1,6 @@
 /* global App,  Snap */
 
-App.StreamOperatorView = Ember.View.extend({
+App.SceneOperatorView = Ember.View.extend({
   group: null,
   
   didInsertElement: function() {
@@ -23,7 +23,7 @@ App.StreamOperatorView = Ember.View.extend({
       strokeWidth: 2
     });
     group.add(opName, opRect);
-    that = this;
+    var that = this;
     this.content.get('outputs').then(function(connectors) {
       that.createOutputs(group, connectors);
     });
