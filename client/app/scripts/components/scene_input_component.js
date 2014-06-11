@@ -1,16 +1,17 @@
 /* global App, Snap */
 
-App.SceneInputView = Ember.View.extend({
+App.SceneInputComponent = Ember.Component.extend({
   rect: null,
   line: null,
   
   didInsertElement: function() {
     var paper = new Snap('#svg');
     
-    var op = this.content.get('operator');
+    var input = this.get('input');
+    var op = input.get('operator');
     var x = op.get('x');
     var y = op.get('y');
-    var pos = this.content.get('position');
+    var pos = input.get('position');
     var numConnectors = op.get('inputs').get('length');
     var offset = 30 - 10 * numConnectors;
     var x1 = x - 10;
@@ -22,9 +23,9 @@ App.SceneInputView = Ember.View.extend({
     });
     this.set('rect', inputRect);
     
-    var pos = this.content.get('sourcePosition');
+    var pos = input.get('sourcePosition');
     var that = this;
-    this.content.get('sourceOperator').then(function(ops){
+    input.get('sourceOperator').then(function(ops){
       ops.map(function(op){
       var x = op.get('x');
       var y = op.get('y');

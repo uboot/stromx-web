@@ -20,7 +20,20 @@
   {{/if}}
 </div>
 
-{{view App.SceneView}}
+<div class="stromx-stream-view panel panel-default">
+  <svg width="400" height="400" id="svg">
+  </svg>
+</div>
+
+{{#each operators}}
+  {{scene-operator operator=this}}
+  {{#each inputs}}
+    {{scene-input input=this}}
+  {{/each}}
+  {{#each outputs}}
+    {{scene-output output=this}}
+  {{/each}}
+{{/each}}
 
 <table class="table">
   <thead>

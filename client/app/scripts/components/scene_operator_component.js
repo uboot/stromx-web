@@ -1,21 +1,20 @@
-/* global App,  Snap */
+/* global App, Snap */
 
-App.SceneOperatorView = Ember.View.extend({
+App.SceneOperatorComponent = Ember.Component.extend({
   group: null,
-    
-  templateName: "scene-operator",
   
   didInsertElement: function() {
     var paper = new Snap('#svg');
     var group = paper.group();
     this.set('group', group);
     
-    var x = this.content.get('x');
-    var y = this.content.get('y');
+    var op = this.get('operator');
+    var x = op.get('x');
+    var y = op.get('y');
     var translation = new Snap.Matrix();
     translation.translate(x, y);
     group.transform(translation);
-    var name = this.content.get('name');
+    var name = op.get('name');
     var opName = paper.text(25, 65, name);
     opName.attr({
       class: 'stromx-svg-operator-name'
@@ -39,11 +38,13 @@ App.SceneOperatorView = Ember.View.extend({
   },
   
   move: function(dx, dy){
-    group = this.get('group');
-    opX = this.content.get('x');
-    opY = this.content.get('y');
+    var group = this.get('group');
+    var op = this.get('operator');
+    
+    opX = op.get('x');
+    opY = op.get('y');
     group.attr({
       transform: new Snap.Matrix().translate(opX + dx, opY + dy)
     });
   }
-});
+}); 
