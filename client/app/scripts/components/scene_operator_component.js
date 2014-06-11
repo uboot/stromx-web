@@ -9,11 +9,6 @@ App.SceneOperatorComponent = Ember.Component.extend({
     this.set('group', group);
     
     var op = this.get('operator');
-    var x = op.get('x');
-    var y = op.get('y');
-    var translation = new Snap.Matrix();
-    translation.translate(x, y);
-    group.transform(translation);
     var name = op.get('name');
     var opName = paper.text(25, 65, name);
     opName.attr({
@@ -24,10 +19,14 @@ App.SceneOperatorComponent = Ember.Component.extend({
       class: 'stromx-svg-operator-rect'
     });
     group.add(opName, opRect);
-    var that = this;
-    group.drag(function(dx, dy){
-      that.move(dx, dy);
-    }, function(){}, function(){});
+    var _this = this;
+    group.drag(
+      function(dx, dy) { _this.moveDrag(dx, dy); },
+      function(x, y) { _this.startDrag(x, y); },
+      function(){}
+    );
+    
+    this.updatePosition();
   },
   
   willDestroyElement: function() {
@@ -37,14 +36,31 @@ App.SceneOperatorComponent = Ember.Component.extend({
     this.set('group', null);
   },
   
-  move: function(dx, dy){
+  updatePosition: function() {
+    var op = this.get('operator');
+    var x = op.get('x');
+    var y = op.get('y');
+    var translation = new Snap.Matrix();
+    translation.translate(x, y);
+    
+    var group = this.get('group');
+    group.transform(translation);
+  }.observes('operator.x', 'operator.y'),
+  
+  startDrag: function(x, y) {
+    var op = this.get('operator');
+    
+    this.set('startDragX', op.get('x'));
+    this.set('startDragY', op.get('y'));
+  },
+  
+  moveDrag: function(dx, dy){
     var group = this.get('group');
     var op = this.get('operator');
     
-    opX = op.get('x');
-    opY = op.get('y');
-    group.attr({
-      transform: new Snap.Matrix().translate(opX + dx, opY + dy)
-    });
+    x = this.get('startDragX');
+    y = this.get('startDragY');
+    op.set('x', x + dx);
+    op.set('y', y + dy);
   }
 }); 
