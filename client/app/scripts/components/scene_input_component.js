@@ -49,7 +49,7 @@ App.SceneInputComponent = Ember.Component.extend({
       y: y1
     });
     
-    var pos = input.get('sourcePosition');
+    var sourcePos = input.get('sourcePosition');
     var that = this;
     input.get('sourceOperator').then(function(ops){
       ops.map(function(op){
@@ -59,7 +59,7 @@ App.SceneInputComponent = Ember.Component.extend({
           var numConnectors = outputs.get('length');
           var offset = 30 - 10 * numConnectors;
           var x2 = x + 50;
-          var y2 = y + offset + 20 * pos;
+          var y2 = y + offset + 20 * sourcePos;
           
           var line = that.get('line');
           line.attr({
@@ -68,7 +68,7 @@ App.SceneInputComponent = Ember.Component.extend({
             x2: x2 + 5,
             y2: y2 + 5
           });
-        })
+        });
       });
     });
     

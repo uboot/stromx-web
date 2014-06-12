@@ -58,8 +58,8 @@ App.SceneOperatorComponent = Ember.Component.extend({
     var group = this.get('group');
     var op = this.get('operator');
     
-    x = this.get('startDragX');
-    y = this.get('startDragY');
+    var x = this.get('startDragX');
+    var y = this.get('startDragY');
     op.set('x', x + dx);
     op.set('y', y + dy);
   }
