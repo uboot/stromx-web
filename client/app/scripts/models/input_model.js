@@ -5,7 +5,8 @@ App.Input = DS.Model.extend({
   operator: DS.belongsTo('operator'),
   position: DS.attr('number'),
   sourceOperator: DS.hasMany('operator', {async: true}),
-  sourcePosition: DS.attr('number')
+  sourcePosition: DS.attr('number'),
+  thread: DS.hasMany('thread')
 });
 
 App.Input.FIXTURES = [
@@ -15,7 +16,8 @@ App.Input.FIXTURES = [
     operator: 2,
     position: 0,
     sourceOperator: [],
-    sourcePosition: -1
+    sourcePosition: -1,
+    thread: []
   },
   {
     id: 2,
@@ -23,7 +25,8 @@ App.Input.FIXTURES = [
     operator: 1,
     position: 0,
     sourceOperator: [0],
-    sourcePosition: 0
+    sourcePosition: 0,
+    thread: []
   },
   {
     id: 3,
@@ -31,6 +34,7 @@ App.Input.FIXTURES = [
     operator: 2,
     position: 1,
     sourceOperator: [],
-    sourcePosition: -1
+    sourcePosition: -1,
+    thread: []
   }
 ];
