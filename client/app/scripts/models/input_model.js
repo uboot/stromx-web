@@ -26,7 +26,7 @@ App.Input.FIXTURES = [
     position: 0,
     sourceOperator: [0],
     sourcePosition: 0,
-    thread: []
+    thread: [1]
   },
   {
     id: 3,
