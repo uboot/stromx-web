@@ -366,7 +366,9 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'Receive',
                              'status': 'initialized',
                              'version': '0.1.0',
-                             'parameters': ['0', '1']}}
+                             'parameters': ['0', '1'],
+                             'x': 0.0,
+                             'y': 0.0}}
         self.assertEqual(data, self.operator.data)
         
     def testDataDeinitialized(self):
@@ -381,7 +383,9 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'Receive',
                              'status': 'none',
                              'version': '0.1.0',
-                             'parameters': []}}
+                             'parameters': [],
+                             'x': 0.0,
+                             'y': 0.0}}
         self.assertEqual(data, op.data)
     
     def tearDown(self):

@@ -339,7 +339,8 @@ class Operators(Items):
         return operator
     
 class Operator(Item):
-    properties = ["name", "status", "type", "package", "version", "parameters"]
+    properties = ["name", "status", "type", "package", "version", "parameters",
+                  "x", "y"]
     
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
@@ -385,6 +386,14 @@ class Operator(Item):
         version = self.__op.info().version()
         return '{0}.{1}.{2}'.format(version.major(), version.minor(),
                                     version.revision())
+        
+    @property
+    def x(self):
+        return self.__op.position().x()
+    
+    @property
+    def y(self):
+        return self.__op.position().y()
         
     @property
     def parameters(self):
