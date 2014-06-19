@@ -246,7 +246,7 @@ class Stream(Item):
     def __init__(self, streamFile, factory, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
-        self.__saved = True
+        self.__saved = False
         self.__operators = []
         
         if os.path.exists(streamFile.path):
@@ -304,7 +304,6 @@ class Stream(Item):
     def name(self, value):
         if self.name != str(value):
             self.__stream.setName(str(value))
-            self.__saved = False
         
     @property
     def saved(self):

@@ -107,7 +107,7 @@ _noFile = {'id': '1',
 _stream = {
     'id': '0',
     'name': '',
-    'saved': True,
+    'saved': False,
     'active': False,
     'paused': False,
     'file': '0',
