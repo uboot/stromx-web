@@ -27,10 +27,10 @@
 
 {{#each operators itemController="operator"}}
   {{scene-operator operator=this}}
-  {{#each inputs}}
+  {{#each inputs itemController="input"}}
     {{scene-input input=this}}
   {{/each}}
-  {{#each outputs}}
+  {{#each outputs itemController="output"}}
     {{scene-output output=this}}
   {{/each}}
 {{/each}}
