@@ -612,16 +612,34 @@ class InputTest(unittest.TestCase):
         
         self.stream = stromx.runtime.Stream()
         kernel = stromx.runtime.Fork()
-        self.fork = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.fork)
+        stromxFork = self.stream.addOperator(kernel)
+        kernel = stromx.runtime.Receive()
+        stromxReceive = self.stream.addOperator(kernel)
+        
+        self.stream.initializeOperator(stromxFork)
+        self.stream.initializeOperator(stromxReceive)
+        
+        self.fork = self.model.operators.addStromxOp(stromxFork)
+        self.receive = self.model.operators.addStromxOp(stromxReceive)
+        
+    def testDataNoSource(self):
+        inputModel = self.inputs.addStromxInput(self.fork, 0)
+        data = {'input': {'id': '0',
+                          'operator': '0',
+                          'position': 0,
+                          'title': 'Input',
+                          'sourceOperator': [],
+                          'sourcePosition': -1}}
+        self.assertEqual(data, inputModel.data)
         
     def testData(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0)
-        inputModel.operator = 0
+        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0)
         data = {'input': {'id': '0',
-                          'operator': 0,
+                          'operator': '0',
                           'position': 0,
-                          'title': 'Input'}}
+                          'title': 'Input',
+                          'sourceOperator': ['1'],
+                          'sourcePosition': 0}}
         self.assertEqual(data, inputModel.data)
         
 class OutputTest(unittest.TestCase):
@@ -631,16 +649,18 @@ class OutputTest(unittest.TestCase):
         
         self.stream = stromx.runtime.Stream()
         kernel = stromx.runtime.Fork()
-        self.fork = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.fork)
+        stromxFork = self.stream.addOperator(kernel)
+        
+        self.stream.initializeOperator(stromxFork)
+        
+        self.fork = self.model.operators.addStromxOp(stromxFork)
         
     def testData(self):
         output = self.outputs.addStromxOutput(self.fork, 0)
-        output.operator = 0
         data = {'output': {'id': '0',
-                          'operator': 0,
-                          'position': 0,
-                          'title': 'Output 0'}}
+                           'operator': '0',
+                           'position': 0,
+                           'title': 'Output 0'}}
         self.assertEqual(data, output.data)
     
 class ErrorsTest(unittest.TestCase):

@@ -420,6 +420,10 @@ class Operator(Item):
     def parameters(self):
         return [op.index for op in self.__parameters]
     
+    @property
+    def stromxOp(self):
+        return self.__op
+    
 class Parameters(Items):
     def addStromxParameter(self, op, param):
         parameter = Parameter(op, param, self.model)
@@ -567,13 +571,15 @@ class EnumDescription(Item):
         return self.__desc.title()
     
 class Input(Item):
-    properties = ['title', 'operator', 'position']
+    properties = ['title', 'operator', 'position', 'sourceOperator',
+                  'sourcePosition']
     
-    def __init__(self, op, pos, model):
+    def __init__(self, op, pos, sourceOp, sourcePos, model):
         super(Input, self).__init__(model)
         self.__op = op
         self.__pos = pos
-        self.__opId = -1
+        self.__sourcePos = sourcePos
+        self.__sourceOp = sourceOp
         
     @property
     def title(self):
@@ -581,23 +587,30 @@ class Input(Item):
     
     @property
     def operator(self):
-        return self.__opId
-        
-    @operator.setter
-    def operator(self, value):
-        self.__opId = value
+        return self.__op.index
     
     @property
     def position(self):
         return self.__pos
     
     @property
+    def sourceOperator(self):
+        if self.__sourceOp != None:
+            return [self.__sourceOp.index]
+        else:
+            return []
+    
+    @property
+    def sourcePosition(self):
+        return self.__sourcePos
+    
+    @property
     def __input(self):
-        return self.__op.info().inputs()[self.__pos]
+        return self.__op.stromxOp.info().inputs()[self.__pos]
         
 class Inputs(Items):
-    def addStromxInput(self, op, position):
-        inputModel = Input(op, position, self.model)
+    def addStromxInput(self, op, pos, sourceOp = None, sourcePos = -1):
+        inputModel = Input(op, pos, sourceOp, sourcePos, self.model)
         self.addItem(inputModel)
         return inputModel
     
@@ -608,7 +621,6 @@ class Output(Item):
         super(Output, self).__init__(model)
         self.__op = op
         self.__pos = pos
-        self.__opId = -1
         
     @property
     def title(self):
@@ -616,11 +628,7 @@ class Output(Item):
     
     @property
     def operator(self):
-        return self.__opId
-        
-    @operator.setter
-    def operator(self, value):
-        self.__opId = value
+        return self.__op.index
     
     @property
     def position(self):
@@ -628,7 +636,7 @@ class Output(Item):
     
     @property
     def __output(self):
-        return self.__op.info().outputs()[self.__pos]
+        return self.__op.stromxOp.info().outputs()[self.__pos]
         
 class Outputs(Items):
     def addStromxOutput(self, op, position):
