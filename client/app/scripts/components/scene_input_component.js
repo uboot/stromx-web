@@ -13,13 +13,19 @@ App.SceneInputComponent = Ember.Component.extend({
     });
     this.set('rect', inputRect);
     
-    var connectionLine = paper.line(0, 0, 0, 0);
-    connectionLine.attr({
-      class: 'stromx-svg-connection-line'
-    });
-    this.set('line', connectionLine);
+    var input = this.get('input');
+    var sourcePos = input.get('sourcePosition');
+    if (sourcePos >= 0)
+    {
+      var connectionLine = paper.line(0, 0, 0, 0);
+      connectionLine.attr({
+        class: 'stromx-svg-connection-line'
+      });
+      this.set('line', connectionLine);
+    }
           
     this.updatePosition();
+    this.updateColor();
   },
   
   willDestroyElement: function() {
@@ -50,6 +56,9 @@ App.SceneInputComponent = Ember.Component.extend({
     });
     
     var sourcePos = input.get('sourcePosition');
+    if (sourcePos < 0)
+      return;
+    
     var that = this;
     input.get('sourceOperator').then(function(ops){
       ops.map(function(op){
@@ -62,6 +71,9 @@ App.SceneInputComponent = Ember.Component.extend({
           var y2 = y + offset + 20 * sourcePos;
           
           var line = that.get('line');
+          if (line === null)
+            return;
+    
           line.attr({
             x1: x1 + 5,
             y1: y1 + 5,
@@ -73,5 +85,25 @@ App.SceneInputComponent = Ember.Component.extend({
     });
     
   }.observes('input.operator.x', 'input.operator.y',
-             'input.sourceOperator.@each.x', 'input.sourceOperator.@each.y')
+             'input.sourceOperator.@each.x', 'input.sourceOperator.@each.y'),
+  
+  updateColor: function() {
+    var line = this.get('line');
+    if (line === null)
+      return;
+    
+    var input = this.get('input');
+    
+    var that = this;
+    input.get('thread').then(function(threads){
+      threads.map(function(thread){
+        var color = thread.get('color');
+            
+        line.attr({
+          stroke: color
+        });
+      });
+    });
+    
+  }.observes('thread.@each.color')
 });

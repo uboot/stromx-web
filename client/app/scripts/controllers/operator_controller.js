@@ -26,6 +26,10 @@ App.OperatorController = Ember.ObjectController.extend({
     }, 
     saveName: function() {
       this.set('isEditingName', false);
+    },
+    save: function() {
+      var model = this.get('model');
+      model.save();
     }
   }
 });

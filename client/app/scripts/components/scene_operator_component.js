@@ -23,7 +23,7 @@ App.SceneOperatorComponent = Ember.Component.extend({
     group.drag(
       function(dx, dy) { _this.moveDrag(dx, dy); },
       function(x, y) { _this.startDrag(x, y); },
-      function(){}
+      function(){ _this.endDrag(); }
     );
     
     this.updatePosition();
@@ -62,5 +62,10 @@ App.SceneOperatorComponent = Ember.Component.extend({
     var y = this.get('startDragY');
     op.set('x', x + dx);
     op.set('y', y + dy);
+  },
+  
+  endDrag: function(dx, dy){
+    var op = this.get('operator');
+    op.send('save');
   }
 }); 

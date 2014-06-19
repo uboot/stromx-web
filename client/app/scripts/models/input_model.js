@@ -6,7 +6,7 @@ App.Input = DS.Model.extend({
   position: DS.attr('number'),
   sourceOperator: DS.hasMany('operator', {async: true}),
   sourcePosition: DS.attr('number'),
-  thread: DS.hasMany('thread')
+  thread: DS.hasMany('thread', {async: true})
 });
 
 App.Input.FIXTURES = [

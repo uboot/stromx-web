@@ -25,7 +25,7 @@
   </svg>
 </div>
 
-{{#each operators}}
+{{#each operators itemController="operator"}}
   {{scene-operator operator=this}}
   {{#each inputs}}
     {{scene-input input=this}}
