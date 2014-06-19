@@ -391,9 +391,21 @@ class Operator(Item):
     def x(self):
         return self.__op.position().x()
     
+    @x.setter
+    def x(self, value):
+        pos = self.__op.position()
+        pos.setX(value)
+        self.__op.setPosition(pos)
+    
     @property
     def y(self):
         return self.__op.position().y()
+    
+    @y.setter
+    def y(self, value):
+        pos = self.__op.position()
+        pos.setY(value)
+        self.__op.setPosition(pos)
         
     @property
     def parameters(self):

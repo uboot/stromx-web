@@ -359,6 +359,16 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual('New name',
                          self.operator.data['operator']['name'])
         
+    def testSetX(self):
+        self.operators.set('0', {'operator': {'x': 20.5}})
+        self.assertAlmostEqual(20.5,
+                               self.operator.data['operator']['x'])
+        
+    def testSetY(self):
+        self.operators.set('0', {'operator': {'y': 30.5}})
+        self.assertAlmostEqual(30.5,
+                               self.operator.data['operator']['y'])
+        
     def testData(self):
         data = {'operator': {'id': '0', 
                              'name': 'Name',
