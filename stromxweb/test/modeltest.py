@@ -605,6 +605,44 @@ class EnumDescriptionsTest(unittest.TestCase):
                                     'value': 0}}
         self.assertEqual(data, desc.data)
         
+class InputTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        self.inputs = self.model.inputs
+        
+        self.stream = stromx.runtime.Stream()
+        kernel = stromx.runtime.Fork()
+        self.fork = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.fork)
+        
+    def testData(self):
+        inputModel = self.inputs.addStromxInput(self.fork, 0)
+        inputModel.operator = 0
+        data = {'input': {'id': '0',
+                          'operator': 0,
+                          'position': 0,
+                          'title': 'Input'}}
+        self.assertEqual(data, inputModel.data)
+        
+class OutputTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        self.outputs = self.model.outputs
+        
+        self.stream = stromx.runtime.Stream()
+        kernel = stromx.runtime.Fork()
+        self.fork = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.fork)
+        
+    def testData(self):
+        output = self.outputs.addStromxOutput(self.fork, 0)
+        output.operator = 0
+        data = {'output': {'id': '0',
+                          'operator': 0,
+                          'position': 0,
+                          'title': 'Output 0'}}
+        self.assertEqual(data, output.data)
+    
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
         self.lastError = None
