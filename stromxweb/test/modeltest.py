@@ -257,6 +257,8 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators))
         self.assertEqual(3, len(self.model.threads))
+        self.assertEqual(5, len(self.model.outputs))
+        self.assertEqual(5, len(self.model.inputs))
         
     def testAddNoFile(self):
         self.setUpStream()
@@ -350,10 +352,10 @@ class OperatorsTest(unittest.TestCase):
         
         kernel = stromx.runtime.Receive()
         self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(stromxOp)
-        stromxOp.setName('Name')
-        self.operator = self.operators.addStromxOp(stromxOp)
+        self.stromxOp = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.stromxOp)
+        self.stromxOp.setName('Name')
+        self.operator = self.operators.addStromxOp(self.stromxOp)
         
     def testSetName(self):
         self.operators.set('0', {'operator': {'name': 'New name'}})
@@ -399,6 +401,14 @@ class OperatorsTest(unittest.TestCase):
                              'y': 0.0}}
         self.assertEqual(data, op.data)
     
+    def testFindStromxOp(self):
+        op = self.operators.findStromxOp(self.stromxOp)
+        self.assertEqual(self.operator, op)
+        
+    def testFindOutputPosition(self):
+        pos = self.operator.findOutputPosition(0)
+        self.assertEqual(0, pos)
+        
     def tearDown(self):
         self.__stream = None
         
@@ -606,7 +616,7 @@ class EnumDescriptionsTest(unittest.TestCase):
                                     'value': 0}}
         self.assertEqual(data, desc.data)
         
-class InputTest(unittest.TestCase):
+class InputsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.inputs = self.model.inputs
@@ -662,17 +672,16 @@ class InputTest(unittest.TestCase):
                           'thread': ['0']}}
         self.assertEqual(data, inputModel.data)
         
-class OutputTest(unittest.TestCase):
+class OutputsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.outputs = self.model.outputs
         
         self.stream = stromx.runtime.Stream()
+        
         kernel = stromx.runtime.Fork()
         stromxFork = self.stream.addOperator(kernel)
-        
         self.stream.initializeOperator(stromxFork)
-        
         self.fork = self.model.operators.addStromxOp(stromxFork)
         
     def testData(self):
@@ -683,7 +692,7 @@ class OutputTest(unittest.TestCase):
                            'title': 'Output 0'}}
         self.assertEqual(data, output.data)
         
-class ThreadTest(unittest.TestCase):
+class ThreadsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.threads = self.model.threads
@@ -695,12 +704,23 @@ class ThreadTest(unittest.TestCase):
         self.thread.setColor(color)
         self.thread.setName('Thread')
         
+        kernel = stromx.runtime.Fork()
+        self.stromxFork = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.stromxFork)
+        self.thread.addInput(self.stromxFork, 0)
+        
     def testData(self):
         thread = self.threads.addStromxThread(self.thread)
         data = {'thread': {'color': '#ff0000',
                            'id': '0',
                            'name': 'Thread'}}
         self.assertEqual(data, thread.data)
+        
+    def testFindThread(self):
+        thread = self.threads.addStromxThread(self.thread)
+        stromxInput = self.stromxFork.info().inputs()[0]
+        foundThread = self.threads.findThread(self.stromxFork, stromxInput)
+        self.assertEqual(thread, foundThread)
     
 class ErrorsTest(unittest.TestCase):
     def setUp(self):

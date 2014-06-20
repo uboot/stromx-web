@@ -265,9 +265,22 @@ class Stream(Item):
         for stromxThread in self.__stream.threads():
             self.model.threads.addStromxThread(stromxThread)
             
-#         for op in self.model.operators:
-#             for input in op.stromxOp.info().inputs():
-#                 pass
+        for op in self.model.operators.values():
+            for pos, _ in enumerate(op.stromxOp.info().outputs()):
+                self.model.outputs.addStromxOutput(op, pos)
+                
+            for pos, stromxInput in enumerate(op.stromxOp.info().inputs()):
+                sourceOp = None
+                sourcePos = -1
+                source = self.__stream.connectionSource(op.stromxOp,
+                                                        stromxInput.id())
+                if source.type() == stromx.runtime.Connector.Type.OUTPUT:
+                    sourceOp = self.model.operators.findStromxOp(source.op)
+                    if sourceOp:
+                        sourcePos = sourceOp.findOutputPosition(source.id())
+                        
+                thread = self.model.threads.findThread(op.stromxOp, stromxInput)
+                self.model.inputs.addStromxInput(op, pos, sourceOp, sourcePos, None)
         
     @property
     def file(self):
@@ -343,10 +356,17 @@ class Stream(Item):
             self.model.operators.delete(op.index)
         
 class Operators(Items):
-    def addStromxOp(self, op):
-        operator = Operator(op, self.model)
+    def addStromxOp(self, stromxOp):
+        operator = Operator(stromxOp, self.model)
         self.addItem(operator)
         return operator
+    
+    def findStromxOp(self, stromxOp):
+        ops = [op for op in self.values() if op.stromxOp == stromxOp]
+        if len(ops):
+            return ops[0]
+        else:
+            return None
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
@@ -424,6 +444,14 @@ class Operator(Item):
     @property
     def stromxOp(self):
         return self.__op
+    
+    def findOutputPosition(self, index):
+        outputs = [i for i, output in enumerate(self.__op.info().outputs())
+                   if output.id() == index]
+        if len(outputs):
+            return outputs[0]
+        else:
+            return None
     
 class Parameters(Items):
     def addStromxParameter(self, op, param):
@@ -638,12 +666,36 @@ class Thread(Item):
     def color(self):
         color = self.__thread.color()
         return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
+    
+    @property
+    def stromxThread(self):
+        return self.__thread
         
 class Threads(Items):
     def addStromxThread(self, thread):
         threadModel = Thread(thread, self.model)
         self.addItem(threadModel)
         return threadModel
+    
+    def findThread(self, stromxOp, stromxInput):
+        threads = [
+            thread for thread in self.values() if 
+            self.__inputIsInInputSequence(stromxOp, stromxInput, 
+                                          thread.stromxThread.inputSequence())
+        ]
+        if len(threads):
+            return threads[0]
+        else:
+            return None
+        
+    def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
+        for connector in sequence:
+            if (connector.type() == stromx.runtime.Connector.Type.INPUT and
+                connector.op() == stromxOp and
+                connector.id() == stromxInput.id()):
+                return True
+            
+        return False
     
 class Output(Item):
     properties = ['title', 'operator', 'position']
