@@ -577,7 +577,7 @@ class EnumDescription(Item):
     
 class Input(Item):
     properties = ['title', 'operator', 'position', 'sourceOperator',
-                  'sourcePosition']
+                  'sourcePosition', 'thread']
     
     def __init__(self, op, pos, sourceOp, sourcePos, thread, model):
         super(Input, self).__init__(model)
@@ -609,6 +609,13 @@ class Input(Item):
     @property
     def sourcePosition(self):
         return self.__sourcePos
+    
+    @property
+    def thread(self):
+        if self.__thread != None:
+            return [self.__thread.index]
+        else:
+            return []
     
     @property
     def __input(self):

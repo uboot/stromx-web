@@ -633,7 +633,8 @@ class InputTest(unittest.TestCase):
                           'position': 0,
                           'title': 'Input',
                           'sourceOperator': [],
-                          'sourcePosition': -1}}
+                          'sourcePosition': -1,
+                          'thread': []}}
         self.assertEqual(data, inputModel.data)
         
     def testDataNoThread(self):
@@ -644,7 +645,8 @@ class InputTest(unittest.TestCase):
                           'position': 0,
                           'title': 'Input',
                           'sourceOperator': ['1'],
-                          'sourcePosition': 0}}
+                          'sourcePosition': 0,
+                          'thread': []}}
         self.assertEqual(data, inputModel.data)
         
     def testData(self):
@@ -655,7 +657,8 @@ class InputTest(unittest.TestCase):
                           'position': 0,
                           'title': 'Input',
                           'sourceOperator': ['1'],
-                          'sourcePosition': 0}}
+                          'sourcePosition': 0,
+                          'thread': ['0']}}
         self.assertEqual(data, inputModel.data)
         
 class OutputTest(unittest.TestCase):
