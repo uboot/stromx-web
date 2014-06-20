@@ -662,6 +662,25 @@ class OutputTest(unittest.TestCase):
                            'position': 0,
                            'title': 'Output 0'}}
         self.assertEqual(data, output.data)
+        
+class ThreadTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        self.threads = self.model.threads
+        
+        self.stream = stromx.runtime.Stream()
+        self.thread = self.stream.addThread()
+        
+        color = stromx.runtime.Color(255, 0, 0)
+        self.thread.setColor(color)
+        self.thread.setName('Thread')
+        
+    def testData(self):
+        thread = self.threads.addStromxThread(self.thread)
+        data = {'thread': {'color': '#ff0000',
+                           'id': '0',
+                           'name': 'Thread'}}
+        self.assertEqual(data, thread.data)
     
 class ErrorsTest(unittest.TestCase):
     def setUp(self):

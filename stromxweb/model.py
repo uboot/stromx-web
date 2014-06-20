@@ -17,6 +17,7 @@ class Model(object):
         self.__enumDescriptions = EnumDescriptions(self)
         self.__outputs = Outputs(self)
         self.__inputs = Inputs(self)
+        self.__threads = Threads(self)
     
     @property
     def files(self):
@@ -49,6 +50,10 @@ class Model(object):
     @property
     def outputs(self):
         return self.__outputs
+    
+    @property
+    def threads(self):
+        return self.__threads
     
 class Items(object):
     def __init__(self, model = None):
@@ -613,6 +618,28 @@ class Inputs(Items):
         inputModel = Input(op, pos, sourceOp, sourcePos, self.model)
         self.addItem(inputModel)
         return inputModel
+    
+class Thread(Item):
+    properties = ['name', 'color']
+    
+    def __init__(self, stromxThread, model):
+        super(Thread, self).__init__(model)
+        self.__thread = stromxThread
+    
+    @property
+    def name(self):
+        return self.__thread.name()
+    
+    @property
+    def color(self):
+        color = self.__thread.color()
+        return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
+        
+class Threads(Items):
+    def addStromxThread(self, thread):
+        threadModel = Thread(thread, self.model)
+        self.addItem(threadModel)
+        return threadModel
     
 class Output(Item):
     properties = ['title', 'operator', 'position']
