@@ -255,7 +255,8 @@ class StreamsTest(unittest.TestCase):
         self.setUpStream()
         self.streams.addFile(self.streamFile)
         self.assertEqual({'streams': [_stream]}, self.streams.data)
-        self.assertEqual(5, len(self.model.operators.items))
+        self.assertEqual(5, len(self.model.operators))
+        self.assertEqual(3, len(self.model.threads))
         
     def testAddNoFile(self):
         self.setUpStream()
@@ -337,7 +338,7 @@ class StreamsTest(unittest.TestCase):
         self.setUpStream()
         stream = self.streams.addFile(self.streamFile)
         self.streams.delete(stream.index)
-        self.assertEqual(dict(), self.model.operators.items)  
+        self.assertEqual(dict(), self.model.operators)  
         
     def tearDown(self):
         shutil.rmtree('temp', True)

@@ -55,31 +55,20 @@ class Model(object):
     def threads(self):
         return self.__threads
     
-class Items(object):
+class Items(dict):
     def __init__(self, model = None):
-        self.__items = dict()
         self.__index = 0
         self.__model = model
         
     @property
     def data(self):
         name = _resourceName(self.__class__.__name__)
-        itemList = [item.data.values()[0] for item in self.items.values()]
+        itemList = [item.data.values()[0] for item in self.values()]
         return {name: itemList}
         
     @property
     def model(self):
         return self.__model
-        
-    @property
-    def items(self):
-        return self.__items
-    
-    def __getitem__(self, index):
-        return self.__items[index]
-    
-    def __len__(self):
-        return len(self.__items)
     
     def set(self, index, data):
         obj = self[index]
@@ -88,7 +77,7 @@ class Items(object):
     
     def addItem(self, item):
         item.index = self.__index
-        self.__items[str(self.__index)] =  item
+        self[str(self.__index)] =  item
         self.__index += 1
     
     def addItems(self, items):
@@ -96,7 +85,7 @@ class Items(object):
             self.addItem(item)
         
     def delete(self, index):
-        item = self.__items.pop(index)
+        item = self.pop(index)
         item.delete()
         
     def addData(self, data):
@@ -159,7 +148,7 @@ class Files(Items):
         
     def addData(self, data):
         filename = data["file"]["name"]
-        duplicates = [f for f in self.items.values() if f.name == filename]
+        duplicates = [f for f in self.values() if f.name == filename]
         assert(len(duplicates) <= 1)
         
         if len(duplicates):
@@ -270,8 +259,15 @@ class Stream(Item):
         else:
             self.__stream = stromx.runtime.Stream()
             
-        for op in self.__stream.operators():
-            self.__operators.append(self.model.operators.addStromxOp(op))
+        for stromxOp in self.__stream.operators():
+            self.__operators.append(self.model.operators.addStromxOp(stromxOp))
+            
+        for stromxThread in self.__stream.threads():
+            self.model.threads.addStromxThread(stromxThread)
+            
+#         for op in self.model.operators:
+#             for input in op.stromxOp.info().inputs():
+#                 pass
         
     @property
     def file(self):
