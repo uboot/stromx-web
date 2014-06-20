@@ -622,8 +622,12 @@ class InputTest(unittest.TestCase):
         self.fork = self.model.operators.addStromxOp(stromxFork)
         self.receive = self.model.operators.addStromxOp(stromxReceive)
         
-    def testDataNoSource(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0)
+        stromxThread = self.stream.addThread()
+        self.thread = self.model.threads.addStromxThread(stromxThread)
+        
+        
+    def testDataNoSourceNoThread(self):
+        inputModel = self.inputs.addStromxInput(self.fork, 0, None, -1, None)
         data = {'input': {'id': '0',
                           'operator': '0',
                           'position': 0,
@@ -632,8 +636,20 @@ class InputTest(unittest.TestCase):
                           'sourcePosition': -1}}
         self.assertEqual(data, inputModel.data)
         
+    def testDataNoThread(self):
+        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0,
+                                                None)
+        data = {'input': {'id': '0',
+                          'operator': '0',
+                          'position': 0,
+                          'title': 'Input',
+                          'sourceOperator': ['1'],
+                          'sourcePosition': 0}}
+        self.assertEqual(data, inputModel.data)
+        
     def testData(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0)
+        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0,
+                                                self.thread)
         data = {'input': {'id': '0',
                           'operator': '0',
                           'position': 0,

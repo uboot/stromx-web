@@ -579,12 +579,13 @@ class Input(Item):
     properties = ['title', 'operator', 'position', 'sourceOperator',
                   'sourcePosition']
     
-    def __init__(self, op, pos, sourceOp, sourcePos, model):
+    def __init__(self, op, pos, sourceOp, sourcePos, thread, model):
         super(Input, self).__init__(model)
         self.__op = op
         self.__pos = pos
         self.__sourcePos = sourcePos
         self.__sourceOp = sourceOp
+        self.__thread = thread
         
     @property
     def title(self):
@@ -614,8 +615,8 @@ class Input(Item):
         return self.__op.stromxOp.info().inputs()[self.__pos]
         
 class Inputs(Items):
-    def addStromxInput(self, op, pos, sourceOp = None, sourcePos = -1):
-        inputModel = Input(op, pos, sourceOp, sourcePos, self.model)
+    def addStromxInput(self, op, pos, sourceOp, sourcePos, thread):
+        inputModel = Input(op, pos, sourceOp, sourcePos, thread, self.model)
         self.addItem(inputModel)
         return inputModel
     
