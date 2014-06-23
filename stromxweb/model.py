@@ -391,7 +391,7 @@ class Operator(Item):
     
     @name.setter
     def name(self, value):
-        self.__op.setName(value)
+        self.__op.setName(str(value))
         
     @property
     def status(self):
