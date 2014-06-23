@@ -275,12 +275,13 @@ class Stream(Item):
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
                 if source.type() == stromx.runtime.Connector.Type.OUTPUT:
-                    sourceOp = self.model.operators.findStromxOp(source.op)
+                    sourceOp = self.model.operators.findStromxOp(source.op())
                     if sourceOp:
                         sourcePos = sourceOp.findOutputPosition(source.id())
                         
                 thread = self.model.threads.findThread(op.stromxOp, stromxInput)
-                self.model.inputs.addStromxInput(op, pos, sourceOp, sourcePos, None)
+                self.model.inputs.addStromxInput(op, pos, sourceOp, sourcePos,
+                                                 thread)
         
     @property
     def file(self):
