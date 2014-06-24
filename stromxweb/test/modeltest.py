@@ -114,6 +114,19 @@ _stream = {
     'operators': ['0', '1', '2', '3', '4']
 }
 
+_fork = {
+    'status': 'initialized',
+    'inputs': ['3'],
+    'name': 'Fork',
+    'parameters': ['1'],
+    'package': 'runtime',
+    'outputs': ['2', '3'],
+    'version': '0.1.0',
+     'y': 0.0, 'x': 0.0,
+     'type': 'Fork', 'id': '2'
+}
+
+
 class DummyItems(model.Items):
     pass
 
@@ -259,6 +272,7 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual(3, len(self.model.threads))
         self.assertEqual(5, len(self.model.outputs))
         self.assertEqual(5, len(self.model.inputs))
+        self.assertEqual({'operator': _fork}, self.model.operators['2'].data)
         
     def testAddNoFile(self):
         self.setUpStream()
@@ -380,6 +394,8 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'initialized',
                              'version': '0.1.0',
                              'parameters': ['0', '1'],
+                             'inputs': [],
+                             'outputs': [],
                              'x': 0.0,
                              'y': 0.0}}
         self.assertEqual(data, self.operator.data)
@@ -397,6 +413,8 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'none',
                              'version': '0.1.0',
                              'parameters': [],
+                             'inputs': [],
+                             'outputs': [],
                              'x': 0.0,
                              'y': 0.0}}
         self.assertEqual(data, op.data)

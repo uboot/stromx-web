@@ -266,8 +266,11 @@ class Stream(Item):
             self.model.threads.addStromxThread(stromxThread)
             
         for op in self.model.operators.values():
+            opInputs = []
+            opOutputs = []
             for pos, _ in enumerate(op.stromxOp.info().outputs()):
-                self.model.outputs.addStromxOutput(op, pos)
+                output = self.model.outputs.addStromxOutput(op, pos)
+                opOutputs.append(output)
                 
             for pos, stromxInput in enumerate(op.stromxOp.info().inputs()):
                 sourceOp = None
@@ -280,8 +283,11 @@ class Stream(Item):
                         sourcePos = sourceOp.findOutputPosition(source.id())
                         
                 thread = self.model.threads.findThread(op.stromxOp, stromxInput)
-                self.model.inputs.addStromxInput(op, pos, sourceOp, sourcePos,
-                                                 thread)
+                inputModel = self.model.inputs.addStromxInput(op, pos, sourceOp,
+                                                              sourcePos, thread)
+                opInputs.append(inputModel)
+            op.setInputModels(opInputs)
+            op.setOutputModels(opOutputs)
         
     @property
     def file(self):
@@ -371,7 +377,7 @@ class Operators(Items):
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
-                  "x", "y"]
+                  "x", "y", "inputs", "outputs"]
     
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
@@ -384,6 +390,8 @@ class Operator(Item):
             parameter = self.model.parameters.addStromxParameter(self.__op,
                                                                  param)
             self.__parameters.append(parameter)
+        self.__inputs = []
+        self.__outputs = []
         
     @property
     def name(self):
@@ -441,6 +449,14 @@ class Operator(Item):
     @property
     def parameters(self):
         return [op.index for op in self.__parameters]
+        
+    @property
+    def inputs(self):
+        return [inputModel.index for inputModel in self.__inputs]
+        
+    @property
+    def outputs(self):
+        return [output.index for output in self.__outputs]
     
     @property
     def stromxOp(self):
@@ -453,6 +469,12 @@ class Operator(Item):
             return outputs[0]
         else:
             return None
+        
+    def setInputModels(self, inputs):
+        self.__inputs = inputs
+    
+    def setOutputModels(self, outputs):
+        self.__outputs = outputs
     
 class Parameters(Items):
     def addStromxParameter(self, op, param):
@@ -924,11 +946,11 @@ def _registerExtraPackages(factory):
         except ImportError:
             pass
         
-        try:
-            import stromx.cvhighgui as cvhighgui
-            cvhighgui.register(factory)
-        except ImportError:
-            pass
+#         try:
+#             import stromx.cvhighgui as cvhighgui
+#             cvhighgui.register(factory)
+#         except ImportError:
+#             pass
         
         try:
             import stromx.raspi as raspi
