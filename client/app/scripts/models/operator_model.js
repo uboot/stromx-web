@@ -10,19 +10,7 @@ App.Operator = DS.Model.extend({
   x: DS.attr('number'),
   y: DS.attr('number'),
   inputs: DS.hasMany('input', { async: true }),
-  outputs: DS.hasMany('output', {async: true}),
-  
-  numInputs: function() {
-    return this.get('inputs').then( function(inputs) {
-      return inputs.get('length');
-    })
-  }.property('inputs'),
-                               
-  numOutputs: function() {
-    return this.get('outputs').then( function(inputs) {
-      return inputs.get('length');
-    })
-  }.property('outputs')
+  outputs: DS.hasMany('output', {async: true})
 });
 
 App.Operator.FIXTURES = [

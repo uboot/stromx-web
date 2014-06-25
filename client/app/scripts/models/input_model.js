@@ -1,24 +1,20 @@
 /* global App */
 
 App.Input = DS.Model.extend({
-  title: DS.attr('string'),
-  thread: DS.hasMany('thread', {async: true})
+  title: DS.attr('string')
 });
 
 App.Input.FIXTURES = [
   {
     id: 1,
-    title: 'Input image',
-    thread: []
+    title: 'Input image'
   },
   {
     id: 2,
-    title: 'Number',
-    thread: [1]
+    title: 'Number'
   },
   {
     id: 3,
-    title: 'Destination image',
-    thread: []
+    title: 'Destination image'
   }
 ];

@@ -8,12 +8,12 @@ App.SceneConnectionComponent = Ember.Component.extend({
     
     var connectionLine = paper.line(0, 0, 0, 0);
     connectionLine.attr({
-      class: 'stromx-svg-connection-line',
-      stroke: '#ff0000'
+      class: 'stromx-svg-connection-line'
     });
     this.set('line', connectionLine);
       
     this.updatePosition();
+    this.updateColor();
   },
   
   willDestroyElement: function() {
@@ -36,14 +36,16 @@ App.SceneConnectionComponent = Ember.Component.extend({
       var x2 = targetOperator.get('x');
       var y2 = targetOperator.get('y');
       
-      var numConnectorPromises = {
-        numInputs: targetOperator.get('numInputs'),
-        numOutputs: sourceOperator.get('numOutputs')
+      var connectorPromises = {
+        inputs: targetOperator.get('inputs'),
+        outputs: sourceOperator.get('outputs')
       };
       
-      Ember.RSVP.hash(numConnectorPromises).then( function(hash){
-        var numInputs = hash['numInputs'];
-        var numOutputs = hash['numOutputs'];
+      Ember.RSVP.hash(connectorPromises).then( function(hash){
+        var inputs = hash['inputs'];
+        var outputs = hash['outputs'];
+        var numInputs = inputs.get('length');
+        var numOutputs = outputs.get('length');
         
         var targetOffset = 30 - 10 * numInputs;
         var sourceOffset = 30 - 10 * numOutputs;
@@ -57,7 +59,23 @@ App.SceneConnectionComponent = Ember.Component.extend({
       });
       
     });
-    
   }.observes('connection.sourceOperator.x', 'connection.sourceOperator.y', 
-             'connection.targetOperator.x', 'connection.targetOperator.y')
+             'connection.targetOperator.x', 'connection.targetOperator.y'),
+
+  updateColor: function() {
+    var line = this.get('line');
+    var connection = this.get('connection');
+    connection.get('thread').then( function(threads) {
+      line.attr({
+        stroke: '#cccccc'
+      });
+        
+      threads.map( function(thread) {
+        var color = thread.get('color');
+        line.attr({
+          stroke: color
+        });
+      });
+    })
+  }.observes('connection.thread')
 }); 
