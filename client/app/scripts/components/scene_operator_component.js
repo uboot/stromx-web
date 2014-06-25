@@ -33,8 +33,8 @@ App.SceneOperatorComponent = Ember.Component.extend({
           class: 'stromx-svg-input-rect'
         });
         group.add(inputRect);
-      })
-    })
+      });
+    });
     
     op.get('outputs').then( function(outputs) {
       var numConnectors = outputs.get('length');
@@ -49,8 +49,8 @@ App.SceneOperatorComponent = Ember.Component.extend({
           class: 'stromx-svg-input-rect'
         });
         group.add(outputRect);
-      })
-    })
+      });
+    });
     
     var _this = this;
     group.drag(

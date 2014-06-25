@@ -29,8 +29,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       targetOperator: connection.get('targetOperator')
     };
     Ember.RSVP.hash(operatorPromises).then( function(hash){
-      var sourceOperator = hash['sourceOperator'];
-      var targetOperator = hash['targetOperator'];
+      var sourceOperator = hash.sourceOperator;
+      var targetOperator = hash.targetOperator;
       var x1 = sourceOperator.get('x');
       var y1 = sourceOperator.get('y');
       var x2 = targetOperator.get('x');
@@ -42,8 +42,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       };
       
       Ember.RSVP.hash(connectorPromises).then( function(hash){
-        var inputs = hash['inputs'];
-        var outputs = hash['outputs'];
+        var inputs = hash.inputs;
+        var outputs = hash.outputs;
         var numInputs = inputs.get('length');
         var numOutputs = outputs.get('length');
         
@@ -76,6 +76,6 @@ App.SceneConnectionComponent = Ember.Component.extend({
           stroke: color
         });
       });
-    })
+    });
   }.observes('connection.thread')
 }); 
