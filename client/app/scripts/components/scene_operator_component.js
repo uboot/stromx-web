@@ -19,6 +19,39 @@ App.SceneOperatorComponent = Ember.Component.extend({
       class: 'stromx-svg-operator-rect'
     });
     group.add(opName, opRect);
+    
+    op.get('inputs').then( function(inputs) {
+      var numConnectors = inputs.get('length');
+      var offset = 30 - 10 * numConnectors;
+      
+      inputs.map( function(input, index) {
+        var x = -10;
+        var y = offset + 20 * index;
+        
+        var inputRect = paper.rect(x, y, 10, 10);
+        inputRect.attr({
+          class: 'stromx-svg-input-rect'
+        });
+        group.add(inputRect);
+      })
+    })
+    
+    op.get('outputs').then( function(outputs) {
+      var numConnectors = outputs.get('length');
+      var offset = 30 - 10 * numConnectors;
+      
+      outputs.map( function(output, index) {
+        var x = 50;
+        var y = offset + 20 * index;
+        
+        var outputRect = paper.rect(x, y, 10, 10);
+        outputRect.attr({
+          class: 'stromx-svg-input-rect'
+        });
+        group.add(outputRect);
+      })
+    })
+    
     var _this = this;
     group.drag(
       function(dx, dy) { _this.moveDrag(dx, dy); },
