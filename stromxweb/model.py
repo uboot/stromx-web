@@ -245,13 +245,15 @@ class Streams(Items):
         return stream
         
 class Stream(Item):
-    properties = ["name", "saved", "active", "paused", "file", "operators"]
+    properties = ["name", "saved", "active", "paused", "file", "operators",
+                  "connections"]
     
     def __init__(self, streamFile, factory, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
         self.__saved = False
         self.__operators = []
+        self.__connections = []
         
         if os.path.exists(streamFile.path):
             reader = stromx.runtime.XmlReader()
@@ -282,8 +284,9 @@ class Stream(Item):
                 
                 thread = self.model.threads.findThread(op.stromxOp, stromxInput)
                 
-                self.model.connections.addConnection(sourceOp, sourcePos,
-                                                     op, pos, thread)
+                connection = self.model.connections.addConnection(
+                                    sourceOp, sourcePos, op, pos, thread)
+                self.__connections.append(connection)
 
         
     @property
@@ -354,6 +357,10 @@ class Stream(Item):
     @property
     def operators(self):
         return [op.index for op in self.__operators]
+    
+    @property
+    def connections(self):
+        return [connection.index for connection in self.__connections]
     
     def delete(self):
         for op in self.__operators:

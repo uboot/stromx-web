@@ -111,6 +111,7 @@ _stream = {
     'active': False,
     'paused': False,
     'file': '0',
+    'connections': ['0', '1', '2', '3', '4'],
     'operators': ['0', '1', '2', '3', '4']
 }
 
