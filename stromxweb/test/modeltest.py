@@ -116,11 +116,11 @@ _stream = {
 
 _fork = {
     'status': 'initialized',
-    'inputs': ['3'],
+    'inputs': ['4'],
     'name': 'Fork',
     'parameters': ['1'],
     'package': 'runtime',
-    'outputs': ['2', '3'],
+    'outputs': ['5', '6'],
     'version': '0.1.0',
      'y': 0.0, 'x': 0.0,
      'type': 'Fork', 'id': '2'
@@ -270,8 +270,8 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators))
         self.assertEqual(3, len(self.model.threads))
-        self.assertEqual(5, len(self.model.outputs))
-        self.assertEqual(5, len(self.model.inputs))
+        self.assertEqual(10, len(self.model.connectors))
+        self.assertEqual(5, len(self.model.connections))
         self.assertEqual({'operator': _fork}, self.model.operators['2'].data)
         
     def testAddNoFile(self):
@@ -395,7 +395,7 @@ class OperatorsTest(unittest.TestCase):
                              'version': '0.1.0',
                              'parameters': ['0', '1'],
                              'inputs': [],
-                             'outputs': [],
+                             'outputs': ['0'],
                              'x': 0.0,
                              'y': 0.0}}
         self.assertEqual(data, self.operator.data)
@@ -634,10 +634,10 @@ class EnumDescriptionsTest(unittest.TestCase):
                                     'value': 0}}
         self.assertEqual(data, desc.data)
         
-class InputsTest(unittest.TestCase):
+class ConnectionTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
-        self.inputs = self.model.inputs
+        self.connections = self.model.connections
         
         self.stream = stromx.runtime.Stream()
         kernel = stromx.runtime.Fork()
@@ -654,61 +654,34 @@ class InputsTest(unittest.TestCase):
         stromxThread = self.stream.addThread()
         self.thread = self.model.threads.addStromxThread(stromxThread)
         
-        
-    def testDataNoSourceNoThread(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0, None, -1, None)
-        data = {'input': {'id': '0',
-                          'operator': '0',
-                          'position': 0,
-                          'title': 'Input',
-                          'sourceOperator': [],
-                          'sourcePosition': -1,
-                          'thread': []}}
-        self.assertEqual(data, inputModel.data)
-        
-    def testDataNoThread(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0,
-                                                None)
-        data = {'input': {'id': '0',
-                          'operator': '0',
-                          'position': 0,
-                          'title': 'Input',
-                          'sourceOperator': ['1'],
-                          'sourcePosition': 0,
-                          'thread': []}}
-        self.assertEqual(data, inputModel.data)
-        
     def testData(self):
-        inputModel = self.inputs.addStromxInput(self.fork, 0, self.receive, 0,
-                                                self.thread)
-        data = {'input': {'id': '0',
-                          'operator': '0',
-                          'position': 0,
-                          'title': 'Input',
-                          'sourceOperator': ['1'],
-                          'sourcePosition': 0,
-                          'thread': ['0']}}
-        self.assertEqual(data, inputModel.data)
+        connection = self.connections.addConnection(self.receive, 0, 
+                                                    self.fork, 0, self.thread)
+        data = {'connection': {'id': '0',
+                               'thread': ['0'],
+                               'sourcePosition': 0, 
+                               'sourceOperator': '1',
+                               'targetPosition': 0,
+                               'targetOperator': '0'}}
+        self.assertEqual(data, connection.data)
         
-class OutputsTest(unittest.TestCase):
+class ConnectorTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
-        self.outputs = self.model.outputs
+        self.connectors = self.model.connectors
         
         self.stream = stromx.runtime.Stream()
         
         kernel = stromx.runtime.Fork()
-        stromxFork = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(stromxFork)
-        self.fork = self.model.operators.addStromxOp(stromxFork)
+        self.fork = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(self.fork)
         
     def testData(self):
-        output = self.outputs.addStromxOutput(self.fork, 0)
-        data = {'output': {'id': '0',
-                           'operator': '0',
-                           'position': 0,
-                           'title': 'Output 0'}}
-        self.assertEqual(data, output.data)
+        description = self.fork.info().outputs()[1]
+        connector = self.connectors.addStromxConnector(description)
+        data = {'connector': {'id': '0',
+                              'title': 'Output 1'}}
+        self.assertEqual(data, connector.data)
         
 class ThreadsTest(unittest.TestCase):
     def setUp(self):

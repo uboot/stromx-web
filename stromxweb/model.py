@@ -15,8 +15,8 @@ class Model(object):
         self.__operators = Operators(self)
         self.__parameters = Parameters(self)
         self.__enumDescriptions = EnumDescriptions(self)
-        self.__outputs = Outputs(self)
-        self.__inputs = Inputs(self)
+        self.__connectors = Connectors(self)
+        self.__connections = Connections(self)
         self.__threads = Threads(self)
     
     @property
@@ -44,12 +44,12 @@ class Model(object):
         return self.__enumDescriptions
     
     @property
-    def inputs(self):
-        return self.__inputs
+    def connections(self):
+        return self.__connections
     
     @property
-    def outputs(self):
-        return self.__outputs
+    def connectors(self):
+        return self.__connectors
     
     @property
     def threads(self):
@@ -266,28 +266,25 @@ class Stream(Item):
             self.model.threads.addStromxThread(stromxThread)
             
         for op in self.model.operators.values():
-            opInputs = []
-            opOutputs = []
-            for pos, _ in enumerate(op.stromxOp.info().outputs()):
-                output = self.model.outputs.addStromxOutput(op, pos)
-                opOutputs.append(output)
-                
             for pos, stromxInput in enumerate(op.stromxOp.info().inputs()):
-                sourceOp = None
-                sourcePos = -1
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
-                if source.type() == stromx.runtime.Connector.Type.OUTPUT:
-                    sourceOp = self.model.operators.findStromxOp(source.op())
-                    if sourceOp:
-                        sourcePos = sourceOp.findOutputPosition(source.id())
-                        
+                if source.type() != stromx.runtime.Connector.Type.OUTPUT:
+                    continue
+                
+                sourceOp = self.model.operators.findStromxOp(source.op())
+                if not sourceOp:
+                    continue
+                    
+                sourcePos = sourceOp.findOutputPosition(source.id())
+                if sourcePos < 0:
+                    continue
+                
                 thread = self.model.threads.findThread(op.stromxOp, stromxInput)
-                inputModel = self.model.inputs.addStromxInput(op, pos, sourceOp,
-                                                              sourcePos, thread)
-                opInputs.append(inputModel)
-            op.setInputModels(opInputs)
-            op.setOutputModels(opOutputs)
+                
+                self.model.connections.addConnection(sourceOp, sourcePos,
+                                                     op, pos, thread)
+
         
     @property
     def file(self):
@@ -382,6 +379,7 @@ class Operator(Item):
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
         self.__op = op
+        
         self.__parameters = []
         for param in self.__op.info().parameters():
             if not _parameterIsReadable(op, param):
@@ -390,8 +388,16 @@ class Operator(Item):
             parameter = self.model.parameters.addStromxParameter(self.__op,
                                                                  param)
             self.__parameters.append(parameter)
+            
         self.__inputs = []
+        for description in self.__op.info().inputs():
+            connector = self.model.connectors.addStromxConnector(description)
+            self.__inputs.append(connector)
+            
         self.__outputs = []
+        for description in self.__op.info().outputs():
+            connector = self.model.connectors.addStromxConnector(description)
+            self.__outputs.append(connector)
         
     @property
     def name(self):
@@ -469,12 +475,6 @@ class Operator(Item):
             return outputs[0]
         else:
             return None
-        
-    def setInputModels(self, inputs):
-        self.__inputs = inputs
-    
-    def setOutputModels(self, outputs):
-        self.__outputs = outputs
     
 class Parameters(Items):
     def addStromxParameter(self, op, param):
@@ -622,40 +622,33 @@ class EnumDescription(Item):
     def title(self):
         return self.__desc.title()
     
-class Input(Item):
-    properties = ['title', 'operator', 'position', 'sourceOperator',
-                  'sourcePosition', 'thread']
+class Connection(Item):
+    properties = ['sourceOperator', 'sourcePosition', 'targetOperator',
+                  'targetPosition', 'thread']
     
-    def __init__(self, op, pos, sourceOp, sourcePos, thread, model):
-        super(Input, self).__init__(model)
-        self.__op = op
-        self.__pos = pos
-        self.__sourcePos = sourcePos
+    def __init__(self, sourceOp, sourcePos, targetOp, targetPos, thread, model):
+        super(Connection, self).__init__(model)
         self.__sourceOp = sourceOp
+        self.__sourcePos = sourcePos
+        self.__targetOp = targetOp
+        self.__targetPos = targetPos
         self.__thread = thread
-        
-    @property
-    def title(self):
-        return self.__input.title()
-    
-    @property
-    def operator(self):
-        return self.__op.index
-    
-    @property
-    def position(self):
-        return self.__pos
     
     @property
     def sourceOperator(self):
-        if self.__sourceOp != None:
-            return [self.__sourceOp.index]
-        else:
-            return []
+        return self.__sourceOp.index
     
     @property
     def sourcePosition(self):
         return self.__sourcePos
+    
+    @property
+    def targetOperator(self):
+        return self.__targetOp.index
+    
+    @property
+    def targetPosition(self):
+        return self.__targetPos
     
     @property
     def thread(self):
@@ -663,16 +656,13 @@ class Input(Item):
             return [self.__thread.index]
         else:
             return []
-    
-    @property
-    def __input(self):
-        return self.__op.stromxOp.info().inputs()[self.__pos]
         
-class Inputs(Items):
-    def addStromxInput(self, op, pos, sourceOp, sourcePos, thread):
-        inputModel = Input(op, pos, sourceOp, sourcePos, thread, self.model)
-        self.addItem(inputModel)
-        return inputModel
+class Connections(Items):
+    def addConnection(self, sourceOp, sourcePos, targetOp, targetPos, thread):
+        connection = Connection(sourceOp, sourcePos, targetOp, targetPos,
+                                thread, self.model)
+        self.addItem(connection)
+        return connection
     
 class Thread(Item):
     properties = ['name', 'color']
@@ -720,35 +710,22 @@ class Threads(Items):
             
         return False
     
-class Output(Item):
-    properties = ['title', 'operator', 'position']
+class Connector(Item):
+    properties = ['title']
     
-    def __init__(self, op, pos, model):
-        super(Output, self).__init__(model)
-        self.__op = op
-        self.__pos = pos
+    def __init__(self, description, model):
+        super(Connector, self).__init__(model)
+        self.__description = description
         
     @property
     def title(self):
-        return self.__output.title()
-    
-    @property
-    def operator(self):
-        return self.__op.index
-    
-    @property
-    def position(self):
-        return self.__pos
-    
-    @property
-    def __output(self):
-        return self.__op.stromxOp.info().outputs()[self.__pos]
+        return self.__description.title()
         
-class Outputs(Items):
-    def addStromxOutput(self, op, position):
-        output = Output(op, position, self.model)
-        self.addItem(output)
-        return output
+class Connectors(Items):
+    def addStromxConnector(self, description):
+        connector = Connector(description, self.model)
+        self.addItem(connector)
+        return connector
         
 class Errors(Items):
     def __init__(self):
