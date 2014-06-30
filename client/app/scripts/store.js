@@ -1,4 +1,6 @@
 /* global App */
 
-// App.ApplicationAdapter = DS.RESTAdapter.extend();
-App.ApplicationAdapter = DS.FixtureAdapter;
+App.ApplicationAdapter = DS.RESTAdapter.extend({
+  host: "http://localhost:8888"
+});
+// App.ApplicationAdapter = DS.FixtureAdapter;
