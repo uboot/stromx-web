@@ -2,6 +2,7 @@
 
 import httplib
 import os
+import re
 import tornado.escape
 import tornado.ioloop
 import tornado.web
@@ -29,7 +30,17 @@ class ItemsHandler(tornado.web.RequestHandler):
     def get(self, index = None):
         try:
             if index == None:
-                json = tornado.escape.json_encode(self.items.data)
+                query = tornado.escape.url_unescape(self.request.query)
+                data = self.items.data
+                if query != "":
+                    ids = [str(index) for index in
+                           re.findall('ids\[\]=(\d+)', query)]
+                    resourceName = data.keys()[0]
+                    items = data.values()[0]
+                    filteredItems = [item for item in items
+                                     if item['id'] in ids]
+                    data = {resourceName: filteredItems}
+                json = tornado.escape.json_encode(data)
             else:
                 json = tornado.escape.json_encode(self.items[index].data)
             self.write(json) 

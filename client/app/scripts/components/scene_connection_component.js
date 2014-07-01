@@ -49,6 +49,12 @@ App.SceneConnectionComponent = Ember.Component.extend({
         
         var targetOffset = 30 - 10 * numInputs;
         var sourceOffset = 30 - 10 * numOutputs;
+        
+        if(sourceOffset === undefined || targetOffset === undefined ||
+           sourcePosition === undefined || targetPosition === undefined)
+        {
+          return;
+        }
       
         line.attr({
           x1: x1 + 60,
@@ -73,7 +79,7 @@ App.SceneConnectionComponent = Ember.Component.extend({
       threads.map( function(thread) {
         var id = thread.get('id');
         var color = thread.get('color');
-        if (! color)
+        if (color === undefined)
           return;
         
         line.attr({
