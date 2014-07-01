@@ -12,8 +12,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
     });
     this.set('line', connectionLine);
       
-    this.updatePosition();
     this.updateColor();
+    this.updatePosition();
   },
   
   willDestroyElement: function() {
@@ -71,11 +71,15 @@ App.SceneConnectionComponent = Ember.Component.extend({
       });
         
       threads.map( function(thread) {
+        var id = thread.get('id');
         var color = thread.get('color');
+        if (! color)
+          return;
+        
         line.attr({
           stroke: color
         });
       });
     });
-  }.observes('connection.thread')
+  }.observes('connection.thread.@each.color')
 }); 
