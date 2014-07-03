@@ -5,7 +5,7 @@ App.OperatorController = Ember.ObjectController.extend({
     return this.get('package') + '::' + this.get('type');
   }.property('type', 'package'),
                                                        
-  status: function() {
+  statusLabel: function() {
     var status = this.get('model').get('status');
     
     if (status === 'none')
