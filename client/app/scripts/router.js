@@ -11,4 +11,7 @@ App.Router.map(function () {
   this.resource('operators', function() {
     this.resource('operator', { path: '/:operator_id' });
   });
+  this.resource('observer_views', function() {
+    this.resource('observer_view', { path: '/:observer_view_id' });
+  });
 });

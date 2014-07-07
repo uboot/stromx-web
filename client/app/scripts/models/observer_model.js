@@ -1,7 +1,7 @@
 /* global App */
 
 App.Observer = DS.Model.extend({
-  visualizationType: DS.attr('string'),
+  visualization: DS.attr('string'),
   dataType: DS.attr('string'),
   data: DS.attr('string'),
   color: DS.attr('string'),
@@ -11,12 +11,18 @@ App.Observer = DS.Model.extend({
 App.Observer.FIXTURES = [
   {
     id: 0,
-    visualizationType: 'lines',
+    visualization: 'lines',
     dataType: 'matrix',
-    data: '',
+    data: {
+      rows: 3,
+      cols: 4,
+      values: [
+        [1, 1, 2, 2],
+        [1, 2, 2, 3],
+        [1, 3, 2, 4]
+      ]
+    },
     color: '#0000ff',
-    connector: 4,
-    rows: 3,
-    cols: 4
+    connector: 4
   }
 ];

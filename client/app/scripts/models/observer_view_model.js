@@ -8,7 +8,7 @@ App.ObserverView = DS.Model.extend({
 App.ObserverView.FIXTURES = [
   {
     id: 1,
-    name: 'Observer',
+    name: 'Main observer',
     observers: [0]
   }
 ];
