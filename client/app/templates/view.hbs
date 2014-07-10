@@ -1,0 +1,36 @@
+<h1>View</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <td>
+        Observer
+      </td>
+      <td>
+        Visualization
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each parameterObservers itemController="parameterObserver"}}
+    <tr>
+      <td>
+        {{title}}
+      </td>
+      <td>
+        {{visualizationLabel}}
+      </td>
+    </tr>
+    {{/each}}
+    {{#each connectorObservers itemController="connectorObserver"}}
+    <tr>
+      <td>
+        {{title}}
+      </td>
+      <td>
+        {{visualizationLabel}}
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table> 

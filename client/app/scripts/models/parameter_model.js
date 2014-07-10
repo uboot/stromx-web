@@ -9,6 +9,7 @@ App.Parameter = DS.Model.extend({
   maximum: DS.attr('number'),
   state: DS.attr('string'),
   writable: DS.attr('boolean'),
+  operator: DS.belongsTo('operator'),
   descriptions: DS.hasMany('enumDescription', {async: true})
 });
 
@@ -23,7 +24,8 @@ App.Parameter.FIXTURES = [
     maximum: 65535,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 1
   },
   {
     id: 2,
@@ -35,7 +37,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: false,
-    descriptions: [0, 1, 2]
+    descriptions: [0, 1, 2],
+    operator: 2
   },
   {
     id: 3,
@@ -47,7 +50,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 2
   },
   {
     id: 4,
@@ -59,7 +63,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'timedOut',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 2
   },
   {
     id: 6,
@@ -71,7 +76,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: false,
-    descriptions: []
+    descriptions: [],
+    operator: 2
   },
   {
     id: 5,
@@ -83,7 +89,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 3
   },
   {
     id: 7,
@@ -95,7 +102,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'accessFailed',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 2
   },
   {
     id: 8,
@@ -107,7 +115,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 4
   },
   {
     id: 9,
@@ -119,7 +128,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 4
   },
   {
     id: 10,
@@ -131,7 +141,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 4
   },
   {
     id: 11,
@@ -143,7 +154,8 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: []
+    descriptions: [],
+    operator: 4
   },
   {
     id: 12,
@@ -155,6 +167,7 @@ App.Parameter.FIXTURES = [
     maximum: 0,
     state: 'current',
     writable: true,
-    descriptions: [3, 4, 5]
+    descriptions: [3, 4, 5],
+    operator: 2
   },
 ];

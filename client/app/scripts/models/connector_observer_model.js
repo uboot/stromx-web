@@ -1,19 +1,20 @@
 /* global App */
 
-App.Observer = DS.Model.extend({
+App.ConnectorObserver = DS.Model.extend({
   visualization: DS.attr('string'),
-  dataType: DS.attr('string'),
-  data: DS.attr('string'),
   color: DS.attr('string'),
-  connector: DS.belongsTo('Connector')
+  dataType: DS.attr('string'),
+  currentData: DS.attr(),
+  connector: DS.belongsTo('connector')
 });
 
-App.Observer.FIXTURES = [
+App.ConnectorObserver.FIXTURES = [
   {
     id: 0,
     visualization: 'lines',
+    color: '#0000ff',
     dataType: 'matrix',
-    data: {
+    currentData: {
       rows: 3,
       cols: 4,
       values: [
@@ -22,7 +23,6 @@ App.Observer.FIXTURES = [
         [1, 3, 2, 4]
       ]
     },
-    color: '#0000ff',
     connector: 4
   }
 ];
