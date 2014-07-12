@@ -61,14 +61,5 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     group.attr({
       'z-value': pos
     });
-  },
-
-  position: function() {
-    var observer = this.get('connectorObserver');
-    var view = observer.get('view');
-    var observers = view.get('connectorObservers');
-    var observerModel = observer.get('model');
-
-    return observers.indexOf(observerModel);
-  }.property('connectorObserver.view.connectorObservers')
+  }
 });

@@ -21,6 +21,8 @@
       <th>
         Visualization
       </th>
+      <th>
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -32,6 +34,8 @@
       <td>
         {{visualizationLabel}}
       </td>
+      <td>
+      </td>
     </tr>
     {{/each}}
     {{#each connectorObservers itemController="connectorObserver"}}
@@ -41,6 +45,9 @@
       </td>
       <td>
         {{visualizationLabel}}
+      </td>
+      <td>
+        <button type="button" {{action "moveUp"}} class="btn btn-default btn-xs">Up</button>
       </td>
     </tr>
     {{/each}}
