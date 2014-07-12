@@ -12,6 +12,10 @@ App.ParameterObserverController = Ember.ObjectController.extend({
                                                                 
   title: function() {
     var parameter = this.get('parameter');
-    return parameter.get('title');
-  }.property('parameter.title'),                  
+    var operator = parameter.get('operator');
+    if (operator)
+      return parameter.get('title') + " at " + operator.get('name');
+    else
+      return '';
+  }.property('parameter.title', 'parameter.operator.name'),                  
 });

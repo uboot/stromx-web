@@ -1,14 +1,26 @@
 <h1>View</h1>
 
+<div class="stromx-view-view panel panel-default">
+  <svg width="1280" height="1024" id="view-svg">
+  </svg>
+</div>
+
+{{#each parameterObservers itemController="parameterObserver"}}
+{{/each}}
+
+{{#each connectorObservers itemController="connectorObserver"}}
+  {{view-connector-observer connectorObserver=this}}
+{{/each}}
+
 <table class="table">
   <thead>
     <tr>
-      <td>
+      <th>
         Observer
-      </td>
-      <td>
+      </th>
+      <th>
         Visualization
-      </td>
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -33,4 +45,4 @@
     </tr>
     {{/each}}
   </tbody>
-</table> 
+</table>

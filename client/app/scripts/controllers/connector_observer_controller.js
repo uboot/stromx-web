@@ -16,8 +16,8 @@ App.ConnectorObserverController = Ember.ObjectController.extend({
     var connector = this.get('connector');
     var operator = connector.get('operator');
     if (operator)
-      return operator.get('name') + connector.get('title');
+      return connector.get('title') + " at " + operator.get('name');
     else
-      return connector.get('title');
+      return '';
   }.property('connector.title', 'connector.operator.name')                
 });

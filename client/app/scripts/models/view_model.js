@@ -10,7 +10,7 @@ App.View.FIXTURES = [
   {
     id: 1,
     name: 'Main observer',
-    connectorObservers: [0],
+    connectorObservers: [0, 2],
     parameterObservers: [0]
   }
 ];
