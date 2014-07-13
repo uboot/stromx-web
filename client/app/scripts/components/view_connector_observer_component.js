@@ -8,6 +8,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     this.set('group', paper.group());
 
     this.updateContent();
+    this.updatePosition();
   },
 
   updateContent: function() {
@@ -27,8 +28,6 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     items.forEach( function(item) {
       group.add(item);
     })
-
-    this.updatePosition();
   }.observes('connectorObserver'),
 
   paintLines: function(observer, paper) {
@@ -57,9 +56,10 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
   updatePosition: function() {
     var group = this.get('group');
-    var pos = this.get('position');
+    var observer = this.get('connectorObserver');
+    var pos = observer.get('position');
     group.attr({
       'z-value': pos
-    });
-  }
+    })
+  }.observes('connectorObserver.position')
 });

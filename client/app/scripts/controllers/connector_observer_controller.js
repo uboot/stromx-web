@@ -36,11 +36,11 @@ App.ConnectorObserverController = Ember.ObjectController.extend({
       var model = this.get('model');
       var index = observers.indexOf(model);
 
-      if (index >= observers.get('lenght') - 1)
+      if (index == 0)
         return;
 
       observers.removeAt(index);
-      observers.insertAt(index + 1, model);
+      observers.insertAt(index - 1, model);
     }
   }
 });
