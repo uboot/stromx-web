@@ -11,27 +11,25 @@ App.FileController = Ember.ObjectController.extend({
         file.deleteRecord();
         file.save();
     },
+
     open: function () {
-        this.set('opened', true);
-        var that = this;
-        var file = this.get('model');
-        file.save().then( function(file) {
-          if (! file.get('opened'))
-            return;
-            
-          return file.get('stream');
-        }).then( function(stream) {
-          if (stream)
-          {
-            var firstStream = stream.get('firstObject');
-            that.transitionToRoute('stream', firstStream);
-          }
-        });
+      this.set('opened', true);
+      var controller = this;
+      var file = this.get('model');
+      file.save().then( function(file) {
+        if (! file.get('opened'))
+          return;
+
+        var stream = file.get('stream');
+        if (stream !== null)
+          controller.transitionToRoute('stream', stream);
+      })
     },
+
     close: function () {
-        this.set('opened', false);
-        var file = this.get('model');
-        file.save();
+      this.set('opened', false);
+      var file = this.get('model');
+      file.save();
     }
   }
 });

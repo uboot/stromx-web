@@ -46,9 +46,9 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                {{#each stream}}
-                  <li>{{#link-to 'stream' this}}Show{{/link-to}}</li>
-                {{/each}}
+                {{#if stream}}
+                  <li>{{#link-to 'stream' stream}}Show{{/link-to}}</li>
+                {{/if}}
                 <li><a {{bind-attr href=url}}>Download</a></li>
               </ul>
             </div>
