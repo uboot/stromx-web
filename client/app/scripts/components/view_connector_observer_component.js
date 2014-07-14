@@ -17,6 +17,11 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     var observer = this.get('connectorObserver');
     var visualization = observer.get('visualization')
     var items = null;
+    var content = observer.get('valueContent');
+
+    content.then( function(content) {
+      ;
+    });
 
     if (visualization === 'lines')
       items = this.paintLines(observer, paper);
@@ -28,7 +33,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     items.forEach( function(item) {
       group.add(item);
     })
-  }.observes('connectorObserver'),
+  }.observes('connectorObserver.value'),
 
   paintLines: function(observer, paper) {
     var currentData = observer.get('currentData');

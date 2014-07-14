@@ -1,22 +1,15 @@
 /* global App */
 
-App.ConnectorObserver = DS.Model.extend({
-  visualization: DS.attr('string'),
-  color: DS.attr('string'),
-  dataType: DS.attr('string'),
-  currentData: DS.attr(),
-  connector: DS.belongsTo('connector'),
-  value: DS.hasMany('ConnectorValue', {async: true}),
-  view: DS.belongsTo('view')
+App.ConnectorValue = DS.Model.extend({
+  valueType: DS.attr('string'),
+  content: DS.attr()
 });
 
-App.ConnectorObserver.FIXTURES = [
+App.ConnectorValue.FIXTURES = [
   {
     id: 0,
-    visualization: 'lines',
-    color: '#0000ff',
-    dataType: 'matrix',
-    currentData: {
+    valueType: 'matrix',
+    content: {
       rows: 3,
       cols: 4,
       values: [
@@ -24,17 +17,12 @@ App.ConnectorObserver.FIXTURES = [
         [10, 20, 200, 300],
         [10, 30, 200, 400]
       ]
-    },
-    connector: 4,
-    value: [0],
-    view: 1
+    }
   },
   {
-    id: 2,
-    visualization: 'image',
-    color: '#0000ff',
-    dataType: 'image',
-    currentData: {
+    id: 1,
+    valueType: 'image',
+    content: {
       width: 100,
       height: 102,
       image: (
@@ -118,9 +106,6 @@ App.ConnectorObserver.FIXTURES = [
       'GkPH3klpRiNlAqggTwimJPDQcZB5W33kS3qMQN8B+zC5SmeTpH2EPtyjIBTE4Pxia1idRN' +
       'H+84N2hnnk/hH+00PmmjYehCfbmxQa4CbEiBqdtHeJULCQvPY+BylGeQnKvb7wwhfOaVK8' +
       'Y9vQl942wef5TfsTOJG2whVykOLLmzxiQAM8MbND5MD6z/9k='
-    )},
-    connector: 2,
-    value: [1],
-    view: 1
+    )}
   }
 ];
