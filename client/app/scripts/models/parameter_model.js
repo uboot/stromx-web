@@ -9,7 +9,7 @@ App.Parameter = DS.Model.extend({
   maximum: DS.attr('number'),
   state: DS.attr('string'),
   writable: DS.attr('boolean'),
-  operator: DS.belongsTo('operator'),
+  operator: DS.belongsTo('operator', {async: true}),
   descriptions: DS.hasMany('enumDescription', {async: true})
 });
 

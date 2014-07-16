@@ -1,28 +1,22 @@
 /* global App */
 
 App.Connection = DS.Model.extend({
-  sourceOperator: DS.belongsTo('operator'),
-  sourcePosition: DS.attr('number'),
-  targetOperator: DS.belongsTo('operator'),
-  targetPosition: DS.attr('number'),
+  sourceConnector: DS.belongsTo('connector', {async: true}),
+  targetConnector: DS.belongsTo('connector', {async: true}),
   thread: DS.belongsTo('thread', {async: true})
 });
 
 App.Connection.FIXTURES = [
   {
     id: 1,
-    sourceOperator: 0,
-    sourcePosition: 0,
-    targetOperator: 1,
-    targetPosition: 0,
+    sourceConnector: 5,
+    targetConnector: 2,
     thread: 1
   },
   {
     id: 2,
-    sourceOperator: 0,
-    sourcePosition: 0,
-    targetOperator: 2,
-    targetPosition: 1,
+    sourceConnector: 5,
+    targetConnector: 3,
     thread: null
   }
 ];

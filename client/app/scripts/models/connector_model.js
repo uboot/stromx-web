@@ -2,7 +2,7 @@
 
 App.Connector = DS.Model.extend({
   title: DS.attr('string'),
-  operator: DS.belongsTo('operator')
+  operator: DS.belongsTo('operator', {async: true})
 });
 
 App.Connector.FIXTURES = [
