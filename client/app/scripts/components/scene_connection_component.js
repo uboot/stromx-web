@@ -66,26 +66,24 @@ App.SceneConnectionComponent = Ember.Component.extend({
 
     });
   }.observes('connection.sourceOperator.x', 'connection.sourceOperator.y',
-             'connection.targetOperator.x', 'connection.targetOperator.y'),
+              'connection.targetOperator.x', 'connection.targetOperator.y'),
 
   updateColor: function() {
     var line = this.get('line');
-    var connection = this.get('connection');
-    connection.get('thread').then( function(threads) {
+    var thread = this.get('connection.thread');
+
+    line.attr({
+      stroke: '#cccccc'
+    });
+    if (thread === null)
+      return;
+
+    thread.then( function(thread) {
+      var color = thread.get('color');
+
       line.attr({
-        stroke: '#cccccc'
-      });
-
-      threads.map( function(thread) {
-        var id = thread.get('id');
-        var color = thread.get('color');
-        if (color === undefined)
-          return;
-
-        line.attr({
-          stroke: color
-        });
+        stroke: color
       });
     });
-  }.observes('connection.thread.@each.color')
+  }.observes('connection.thread.color')
 });

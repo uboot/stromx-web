@@ -5,7 +5,7 @@ App.Connection = DS.Model.extend({
   sourcePosition: DS.attr('number'),
   targetOperator: DS.belongsTo('operator'),
   targetPosition: DS.attr('number'),
-  thread: DS.hasMany('thread', {async: true})
+  thread: DS.belongsTo('thread', {async: true})
 });
 
 App.Connection.FIXTURES = [
@@ -15,7 +15,7 @@ App.Connection.FIXTURES = [
     sourcePosition: 0,
     targetOperator: 1,
     targetPosition: 0,
-    thread: [1]
+    thread: 1
   },
   {
     id: 2,
@@ -23,6 +23,6 @@ App.Connection.FIXTURES = [
     sourcePosition: 0,
     targetOperator: 2,
     targetPosition: 1,
-    thread: []
+    thread: null
   }
 ];

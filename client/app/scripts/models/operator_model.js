@@ -9,7 +9,7 @@ App.Operator = DS.Model.extend({
   parameters: DS.hasMany('parameter', {async: true}),
   x: DS.attr('number'),
   y: DS.attr('number'),
-  inputs: DS.hasMany('connector', { async: true }),
+  inputs: DS.hasMany('connector', {async: true}),
   outputs: DS.hasMany('connector', {async: true})
 });
 
