@@ -31,13 +31,7 @@ App.OperatorController = Ember.ObjectController.extend({
     },
     save: function() {
       var model = this.get('model');
-      var inputs = model.get('inputs');
-      var outputs = model.get('outputs');
-      Ember.RSVP.all([inputs, outputs]).then( function(values){
-        model.set('inputs', values[0]);
-        model.set('outputs', values[1]);
-        model.save();
-      })
+      model.save();
     }
   }
 });

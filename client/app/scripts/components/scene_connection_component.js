@@ -28,10 +28,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       targetConnector: connection.get('targetConnector'),
       outputs: connection.get('sourceConnector.operator.outputs'),
       inputs: connection.get('targetConnector.operator.inputs'),
-      x1: connection.get('sourceConnector.operator.x'),
-      y1: connection.get('sourceConnector.operator.y'),
-      x2: connection.get('targetConnector.operator.x'),
-      y2: connection.get('targetConnector.operator.y')
+      sourcePos: connection.get('sourceConnector.operator.position'),
+      targetPos: connection.get('targetConnector.operator.position')
     };
 
     Ember.RSVP.hash(promises).then( function(values) {
@@ -40,40 +38,38 @@ App.SceneConnectionComponent = Ember.Component.extend({
       if (values.inputs === null || values.outputs === null)
         return;
 
-      if (values.x1 === undefined || values.y1 === undefined)
+      if (values.sourcePos === undefined || values.sourcePos === undefined)
         return;
-      if (values.x1 === null || values.y1 === null)
+      if (values.targetPos === null || values.targetPos === null)
         return;
 
       var numInputs = values.inputs.get('length');
       var numOutputs = values.outputs.get('length');
 
-      var sourcePos = values.outputs.indexOf(values.sourceConnector);
-      var targetPos = values.inputs.indexOf(values.targetConnector);
+      var sourceIndex = values.outputs.indexOf(values.sourceConnector);
+      var targetIndex = values.inputs.indexOf(values.targetConnector);
 
-      if (targetPos === -1 || sourcePos === -1)
+      if (sourceIndex === -1 || targetIndex === -1)
         return;
 
-      var x1 = values.x1;
-      var y1 = values.y1;
+      var x1 = values.sourcePos.x;
+      var y1 = values.sourcePos.y;
 
-      var x2 = values.x2;
-      var y2 = values.y2;
+      var x2 = values.targetPos.x;
+      var y2 = values.targetPos.y;
 
       var targetOffset = 30 - 10 * numInputs;
       var sourceOffset = 30 - 10 * numOutputs;
 
       line.attr({
         x1: x1 + 60,
-        y1: y1 + sourceOffset + 20 * sourcePos + 5,
+        y1: y1 + sourceOffset + 20 * sourceIndex + 5,
         x2: x2 - 10,
-        y2: y2 + targetOffset + 20 * targetPos + 5,
+        y2: y2 + targetOffset + 20 * targetIndex + 5,
       });
     });
-  }.observes('connection.sourceConnector.operator.x',
-              'connection.sourceConnector.operator.y',
-              'connection.targetConnector.operator.x',
-              'connection.targetConnector.operator.y'),
+  }.observes('connection.sourceConnector.operator.position',
+              'connection.targetConnector.operator.position'),
 
   updateColor: function() {
     var line = this.get('line');

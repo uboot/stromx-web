@@ -71,30 +71,30 @@ App.SceneOperatorComponent = Ember.Component.extend({
 
   updatePosition: function() {
     var op = this.get('operator');
-    var x = op.get('x');
-    var y = op.get('y');
+    var pos = op.get('position');
     var translation = new Snap.Matrix();
-    translation.translate(x, y);
+    translation.translate(pos.x, pos.y);
 
     var group = this.get('group');
     group.transform(translation);
-  }.observes('operator.x', 'operator.y'),
+  }.observes('operator.position'),
 
   startDrag: function(x, y) {
     var op = this.get('operator');
 
-    this.set('startDragX', op.get('x'));
-    this.set('startDragY', op.get('y'));
+    this.set('startDragPos', op.get('position'));
   },
 
   moveDrag: function(dx, dy){
     var group = this.get('group');
     var op = this.get('operator');
 
-    var x = this.get('startDragX');
-    var y = this.get('startDragY');
-    op.set('x', x + dx);
-    op.set('y', y + dy);
+    var startDragPos = this.get('startDragPos');
+    var pos = {
+      x: startDragPos.x + dx,
+      y: startDragPos.y + dy
+    };
+    op.set('position', pos);
   },
 
   endDrag: function(dx, dy){

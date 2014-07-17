@@ -7,8 +7,7 @@ App.Operator = DS.Model.extend({
   package: DS.attr('string'),
   version: DS.attr('string'),
   parameters: DS.hasMany('parameter', {async: true}),
-  x: DS.attr('number'),
-  y: DS.attr('number'),
+  position: DS.attr(),
   inputs: DS.hasMany('connector', {async: true}),
   outputs: DS.hasMany('connector', {async: true})
 });
@@ -22,8 +21,10 @@ App.Operator.FIXTURES = [
     package: 'runtime',
     version: '0.3.0',
     parameters: [],
-    x: 20,
-    y: 20,
+    position: {
+      x: 20,
+      y: 20
+    },
     inputs: [],
     outputs: [5]
   },
@@ -35,8 +36,10 @@ App.Operator.FIXTURES = [
     package: 'runtime',
     version: '0.3.0',
     parameters: [1],
-    x: 160,
-    y: 40,
+    position: {
+      x: 160,
+      y: 40
+    },
     inputs: [2],
     outputs: []
   },
@@ -48,8 +51,10 @@ App.Operator.FIXTURES = [
     package: 'cv::imgproc',
     version: '0.0.1',
     parameters: [2, 3, 4, 6, 7, 12],
-    x: 240,
-    y: 40,
+    position: {
+      x: 240,
+      y: 40
+    },
     inputs: [1, 3],
     outputs: [4]
   },
@@ -61,8 +66,10 @@ App.Operator.FIXTURES = [
     package: 'runtime',
     version: '0.0.1',
     parameters: [5],
-    x: 40,
-    y: 160,
+    position: {
+      x: 40,
+      y: 100
+    },
     inputs: [],
     outputs: [6]
   },
@@ -74,8 +81,10 @@ App.Operator.FIXTURES = [
     package: 'mypackage',
     version: '0.0.1',
     parameters: [8, 9, 10, 11],
-    x: 120,
-    y: 160,
+    position: {
+      x: 120,
+      y: 160
+    },
     inputs: [],
     outputs: []
   }
