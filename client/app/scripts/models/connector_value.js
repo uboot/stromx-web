@@ -1,15 +1,15 @@
 /* global App */
 
 App.ConnectorValue = DS.Model.extend({
-  valueType: DS.attr('string'),
-  content: DS.attr()
+  variant: DS.attr('string'),
+  value: DS.attr()
 });
 
 App.ConnectorValue.FIXTURES = [
   {
     id: 0,
-    valueType: 'matrix',
-    content: {
+    variant: 'matrix',
+    value: {
       rows: 3,
       cols: 4,
       values: [
@@ -21,11 +21,11 @@ App.ConnectorValue.FIXTURES = [
   },
   {
     id: 1,
-    valueType: 'image',
-    content: {
+    variant: 'image',
+    value: {
       width: 100,
       height: 102,
-      image: (
+      values: (
       'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgICAgMCAgI' +
       'DAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QE' +
       'BD/wgALCABmAGQBAREA/8QAHAAAAwEBAQEBAQAAAAAAAAAABQYHBAMCAQgA/9oACAEBAAA' +

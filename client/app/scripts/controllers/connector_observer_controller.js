@@ -21,14 +21,6 @@ App.ConnectorObserverController = Ember.ObjectController.extend({
       return '';
   }.property('connector.title', 'connector.operator.name'),
 
-  position: function() {
-    var view = this.get('view');
-    var observers = view.get('connectorObservers');
-    var model = this.get('model');
-
-    return observers.indexOf(model);
-  }.property('view.connectorObservers'),
-
   valueContent: function() {
     var value = this.get('value');
 

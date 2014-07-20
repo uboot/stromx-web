@@ -8,7 +8,6 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     this.set('group', paper.group());
 
     this.updateContent();
-    this.updatePosition();
   },
 
   updateContent: function() {
@@ -17,29 +16,28 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     var observer = this.get('connectorObserver');
     var visualization = observer.get('visualization')
     var items = null;
-    var content = observer.get('valueContent');
+    var value = observer.get('value');
+    var _this = this;
 
-    content.then( function(content) {
-      ;
+    value.then( function(value) {
+      if (visualization === 'lines')
+        items = _this.paintLines(observer, paper, value);
+      else if (visualization === 'image')
+        items = _this.paintImage(observer, paper, value);
+
+      group.remove();
+      group = paper.group()
+      items.forEach( function(item) {
+        group.add(item);
+      })
     });
-
-    if (visualization === 'lines')
-      items = this.paintLines(observer, paper);
-    else if (visualization === 'image')
-      items = this.paintImage(observer, paper);
-
-    group.remove();
-    group = paper.group()
-    items.forEach( function(item) {
-      group.add(item);
-    })
   }.observes('connectorObserver.value'),
 
-  paintLines: function(observer, paper) {
-    var currentData = observer.get('currentData');
+  paintLines: function(observer, paper, value) {
+    var matrix = value.get('value');
     var color = observer.get('color');
     var items = [];
-    currentData.values.forEach( function(row) {
+    matrix.values.forEach( function(row) {
       var line = paper.line(row[0], row[1], row[2], row[3]);
       line.attr({
         stroke: color
@@ -49,22 +47,13 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     return items;
   },
 
-  paintImage: function(observer, paper) {
-    var currentData = observer.get('currentData');
-    var image = currentData.image
-    var width = currentData.width
-    var height = currentData.height
+  paintImage: function(observer, paper, value) {
+    var image = value.get('value');
+    var values = image.values
+    var width = image.width
+    var height = image.height
 
-    var image = paper.image(image, 0, 0, width, height);
+    var image = paper.image(values, 0, 0, width, height);
     return [image];
-  },
-
-  updatePosition: function() {
-    var group = this.get('group');
-    var observer = this.get('connectorObserver');
-    var pos = observer.get('position');
-    group.attr({
-      'z-value': pos
-    })
-  }.observes('connectorObserver.position')
+  }
 });
