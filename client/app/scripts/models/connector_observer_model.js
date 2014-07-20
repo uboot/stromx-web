@@ -13,7 +13,7 @@ App.ConnectorObserver.FIXTURES = [
     id: 0,
     visualization: 'lines',
     color: '#0000ff',
-    connector: 4,
+    connector: 5,
     value: 0,
     view: 1
   },

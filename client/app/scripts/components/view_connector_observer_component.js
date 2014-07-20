@@ -10,6 +10,13 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     this.updateContent();
   },
 
+  willDestroyElement: function() {
+    var group = this.get('group');
+    if (group)
+      group.remove();
+    this.set('group', null);
+  },
+
   updateContent: function() {
     var paper = new Snap('#view-svg');
     var group = this.get('group');
