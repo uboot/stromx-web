@@ -37,6 +37,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       items.forEach( function(item) {
         group.add(item);
       })
+      _this.set('group', group);
     });
   }.observes('connectorObserver.value'),
 
