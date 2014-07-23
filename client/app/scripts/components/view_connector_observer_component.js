@@ -18,20 +18,23 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   },
 
   updateContent: function() {
-    var paper = new Snap('#view-svg');
-    var group = this.get('group');
     var observer = this.get('connectorObserver');
-    var visualization = observer.get('visualization')
-    var items = null;
     var value = observer.get('value');
     var _this = this;
 
     value.then( function(value) {
+      var paper = new Snap('#view-svg');
+      var visualization = observer.get('visualization')
+
+      var items = null;
       if (visualization === 'lines')
         items = _this.paintLines(observer, paper, value);
       else if (visualization === 'image')
         items = _this.paintImage(observer, paper, value);
 
+      var zvalue = _this.get('zvalue');
+      var predecessor = Snap.select('g');
+      var group = _this.get('group');
       group.remove();
       group = paper.group()
       items.forEach( function(item) {
