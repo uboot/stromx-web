@@ -26,45 +26,40 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       var paper = new Snap('#view-svg');
       var visualization = observer.get('visualization')
 
-      var items = null;
-      if (visualization === 'lines')
-        items = _this.paintLines(observer, paper, value);
-      else if (visualization === 'image')
-        items = _this.paintImage(observer, paper, value);
+      var zvalueAbove = observer.get('zvalue') + 1;
+      var groupAbove = Snap.select('g:nth-of-type(' + zvalueAbove + ')');
 
-      var zvalue = _this.get('zvalue');
-      var predecessor = Snap.select('g');
       var group = _this.get('group');
       group.remove();
-      group = paper.group()
-      items.forEach( function(item) {
-        group.add(item);
-      })
+
+      group = paper.group();
+      if (groupAbove)
+        groupAbove.before(group);
+      if (visualization === 'lines')
+        _this.paintLines(observer, group, value);
+      else if (visualization === 'image')
+        _this.paintImage(observer, group, value);
       _this.set('group', group);
     });
-  }.observes('connectorObserver.value'),
+  }.observes('connectorObserver.zvalue'),
 
-  paintLines: function(observer, paper, value) {
+  paintLines: function(observer, group, value) {
     var matrix = value.get('value');
     var color = observer.get('color');
-    var items = [];
     matrix.values.forEach( function(row) {
-      var line = paper.line(row[0], row[1], row[2], row[3]);
+      var line = group.line(row[0], row[1], row[2], row[3]);
       line.attr({
         stroke: color
       });
-      items.push(line);
     });
-    return items;
   },
 
-  paintImage: function(observer, paper, value) {
+  paintImage: function(observer, group, value) {
     var image = value.get('value');
     var values = image.values
     var width = image.width
     var height = image.height
 
-    var image = paper.image(values, 0, 0, width, height);
-    return [image];
+    var image = group.image(values, 0, 0, width, height);
   }
 });

@@ -26,19 +26,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each parameterObservers itemController="parameterObserver"}}
-    <tr>
-      <td>
-        {{title}}
-      </td>
-      <td>
-        {{visualizationLabel}}
-      </td>
-      <td>
-      </td>
-    </tr>
-    {{/each}}
-    {{#each sortedConnectorObservers itemController="connectorObserver"}}
+    {{#each sortedObservers itemController="observer"}}
     <tr>
       <td>
         {{title}}
@@ -48,7 +36,8 @@
       </td>
       <td>
         <button type="button" {{action "moveUp"}} class="btn btn-default btn-xs">Up</button>
-      </td>
+        <button type="button" {{action "moveDown"}} class="btn btn-default btn-xs">Down</button>
+     </td>
     </tr>
     {{/each}}
   </tbody>

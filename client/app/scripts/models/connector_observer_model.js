@@ -1,18 +1,16 @@
 /* global App */
 
-App.ConnectorObserver = DS.Model.extend({
-  zvalue: DS.attr('number'),
-  visualization: DS.attr('string'),
-  color: DS.attr('string'),
+require('scripts/models/observer_model');
+
+App.ConnectorObserver = App.Observer.extend({
   connector: DS.belongsTo('connector'),
   value: DS.belongsTo('connector-value', {async: true}),
-  view: DS.belongsTo('view')
 });
 
 App.ConnectorObserver.FIXTURES = [
   {
     id: 0,
-    zvalue: 1,
+    zvalue: 2,
     visualization: 'lines',
     color: '#0000ff',
     connector: 5,
@@ -21,7 +19,7 @@ App.ConnectorObserver.FIXTURES = [
   },
   {
     id: 2,
-    zvalue: 0,
+    zvalue: 1,
     visualization: 'image',
     color: '#0000ff',
     connector: 2,

@@ -2,15 +2,26 @@
 
 App.View = DS.Model.extend({
   name: DS.attr('string'),
-  connectorObservers: DS.hasMany('connectorObservers', {async: true}),
-  parameterObservers: DS.hasMany('parameterObservers', {async: true})
+  observers: DS.hasMany('observer', {async: true,  polymorphic: true })
 });
 
 App.View.FIXTURES = [
   {
     id: 1,
     name: 'Main observer',
-    connectorObservers: [0, 2],
-    parameterObservers: [0]
+    observers: [
+      {
+        id: 0,
+        type: "connectorObserver"
+      },
+      {
+        id: 2,
+        type: "connectorObserver"
+      },
+      {
+        id: 0,
+        type: "parameterObserver"
+      }
+    ]
   }
 ];
