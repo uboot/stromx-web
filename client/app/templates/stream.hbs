@@ -59,3 +59,25 @@
     {{/each}}
   </tbody>
 </table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>View</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each views itemController="view"}}
+      <tr>
+        <td>
+          {{name}}
+        </td>
+        <td>
+          {{#link-to 'view' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+        </td>
+      </tr>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
