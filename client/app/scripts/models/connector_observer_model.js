@@ -10,7 +10,7 @@ App.ConnectorObserver = App.Observer.extend({
 App.ConnectorObserver.FIXTURES = [
   {
     id: 0,
-    zvalue: 2,
+    zvalue: 1,
     visualization: 'lines',
     color: '#0000ff',
     connector: 5,
@@ -19,7 +19,7 @@ App.ConnectorObserver.FIXTURES = [
   },
   {
     id: 2,
-    zvalue: 1,
+    zvalue: 2,
     visualization: 'image',
     color: '#0000ff',
     connector: 2,

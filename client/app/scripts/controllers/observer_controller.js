@@ -49,8 +49,8 @@ App.ObserverController = Ember.ObjectController.extend({
         var observers = view.get('observers');
         var modelAbove = observers.findBy('zvalue', zvalue + 1);
         if (modelAbove) {
-          modelAbove.set('zvalue', zvalue);
           _this.set('zvalue', zvalue + 1);
+          modelAbove.set('zvalue', zvalue);
         }
       });
     },

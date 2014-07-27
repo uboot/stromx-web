@@ -5,7 +5,10 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
   didInsertElement: function() {
     var paper = new Snap('#view-svg');
-    this.set('group', paper.group());
+    var observer = this.get('connectorObserver');
+
+    var group = paper.group();
+    this.set('group', group);
 
     this.updateContent();
   },
@@ -26,21 +29,39 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       var paper = new Snap('#view-svg');
       var visualization = observer.get('visualization')
 
-      var zvalueAbove = observer.get('zvalue') + 1;
-      var groupAbove = Snap.select('g:nth-of-type(' + zvalueAbove + ')');
-
       var group = _this.get('group');
       group.remove();
 
       group = paper.group();
-      if (groupAbove)
-        groupAbove.before(group);
       if (visualization === 'lines')
         _this.paintLines(observer, group, value);
       else if (visualization === 'image')
         _this.paintImage(observer, group, value);
       _this.set('group', group);
+      _this.updateZValue();
     });
+  }.observes('connectorObserver.value'),
+
+  updateZValue: function() {
+    var group = this.get('group');
+    var observer = this.get('connectorObserver');
+    var zvalue = observer.get('zvalue')
+    group.data('zvalue', zvalue);
+
+    var groups = Snap.selectAll('g');
+    var groupAbove = null;
+    var zvalueAbove = null;
+    groups.forEach(function(group) {
+      var groupZValue = group.data('zvalue');
+      if (groupZValue > zvalue && (zvalueAbove === null || zvalueAbove > groupZValue))
+      {
+        groupAbove = group;
+        zvalueAbove = groupZValue;
+      }
+    });
+
+    if (groupAbove)
+      group.insertBefore(groupAbove);
   }.observes('connectorObserver.zvalue'),
 
   paintLines: function(observer, group, value) {
