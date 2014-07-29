@@ -23,7 +23,7 @@ App.FileController = Ember.ObjectController.extend({
         var stream = file.get('stream');
         if (stream !== null)
           controller.transitionToRoute('stream', stream);
-      })
+      });
     },
 
     close: function () {

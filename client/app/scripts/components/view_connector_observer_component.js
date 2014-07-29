@@ -27,7 +27,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
     value.then( function(value) {
       var paper = new Snap('#view-svg');
-      var visualization = observer.get('visualization')
+      var visualization = observer.get('visualization');
 
       var group = _this.get('group');
       group.remove();
@@ -45,7 +45,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   updateZValue: function() {
     var group = this.get('group');
     var observer = this.get('connectorObserver');
-    var zvalue = observer.get('zvalue')
+    var zvalue = observer.get('zvalue');
     group.data('zvalue', zvalue);
 
     var groups = Snap.selectAll('g');
@@ -77,10 +77,10 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
   paintImage: function(observer, group, value) {
     var image = value.get('value');
-    var values = image.values
-    var width = image.width
-    var height = image.height
+    var values = image.values;
+    var width = image.width;
+    var height = image.height;
 
-    var image = group.image(values, 0, 0, width, height);
+    group.image(values, 0, 0, width, height);
   }
 });
