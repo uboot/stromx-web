@@ -199,7 +199,7 @@ class File(Item):
     
     @property
     def stream(self):
-        return [self.__stream.index] if self.__stream else []
+        return self.__stream.index if self.__stream else None
     
     @property
     def content(self):
@@ -670,9 +670,9 @@ class Connection(Item):
     @property
     def thread(self):
         if self.__thread != None:
-            return [self.__thread.index]
+            return self.__thread.index
         else:
-            return []
+            return None
         
 class Connections(Items):
     def addConnection(self, sourceOp, sourcePos, targetOp, targetPos, thread):

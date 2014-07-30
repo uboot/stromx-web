@@ -72,7 +72,7 @@ _parallelFile = {
     'name': 'parallel.stromx',
     'content': '',
     'opened': False,
-    'stream': []
+    'stream': None
 }
 
 _renamedFile = {
@@ -80,28 +80,28 @@ _renamedFile = {
     'name': 'renamed.stromx',
     'content': '',
     'opened': False,
-    'stream': []
+    'stream': None
 }
 
 _openedFile = {'id': '0', 
     'name': 'parallel.stromx', 
     'content': '',
     'opened': True, 
-    'stream': ['0']
+    'stream': '0'
 }
 
 _testFile = {'id': '1', 
     'name': 'test.stromx', 
     'content': '', 
     'opened': False,
-    'stream': []
+    'stream': None
 }
 
 _noFile = {'id': '1', 
     'name': 'nothing.stromx', 
     'content': '', 
     'opened': False,
-    'stream': []
+    'stream': None
 }
 
 _stream = {
@@ -230,8 +230,7 @@ class FilesTest(unittest.TestCase):
         
     def testAddData(self):
         self.files.addData({'file': {'name': 'test.stromx', 'content': _content}})
-        self.assertEqual({'files': [_testFile, _parallelFile]},
-                         self.files.data)
+        self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('data/stream/parallel.stromx',
                                     'temp/test.stromx'))
@@ -648,7 +647,7 @@ class ConnectionTest(unittest.TestCase):
         connection = self.connections.addConnection(self.receive, 0, 
                                                     self.fork, 0, self.thread)
         data = {'connection': {'id': '0',
-                               'thread': ['0'],
+                               'thread': '0',
                                'sourcePosition': 0, 
                                'sourceOperator': '1',
                                'targetPosition': 0,
