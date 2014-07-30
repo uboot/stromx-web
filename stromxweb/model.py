@@ -274,7 +274,7 @@ class Stream(Item):
                 if source.type() != stromx.runtime.Connector.Type.OUTPUT:
                     continue
                 
-                sourceOp = self.model.operators.findStromxOp(source.op())
+                sourceOp = self.model.operators.findOperatorModel(source.op())
                 if not sourceOp:
                     continue
                     
@@ -372,7 +372,7 @@ class Operators(Items):
         self.addItem(operator)
         return operator
     
-    def findStromxOp(self, stromxOp):
+    def findOperatorModel(self, stromxOp):
         ops = [op for op in self.values() if op.stromxOp == stromxOp]
         if len(ops):
             return ops[0]
@@ -398,12 +398,14 @@ class Operator(Item):
             
         self.__inputs = []
         for description in self.__op.info().inputs():
-            connector = self.model.connectors.addStromxConnector(description)
+            connector = self.model.connectors.addStromxConnector(self.__op,
+                                                                 description)
             self.__inputs.append(connector)
             
         self.__outputs = []
         for description in self.__op.info().outputs():
-            connector = self.model.connectors.addStromxConnector(description)
+            connector = self.model.connectors.addStromxConnector(self.__op,
+                                                                 description)
             self.__outputs.append(connector)
         
     @property
@@ -490,8 +492,8 @@ class Parameters(Items):
         return parameter
     
 class Parameter(Item):
-    properties = ['title', 'type', 'stringValue', 'numberValue', 'minimum',
-                  'maximum', 'writable', 'descriptions', 'state']
+    properties = ['title', 'type', 'operator', 'stringValue', 'numberValue',
+                  'minimum', 'maximum', 'writable', 'descriptions', 'state']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -520,6 +522,14 @@ class Parameter(Item):
     def type(self):
         variant = self.__param.variant()
         return _variantToType(variant)
+        
+    @property
+    def operator(self):
+        op = self.model.operators.findOperatorModel(self.__op)
+        if op:
+            return op.index
+        else:
+            assert(False)
         
     @property
     def stringValue(self):
@@ -718,19 +728,28 @@ class Threads(Items):
         return False
     
 class Connector(Item):
-    properties = ['title']
+    properties = ['operator', 'title']
     
-    def __init__(self, description, model):
+    def __init__(self, op, description, model):
         super(Connector, self).__init__(model)
         self.__description = description
+        self.__op = op
+        
+    @property
+    def operator(self):
+        op = self.model.operators.findOperatorModel(self.__op)
+        if op:
+            return op.index
+        else:
+            assert(False)
         
     @property
     def title(self):
         return self.__description.title()
         
 class Connectors(Items):
-    def addStromxConnector(self, description):
-        connector = Connector(description, self.model)
+    def addStromxConnector(self, op, description):
+        connector = Connector(op, description, self.model)
         self.addItem(connector)
         return connector
         

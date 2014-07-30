@@ -420,8 +420,8 @@ class OperatorsTest(unittest.TestCase):
                              'y': 0.0}}
         self.assertEqual(data, op.data)
     
-    def testFindStromxOp(self):
-        op = self.operators.findStromxOp(self.stromxOp)
+    def testFindOperatorModel(self):
+        op = self.operators.findOperatorModel(self.stromxOp)
         self.assertEqual(self.operator, op)
         
     def testFindOutputPosition(self):
@@ -454,8 +454,8 @@ class ParametersTest(unittest.TestCase):
         self.stream.initializeOperator(self.parameterOperator)
         
     def testDataUrl(self):
-        stromxParam = self.receive.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        self.model.operators.addStromxOp(self.receive)
+        param = self.parameters['0']
         data = {'parameter': {'descriptions': [],
                               'id': '0',
                               'maximum': 0,
@@ -465,32 +465,31 @@ class ParametersTest(unittest.TestCase):
                               'stringValue': 'localhost',
                               'title': 'URL',
                               'type': 'string',
+                              'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
         
     def testSetUrl(self):
-        stromxParam = self.receive.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        self.model.operators.addStromxOp(self.receive)
+        param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'stringValue': '127.0.0.1',
                                  'numberValue': 0}})
-        paramId = stromxParam.id()
-        self.assertEqual('127.0.0.1', self.receive.getParameter(paramId).get())
+        self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testSetUrlUnicode(self):
-        stromxParam = self.receive.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        self.model.operators.addStromxOp(self.receive)
+        param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'stringValue': u'127.0.0.1',
                                  'numberValue': 0}})
-        paramId = stromxParam.id()
-        self.assertEqual('127.0.0.1', self.receive.getParameter(paramId).get())
+        self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testDataPort(self):
-        stromxParam = self.receive.info().parameters()[1]
-        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        self.model.operators.addStromxOp(self.receive)
+        param = self.parameters['1']
         data = {'parameter': {'descriptions': [],
-                              'id': '0',
+                              'id': '1',
                               'maximum': 65535,
                               'minimum': 49152,
                               'numberValue': 49152,
@@ -498,21 +497,21 @@ class ParametersTest(unittest.TestCase):
                               'stringValue': '',
                               'title': 'TCP port',
                               'type': 'int',
+                              'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
         
     def testSetPort(self):
-        stromxParam = self.receive.info().parameters()[1]
-        param = self.parameters.addStromxParameter(self.receive, stromxParam)
+        self.model.operators.addStromxOp(self.receive)
+        param = self.parameters['1']
         param.set({'parameter': {'id': '0',
                                  'stringValue': '',
                                  'numberValue': 50000}})
-        paramId = stromxParam.id()
-        self.assertEqual(50000, self.receive.getParameter(paramId).get())
+        self.assertEqual(50000, self.receive.getParameter(1).get())
         
     def testDataNumberOfOutputs(self):
-        stromxParam = self.fork.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.fork, stromxParam)
+        self.model.operators.addStromxOp(self.fork)
+        param = self.parameters['0']
         data = {'parameter': {'descriptions': [],
                               'id': '0',
                               'maximum': 4,
@@ -522,25 +521,24 @@ class ParametersTest(unittest.TestCase):
                               'stringValue': '',
                               'title': 'Number of outputs',
                               'type': 'int',
+                              'operator': '0',
                               'writable': False}}
         self.assertEqual(data, param.data)
         
     def testSetNumberOfOutputs(self):
+        self.model.operators.addStromxOp(self.fork)
         self.stream.deinitializeOperator(self.fork)
-        stromxParam = self.fork.info().parameters()[0]
-        param = self.parameters.addStromxParameter(self.fork, stromxParam)
+        param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'stringValue': '',
                                  'numberValue': 3}})
-        paramId = stromxParam.id()
-        self.assertEqual(3, self.fork.getParameter(paramId).get())
+        self.assertEqual(3, self.fork.getParameter(0).get())
         
     def testDataPixelType(self):
-        stromxParam = self.dummyCamera.info().parameters()[1]
-        param = self.parameters.addStromxParameter(self.dummyCamera,
-                                                   stromxParam)
+        self.model.operators.addStromxOp(self.dummyCamera)
+        param = self.parameters['1']
         data = {'parameter': {'descriptions': ['0', '1', '2'],
-                              'id': '0',
+                              'id': '1',
                               'maximum': 0,
                               'minimum': 0,
                               'numberValue': 0,
@@ -548,25 +546,23 @@ class ParametersTest(unittest.TestCase):
                               'stringValue': '',
                               'title': 'Trigger mode',
                               'type': 'enum',
+                              'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
         
     def testSetPixelType(self):
-        stromxParam = self.dummyCamera.info().parameters()[1]
-        param = self.parameters.addStromxParameter(self.dummyCamera,
-                                                   stromxParam)
+        self.model.operators.addStromxOp(self.dummyCamera)
+        param = self.parameters['1']
         param.set({'parameter': {'id': '1',
                                  'stringValue': '',
                                  'numberValue': 1}})
-        paramId = stromxParam.id()
-        self.assertEqual(1, self.dummyCamera.getParameter(paramId).get())
+        self.assertEqual(1, self.dummyCamera.getParameter(2).get())
         
     def testDataException(self):
         self.__activateExceptionOnParameter()
+        self.model.operators.addStromxOp(self.exceptionOperator)
+        param = self.parameters['6']
         
-        stromxParam = self.exceptionOperator.info().parameters()[6]
-        param = self.parameters.addStromxParameter(self.exceptionOperator,
-                                                   stromxParam)
         state = param.data['parameter']['state']
         self.assertEqual('accessFailed', state)
         self.assertEqual(1, len(self.model.errors))
@@ -585,33 +581,26 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(2, len(self.model.errors))
         
     def __activateExceptionOnParameter(self):
-        stromxParam = self.exceptionOperator.info().parameters()[5]
-        param = self.parameters.addStromxParameter(self.exceptionOperator, 
-                                                   stromxParam)
+        self.model.operators.addStromxOp(self.exceptionOperator)
+        param = self.parameters['5']
         param.set({'parameter': {'id': '0',
                                  'stringValue': '',
                                  'numberValue': 1}})
         
     def testDataTrigger(self):
-        stromxParam = self.parameterOperator.info().parameters()[8]
-        valueParam = self.parameters.addStromxParameter(self.parameterOperator,
-                                                        stromxParam)
-        stromxParam = self.parameterOperator.info().parameters()[9]
-        param = self.parameters.addStromxParameter(self.parameterOperator, 
-                                                   stromxParam)
+        self.model.operators.addStromxOp(self.parameterOperator)
+        valueParam = self.parameters['6']
+        param = self.parameters['7']
         
         self.assertEqual('trigger', param.data['parameter']['type'])
         self.assertEqual(0, valueParam.data['parameter']['numberValue'])
         
     def testSetTrigger(self):
-        stromxParam = self.parameterOperator.info().parameters()[8]
-        valueParam = self.parameters.addStromxParameter(self.parameterOperator,
-                                                        stromxParam)
-        stromxParam = self.parameterOperator.info().parameters()[9]
-        param = self.parameters.addStromxParameter(self.parameterOperator, 
-                                                   stromxParam)
+        self.model.operators.addStromxOp(self.parameterOperator)
+        valueParam = self.parameters['6']
+        param = self.parameters['7']
         
-        param.set({'parameter': {'id': '9',
+        param.set({'parameter': {'id': '7',
                                  'stringValue': '',
                                  'numberValue': 1}})
         self.assertEqual(1, valueParam.data['parameter']['numberValue'])
@@ -669,18 +658,17 @@ class ConnectionTest(unittest.TestCase):
 class ConnectorTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
-        self.connectors = self.model.connectors
         
         self.stream = stromx.runtime.Stream()
-        
         kernel = stromx.runtime.Fork()
-        self.fork = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.fork)
+        stromxOp = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(stromxOp)
+        self.model.operators.addStromxOp(stromxOp)
         
     def testData(self):
-        description = self.fork.info().outputs()[1]
-        connector = self.connectors.addStromxConnector(description)
-        data = {'connector': {'id': '0',
+        connector = self.model.connectors['2']
+        data = {'connector': {'id': '2',
+                              'operator': '0',
                               'title': 'Output 1'}}
         self.assertEqual(data, connector.data)
         
