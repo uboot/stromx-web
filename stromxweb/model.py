@@ -267,25 +267,28 @@ class Stream(Item):
         for stromxThread in self.__stream.threads():
             self.model.threads.addStromxThread(stromxThread)
             
+        connectors = self.model.connectors
         for op in self.model.operators.values():
-            for pos, stromxInput in enumerate(op.stromxOp.info().inputs()):
+            for stromxInput in op.stromxOp.info().inputs():
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
                 if source.type() != stromx.runtime.Connector.Type.OUTPUT:
                     continue
+                if source.op() == None:
+                    continue
                 
-                sourceOp = self.model.operators.findOperatorModel(source.op())
-                if not sourceOp:
-                    continue
-                    
-                sourcePos = sourceOp.findOutputPosition(source.id())
-                if sourcePos < 0:
-                    continue
+                sourceConnector = connectors.findConnectorModel(
+                                source.op(), source.id(), Connector.OUTPUT)
+                assert(sourceConnector)
+                
+                targetConnector = connectors.findConnectorModel(
+                                op.stromxOp, stromxInput.id(), Connector.INPUT)
+                assert(targetConnector)
                 
                 thread = self.model.threads.findThread(op.stromxOp, stromxInput)
                 
                 connection = self.model.connections.addConnection(
-                                    sourceOp, sourcePos, op, pos, thread)
+                                    sourceConnector, targetConnector, thread)
                 self.__connections.append(connection)
 
         
@@ -388,24 +391,25 @@ class Operator(Item):
         self.__op = op
         
         self.__parameters = []
+        parameters = self.model.parameters
         for param in self.__op.info().parameters():
             if not _parameterIsReadable(op, param):
                 continue
             
-            parameter = self.model.parameters.addStromxParameter(self.__op,
-                                                                 param)
+            parameter = parameters.addStromxParameter(self.__op, param)
             self.__parameters.append(parameter)
             
         self.__inputs = []
+        connectors = self.model.connectors
         for description in self.__op.info().inputs():
-            connector = self.model.connectors.addStromxConnector(self.__op,
-                                                                 description)
+            connector = connectors.addStromxConnector(self.__op, description,
+                                                      Connector.INPUT)
             self.__inputs.append(connector)
             
         self.__outputs = []
         for description in self.__op.info().outputs():
-            connector = self.model.connectors.addStromxConnector(self.__op,
-                                                                 description)
+            connector = connectors.addStromxConnector(self.__op, description,
+                                                      Connector.OUTPUT)
             self.__outputs.append(connector)
         
     @property
@@ -640,32 +644,21 @@ class EnumDescription(Item):
         return self.__desc.title()
     
 class Connection(Item):
-    properties = ['sourceOperator', 'sourcePosition', 'targetOperator',
-                  'targetPosition', 'thread']
+    properties = ['sourceConnector', 'targetConnector', 'thread']
     
-    def __init__(self, sourceOp, sourcePos, targetOp, targetPos, thread, model):
+    def __init__(self, sourceConnector, targetConnector, thread, model):
         super(Connection, self).__init__(model)
-        self.__sourceOp = sourceOp
-        self.__sourcePos = sourcePos
-        self.__targetOp = targetOp
-        self.__targetPos = targetPos
+        self.__sourceConnector = sourceConnector
+        self.__targetConnector = targetConnector
         self.__thread = thread
     
     @property
-    def sourceOperator(self):
-        return self.__sourceOp.index
+    def sourceConnector(self):
+        return self.__sourceConnector.index
     
     @property
-    def sourcePosition(self):
-        return self.__sourcePos
-    
-    @property
-    def targetOperator(self):
-        return self.__targetOp.index
-    
-    @property
-    def targetPosition(self):
-        return self.__targetPos
+    def targetConnector(self):
+        return self.__targetConnector.index
     
     @property
     def thread(self):
@@ -675,9 +668,9 @@ class Connection(Item):
             return None
         
 class Connections(Items):
-    def addConnection(self, sourceOp, sourcePos, targetOp, targetPos, thread):
-        connection = Connection(sourceOp, sourcePos, targetOp, targetPos,
-                                thread, self.model)
+    def addConnection(self, sourceConnector, targetConnector, thread):
+        connection = Connection(sourceConnector, targetConnector, thread,
+                                self.model)
         self.addItem(connection)
         return connection
     
@@ -707,6 +700,7 @@ class Threads(Items):
         self.addItem(threadModel)
         return threadModel
     
+    # FIXME: rename to findThreadModel
     def findThread(self, stromxOp, stromxInput):
         threads = [
             thread for thread in self.values() if 
@@ -728,12 +722,16 @@ class Threads(Items):
         return False
     
 class Connector(Item):
+    INPUT = 0
+    OUTPUT = 1
+    
     properties = ['operator', 'title']
     
-    def __init__(self, op, description, model):
+    def __init__(self, op, description, connectorType, model):
         super(Connector, self).__init__(model)
         self.__description = description
         self.__op = op
+        self.__connectorType = connectorType
         
     @property
     def operator(self):
@@ -742,16 +740,41 @@ class Connector(Item):
             return op.index
         else:
             assert(False)
-        
+    
     @property
     def title(self):
         return self.__description.title()
         
+    @property
+    def connectorType(self):
+        return self.__connectorType
+    
+    @property
+    def stromxOp(self):
+        return self.__op
+    
+    @property
+    def stromxId(self):
+        return self.__description.id()
+        
 class Connectors(Items):
-    def addStromxConnector(self, op, description):
-        connector = Connector(op, description, self.model)
+    def addStromxConnector(self, op, description, connectorType):
+        connector = Connector(op, description, connectorType, self.model)
         self.addItem(connector)
         return connector
+    
+    def findConnectorModel(self, stromxOp, connectorId, connectorType):
+        connectors = [
+            connector for connector in self.values()
+            if (connector.stromxOp == stromxOp and 
+                connector.stromxId == connectorId and
+                connector.connectorType == connectorType)
+        ]
+        
+        if len(connectors):
+            return connectors[0]
+        else:
+            return None
         
 class Errors(Items):
     def __init__(self):

@@ -644,14 +644,13 @@ class ConnectionTest(unittest.TestCase):
         self.thread = self.model.threads.addStromxThread(stromxThread)
         
     def testData(self):
-        connection = self.connections.addConnection(self.receive, 0, 
-                                                    self.fork, 0, self.thread)
+        source = self.model.connectors['0']
+        target = self.model.connectors['3']
+        connection = self.connections.addConnection(source, target, self.thread)
         data = {'connection': {'id': '0',
                                'thread': '0',
-                               'sourcePosition': 0, 
-                               'sourceOperator': '1',
-                               'targetPosition': 0,
-                               'targetOperator': '0'}}
+                               'sourceConnector': '0', 
+                               'targetConnector': '3'}}
         self.assertEqual(data, connection.data)
         
 class ConnectorTest(unittest.TestCase):
