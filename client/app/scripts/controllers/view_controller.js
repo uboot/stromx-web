@@ -9,5 +9,13 @@ App.ViewController = Ember.ObjectController.extend({
 
   observerSorting: ['zvalue:desc'],
 
-  sortedObservers: Ember.computed.sort('observers', 'observerSorting')
+  sortedObservers: Ember.computed.sort('observers', 'observerSorting'),
+
+  actions: {
+    remove: function () {
+        var view = this.get('model');
+        view.deleteRecord();
+        view.save();
+    }
+  }
 });

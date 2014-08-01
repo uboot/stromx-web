@@ -79,7 +79,15 @@
           {{name}}
         </td>
         <td>
-          {{#link-to 'view' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li>{{#link-to 'view' this}}Show{{/link-to}}</li>
+              <li><a {{action "showModal" "removeView" this}}>Remove</a></li>
+            </ul>
+          </div>
         </td>
       </tr>
     </tr>

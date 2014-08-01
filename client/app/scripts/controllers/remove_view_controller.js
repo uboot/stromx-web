@@ -1,8 +1,8 @@
 /* global App */
 
-require('scripts/controllers/file_controller');
+require('scripts/controllers/view_controller');
 
-App.RemoveFileController = App.FileController.extend({
+App.RemoveViewController = App.ViewController.extend({
   actions: {
     accept: function() {
         this.send("remove");
