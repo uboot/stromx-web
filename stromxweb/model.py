@@ -496,7 +496,7 @@ class Parameters(Items):
         return parameter
     
 class Parameter(Item):
-    properties = ['title', 'type', 'operator', 'stringValue', 'numberValue',
+    properties = ['title', 'variant', 'operator', 'stringValue', 'numberValue',
                   'minimum', 'maximum', 'writable', 'descriptions', 'state']
     
     def __init__(self, op, param, model):
@@ -523,9 +523,9 @@ class Parameter(Item):
         return self.__param.title()
     
     @property
-    def type(self):
+    def variant(self):
         variant = self.__param.variant()
-        return _variantToType(variant)
+        return _variantToString(variant)
         
     @property
     def operator(self):
@@ -933,7 +933,7 @@ def _toStromxData(variant, value):
     else:
         return None
     
-def _variantToType(variant):
+def _variantToString(variant):
     if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
         return 'float'
     elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):

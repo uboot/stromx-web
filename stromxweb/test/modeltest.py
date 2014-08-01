@@ -463,7 +463,7 @@ class ParametersTest(unittest.TestCase):
                               'state': 'current',
                               'stringValue': 'localhost',
                               'title': 'URL',
-                              'type': 'string',
+                              'variant': 'string',
                               'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
@@ -495,7 +495,7 @@ class ParametersTest(unittest.TestCase):
                               'state': 'current',
                               'stringValue': '',
                               'title': 'TCP port',
-                              'type': 'int',
+                              'variant': 'int',
                               'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
@@ -519,7 +519,7 @@ class ParametersTest(unittest.TestCase):
                               'state': 'current',
                               'stringValue': '',
                               'title': 'Number of outputs',
-                              'type': 'int',
+                              'variant': 'int',
                               'operator': '0',
                               'writable': False}}
         self.assertEqual(data, param.data)
@@ -544,7 +544,7 @@ class ParametersTest(unittest.TestCase):
                               'state': 'current',
                               'stringValue': '',
                               'title': 'Trigger mode',
-                              'type': 'enum',
+                              'variant': 'enum',
                               'operator': '0',
                               'writable': True}}
         self.assertEqual(data, param.data)
@@ -591,7 +591,7 @@ class ParametersTest(unittest.TestCase):
         valueParam = self.parameters['6']
         param = self.parameters['7']
         
-        self.assertEqual('trigger', param.data['parameter']['type'])
+        self.assertEqual('trigger', param.data['parameter']['variant'])
         self.assertEqual(0, valueParam.data['parameter']['numberValue'])
         
     def testSetTrigger(self):
