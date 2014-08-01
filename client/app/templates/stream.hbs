@@ -76,18 +76,27 @@
     {{#each views itemController="view"}}
       <tr>
         <td>
-          {{name}}
+          {{#if isEditingName}}
+            {{input value=name}}
+          {{else}}
+            {{name}}
+          {{/if}}
         </td>
         <td>
-          <div class="btn-group">
-            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-              Action <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              <li>{{#link-to 'view' this}}Show{{/link-to}}</li>
-              <li><a {{action "showModal" "removeView" this}}>Remove</a></li>
-            </ul>
-          </div>
+          {{#if isEditingName}}
+            <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+          {{else}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                Action <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>{{#link-to 'view' this}}Show{{/link-to}}</li>
+                <li><a {{action "rename"}}>Rename</a></li>
+                <li><a {{action "showModal" "removeView" this}}>Remove</a></li>
+              </ul>
+            </div>
+          {{/if}}
         </td>
       </tr>
     </tr>

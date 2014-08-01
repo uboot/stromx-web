@@ -1,5 +1,13 @@
 <h1>View</h1>
 
+<div class="stromx-center-buttons">
+  <div class="btn-group">
+    {{#link-to 'view.newObserver' type="button" class="btn btn-default"}}New Observer{{/link-to}}
+  </div>
+</div>
+
+{{outlet}}
+
 <div class="stromx-view-view panel panel-default">
   <svg width="1280" height="1024" id="view-svg">
   </svg>
