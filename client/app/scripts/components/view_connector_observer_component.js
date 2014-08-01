@@ -8,6 +8,8 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     var observer = this.get('connectorObserver');
 
     var group = paper.group();
+    var zvalue = observer.get('zvalue');
+    group.data('zvalue', zvalue);
     this.set('group', group);
 
     this.updateContent();
@@ -23,8 +25,10 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   updateContent: function() {
     var observer = this.get('connectorObserver');
     var value = observer.get('value');
-    var _this = this;
+    if (!value)
+      return;
 
+    var _this = this;
     value.then( function(value) {
       var paper = new Snap('#view-svg');
       var visualization = observer.get('visualization');

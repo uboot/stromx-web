@@ -1,7 +1,11 @@
  <div class="panel panel-default">
   <div class="panel-body">
     <div class="form-group">
+      {{view Ember.Select value=operator content=stream.operators optionValuePath="content"
+         optionLabelPath="content.name"}}
+      {{view Ember.Select value=connector content=connectors optionValuePath="content"
+         optionLabelPath="content.title"}}
     </div>
-    <button {{action 'newObserver'}} type="submit" class="btn btn-default">Save</button>
+    <button {{action 'saveObserver'}} type="submit" class="btn btn-default">Save</button>
   </div>
 </div>

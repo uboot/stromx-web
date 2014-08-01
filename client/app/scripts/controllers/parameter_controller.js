@@ -109,7 +109,6 @@ App.ParameterController = Ember.ObjectController.extend({
       return "";
     else
       return this.get('value');
-
   }.property('value', 'variant', 'isEditing'),
 
   // cf. http://stackoverflow.com/q/20623027

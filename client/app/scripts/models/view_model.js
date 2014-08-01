@@ -2,7 +2,8 @@
 
 App.View = DS.Model.extend({
   name: DS.attr('string'),
-  observers: DS.hasMany('observer', {async: true,  polymorphic: true })
+  observers: DS.hasMany('observer', {async: true,  polymorphic: true }),
+  stream: DS.belongsTo('stream', {async: true})
 });
 
 App.View.FIXTURES = [
@@ -22,6 +23,7 @@ App.View.FIXTURES = [
         id: 0,
         type: "parameterObserver"
       }
-    ]
+    ],
+    stream: 2
   }
 ];

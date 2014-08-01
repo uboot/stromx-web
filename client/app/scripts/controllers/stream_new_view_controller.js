@@ -2,14 +2,15 @@
 
 App.StreamNewViewController = Ember.Controller.extend({
   actions: {
-    newView: function () {
+    saveView: function () {
+      var stream = this.get('model');
       var name = this.get('viewName');
       var view = this.store.createRecord('view', {
-        name: name
+        name: name,
+        stream: stream,
       });
       view.save();
 
-      var stream = this.get('model');
       stream.get('views').then(function(views) {
         views.pushObject(view);
       })
