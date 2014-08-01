@@ -459,9 +459,8 @@ class ParametersTest(unittest.TestCase):
                               'id': '0',
                               'maximum': 0,
                               'minimum': 0,
-                              'numberValue': 0,
                               'state': 'current',
-                              'stringValue': 'localhost',
+                              'value': 'localhost',
                               'title': 'URL',
                               'variant': 'string',
                               'operator': '0',
@@ -472,16 +471,14 @@ class ParametersTest(unittest.TestCase):
         self.model.operators.addStromxOp(self.receive)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
-                                 'stringValue': '127.0.0.1',
-                                 'numberValue': 0}})
+                                 'value': '127.0.0.1'}})
         self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testSetUrlUnicode(self):
         self.model.operators.addStromxOp(self.receive)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
-                                 'stringValue': u'127.0.0.1',
-                                 'numberValue': 0}})
+                                 'value': u'127.0.0.1'}})
         self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testDataPort(self):
@@ -491,9 +488,8 @@ class ParametersTest(unittest.TestCase):
                               'id': '1',
                               'maximum': 65535,
                               'minimum': 49152,
-                              'numberValue': 49152,
+                              'value': 49152,
                               'state': 'current',
-                              'stringValue': '',
                               'title': 'TCP port',
                               'variant': 'int',
                               'operator': '0',
@@ -504,8 +500,7 @@ class ParametersTest(unittest.TestCase):
         self.model.operators.addStromxOp(self.receive)
         param = self.parameters['1']
         param.set({'parameter': {'id': '0',
-                                 'stringValue': '',
-                                 'numberValue': 50000}})
+                                 'value': 50000}})
         self.assertEqual(50000, self.receive.getParameter(1).get())
         
     def testDataNumberOfOutputs(self):
@@ -515,9 +510,8 @@ class ParametersTest(unittest.TestCase):
                               'id': '0',
                               'maximum': 4,
                               'minimum': 2,
-                              'numberValue': 2,
+                              'value': 2,
                               'state': 'current',
-                              'stringValue': '',
                               'title': 'Number of outputs',
                               'variant': 'int',
                               'operator': '0',
@@ -529,8 +523,7 @@ class ParametersTest(unittest.TestCase):
         self.stream.deinitializeOperator(self.fork)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
-                                 'stringValue': '',
-                                 'numberValue': 3}})
+                                 'value': 3}})
         self.assertEqual(3, self.fork.getParameter(0).get())
         
     def testDataPixelType(self):
@@ -540,9 +533,8 @@ class ParametersTest(unittest.TestCase):
                               'id': '1',
                               'maximum': 0,
                               'minimum': 0,
-                              'numberValue': 0,
+                              'value': 0,
                               'state': 'current',
-                              'stringValue': '',
                               'title': 'Trigger mode',
                               'variant': 'enum',
                               'operator': '0',
@@ -553,8 +545,7 @@ class ParametersTest(unittest.TestCase):
         self.model.operators.addStromxOp(self.dummyCamera)
         param = self.parameters['1']
         param.set({'parameter': {'id': '1',
-                                 'stringValue': '',
-                                 'numberValue': 1}})
+                                 'value': 1}})
         self.assertEqual(1, self.dummyCamera.getParameter(2).get())
         
     def testDataException(self):
@@ -573,8 +564,7 @@ class ParametersTest(unittest.TestCase):
                                                    stromxParam)
         
         data = param.set({'parameter': {'id': '0',
-                                        'stringValue': '',
-                                        'numberValue': 1}})
+                                        'value': 1}})
         state = data['parameter']['state']
         self.assertEqual('accessFailed', state)
         self.assertEqual(2, len(self.model.errors))
@@ -583,8 +573,7 @@ class ParametersTest(unittest.TestCase):
         self.model.operators.addStromxOp(self.exceptionOperator)
         param = self.parameters['5']
         param.set({'parameter': {'id': '0',
-                                 'stringValue': '',
-                                 'numberValue': 1}})
+                                 'value': 1}})
         
     def testDataTrigger(self):
         self.model.operators.addStromxOp(self.parameterOperator)
@@ -592,7 +581,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['7']
         
         self.assertEqual('trigger', param.data['parameter']['variant'])
-        self.assertEqual(0, valueParam.data['parameter']['numberValue'])
+        self.assertEqual(0, valueParam.data['parameter']['value'])
         
     def testSetTrigger(self):
         self.model.operators.addStromxOp(self.parameterOperator)
@@ -600,9 +589,8 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['7']
         
         param.set({'parameter': {'id': '7',
-                                 'stringValue': '',
-                                 'numberValue': 1}})
-        self.assertEqual(1, valueParam.data['parameter']['numberValue'])
+                                 'value': 1}})
+        self.assertEqual(1, valueParam.data['parameter']['value'])
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):

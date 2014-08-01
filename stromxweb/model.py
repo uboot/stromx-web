@@ -496,7 +496,7 @@ class Parameters(Items):
         return parameter
     
 class Parameter(Item):
-    properties = ['title', 'variant', 'operator', 'stringValue', 'numberValue',
+    properties = ['title', 'variant', 'operator', 'value',
                   'minimum', 'maximum', 'writable', 'descriptions', 'state']
     
     def __init__(self, op, param, model):
@@ -536,36 +536,15 @@ class Parameter(Item):
             assert(False)
         
     @property
-    def stringValue(self):
+    def value(self):
         variant = self.__param.variant()
-        if not _hasStringRepresentation(variant):
-            return ''
-        
         return self.__getParameter(variant)
         
-    @stringValue.setter
-    def stringValue(self, value):
-        assert(type(value) == str or type(value) == unicode)
+    @value.setter
+    def value(self, value):
+        assert(type(value) == str or type(value) == unicode or
+               type(value) == float or type(value) == int)
         variant = self.__param.variant()
-        if not _isString(variant):
-            return
-        data = _toStromxData(variant, str(value))
-        self.__setParameter(data)
-        
-    @property
-    def numberValue(self):
-        variant = self.__param.variant()
-        if not _isNumber(variant):
-            return 0
-        
-        return self.__getParameter(variant)
-        
-    @numberValue.setter
-    def numberValue(self, value):
-        assert(type(value) == float or type(value) == int)
-        variant = self.__param.variant()
-        if not _isNumber(variant):
-            return
         data = _toStromxData(variant, value)
         self.__setParameter(data)
         
@@ -927,7 +906,7 @@ def _toStromxData(variant, value):
     elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_64):
         return stromx.runtime.Float64(value)
     elif variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return stromx.runtime.String(value)
+        return stromx.runtime.String(str(value))
     elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
         return stromx.runtime.TriggerData()
     else:
