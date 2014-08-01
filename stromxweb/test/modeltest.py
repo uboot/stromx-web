@@ -123,8 +123,8 @@ _fork = {
     'package': 'runtime',
     'outputs': ['5', '6'],
     'version': '0.1.0',
-     'y': 0.0, 'x': 0.0,
-     'type': 'Fork', 'id': '2'
+    'position': {'y': 0.0, 'x': 0.0},
+    'type': 'Fork', 'id': '2'
 }
 
 
@@ -376,15 +376,14 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual('New name',
                          self.operator.data['operator']['name'])
         
-    def testSetX(self):
-        self.operators.set('0', {'operator': {'x': 20.5}})
+    def testSetPosition(self):
+        self.operators.set('0', {'operator': 
+                                 {'position': {'x': 20.5, 'y': 30.5}}
+                                 })
         self.assertAlmostEqual(20.5,
-                               self.operator.data['operator']['x'])
-        
-    def testSetY(self):
-        self.operators.set('0', {'operator': {'y': 30.5}})
+                               self.operator.data['operator']['position']['x'])
         self.assertAlmostEqual(30.5,
-                               self.operator.data['operator']['y'])
+                               self.operator.data['operator']['position']['y'])
         
     def testData(self):
         data = {'operator': {'id': '0', 
@@ -396,8 +395,7 @@ class OperatorsTest(unittest.TestCase):
                              'parameters': ['0', '1'],
                              'inputs': [],
                              'outputs': ['0'],
-                             'x': 0.0,
-                             'y': 0.0}}
+                             'position': {'x': 0.0, 'y': 0.0} }}
         self.assertEqual(data, self.operator.data)
         
     def testDataDeinitialized(self):
@@ -415,8 +413,7 @@ class OperatorsTest(unittest.TestCase):
                              'parameters': [],
                              'inputs': [],
                              'outputs': [],
-                             'x': 0.0,
-                             'y': 0.0}}
+                             'position': {'x': 0.0, 'y': 0.0} }}
         self.assertEqual(data, op.data)
     
     def testFindOperatorModel(self):

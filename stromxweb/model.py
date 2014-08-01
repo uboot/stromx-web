@@ -384,7 +384,7 @@ class Operators(Items):
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
-                  "x", "y", "inputs", "outputs"]
+                  "position", "inputs", "outputs"]
     
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
@@ -446,23 +446,14 @@ class Operator(Item):
                                     version.revision())
         
     @property
-    def x(self):
-        return self.__op.position().x()
-    
-    @x.setter
-    def x(self, value):
+    def position(self):
         pos = self.__op.position()
-        pos.setX(value)
-        self.__op.setPosition(pos)
+        value = {'x': pos.x(), 'y': pos.y()}
+        return value
     
-    @property
-    def y(self):
-        return self.__op.position().y()
-    
-    @y.setter
-    def y(self, value):
-        pos = self.__op.position()
-        pos.setY(value)
+    @position.setter
+    def position(self, value):
+        pos = stromx.runtime.Position(value['x'], value['y'])
         self.__op.setPosition(pos)
         
     @property
