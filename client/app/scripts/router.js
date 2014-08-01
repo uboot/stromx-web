@@ -6,7 +6,9 @@ App.Router.map(function () {
     this.route('new');
   });
   this.resource('streams', function() {
-    this.resource('stream', { path: '/:stream_id' });
+    this.resource('stream', { path: '/:stream_id' }, function() {
+      this.route('newView');
+    });
   });
   this.resource('operators', function() {
     this.resource('operator', { path: '/:operator_id' });

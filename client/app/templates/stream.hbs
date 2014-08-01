@@ -1,25 +1,24 @@
 <h1>Stream</h1>
 
 <div class="stromx-center-buttons">
-  {{#if active}}
-    {{#if paused}}
-      <div class="btn-group">
+  <div class="btn-group">
+    {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
+    {{#if active}}
+      {{#if paused}}
         <button type="button" {{action "resume" }} class="btn btn-default">Resume</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      </div>
-    {{else}}
-      <div class="btn-group">
+      {{else}}
         <button type="button" {{action "pause"}} class="btn btn-default">Pause</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      </div>
-    {{/if}}
-  {{else}}
-    <div class="btn-group">
+      {{/if}}
+    {{else}}
       <button type="button" {{action "start"}} class="btn btn-default">Start</button>
       <button type="button" {{action "close"}} class="btn btn-default">Close</button>
-    </div>
-  {{/if}}
+    {{/if}}
+  </div>
 </div>
+
+{{outlet}}
 
 <div class="stromx-stream-view panel panel-default">
   <svg width="1280" height="1024" id="stream-svg">
