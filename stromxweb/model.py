@@ -472,6 +472,16 @@ class Operator(Item):
     def stromxOp(self):
         return self.__op
     
+    def delete(self):
+        for param in self.__parameters:
+            self.model.parameters.delete(param.index)
+            
+        for inputConnector in self.__inputs:
+            self.model.connectors.delete(inputConnector.index)
+            
+        for outputConnector in self.__outputs:
+            self.model.connectors.delete(outputConnector.index)
+    
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
                    if output.id() == index]
