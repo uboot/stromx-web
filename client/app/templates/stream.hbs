@@ -1,21 +1,27 @@
 <h1>Stream</h1>
 
 <div class="stromx-center-buttons">
-  <div class="btn-group">
-    {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
-    {{#if active}}
-      {{#if paused}}
+  {{#if active}}
+    {{#if paused}}
+      <div class="btn-group">
+        {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
         <button type="button" {{action "resume" }} class="btn btn-default">Resume</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      {{else}}
+      </div>
+    {{else}}
+      <div class="btn-group">
+        {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
         <button type="button" {{action "pause"}} class="btn btn-default">Pause</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      {{/if}}
-    {{else}}
+      </div>
+    {{/if}}
+  {{else}}
+    <div class="btn-group">
+      {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
       <button type="button" {{action "start"}} class="btn btn-default">Start</button>
       <button type="button" {{action "close"}} class="btn btn-default">Close</button>
-    {{/if}}
-  </div>
+    </div>
+  {{/if}}
 </div>
 
 {{outlet}}
