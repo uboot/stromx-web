@@ -44,12 +44,12 @@ App.ObserverController = Ember.ObjectController.extend({
   actions: {
     moveUp: function() {
       var zvalue = this.get('zvalue');
-      var _this = this;
+      var controller = this;
       this.get('view').then(function(view) {
         var observers = view.get('observers');
         var modelAbove = observers.findBy('zvalue', zvalue + 1);
         if (modelAbove) {
-          _this.set('zvalue', zvalue + 1);
+          controller.set('zvalue', zvalue + 1);
           modelAbove.set('zvalue', zvalue);
         }
       });
@@ -57,14 +57,32 @@ App.ObserverController = Ember.ObjectController.extend({
 
     moveDown: function() {
       var zvalue = this.get('zvalue');
-      var _this = this;
+      var controller = this;
       this.get('view').then(function(view) {
         var observers = view.get('observers');
         var modelBelow = observers.findBy('zvalue', zvalue - 1);
         if (modelBelow) {
           modelBelow.set('zvalue', zvalue);
-          _this.set('zvalue', zvalue - 1);
+          controller.set('zvalue', zvalue - 1);
         }
+      });
+    },
+
+    remove: function () {
+      var observer = this.get('model');
+      var zvalue = this.get('zvalue');
+      var view = this.get('view');
+      observer.deleteRecord();
+      observer.save();
+
+      // update the z-value of the remainig controllers
+      view.then(function(view) {
+        var observers = view.get('observers');
+        observers.forEach(function(observer) {
+          var thisZValue = observer.get('zvalue');
+          if (thisZValue > zvalue)
+            observer.set('zvalue', thisZValue - 1);
+        });
       });
     }
   }

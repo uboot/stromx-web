@@ -34,6 +34,9 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       var visualization = observer.get('visualization');
 
       var group = _this.get('group');
+      if (! group)
+        return;
+
       group.remove();
 
       group = paper.group();
