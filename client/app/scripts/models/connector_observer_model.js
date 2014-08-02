@@ -3,7 +3,7 @@
 require('scripts/models/observer_model');
 
 App.ConnectorObserver = App.Observer.extend({
-  connector: DS.belongsTo('connector'),
+  connector: DS.belongsTo('connector', {async: true}),
   value: DS.belongsTo('connector-value', {async: true}),
 });
 

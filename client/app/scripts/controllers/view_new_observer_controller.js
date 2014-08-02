@@ -29,9 +29,9 @@ App.ViewNewObserverController = Ember.Controller.extend({
             view: model,
             zvalue: numObservers + 1
           });
-          observer.save();
-
-          observers.pushObject(observer);
+          observer.save().then(function(observer) {
+            observers.pushObject(observer);
+          });
         })
       }
       this.transitionToRoute('view');
