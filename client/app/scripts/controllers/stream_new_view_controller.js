@@ -13,7 +13,7 @@ App.StreamNewViewController = Ember.Controller.extend({
 
       stream.get('views').then(function(views) {
         views.pushObject(view);
-      })
+      });
 
       this.transitionToRoute('stream');
     }

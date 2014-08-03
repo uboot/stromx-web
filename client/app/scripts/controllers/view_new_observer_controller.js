@@ -13,7 +13,7 @@ App.ViewNewObserverController = Ember.Controller.extend({
   targetTypes: [
     {id: 0, label: 'Input'},
     {id: 1, label: 'Output'},
-    {id: 2, label: 'Parameter'},
+    {id: 2, label: 'Parameter'}
   ],
 
   targets: function() {

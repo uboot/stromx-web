@@ -85,7 +85,7 @@ App.ObserverController = Ember.ObjectController.extend({
             if (thisZValue > zvalue)
               observer.set('zvalue', thisZValue - 1);
           });
-        })
+        });
       });
     }
   }

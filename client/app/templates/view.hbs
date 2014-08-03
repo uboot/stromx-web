@@ -43,9 +43,16 @@
         {{visualizationLabel}}
       </td>
       <td>
-        <button type="button" {{action "moveUp"}} class="btn btn-default btn-xs">Up</button>
-        <button type="button" {{action "moveDown"}} class="btn btn-default btn-xs">Down</button>
-        <button type="button" {{action "remove"}} class="btn btn-default btn-xs">Remove</button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+            Action <span class="caret"></span>
+          </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a {{action "moveUp"}}>Up</a></li>
+              <li><a {{action "moveDown"}}>Down</a></li>
+              <li><a {{action "remove"}}>Remove</a></li>
+            </ul>
+          </div>
      </td>
     </tr>
     {{/each}}
