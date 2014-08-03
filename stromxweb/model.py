@@ -2,6 +2,7 @@
 
 import base64
 import datetime
+import json
 import os
 import re
 
@@ -265,6 +266,15 @@ class Stream(Item):
             zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(zipInput, "stream.xml", factory)
+            
+            zipInput.initialize("", "views.json")
+            try:
+                zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
+                viewData = json.load(zipInput.file())
+                for data in viewData:
+                    self.model.views.addViewForStream(self, data)
+            except stromx.runtime.FileAccessFailed:
+                pass
         else:
             self.__stream = stromx.runtime.Stream()
             
@@ -356,10 +366,20 @@ class Stream(Item):
         if not value:
             return
         
-        # the file should be saved
+        # compile the list of view data
+        viewData = [view.data for view in self.__views]
+        
+        # write the file
         writer = stromx.runtime.XmlWriter()
         try:
-            writer.writeStream(str(self.__file.path), self.__stream)
+            zipOutput = stromx.runtime.ZipFileOutput(self.__file.path)
+            writer.writeStream(zipOutput, 'stream', self.__stream)
+            
+            zipOutput.initialize('views')
+            zipOutput.openFile("json", stromx.runtime.OutputProvider.OpenMode.TEXT)
+            json.dump(viewData, zipOutput.file())
+            zipOutput.close()
+            
             self.__saved = True
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
@@ -769,11 +789,11 @@ class Connectors(Items):
 class View(Item):
     properties = ['name', 'observers', 'stream']
     
-    def __init__(self, data, model):
+    def __init__(self, stream, data, model):
         super(View, self).__init__(model)
         self.__name = data['view']['name']
         self.__observers = []
-        self.stream = data['view']['stream']
+        self.__stream = stream
         
     @property
     def name(self):
@@ -799,21 +819,16 @@ class View(Item):
     def stream(self, value):
         self.__stream = self.model.streams[value]
         
-class Views(Items):
-    def readViews(self, fileInput):
-        fileInput.initialize("", "views.dat")
-        try:
-            fileInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
-            fileInput.file().read()
-            return []
-        except stromx.runtime.FileAccessFailed:
-            return []
-    
-    def writeViews(self, fileOutput, views):
-        pass
+class Views(Items):    
+    def addViewForStream(self, stream, data):
+        view = View(stream, data, self.model)
+        self.addItem(view)
+        return view.data
     
     def addData(self, data):
-        view = View(data, self.model)
+        streamIndex = data['view']['stream']
+        stream = self.model.streams[streamIndex]
+        view = View(stream, data, self.model)
         self.addItem(view)
         return view.data
         
