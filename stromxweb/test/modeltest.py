@@ -368,11 +368,6 @@ class StreamsTest(unittest.TestCase):
         self.setUpViews()
         stream = self.streams.addFile(self.streamFile)
         self.assertEqual(['0'], stream.data['stream']['views'])
-        self.assertEqual({'views': [{'id': '0', 
-                                     'name': u'View name', 
-                                     'observers': [],
-                                     'stream': '0'}]}, 
-                         self.model.views.data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
@@ -706,23 +701,47 @@ class ThreadsTest(unittest.TestCase):
 class ViewsTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
+        self.model = None
+        
+    def setupViewData(self):
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streamFile = self.model.files['0']
+        self.model.streams.addFile(self.streamFile)
         
     def testAddData(self):
         shutil.copytree('data/stream', 'temp')
-        testModel = model.Model('temp')
-        stream = testModel.streams.addFile(testModel.files['0'])
+        self.model = model.Model('temp')
+        stream = self.model.streams.addFile(self.model.files['0'])
         viewData = {'view': {'name': 'View name',
                              'observers': [],
                              'stream': '0'}}
-        viewData = testModel.views.addData(viewData)
+        viewData = self.model.views.addData(viewData)
         
         data = {'view': {'id': '0',
                          'name': 'View name',
                          'observers': [],
                          'stream': '0'}}
         self.assertEqual(data, viewData)
-        self.assertEqual(data, testModel.views['0'].data)
         self.assertEqual(1, len(stream.views))
+        
+    def testData(self):
+        self.setupViewData()
+        
+        data = {'view': {'id': '0',
+                         'name': 'View name',
+                         'observers': [],
+                         'stream': '0'}}
+        self.assertEqual(data, self.model.views['0'].data)
+        
+    def testSetName(self):
+        self.setupViewData()
+        
+        view = self.model.views['0']
+        view.set({'view': {'id': '0',
+                           'name': 'New name'}})
+        self.assertEqual('New name', view.name)
         
     def tearDown(self):
         shutil.rmtree('temp', True)

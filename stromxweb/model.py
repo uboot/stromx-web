@@ -796,7 +796,7 @@ class View(Item):
     
     def __init__(self, stream, data, model):
         super(View, self).__init__(model)
-        self.__name = data['view']['name']
+        self.__name = str(data['view']['name'])
         self.__observers = []
         self.__stream = stream
         self.__stream.addView(self)
