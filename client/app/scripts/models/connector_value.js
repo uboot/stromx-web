@@ -23,8 +23,8 @@ App.ConnectorValue.FIXTURES = [
     id: 1,
     variant: 'image',
     value: {
-      width: 100,
-      height: 102,
+      width: 200,
+      height: 204,
       values: (
       'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgICAgMCAgI' +
       'DAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QE' +

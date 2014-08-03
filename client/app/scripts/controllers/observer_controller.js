@@ -70,21 +70,23 @@ App.ObserverController = Ember.ObjectController.extend({
 
     remove: function () {
       var observer = this.get('model');
-      var zvalue = observer.get('zvalue');
-      observer.get('view').then(function(view) {
-        view.get('observers').then(function(observers) {
-          observers.popObject(observer);
-          view.save();
+      var zvalue = this.get('model.zvalue');
+      var view = this.get('model.view');
+      observer.deleteRecord();
+      observer.save();
+
+      view.then(function(view) {
+        var observers = view.get('observers');
+        observers.removeObject(observer);
+
+        observers.then(function(observers) {
           observers.forEach(function(observer) {
             var thisZValue = observer.get('zvalue');
             if (thisZValue > zvalue)
               observer.set('zvalue', thisZValue - 1);
           });
         })
-      })
-
-      /*observer.deleteRecord();
-      observer.save();*/
+      });
     }
   }
 });
