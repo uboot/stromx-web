@@ -70,20 +70,21 @@ App.ObserverController = Ember.ObjectController.extend({
 
     remove: function () {
       var observer = this.get('model');
-      var zvalue = this.get('zvalue');
-      var view = this.get('view');
-      observer.deleteRecord();
-      observer.save();
+      var zvalue = observer.get('zvalue');
+      observer.get('view').then(function(view) {
+        view.get('observers').then(function(observers) {
+          observers.popObject(observer);
+          view.save();
+          observers.forEach(function(observer) {
+            var thisZValue = observer.get('zvalue');
+            if (thisZValue > zvalue)
+              observer.set('zvalue', thisZValue - 1);
+          });
+        })
+      })
 
-      // update the z-value of the remainig controllers
-      view.then(function(view) {
-        var observers = view.get('observers');
-        observers.forEach(function(observer) {
-          var thisZValue = observer.get('zvalue');
-          if (thisZValue > zvalue)
-            observer.set('zvalue', thisZValue - 1);
-        });
-      });
+      /*observer.deleteRecord();
+      observer.save();*/
     }
   }
 });

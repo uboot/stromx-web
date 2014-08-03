@@ -6,7 +6,7 @@
       {{view Ember.Select value=targetType content=targetTypes optionValuePath="content.id"
          optionLabelPath="content.label"
          prompt="Select a type"}}
-      {{view Ember.Select value=target content=targets optionValuePath="content"
+      {{view Ember.Select value=observerTarget content=targets optionValuePath="content"
          optionLabelPath="content.title" prompt="Select a target"}}
       <button {{action 'saveObserver'}} type="submit" class="btn btn-default">Save</button>
     </div>

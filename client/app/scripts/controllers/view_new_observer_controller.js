@@ -7,16 +7,14 @@ App.ViewNewObserverController = Ember.Controller.extend({
   }.property(),
 
   operator: null,
-
-  target: null,
+  targetType: null,
+  observerTarget: null,
 
   targetTypes: [
     {id: 0, label: 'Input'},
     {id: 1, label: 'Output'},
     {id: 2, label: 'Parameter'},
   ],
-
-  targetType: null,
 
   targets: function() {
     var operator = this.get('operator');
@@ -37,24 +35,22 @@ App.ViewNewObserverController = Ember.Controller.extend({
 
   actions: {
     saveObserver: function () {
-      var target = this.get('target');
+      var target = this.get('observerTarget');
       var model = this.get('model');
       var store = this.get('store');
+
       if (target) {
         model.get('observers').then(function(observers) {
           var numObservers = observers.get('length');
           var observer = null;
 
-          if (target instanceof App.Connector)
-          {
+          if (target instanceof App.Connector) {
             observer = store.createRecord('connector_observer', {
               connector: target,
               view: model,
               zvalue: numObservers + 1
             });
-          }
-          else if (target instanceof App.Parameter)
-          {
+          } else if (target instanceof App.Parameter) {
             observer = store.createRecord('parameter_observer', {
               parameter: target,
               view: model,
@@ -62,13 +58,13 @@ App.ViewNewObserverController = Ember.Controller.extend({
             });
           }
 
-          if (observer)
-          {
+          if (observer) {
             observer.save().then(function(observer) {
               observers.pushObject(observer);
+              model.save();
             });
           }
-        })
+        });
       }
       this.transitionToRoute('view');
     }

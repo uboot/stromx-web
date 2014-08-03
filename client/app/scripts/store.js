@@ -14,7 +14,16 @@ DS.JSONSerializer.reopen({
       record.constructor, relationship);
 
     if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
-      json[key] = Ember.get(record, key).mapBy('id');
+      if (relationship.options.polymorphic) {
+        json[key] = Ember.get(record, key).map(function(item) {
+          return {
+            id: item.get('id'),
+            type: item.constructor.typeKey
+          };
+        });
+      } else {
+        json[key] = Ember.get(record, key).mapBy('id');
+      }
       // TODO support for polymorphic manyToNone and manyToMany
       // relationships
     }
