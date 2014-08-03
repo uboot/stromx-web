@@ -18,6 +18,7 @@ class Model(object):
         self.__connectors = Connectors(self)
         self.__connections = Connections(self)
         self.__threads = Threads(self)
+        self.__views = Views(self)
     
     @property
     def files(self):
@@ -54,6 +55,10 @@ class Model(object):
     @property
     def threads(self):
         return self.__threads
+    
+    @property
+    def views(self):
+        return self.__views
     
 class Items(dict):
     def __init__(self, model = None):
@@ -254,10 +259,12 @@ class Stream(Item):
         self.__saved = False
         self.__operators = []
         self.__connections = []
+        self.__views = []
         
         if os.path.exists(streamFile.path):
+            zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
             reader = stromx.runtime.XmlReader()
-            self.__stream = reader.readStream(str(streamFile.path), factory)
+            self.__stream = reader.readStream(zipInput, "stream.xml", factory)
         else:
             self.__stream = stromx.runtime.Stream()
             
@@ -368,6 +375,9 @@ class Stream(Item):
     def delete(self):
         for op in self.__operators:
             self.model.operators.delete(op.index)
+            
+        for connection in self.__connections:
+            self.model.connections.delete(connection.index)
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -755,6 +765,57 @@ class Connectors(Items):
             return connectors[0]
         else:
             return None
+        
+class View(Item):
+    properties = ['name', 'observers', 'stream']
+    
+    def __init__(self, data, model):
+        super(View, self).__init__(model)
+        self.__name = data['view']['name']
+        self.__observers = []
+        self.stream = data['view']['stream']
+        
+    @property
+    def name(self):
+        return self.__name
+    
+    @name.setter
+    def name(self, value):
+        self.__name = value
+        
+    @property
+    def observers(self):
+        return [observer.index for observer in self.__observers]
+    
+    @observers.setter
+    def observers(self, value):
+        pass
+    
+    @property
+    def stream(self):
+        return self.__stream.index
+    
+    @stream.setter
+    def stream(self, value):
+        self.__stream = self.model.streams[value]
+        
+class Views(Items):
+    def readViews(self, fileInput):
+        fileInput.initialize("", "views.dat")
+        try:
+            fileInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
+            fileInput.file().read()
+            return []
+        except stromx.runtime.FileAccessFailed:
+            return []
+    
+    def writeViews(self, fileOutput, views):
+        pass
+    
+    def addData(self, data):
+        view = View(data, self.model)
+        self.addItem(view)
+        return view.data
         
 class Errors(Items):
     def __init__(self):

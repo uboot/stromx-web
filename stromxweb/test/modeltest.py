@@ -685,6 +685,29 @@ class ThreadsTest(unittest.TestCase):
         foundThread = self.threads.findThread(self.stromxFork, stromxInput)
         self.assertEqual(thread, foundThread)
     
+class ViewsTest(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree('temp', True)
+        
+    def testAddData(self):
+        shutil.copytree('data/stream', 'temp')
+        testModel = model.Model('temp')
+        testModel.streams.addFile(testModel.files['0'])
+        viewData = {'view': {'name': 'View name',
+                             'observers': [],
+                             'stream': '0'}}
+        viewData = testModel.views.addData(viewData)
+        
+        data = {'view': {'id': '0',
+                         'name': 'View name',
+                         'observers': [],
+                         'stream': '0'}}
+        self.assertEqual(data, viewData)
+        self.assertEqual(data, testModel.views['0'].data)
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
+        
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
         self.lastError = None
