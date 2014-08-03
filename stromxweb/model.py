@@ -252,7 +252,7 @@ class Streams(Items):
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
-                  "connections"]
+                  "connections", "views"]
     
     def __init__(self, streamFile, factory, model):
         super(Stream, self).__init__(model)
@@ -392,12 +392,19 @@ class Stream(Item):
     def connections(self):
         return [connection.index for connection in self.__connections]
     
+    @property
+    def views(self):
+        return [view.index for view in self.__views]
+    
     def delete(self):
         for op in self.__operators:
             self.model.operators.delete(op.index)
             
         for connection in self.__connections:
             self.model.connections.delete(connection.index)
+    
+    def addView(self, view):
+        self.__views.append(view)
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -794,6 +801,7 @@ class View(Item):
         self.__name = data['view']['name']
         self.__observers = []
         self.__stream = stream
+        self.__stream.addView(self)
         
     @property
     def name(self):

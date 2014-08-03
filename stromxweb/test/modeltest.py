@@ -112,7 +112,8 @@ _stream = {
     'paused': False,
     'file': '0',
     'connections': ['0', '1', '2', '3', '4'],
-    'operators': ['0', '1', '2', '3', '4']
+    'operators': ['0', '1', '2', '3', '4'],
+    'views': []
 }
 
 _fork = {
@@ -264,6 +265,13 @@ class StreamsTest(unittest.TestCase):
         self.deactivateFile = self.model.files['1']
         self.deinitializeFile = self.model.files['2']
         
+    def setUpViews(self):
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streams = self.model.streams
+        self.streamFile = self.model.files['0']
+        
     def testAddData(self):
         self.setUpStream()
         self.streams.addFile(self.streamFile)
@@ -355,6 +363,16 @@ class StreamsTest(unittest.TestCase):
         stream = self.streams.addFile(self.streamFile)
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators)  
+        
+    def testReadViews(self):
+        self.setUpViews()
+        stream = self.streams.addFile(self.streamFile)
+        self.assertEqual(['0'], stream.data['stream']['views'])
+        self.assertEqual({'views': [{'id': '0', 
+                                     'name': u'View name', 
+                                     'observers': [],
+                                     'stream': '0'}]}, 
+                         self.model.views.data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
@@ -692,7 +710,7 @@ class ViewsTest(unittest.TestCase):
     def testAddData(self):
         shutil.copytree('data/stream', 'temp')
         testModel = model.Model('temp')
-        testModel.streams.addFile(testModel.files['0'])
+        stream = testModel.streams.addFile(testModel.files['0'])
         viewData = {'view': {'name': 'View name',
                              'observers': [],
                              'stream': '0'}}
@@ -704,6 +722,7 @@ class ViewsTest(unittest.TestCase):
                          'stream': '0'}}
         self.assertEqual(data, viewData)
         self.assertEqual(data, testModel.views['0'].data)
+        self.assertEqual(1, len(stream.views))
         
     def tearDown(self):
         shutil.rmtree('temp', True)
