@@ -289,8 +289,6 @@ class Stream(Item):
             for stromxInput in op.stromxOp.info().inputs():
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
-                if source.type() != stromx.runtime.Connector.Type.OUTPUT:
-                    continue
                 if source.op() == None:
                     continue
                 
