@@ -20,7 +20,6 @@ class ViewTest(unittest.TestCase):
         delay = stream.operators()[4]
         parameterObserver = view.ParameterObserver(stream, delay, 0)
         parameterObserver.color = stromx.runtime.Color(255, 0, 0)
-        parameterObserver.zvalue = 0
         self.view.observers.append(parameterObserver)
         
         counter = stream.operators()[3]
@@ -29,6 +28,7 @@ class ViewTest(unittest.TestCase):
                                                    connectorType, 0)
         connectorObserver.color = stromx.runtime.Color(0, 0, 255)
         parameterObserver.zvalue = 1
+        parameterObserver.active = False
         self.view.observers.append(connectorObserver)
         
     def testDeserialize(self):
@@ -44,6 +44,7 @@ class ViewTest(unittest.TestCase):
                         'color': '#ff0000',
                         'zvalue': 1,
                         'param': 0,
+                        'active': False,
                         'op': 4}
                      }, {
                     'ConnectorObserver': {
@@ -51,6 +52,7 @@ class ViewTest(unittest.TestCase):
                         'color': '#0000ff', 
                         'zvalue': 0, 
                         'type': 2, 
+                        'active': True,
                         'op': 3}
                     }
                 ],
