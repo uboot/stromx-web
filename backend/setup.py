@@ -6,7 +6,7 @@ import shutil
 
 if os.path.exists('stromxweb/static'):
     shutil.rmtree('stromxweb/static')
-shutil.copytree('client/dist', 'stromxweb/static')
+shutil.copytree('../frontend/dist', 'stromxweb/static')
 
 static_files = []
 

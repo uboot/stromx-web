@@ -5,5 +5,5 @@
 .settings
 dist
 MANIFEST
-stromxweb/static
+backend/stromxweb/static
 
