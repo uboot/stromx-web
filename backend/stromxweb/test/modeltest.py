@@ -718,6 +718,7 @@ class ViewsTest(unittest.TestCase):
                              'observers': [],
                              'stream': '0'}}
         viewData = self.model.views.addData(viewData)
+        stream.saved = True
         
         data = {'view': {'id': '0',
                          'name': 'View name',

@@ -6,7 +6,9 @@ import json
 import os
 import re
 
-import stromx.runtime 
+import stromx.runtime
+ 
+import view
 
 class Model(object):
     def __init__(self, directory = ""):
@@ -272,7 +274,10 @@ class Stream(Item):
                 zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
                 viewData = json.load(zipInput.file())
                 for data in viewData:
-                    self.model.views.addViewForStream(self, data)
+                    stromxView = view.View(self)
+                    stromxView.deserialize(data)
+                    viewModel = self.model.views.addStromxView(stromxView)
+                    self.__views.append(viewModel)
             except stromx.runtime.FileAccessFailed:
                 pass
         else:
@@ -365,7 +370,7 @@ class Stream(Item):
             return
         
         # compile the list of view data
-        viewData = [view.data for view in self.__views]
+        viewData = [view.stromxView.serialize() for view in self.__views]
         
         # write the file
         writer = stromx.runtime.XmlWriter()
@@ -400,9 +405,12 @@ class Stream(Item):
             
         for connection in self.__connections:
             self.model.connections.delete(connection.index)
-    
-    def addView(self, view):
-        self.__views.append(view)
+            
+    def addView(self):
+        stromxView = view.View(self.__stream)
+        viewModel = self.model.views.addStromxView(stromxView)
+        self.__views.append(viewModel)
+        return viewModel
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -792,22 +800,19 @@ class Connectors(Items):
             return None
         
 class View(Item):
-    properties = ['name', 'observers', 'stream']
+    properties = ['name']
     
-    def __init__(self, stream, data, model):
+    def __init__(self, stromxView, model):
         super(View, self).__init__(model)
-        self.__name = str(data['view']['name'])
-        self.__observers = []
-        self.__stream = stream
-        self.__stream.addView(self)
+        self.__view = stromxView
         
     @property
     def name(self):
-        return self.__name
+        return self.__view.name
     
     @name.setter
     def name(self, value):
-        self.__name = value
+        self.__view.name = value
         
     @property
     def observers(self):
@@ -825,18 +830,22 @@ class View(Item):
     def stream(self, value):
         self.__stream = self.model.streams[value]
         
+    @property
+    def stromxView(self):
+        return self.__view
+        
 class Views(Items):    
-    def addViewForStream(self, stream, data):
-        view = View(stream, data, self.model)
-        self.addItem(view)
-        return view.data
+    def addStromxView(self, view):
+        viewModel = View(view, self.model)
+        self.addItem(viewModel)
+        return viewModel
     
     def addData(self, data):
         streamIndex = data['view']['stream']
         stream = self.model.streams[streamIndex]
-        view = View(stream, data, self.model)
-        self.addItem(view)
-        return view.data
+        viewModel = stream.addView()
+        viewModel.set(data)
+        return viewModel.data
         
 class Errors(Items):
     def __init__(self):
