@@ -4,7 +4,21 @@ class View(object):
     def __init__(self, stream):
         self.__stream = stream
         self.name = ''
-        self.observers = []
+        self.__observers = []
+        
+    @property
+    def observers(self):
+        return self.__observers
+        
+    def addConnectorObserver(self, op, connectorType, index):
+        observer = ConnectorObserver(self.__stream, op, connectorType, index)
+        self.__observers.append(observer)
+        return observer
+        
+    def addParameterObserver(self, op, index):
+        observer = ParameterObserver(self.__stream, op, index)
+        self.__observers.append(observer)
+        return observer
         
     def deserialize(self, data):
         pass
@@ -17,7 +31,6 @@ class View(object):
                 'observers': observers
             }
         }
-        
         return data
     
 class Observer(object):

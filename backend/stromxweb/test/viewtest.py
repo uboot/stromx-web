@@ -18,18 +18,16 @@ class ViewTest(unittest.TestCase):
         self.view.name = 'Test view'
         
         delay = stream.operators()[4]
-        parameterObserver = view.ParameterObserver(stream, delay, 0)
+        parameterObserver = self.view.addParameterObserver(delay, 0)
         parameterObserver.color = stromx.runtime.Color(255, 0, 0)
-        self.view.observers.append(parameterObserver)
         
         counter = stream.operators()[3]
         connectorType = stromx.runtime.Connector.Type.OUTPUT
-        connectorObserver = view.ConnectorObserver(stream,counter,
-                                                   connectorType, 0)
+        connectorObserver = self.view.addConnectorObserver(counter, 
+                                                           connectorType, 0)
         connectorObserver.color = stromx.runtime.Color(0, 0, 255)
         parameterObserver.zvalue = 1
         parameterObserver.active = False
-        self.view.observers.append(connectorObserver)
         
     def testDeserialize(self):
         data = {}
