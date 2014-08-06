@@ -21,7 +21,19 @@ class View(object):
         return observer
         
     def deserialize(self, data):
-        pass
+        properties = data['View']
+        self.name = properties['name']
+        for data in properties['observers']:
+            for key in data:
+                if key == 'ParameterObserver':
+                    observer = ParameterObserver(self.__stream)
+                elif key == 'ConnectorObserver':
+                    observer = ConnectorObserver(self.__stream)
+                else:
+                    assert(False)
+                    
+                observer.deserialize(data[key])
+                self.__observers.append(observer)
     
     def serialize(self):
         observers = [observer.serialize() for observer in self.observers]
@@ -57,6 +69,17 @@ class Observer(object):
         }
         
         return data
+    
+    def deserialize(self, properties):
+        red = int(properties['color'][1:3], 16)
+        green = int(properties['color'][3:5], 16)
+        blue = int(properties['color'][5:], 16)
+        
+        self.zvalue = properties['zvalue']
+        self.active = properties['active']
+        self.visualization = properties['visualization']
+        self.color = stromx.runtime.Color(red, green, blue)
+        self.__op = self.__stream.operators()[properties['op']]
         
     @property
     def __opId(self):
@@ -67,7 +90,7 @@ class Observer(object):
         return -1
         
 class ParameterObserver(Observer):
-    def __init__(self, stream, op, index):
+    def __init__(self, stream, op = None, index = None):
         super(ParameterObserver, self).__init__(stream, op)
         self.__op = op
         self.__index = index
@@ -75,7 +98,7 @@ class ParameterObserver(Observer):
     def serialize(self):
         parentData = super(ParameterObserver, self).serialize()
         data = {
-            'param': self.__index
+            'parameter': self.__index
         }
         data.update(parentData['Observer'])
         
@@ -83,8 +106,12 @@ class ParameterObserver(Observer):
            'ParameterObserver': data
         }
         
+    def deserialize(self, properties):
+        super(ParameterObserver, self).deserialize(properties)
+        self.__index = properties['parameter']
+        
 class ConnectorObserver(Observer):
-    def __init__(self, stream, op, connectorType, index):
+    def __init__(self, stream, op = None, connectorType = None, index = None):
         super(ConnectorObserver, self).__init__(stream, op)
         self.__connectorType = connectorType
         self.__index = index
@@ -99,4 +126,9 @@ class ConnectorObserver(Observer):
         return {
            'ConnectorObserver': data
         }
+        
+    def deserialize(self, properties):
+        super(ConnectorObserver, self).deserialize(properties)
+        self.__index = properties['connector']
+        self.__connectorType = properties['type']
     
