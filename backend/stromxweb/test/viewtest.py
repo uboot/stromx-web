@@ -20,6 +20,7 @@ class ViewTest(unittest.TestCase):
         delay = stream.operators()[4]
         parameterObserver = self.view.addParameterObserver(delay, 0)
         parameterObserver.color = stromx.runtime.Color(255, 0, 0)
+        parameterObserver.visualization = 'slider'
         
         counter = stream.operators()[3]
         connectorType = stromx.runtime.Connector.Type.OUTPUT
@@ -43,6 +44,7 @@ class ViewTest(unittest.TestCase):
                         'zvalue': 1,
                         'param': 0,
                         'active': False,
+                        'visualization': 'slider',
                         'op': 4}
                      }, {
                     'ConnectorObserver': {
@@ -51,6 +53,7 @@ class ViewTest(unittest.TestCase):
                         'zvalue': 0, 
                         'type': 2, 
                         'active': True,
+                        'visualization': 'default',
                         'op': 3}
                     }
                 ],

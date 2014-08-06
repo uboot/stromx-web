@@ -38,6 +38,7 @@ class Observer(object):
         self.color = stromx.runtime.Color(0, 0, 0)
         self.zvalue = 0
         self.active = True
+        self.visualization = 'default'
         self.__stream = stream
         self.__op = op
     
@@ -50,7 +51,8 @@ class Observer(object):
                 'color': colorStr,
                 'op': self.__opId,
                 'zvalue': self.zvalue,
-                'active': self.active
+                'active': self.active,
+                'visualization': self.visualization
            }
         }
         
