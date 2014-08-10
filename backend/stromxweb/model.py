@@ -22,6 +22,8 @@ class Model(object):
         self.__connections = Connections(self)
         self.__threads = Threads(self)
         self.__views = Views(self)
+        self.__parameterObservers = ParameterObservers(self)
+        self.__connectorObservers = ConnectorObservers(self)
     
     @property
     def files(self):
@@ -62,6 +64,14 @@ class Model(object):
     @property
     def views(self):
         return self.__views
+    
+    @property
+    def parameterObservers(self):
+        return self.__parameterObservers
+    
+    @property
+    def connectorObservers(self):
+        return self.__connectorObservers
     
 class Items(dict):
     def __init__(self, model = None):
@@ -310,7 +320,8 @@ class Stream(Item):
                                 op.stromxOp, stromxInput.id(), Connector.INPUT)
                 assert(targetConnector)
                 
-                thread = self.model.threads.findThread(op.stromxOp, stromxInput)
+                thread = self.model.threads.findThreadModel(op.stromxOp,
+                                                            stromxInput)
                 
                 connection = self.model.connections.addConnection(
                                     sourceConnector, targetConnector, thread)
@@ -418,7 +429,7 @@ class Stream(Item):
     def stromxStream(self):
         return self.__stream
             
-    def addNewStromxView(self):
+    def addStromxView(self):
         stromxView = view.View(self.__stream)
         self.__stromxViews.append(stromxView)
         return stromxView
@@ -636,6 +647,14 @@ class Parameter(Item):
         return [desc.index for desc in self.__descriptions]
         return self.__descriptions
     
+    @property
+    def stromxOperator(self):
+        return self.__op
+    
+    @property
+    def stromxParameterId(self):
+        return self.__param.id()
+    
     def __getParameter(self, variant):
         try:
             data = self.__op.getParameter(self.__param.id())
@@ -734,8 +753,7 @@ class Threads(Items):
         self.addItem(threadModel)
         return threadModel
     
-    # FIXME: rename to findThreadModel
-    def findThread(self, stromxOp, stromxInput):
+    def findThreadModel(self, stromxOp, stromxInput):
         threads = [
             thread for thread in self.values() if 
             self.__inputIsInInputSequence(stromxOp, stromxInput, 
@@ -841,6 +859,12 @@ class View(Item):
     @property
     def stromxView(self):
         return self.__view
+    
+    def addStromxParameterObserver(self, parameterIndex):
+        param = self.model.parameters[parameterIndex]
+        observer = self.__view.addParameterObserver(param.stromxOperator,
+                                                    param.stromxParameterId)
+        return observer
         
 class Views(Items):  
     def addStromxView(self, stromxView):  
@@ -856,10 +880,39 @@ class Views(Items):
     def addData(self, data):
         streamIndex = data['view']['stream']
         stream = self.model.streams[streamIndex]
-        stromxView = stream.addNewStromxView()
+        stromxView = stream.addStromxView()
         viewModel = self.addStromxView(stromxView)
         viewModel.set(data)
         return viewModel.data
+    
+class Observer(Item):
+    pass
+
+class ParameterObserver(Observer):
+    def __init__(self, stromxObserver, model):
+        super(ParameterObserver, self).__init__(model)
+        self.__observer = stromxObserver
+
+class ConnectorObserver(Observer):
+    pass
+
+class ParameterObservers(Items):
+    def addStromxObserver(self, stromxObserver):
+        observer = ParameterObserver(stromxObserver, self.model)
+        self.addItem(observer)
+        return observer
+        
+    def addData(self, data):
+        viewIndex = data['parameterObserver']['view']
+        view = self.model.views[viewIndex]
+        parameterIndex = data['parameterObserver']['parameter']
+        stromxObserver = view.addStromxParameterObserver(parameterIndex)
+        observerModel = self.addStromxObserver(stromxObserver)
+        observerModel.set(data)
+        return observerModel.data
+
+class ConnectorObservers(Items):
+    pass
         
 class Errors(Items):
     def __init__(self):

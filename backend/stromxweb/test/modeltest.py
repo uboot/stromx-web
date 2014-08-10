@@ -692,10 +692,10 @@ class ThreadsTest(unittest.TestCase):
                            'name': 'Thread'}}
         self.assertEqual(data, thread.data)
         
-    def testFindThread(self):
+    def testFindThreadModel(self):
         thread = self.threads.addStromxThread(self.thread)
         stromxInput = self.stromxFork.info().inputs()[0]
-        foundThread = self.threads.findThread(self.stromxFork, stromxInput)
+        foundThread = self.threads.findThreadModel(self.stromxFork, stromxInput)
         self.assertEqual(thread, foundThread)
     
 class ViewsTest(unittest.TestCase):
@@ -717,15 +717,15 @@ class ViewsTest(unittest.TestCase):
         viewData = {'view': {'name': 'View name',
                              'observers': [],
                              'stream': '0'}}
-        viewData = self.model.views.addData(viewData)
-        stream.saved = True
         
-        data = {'view': {'id': '0',
-                         'name': 'View name',
-                         'observers': [],
-                         'stream': '0'}}
-        self.assertEqual(data, viewData)
-        self.assertEqual(1, len(stream.views))
+        self.model.views.addData(viewData)
+        
+        refData = {'view': {'id': '0',
+                            'name': 'View name',
+                            'observers': [],
+                            'stream': '0'}}
+        self.assertEqual(refData, self.model.views['0'].data)
+        self.assertEqual(['0'], stream.views)
         
     def testData(self):
         self.setupViewData()
@@ -747,6 +747,32 @@ class ViewsTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree('temp', True)
         
+class ParameterObserversTest(unittest.TestCase):
+    def setUp(self):
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streamFile = self.model.files['0']
+        self.model.streams.addFile(self.streamFile)
+        
+    def testAddData(self):
+        data = {'parameterObserver': {'id': '0',
+                                      'parameter': '2',
+                                      'view': '0'}}
+        
+        self.model.parameterObservers.addData(data)
+        
+        refData = {'parameterObserver': {'id': '0',
+                                         'parameter': '2',
+                                         'view': '0'}}
+        self.assertEqual(refData, self.model.parameterObservers['0'].data)
+        viewModel = self.model.views['0']
+        self.assertEqual([{'id': '0', 'type': 'parameterObserver'}],
+                         viewModel.observers)
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
+    
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
         self.lastError = None
