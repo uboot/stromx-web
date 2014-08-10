@@ -251,6 +251,11 @@ class Streams(Items):
         stream = Stream(streamFile, self.__factory, self.model)
         self.addItem(stream)
         return stream
+    
+    def findStreamModel(self, stromxStream):
+        streamModels = filter(
+            lambda stream: stream.stromxStream == stromxStream, self.values())
+        return streamModels[0] if len(streamModels) else None
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
@@ -262,7 +267,7 @@ class Stream(Item):
         self.__saved = False
         self.__operators = []
         self.__connections = []
-        self.__views = []
+        self.__stromxViews = []
         
         if os.path.exists(streamFile.path):
             zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
@@ -274,10 +279,10 @@ class Stream(Item):
                 zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
                 viewData = json.load(zipInput.file())
                 for data in viewData:
-                    stromxView = view.View(self)
+                    stromxView = view.View(self.stromxStream)
                     stromxView.deserialize(data)
-                    viewModel = self.model.views.addStromxView(stromxView)
-                    self.__views.append(viewModel)
+                    self.__stromxViews.append(stromxView)
+                    self.model.views.addStromxView(stromxView)
             except stromx.runtime.FileAccessFailed:
                 pass
         else:
@@ -370,7 +375,7 @@ class Stream(Item):
             return
         
         # compile the list of view data
-        viewData = [view.stromxView.serialize() for view in self.__views]
+        viewData = [view.serialize() for view in self.__stromxViews]
         
         # write the file
         writer = stromx.runtime.XmlWriter()
@@ -397,7 +402,10 @@ class Stream(Item):
     
     @property
     def views(self):
-        return [view.index for view in self.__views]
+        viewModels = [self.model.views.findViewModel(view) for
+                view in self.__stromxViews]
+        return [view.index for view in 
+                filter(lambda view: view != None, viewModels)]
     
     def delete(self):
         for op in self.__operators:
@@ -405,12 +413,15 @@ class Stream(Item):
             
         for connection in self.__connections:
             self.model.connections.delete(connection.index)
+    
+    @property  
+    def stromxStream(self):
+        return self.__stream
             
-    def addView(self):
+    def addNewStromxView(self):
         stromxView = view.View(self.__stream)
-        viewModel = self.model.views.addStromxView(stromxView)
-        self.__views.append(viewModel)
-        return viewModel
+        self.__stromxViews.append(stromxView)
+        return stromxView
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -800,7 +811,7 @@ class Connectors(Items):
             return None
         
 class View(Item):
-    properties = ['name']
+    properties = ['name', 'observers', 'stream']
     
     def __init__(self, stromxView, model):
         super(View, self).__init__(model)
@@ -808,15 +819,15 @@ class View(Item):
         
     @property
     def name(self):
-        return self.__view.name
+        return str(self.__view.name)
     
     @name.setter
     def name(self, value):
-        self.__view.name = value
+        self.__view.name = str(value)
         
     @property
     def observers(self):
-        return [observer.index for observer in self.__observers]
+        return []
     
     @observers.setter
     def observers(self, value):
@@ -824,26 +835,29 @@ class View(Item):
     
     @property
     def stream(self):
-        return self.__stream.index
-    
-    @stream.setter
-    def stream(self, value):
-        self.__stream = self.model.streams[value]
+        stream = self.model.streams.findStreamModel(self.__view.stream)
+        return stream.index if stream != None else None
         
     @property
     def stromxView(self):
         return self.__view
         
-class Views(Items):    
-    def addStromxView(self, view):
-        viewModel = View(view, self.model)
-        self.addItem(viewModel)
-        return viewModel
+class Views(Items):  
+    def addStromxView(self, stromxView):  
+        view = View(stromxView, self.model)
+        self.addItem(view)
+        return view
     
+    def findViewModel(self, stromxView):
+        viewModels = filter(lambda view: view.stromxView == stromxView, 
+                            self.values())
+        return viewModels[0] if len(viewModels) else None
+        
     def addData(self, data):
         streamIndex = data['view']['stream']
         stream = self.model.streams[streamIndex]
-        viewModel = stream.addView()
+        stromxView = stream.addNewStromxView()
+        viewModel = self.addStromxView(stromxView)
         viewModel.set(data)
         return viewModel.data
         

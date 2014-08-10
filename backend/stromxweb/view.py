@@ -9,6 +9,10 @@ class View(object):
     @property
     def observers(self):
         return self.__observers
+    
+    @property
+    def stream(self):
+        return self.__stream
         
     def addConnectorObserver(self, op, connectorType, index):
         observer = ConnectorObserver(self.__stream, op, connectorType, index)
