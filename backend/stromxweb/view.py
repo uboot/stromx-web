@@ -98,6 +98,14 @@ class ParameterObserver(Observer):
         super(ParameterObserver, self).__init__(stream, op)
         self.__op = op
         self.__index = index
+        
+    @property
+    def op(self):
+        return self.__op
+    
+    @property
+    def parameterIndex(self):
+        return self.__index
     
     def serialize(self):
         parentData = super(ParameterObserver, self).serialize()
