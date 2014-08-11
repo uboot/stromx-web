@@ -57,6 +57,10 @@ class Observer(object):
         self.visualization = 'default'
         self.__stream = stream
         self.__op = op
+        
+    @property
+    def op(self):
+        return self.__op
     
     def serialize(self):
         colorStr = '#{0:02x}{1:02x}{2:02x}'.format(self.color.r(),
@@ -96,12 +100,7 @@ class Observer(object):
 class ParameterObserver(Observer):
     def __init__(self, stream, op = None, index = None):
         super(ParameterObserver, self).__init__(stream, op)
-        self.__op = op
         self.__index = index
-        
-    @property
-    def op(self):
-        return self.__op
     
     @property
     def parameterIndex(self):
@@ -127,6 +126,14 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).__init__(stream, op)
         self.__connectorType = connectorType
         self.__index = index
+    
+    @property
+    def connectorIndex(self):
+        return self.__index
+    
+    @property
+    def connectorType(self):
+        return self.__connectorType
     
     def serialize(self):
         parentData = super(ConnectorObserver, self).serialize()

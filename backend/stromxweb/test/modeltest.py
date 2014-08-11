@@ -772,6 +772,32 @@ class ParameterObserversTest(unittest.TestCase):
         
     def tearDown(self):
         shutil.rmtree('temp', True)
+        
+class ConnectorObserversTest(unittest.TestCase):
+    def setUp(self):
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streamFile = self.model.files['0']
+        self.model.streams.addFile(self.streamFile)
+        
+    def testAddData(self):
+        data = {'connectorObserver': {'id': '0',
+                                      'connector': '2',
+                                      'view': '0'}}
+        
+        self.model.connectorObservers.addData(data)
+        
+        refData = {'connectorObserver': {'id': '0',
+                                         'connector': '2',
+                                         'view': '0'}}
+        self.assertEqual(refData, self.model.connectorObservers['0'].data)
+        viewModel = self.model.views['0']
+        self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],
+                         viewModel.observers)
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
     
 class ErrorsTest(unittest.TestCase):
     def setUp(self):
