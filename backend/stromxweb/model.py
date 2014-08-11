@@ -265,7 +265,8 @@ class Streams(Items):
     def findStreamModel(self, stromxStream):
         streamModels = filter(
             lambda stream: stream.stromxStream == stromxStream, self.values())
-        return streamModels[0] if len(streamModels) else None
+        assert(len(streamModels) == 1)
+        return streamModels[0]
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
@@ -442,10 +443,8 @@ class Operators(Items):
     
     def findOperatorModel(self, stromxOp):
         ops = [op for op in self.values() if op.stromxOp == stromxOp]
-        if len(ops):
-            return ops[0]
-        else:
-            return None
+        assert(len(ops) == 1)
+        return ops[0]
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
@@ -550,10 +549,8 @@ class Operator(Item):
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
                    if output.id() == index]
-        if len(outputs):
-            return outputs[0]
-        else:
-            return None
+        assert(len(outputs) == 1)
+        return outputs[0]
     
 class Parameters(Items):
     def addStromxParameter(self, op, param):
@@ -652,7 +649,7 @@ class Parameter(Item):
         return self.__op
     
     @property
-    def stromxParameterId(self):
+    def stromxId(self):
         return self.__param.id()
     
     def __getParameter(self, variant):
@@ -759,10 +756,8 @@ class Threads(Items):
             self.__inputIsInInputSequence(stromxOp, stromxInput, 
                                           thread.stromxThread.inputSequence())
         ]
-        if len(threads):
-            return threads[0]
-        else:
-            return None
+        assert(len(threads) == 1)
+        return threads[0]
         
     def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
         for connector in sequence:
@@ -822,11 +817,8 @@ class Connectors(Items):
                 connector.stromxId == connectorId and
                 connector.connectorType == connectorType)
         ]
-        
-        if len(connectors):
-            return connectors[0]
-        else:
-            return None
+        assert(len(connectors) == 1)
+        return connectors[0]
         
 class View(Item):
     properties = ['name', 'observers', 'stream']
@@ -879,7 +871,7 @@ class View(Item):
     def addStromxParameterObserver(self, parameterIndex):
         param = self.model.parameters[parameterIndex]
         observer = self.__view.addParameterObserver(param.stromxOp,
-                                                    param.stromxParameterId)
+                                                    param.stromxId)
         return observer
     
     def addStromxConnectorObserver(self, connectorIndex):
@@ -905,7 +897,8 @@ class Views(Items):
     def findViewModel(self, stromxView):
         viewModels = filter(lambda view: view.stromxView == stromxView, 
                             self.values())
-        return viewModels[0] if len(viewModels) else None
+        assert(len(viewModels) == 1)
+        return viewModels[0]
         
     def addData(self, data):
         streamIndex = data['view']['stream']
@@ -938,7 +931,7 @@ class ParameterObserver(Observer):
         op = self.__observer.op
         
         selector = lambda param: (param.stromxOp == op and
-                                  param.stromxParameterId == index)
+                                  param.stromxId == index)
         parameterModels = filter(selector, self.model.parameters.values())
         assert(len(parameterModels) == 1)
         return parameterModels[0].index

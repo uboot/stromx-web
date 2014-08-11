@@ -560,7 +560,6 @@ class ParametersTest(unittest.TestCase):
         
     def testDataException(self):
         self.__activateExceptionOnParameter()
-        self.model.operators.addStromxOp(self.exceptionOperator)
         param = self.parameters['6']
         
         state = param.data['parameter']['state']
