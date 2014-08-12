@@ -306,7 +306,7 @@ class Stream(Item):
             self.model.threads.addStromxThread(stromxThread)
             
         connectors = self.model.connectors
-        for op in self.model.operators.values():
+        for op in self.__operators:
             for stromxInput in op.stromxOp.info().inputs():
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
@@ -825,6 +825,15 @@ class View(Item):
     def __init__(self, stromxView, model):
         super(View, self).__init__(model)
         self.__view = stromxView
+        for observer in self.__view.observers:
+            if isinstance(observer, view.ParameterObserver):
+                self.model.parameterObservers.addStromxObserver(self.__view,
+                                                                observer)
+            elif isinstance(observer, view.ConnectorObserver):
+                self.model.connectorObservers.addStromxObserver(self.__view, 
+                                                                observer)
+            else:
+                assert(False)
         
     @property
     def name(self):

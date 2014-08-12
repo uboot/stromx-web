@@ -728,12 +728,15 @@ class ViewsTest(unittest.TestCase):
         
     def testData(self):
         self.setupViewData()
+        streamFile = self.model.files['1']
+        self.model.streams.addFile(streamFile)
         
-        data = {'view': {'id': '0',
+        data = {'view': {'id': '1',
                          'name': 'View name',
-                         'observers': [],
-                         'stream': '0'}}
-        self.assertEqual(data, self.model.views['0'].data)
+                         'observers': [{'id': '0', 'type': 'parameterObserver'},
+                                       {'id': '0', 'type': 'connectorObserver'}],
+                         'stream': '1'}}
+        self.assertEqual(data, self.model.views['1'].data)
         
     def testSetName(self):
         self.setupViewData()
