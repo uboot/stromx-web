@@ -746,6 +746,25 @@ class ViewsTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree('temp', True)
         
+class ObserversTest(unittest.TestCase):
+    def setUp(self):
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streamFile = self.model.files['1']
+        self.model.streams.addFile(self.streamFile)
+        
+        self.observer = self.model.connectorObservers['0']
+        self.stromxObserver = self.observer.stromxObserver
+        
+    def testSetVisualization(self):
+        self.observer.set({'connectorObserver': {'id': '0',
+                                                 'visualization': 'lines'}})
+        self.assertEqual('lines', self.stromxObserver.visualization)
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
+        
 class ParameterObserversTest(unittest.TestCase):
     def setUp(self):
         shutil.copytree('data/views', 'temp')
@@ -763,7 +782,11 @@ class ParameterObserversTest(unittest.TestCase):
         
         refData = {'parameterObserver': {'id': '0',
                                          'parameter': '2',
-                                         'view': '0'}}
+                                         'view': '0',
+                                         'active': True,
+                                         'color': '#000000',
+                                         'visualization': 'default',
+                                         'zvalue': 0}}
         self.assertEqual(refData, self.model.parameterObservers['0'].data)
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'parameterObserver'}],
@@ -789,7 +812,11 @@ class ConnectorObserversTest(unittest.TestCase):
         
         refData = {'connectorObserver': {'id': '0',
                                          'connector': '2',
-                                         'view': '0'}}
+                                         'view': '0',
+                                         'active': True,
+                                         'color': '#000000',
+                                         'visualization': 'default',
+                                         'zvalue': 0}}
         self.assertEqual(refData, self.model.connectorObservers['0'].data)
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],

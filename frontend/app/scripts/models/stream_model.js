@@ -1,7 +1,5 @@
 /* global App */
 
-// disable belongsTo because of
-// http://discuss.emberjs.com/t/ember-data-fixture-adapter-saving-record-loses-has-many-relationships/2821/6
 App.Stream = DS.Model.extend({
   name: DS.attr('string'),
   file: DS.belongsTo('file'),

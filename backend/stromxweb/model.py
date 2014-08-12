@@ -737,8 +737,7 @@ class Thread(Item):
     
     @property
     def color(self):
-        color = self.__thread.color()
-        return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
+        return _stromxColorToString(self.__thread.color())
     
     @property
     def stromxThread(self):
@@ -884,8 +883,8 @@ class View(Item):
             assert(False)
             
         observer = self.__view.addConnectorObserver(connector.stromxOp,
-                                                    connector.stromxId,
-                                                    connectorType)
+                                                    int(connectorType),
+                                                    connector.stromxId)
         return observer
         
 class Views(Items):  
@@ -909,51 +908,87 @@ class Views(Items):
         return viewModel.data
     
 class Observer(Item):
-    def __init__(self, stromxView, model):
+    properties = ['view', 'zvalue', 'visualization', 'color', 'active']
+    
+    def __init__(self, stromxView, stromxObserver, model):
         super(Observer, self).__init__(model)
         self.__view = stromxView
+        self.__observer = stromxObserver
         
     @property
     def view(self):
         viewModel = self.model.views.findViewModel(self.__view)
         return viewModel.index if viewModel != None else None 
     
+    @property
+    def zvalue(self):
+        return self.__observer.zvalue
+    
+    @zvalue.setter
+    def zvalue(self, value):
+        self.__observer.zvalue = value
+        
+    @property
+    def visualization(self):
+        return self.__observer.visualization
+        
+    @visualization.setter
+    def visualization(self, value):
+        self.__observer.visualization = value
+        
+    @property
+    def color(self):
+        return _stromxColorToString(self.__observer.color)
+        
+    @color.setter
+    def color(self, value):
+        self.__observer.color = _stringToStromxColor(value)
+        
+    @property
+    def active(self):
+        return self.__observer.active
+        
+    @active.setter
+    def active(self, value):
+        self.__observer.active = value
+    
+    @property
+    def stromxObserver(self):
+        return self.__observer
+    
 class ParameterObserver(Observer):
-    properties = ['parameter', 'view']
+    properties = Observer.properties + ['parameter', 'view']
     
     def __init__(self, stromxView, stromxObserver, model):
-        super(ParameterObserver, self).__init__(stromxView, model)
-        self.__observer = stromxObserver
+        super(ParameterObserver, self).__init__(stromxView, stromxObserver, 
+                                                model)
         
     @property
     def parameter(self):
-        index = self.__observer.parameterIndex
-        op = self.__observer.op
+        index = self.stromxObserver.parameterIndex
+        op = self.stromxObserver.op
         
         selector = lambda param: (param.stromxOp == op and
                                   param.stromxId == index)
         parameterModels = filter(selector, self.model.parameters.values())
         assert(len(parameterModels) == 1)
         return parameterModels[0].index
-    
-    @property
-    def stromxObserver(self):
-        return self.__observer
 
 class ConnectorObserver(Observer):
-    properties = ['connector', 'view']
+    properties = Observer.properties + ['connector']
     
     def __init__(self, stromxView, stromxObserver, model):
-        super(ConnectorObserver, self).__init__(stromxView, model)
-        self.__observer = stromxObserver
+        super(ConnectorObserver, self).__init__(stromxView, stromxObserver,
+                                                model)
         
     @property
     def connector(self):
-        index = self.__observer.connectorIndex
-        op = self.__observer.op
-        if self.__observer.connectorType == stromx.runtime.Connector.Type.INPUT:
+        index = self.stromxObserver.connectorIndex
+        op = self.stromxObserver.op
+        if (self.stromxObserver.connectorType 
+            == stromx.runtime.Connector.Type.INPUT):
             connectorType = Connector.INPUT 
-        elif (self.__observer.connectorType
+        elif (self.stromxObserver.connectorType
               == stromx.runtime.Connector.Type.OUTPUT):
             connectorType = Connector.OUTPUT 
         else:
@@ -965,10 +1000,6 @@ class ConnectorObserver(Observer):
         connectorModel = filter(selector, self.model.connectors.values())
         assert(len(connectorModel) == 1)
         return connectorModel[0].index
-    
-    @property
-    def stromxObserver(self):
-        return self.__observer
 
 class ParameterObservers(Items):
     def addStromxObserver(self, stromxView, stromxObserver):
@@ -1177,6 +1208,16 @@ def _variantToString(variant):
     else:
         return 'none'
 
+def _stromxColorToString(color):
+    return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
+
+def _stringToStromxColor(string):
+    red = int(string[1:3], 16)
+    green = int(string[3:5], 16)
+    blue = int(string[5:], 16)
+    return stromx.runtime.Color(red, green, blue)
+    
+    
 def _registerExtraPackages(factory):
         try:
             import stromx.cvsupport as cvsupport
