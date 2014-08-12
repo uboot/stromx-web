@@ -748,6 +748,7 @@ class ViewsTest(unittest.TestCase):
         
 class ObserversTest(unittest.TestCase):
     def setUp(self):
+        shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
         
         self.model = model.Model('temp')
@@ -767,6 +768,7 @@ class ObserversTest(unittest.TestCase):
         
 class ParameterObserversTest(unittest.TestCase):
     def setUp(self):
+        shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
         
         self.model = model.Model('temp')
@@ -797,6 +799,7 @@ class ParameterObserversTest(unittest.TestCase):
         
 class ConnectorObserversTest(unittest.TestCase):
     def setUp(self):
+        shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
         
         self.model = model.Model('temp')
