@@ -163,6 +163,21 @@ class ItemTest(unittest.TestCase):
         
     def testSet(self):
         self.item.set({'dummyItem': {'read': 0, 'write': 0}})
+    
+class ItemsTest(unittest.TestCase):
+    def setUp(self):
+        self.items = DummyItems()
+        self.item = DummyItem()
+        self.items.addItem(self.item)
+        
+    def testDelete(self):
+        self.items.delete('0')
+        self.assertEqual({'dummyItems': []}, self.items.data)
+        
+    def testDeleteMissingItem(self):
+        self.items.delete('0')
+        self.items.delete('0')
+        self.assertEqual({'dummyItems': []}, self.items.data)
 
 class FilesTest(unittest.TestCase):
     def setUp(self):
@@ -362,7 +377,20 @@ class StreamsTest(unittest.TestCase):
         self.setUpStream()
         stream = self.streams.addFile(self.streamFile)
         self.streams.delete(stream.index)
+        self.assertEqual(dict(), self.model.operators) 
+        
+    def testDeleteMissingStream(self):
+        self.setUpStream()
+        stream = self.streams.addFile(self.streamFile)
+        self.streams.delete(stream.index)
+        self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators)  
+        
+    def testDeleteDeletedStream(self):
+        self.setUpStream()
+        stream = self.streams.addFile(self.streamFile)
+        self.streams.delete(stream.index)
+        self.assertEqual(dict(), self.model.operators) 
         
     def testReadViews(self):
         self.setUpViews()

@@ -103,8 +103,11 @@ class Items(dict):
             self.addItem(item)
         
     def delete(self, index):
-        item = self.pop(index)
-        item.delete()
+        try:
+            item = self.pop(index)
+            item.delete()
+        except KeyError:
+            pass
         
     def addData(self, data):
         raise NotImplementedError()
