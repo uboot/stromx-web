@@ -737,7 +737,7 @@ class ViewsTest(unittest.TestCase):
                                        {'id': '0', 'type': 'connectorObserver'}],
                          'stream': '1'}}
         self.assertEqual(data, self.model.views['1'].data)
-        
+
     def testSetName(self):
         self.setupViewData()
         
@@ -765,6 +765,17 @@ class ObserversTest(unittest.TestCase):
         self.observer.set({'connectorObserver': {'id': '0',
                                                  'visualization': 'lines'}})
         self.assertEqual('lines', self.stromxObserver.visualization)
+        
+    def testSetColor(self):
+        self.observer.set({'connectorObserver': {'id': '0',
+                                                 'color': '#ff00ff'}})
+        self.assertEqual(stromx.runtime.Color(255, 0, 255),
+                         self.stromxObserver.color)
+        
+    def testSetActive(self):
+        self.observer.set({'connectorObserver': {'id': '0',
+                                                 'active': False}})
+        self.assertEqual(False, self.stromxObserver.active)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
