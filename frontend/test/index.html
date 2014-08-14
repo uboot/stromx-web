@@ -8,7 +8,26 @@
 <body>
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
-<script src="bower_components/qunit/qunit/qunit.js"></script>
-<script src="spec/test.js"></script>
+<div id="app-fixture"></div>
+
+    <!-- build:js(app) scripts/components.js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/handlebars/handlebars.runtime.js"></script>
+    <script src="bower_components/ember/ember.js"></script>
+    <script src="bower_components/ember-data/ember-data.js"></script>
+    <script src="bower_components/snap.svg/dist/snap.svg.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js(.tmp) scripts/templates.js -->
+    <script src="scripts/compiled-templates.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js(.tmp) scripts/main.js -->
+    <script src="scripts/combined-scripts.js"></script>
+    <!-- endbuild -->
+
+    <script src="bower_components/qunit/qunit/qunit.js"></script>
+    <script src="spec/test.js"></script>
+    <script src="spec/integration_tests.js"></script>
 </body>
 </html>
