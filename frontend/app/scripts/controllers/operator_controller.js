@@ -20,6 +20,18 @@ App.OperatorController = Ember.ObjectController.extend({
 
   isEditingName: false,
 
+  inputs: function() {
+    return this.get('connectors').then(function(connectors) {
+      return connectors.filterBy('type', 'input');
+    });
+  }.property('connectors'),
+
+  outputs: function() {
+    return this.get('connectors').then(function(connectors) {
+      return connectors.filterBy('type', 'output');
+    });
+  }.property('connectors'),
+
   actions: {
     editName: function() {
       this.set('isEditingName', true);

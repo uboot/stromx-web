@@ -11,9 +11,8 @@ App.ViewNewObserverController = Ember.Controller.extend({
   observerTarget: null,
 
   targetTypes: [
-    {id: 0, label: 'Input'},
-    {id: 1, label: 'Output'},
-    {id: 2, label: 'Parameter'}
+    {id: 0, label: 'Connector'},
+    {id: 1, label: 'Parameter'}
   ],
 
   targets: function() {
@@ -25,10 +24,8 @@ App.ViewNewObserverController = Ember.Controller.extend({
     switch(targetType)
     {
     case 0:
-      return operator.get('inputs');
+      return operator.get('connectors');
     case 1:
-      return operator.get('outputs');
-    case 2:
       return operator.get('parameters');
     }
   }.property('operator', 'targetType'),

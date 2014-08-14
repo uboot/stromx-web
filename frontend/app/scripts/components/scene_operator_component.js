@@ -8,6 +8,18 @@ App.SceneOperatorComponent = Ember.Component.extend({
     var group = paper.group();
     this.set('group', group);
 
+    this.updateOperator();
+  },
+
+  updateOperator: function() {
+    var group = this.get('group');
+    if (group)
+      group.remove();
+
+    var paper = new Snap('#stream-svg');
+    var group = paper.group();
+    this.set('group', group);
+
     var op = this.get('operator');
     var name = op.get('name');
     var opName = paper.text(25, 65, name);
@@ -20,7 +32,7 @@ App.SceneOperatorComponent = Ember.Component.extend({
     });
     group.add(opName, opRect);
 
-    op.get('inputs').then( function(inputs) {
+    op.get('inputs').then(function(inputs) {
       var numConnectors = inputs.get('length');
       var offset = 30 - 10 * numConnectors;
 
@@ -36,7 +48,7 @@ App.SceneOperatorComponent = Ember.Component.extend({
       });
     });
 
-    op.get('outputs').then( function(outputs) {
+    op.get('outputs').then(function(outputs) {
       var numConnectors = outputs.get('length');
       var offset = 30 - 10 * numConnectors;
 

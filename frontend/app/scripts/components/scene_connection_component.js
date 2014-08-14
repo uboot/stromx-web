@@ -26,8 +26,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
     var promises = {
       sourceConnector: connection.get('sourceConnector'),
       targetConnector: connection.get('targetConnector'),
-      outputs: connection.get('sourceConnector.operator.outputs'),
-      inputs: connection.get('targetConnector.operator.inputs'),
+      outputs: connection.get('sourceConnector.operator.connectors'),
+      inputs: connection.get('targetConnector.operator.connectors'),
       sourcePos: connection.get('sourceConnector.operator.position'),
       targetPos: connection.get('targetConnector.operator.position')
     };
@@ -43,8 +43,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       if (values.targetPos === null || values.targetPos === null)
         return;
 
-      var numInputs = values.inputs.get('length');
-      var numOutputs = values.outputs.get('length');
+      var numInputs = values.inputs.filterBy('type', 'input').get('length');
+      var numOutputs = values.outputs.filterBy('type', 'output').get('length');
 
       var sourceIndex = values.outputs.indexOf(values.sourceConnector);
       var targetIndex = values.inputs.indexOf(values.targetConnector);

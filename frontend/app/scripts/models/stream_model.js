@@ -8,7 +8,8 @@ App.Stream = DS.Model.extend({
   saved: DS.attr('boolean'),
   operators: DS.hasMany('operator', {async: true}),
   connections: DS.hasMany('connection', {async: true}),
-  views: DS.hasMany('view', {async: true})
+  views: DS.hasMany('view', {async: true}),
+  threads: DS.hasMany('thread', {async: true})
 });
 
 App.Stream.FIXTURES = [
@@ -20,7 +21,8 @@ App.Stream.FIXTURES = [
     paused: false,
     operators: [0, 1, 2, 4],
     connections: [1, 2],
-    views: [1]
+    views: [1],
+    threads: [1]
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ App.Stream.FIXTURES = [
     paused: false,
     operators: [],
     connections: [],
-    views: []
+    views: [],
+    threads: []
   }
 ];

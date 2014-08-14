@@ -8,8 +8,7 @@ App.Operator = DS.Model.extend({
   version: DS.attr('string'),
   parameters: DS.hasMany('parameter', {async: true}),
   position: DS.attr(),
-  inputs: DS.hasMany('connector', {async: true}),
-  outputs: DS.hasMany('connector', {async: true})
+  connectors: DS.hasMany('connector', {async: true})
 });
 
 App.Operator.FIXTURES = [
@@ -25,8 +24,7 @@ App.Operator.FIXTURES = [
       x: 20,
       y: 20
     },
-    inputs: [],
-    outputs: [5]
+    connectors: [5]
   },
   {
     id: 1,
@@ -40,8 +38,7 @@ App.Operator.FIXTURES = [
       x: 160,
       y: 40
     },
-    inputs: [2],
-    outputs: []
+    connectors: [2]
   },
   {
     id: 2,
@@ -55,8 +52,7 @@ App.Operator.FIXTURES = [
       x: 240,
       y: 40
     },
-    inputs: [1, 3],
-    outputs: [4]
+    connectors: [1, 3, 4]
   },
   {
     id: 3,
@@ -70,8 +66,7 @@ App.Operator.FIXTURES = [
       x: 40,
       y: 100
     },
-    inputs: [],
-    outputs: [6]
+    connectors: [6]
   },
   {
     id: 4,
@@ -85,7 +80,6 @@ App.Operator.FIXTURES = [
       x: 120,
       y: 160
     },
-    inputs: [],
-    outputs: []
+    connectors: []
   }
 ];
