@@ -2,14 +2,14 @@
 
 App.Stream = DS.Model.extend({
   name: DS.attr('string'),
-  file: DS.belongsTo('file'),
+  file: DS.belongsTo('file', {async: true}),
   active: DS.attr('boolean'),
   paused: DS.attr('boolean'),
   saved: DS.attr('boolean'),
   operators: DS.hasMany('operator', {async: true}),
   connections: DS.hasMany('connection', {async: true}),
   views: DS.hasMany('view', {async: true}),
-  threads: DS.hasMany('thread', {async: true})
+  threads: DS.hasMany('thread', {async: true}),
 });
 
 App.Stream.FIXTURES = [

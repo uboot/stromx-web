@@ -4,7 +4,7 @@ App.File = DS.Model.extend({
   name: DS.attr('string'),
   content: DS.attr('string'),
   opened: DS.attr('boolean'),
-  stream: DS.belongsTo('stream')
+  stream: DS.belongsTo('stream', {async: true})
 });
 
 App.File.FIXTURES = [
