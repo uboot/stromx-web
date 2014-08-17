@@ -270,7 +270,7 @@ class Streams(Items):
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
-                  "connections", "views"]
+                  "connections", "views", "threads"]
     
     def __init__(self, streamFile, factory, model):
         super(Stream, self).__init__(model)
@@ -279,6 +279,7 @@ class Stream(Item):
         self.__operators = []
         self.__connections = []
         self.__stromxViews = []
+        self.__threads = []
         
         if os.path.exists(streamFile.path):
             zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
@@ -303,7 +304,8 @@ class Stream(Item):
             self.__operators.append(self.model.operators.addStromxOp(stromxOp))
             
         for stromxThread in self.__stream.threads():
-            self.model.threads.addStromxThread(stromxThread)
+            threadModel = self.model.threads.addStromxThread(stromxThread)
+            self.__threads.append(threadModel)
             
         connectors = self.model.connectors
         for op in self.__operators:
@@ -418,6 +420,10 @@ class Stream(Item):
                 view in self.__stromxViews]
         return [view.index for view in 
                 filter(lambda view: view != None, viewModels)]
+        
+    @property
+    def threads(self):
+        return map(lambda t: t.index, self.__threads)
     
     def delete(self):
         for op in self.__operators:

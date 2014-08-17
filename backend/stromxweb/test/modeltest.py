@@ -113,7 +113,8 @@ _stream = {
     'file': '0',
     'connections': ['0', '1', '2', '3', '4'],
     'operators': ['0', '1', '2', '3', '4'],
-    'views': []
+    'views': [],
+    'threads': ['0', '1', '2']
 }
 
 _fork = {
