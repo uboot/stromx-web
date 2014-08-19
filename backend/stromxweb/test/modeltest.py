@@ -119,11 +119,10 @@ _stream = {
 
 _fork = {
     'status': 'initialized',
-    'inputs': ['4'],
     'name': 'Fork',
     'parameters': ['1'],
     'package': 'runtime',
-    'outputs': ['5', '6'],
+    'connectors': ['4', '5', '6'],
     'version': '0.1.0',
     'position': {'y': 0.0, 'x': 0.0},
     'type': 'Fork', 'id': '2'
@@ -407,8 +406,7 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'initialized',
                              'version': '0.1.0',
                              'parameters': ['0', '1'],
-                             'inputs': [],
-                             'outputs': ['0'],
+                             'connectors': ['0'],
                              'position': {'x': 0.0, 'y': 0.0} }}
         self.assertEqual(data, self.operator.data)
         
@@ -425,8 +423,7 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'none',
                              'version': '0.1.0',
                              'parameters': [],
-                             'inputs': [],
-                             'outputs': [],
+                             'connectors': [],
                              'position': {'x': 0.0, 'y': 0.0} }}
         self.assertEqual(data, op.data)
     
@@ -665,7 +662,8 @@ class ConnectorTest(unittest.TestCase):
         connector = self.model.connectors['2']
         data = {'connector': {'id': '2',
                               'operator': '0',
-                              'title': 'Output 1'}}
+                              'title': 'Output 1',
+                              'connectorType': 'output'}}
         self.assertEqual(data, connector.data)
         
 class ThreadsTest(unittest.TestCase):

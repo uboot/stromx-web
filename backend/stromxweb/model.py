@@ -454,7 +454,7 @@ class Operators(Items):
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
-                  "position", "inputs", "outputs"]
+                  "position", "connectors"]
     
     def __init__(self, op, model):
         super(Operator, self).__init__(model)
@@ -469,18 +469,17 @@ class Operator(Item):
             parameter = parameters.addStromxParameter(self.__op, param)
             self.__parameters.append(parameter)
             
-        self.__inputs = []
+        self.__connectors = []
         connectors = self.model.connectors
         for description in self.__op.info().inputs():
             connector = connectors.addStromxConnector(self.__op, description,
                                                       Connector.INPUT)
-            self.__inputs.append(connector)
+            self.__connectors.append(connector)
             
-        self.__outputs = []
         for description in self.__op.info().outputs():
             connector = connectors.addStromxConnector(self.__op, description,
                                                       Connector.OUTPUT)
-            self.__outputs.append(connector)
+            self.__connectors.append(connector)
         
     @property
     def name(self):
@@ -531,12 +530,8 @@ class Operator(Item):
         return [op.index for op in self.__parameters]
         
     @property
-    def inputs(self):
-        return [inputModel.index for inputModel in self.__inputs]
-        
-    @property
-    def outputs(self):
-        return [output.index for output in self.__outputs]
+    def connectors(self):
+        return map(lambda model: model.index, self.__connectors)
     
     @property
     def stromxOp(self):
@@ -546,11 +541,8 @@ class Operator(Item):
         for param in self.__parameters:
             self.model.parameters.delete(param.index)
             
-        for inputConnector in self.__inputs:
-            self.model.connectors.delete(inputConnector.index)
-            
-        for outputConnector in self.__outputs:
-            self.model.connectors.delete(outputConnector.index)
+        for connector in self.__connectors:
+            self.model.connectors.delete(connector.index)
     
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
@@ -774,10 +766,10 @@ class Threads(Items):
         return False
     
 class Connector(Item):
-    INPUT = 0
-    OUTPUT = 1
+    INPUT = 'input'
+    OUTPUT = 'output'
     
-    properties = ['operator', 'title']
+    properties = ['operator', 'title', 'connectorType']
     
     def __init__(self, op, description, connectorType, model):
         super(Connector, self).__init__(model)

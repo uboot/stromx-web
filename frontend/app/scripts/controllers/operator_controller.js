@@ -22,13 +22,13 @@ App.OperatorController = Ember.ObjectController.extend({
 
   inputs: function() {
     return this.get('connectors').then(function(connectors) {
-      return connectors.filterBy('type', 'input');
+      return connectors.filterBy('connectorType', 'input');
     });
   }.property('connectors'),
 
   outputs: function() {
     return this.get('connectors').then(function(connectors) {
-      return connectors.filterBy('type', 'output');
+      return connectors.filterBy('connectorType', 'output');
     });
   }.property('connectors'),
 

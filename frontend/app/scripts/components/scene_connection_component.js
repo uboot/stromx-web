@@ -43,8 +43,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       if (values.targetPos === null || values.targetPos === null)
         return;
 
-      var numInputs = values.inputs.filterBy('type', 'input').get('length');
-      var numOutputs = values.outputs.filterBy('type', 'output').get('length');
+      var numInputs = values.inputs.filterBy('connectorType', 'input').get('length');
+      var numOutputs = values.outputs.filterBy('connectorType', 'output').get('length');
 
       var sourceIndex = values.outputs.indexOf(values.sourceConnector);
       var targetIndex = values.inputs.indexOf(values.targetConnector);
