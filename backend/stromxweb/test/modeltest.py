@@ -736,7 +736,17 @@ class ViewsTest(unittest.TestCase):
                                        {'id': '0', 'type': 'connectorObserver'}],
                          'stream': '1'}}
         self.assertEqual(data, self.model.views['1'].data)
-
+        
+    def testDeleteStreamWithView(self):
+        self.setupViewData()
+        streamFile = self.model.files['1']
+        stream = self.model.streams.addFile(streamFile)
+        
+        self.model.streams.delete(stream.index)
+        self.assertEqual(1, len(self.model.views))
+        self.assertEqual(0, len(self.model.connectorObservers))
+        self.assertEqual(0, len(self.model.parameterObservers))
+        
     def testSetName(self):
         self.setupViewData()
         

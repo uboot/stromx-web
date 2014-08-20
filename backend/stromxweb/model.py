@@ -431,6 +431,9 @@ class Stream(Item):
             
         for connection in self.__connections:
             self.model.connections.delete(connection.index)
+            
+        for viewIndex in self.views:
+            self.model.views.delete(viewIndex)
     
     @property  
     def stromxStream(self):
@@ -843,21 +846,8 @@ class View(Item):
         
     @property
     def observers(self):
-        parameterObservers = []
-        connectorObservers = []
-        for observer in self.__view.observers:
-            selector = lambda observerModel: (observerModel.stromxObserver == 
-                                              observer)
-            observers = filter(selector, self.model.parameterObservers.values())
-            assert(len(observers) <= 1)
-            if len(observers):
-                parameterObservers.extend(observers)
-                
-            observers = filter(selector, self.model.connectorObservers.values())
-            assert(len(observers) <= 1)
-            if len(observers):
-                connectorObservers.extend(observers)
-                
+        parameterObservers, connectorObservers = self.__findObserverModels()
+                        
         data = []
         data.extend([{ 'id': model.index, 'type': 'parameterObserver'} for
                      model in parameterObservers])
@@ -873,6 +863,15 @@ class View(Item):
     @property
     def stromxView(self):
         return self.__view
+    
+    def delete(self):
+        parameterObservers, connectorObservers = self.__findObserverModels()
+        
+        for observer in parameterObservers:
+            self.model.parameterObservers.delete(observer.index)
+            
+        for observer in connectorObservers:
+            self.model.connectorObservers.delete(observer.index)
     
     def addStromxParameterObserver(self, parameterIndex):
         param = self.model.parameters[parameterIndex]
@@ -893,6 +892,24 @@ class View(Item):
                                                     int(connectorType),
                                                     connector.stromxId)
         return observer
+    
+    def __findObserverModels(self):
+        parameterObservers = []
+        connectorObservers = []
+        for observer in self.__view.observers:
+            selector = lambda observerModel: (observerModel.stromxObserver == 
+                                              observer)
+            observers = filter(selector, self.model.parameterObservers.values())
+            assert(len(observers) <= 1)
+            if len(observers):
+                parameterObservers.extend(observers)
+                
+            observers = filter(selector, self.model.connectorObservers.values())
+            assert(len(observers) <= 1)
+            if len(observers):
+                connectorObservers.extend(observers)
+                
+        return (parameterObservers, connectorObservers)
         
 class Views(Items):  
     def addStromxView(self, stromxView):  
