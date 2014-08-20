@@ -24,6 +24,7 @@ class Model(object):
         self.__views = Views(self)
         self.__parameterObservers = ParameterObservers(self)
         self.__connectorObservers = ConnectorObservers(self)
+        self.__connectorValues = ConnectorValues(self)
     
     @property
     def files(self):
@@ -72,6 +73,10 @@ class Model(object):
     @property
     def connectorObservers(self):
         return self.__connectorObservers
+    
+    @property
+    def connectorValues(self):
+        return self.__connectorValues
     
 class Items(dict):
     def __init__(self, model = None):
@@ -999,12 +1004,14 @@ class ParameterObserver(Observer):
         return parameterModels[0].index
 
 class ConnectorObserver(Observer):
-    properties = Observer.properties + ['connector']
+    properties = Observer.properties + ['connector', 'value']
     
     def __init__(self, stromxView, stromxObserver, model):
         super(ConnectorObserver, self).__init__(stromxView, stromxObserver,
                                                 model)
-        
+        self.model.connectorValues.addStromxConnectorValue(
+                                                stromxObserver.connectorValue)
+
     @property
     def connector(self):
         index = self.stromxObserver.connectorIndex
@@ -1024,6 +1031,22 @@ class ConnectorObserver(Observer):
         connectorModel = filter(selector, self.model.connectors.values())
         assert(len(connectorModel) == 1)
         return connectorModel[0].index
+    
+    @property
+    def value(self):
+        return self.__findConnectorValueModel().index
+    
+    def delete(self):
+        connectorValueModel = self.__findConnectorValueModel()
+        self.model.connectorValues.delete(connectorValueModel.index)
+    
+    def __findConnectorValueModel(self):
+        connectorValue = self.stromxObserver.connectorValue
+        selector = lambda value: value.stromxConnectorValue == connectorValue
+        observerValue = filter(selector, self.model.connectorValues.values())
+        assert(len(observerValue) == 1)
+        return observerValue[0]
+        
 
 class ParameterObservers(Items):
     def addStromxObserver(self, stromxView, stromxObserver):
@@ -1054,6 +1077,31 @@ class ConnectorObservers(Items):
         observerModel = self.addStromxObserver(view.stromxView, stromxObserver)
         observerModel.set(data)
         return observerModel.data
+    
+class ConnectorValue(Item):
+    properties = ['variant', 'value']
+    
+    def __init__(self, stromxConnectorValue, model):
+        super(ConnectorValue, self).__init__(model)
+        self.__value = stromxConnectorValue
+        
+    @property
+    def variant(self):
+        return 'none'
+    
+    @property
+    def value(self):
+        return None
+        
+    @property
+    def stromxConnectorValue(self):
+        return self.__value
+    
+class ConnectorValues(Items):
+    def addStromxConnectorValue(self, stromxConnectorValue):
+        connectorValue = ConnectorValue(stromxConnectorValue, self.model)
+        self.addItem(connectorValue)
+        return connectorValue
         
 class Errors(Items):
     def __init__(self):

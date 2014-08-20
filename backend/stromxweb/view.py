@@ -126,6 +126,7 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).__init__(stream, op)
         self.__connectorType = connectorType
         self.__index = index
+        self.__value = ConnectorValue(self)
     
     @property
     def connectorIndex(self):
@@ -134,6 +135,10 @@ class ConnectorObserver(Observer):
     @property
     def connectorType(self):
         return self.__connectorType
+    
+    @property
+    def connectorValue(self):
+        return self.__value
     
     def serialize(self):
         parentData = super(ConnectorObserver, self).serialize()
@@ -150,4 +155,10 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).deserialize(properties)
         self.__index = properties['connector']
         self.__connectorType = properties['type']
+        
+class ConnectorValue(object):
+    def __init__(self, observer):
+        self.__observer = observer
+        
+        
     

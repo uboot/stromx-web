@@ -746,6 +746,7 @@ class ViewsTest(unittest.TestCase):
         self.assertEqual(1, len(self.model.views))
         self.assertEqual(0, len(self.model.connectorObservers))
         self.assertEqual(0, len(self.model.parameterObservers))
+        self.assertEqual(0, len(self.model.connectorValues))
         
     def testSetName(self):
         self.setupViewData()
@@ -840,6 +841,7 @@ class ConnectorObserversTest(unittest.TestCase):
                                          'connector': '2',
                                          'view': '0',
                                          'active': True,
+                                         'value': '0',
                                          'color': '#000000',
                                          'visualization': 'default',
                                          'zvalue': 0}}
@@ -847,6 +849,24 @@ class ConnectorObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],
                          viewModel.observers)
+        
+    def tearDown(self):
+        shutil.rmtree('temp', True)
+        
+class ConnectorValuesTest(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree('temp', True)
+        shutil.copytree('data/views', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streamFile = self.model.files['1']
+        self.model.streams.addFile(self.streamFile)
+        
+    def testData(self):
+        refData = {'connectorValue': {'id': '0', 
+                                      'value': None, 
+                                      'variant': 'none'}}
+        self.assertEqual(refData, self.model.connectorValues['0'].data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
