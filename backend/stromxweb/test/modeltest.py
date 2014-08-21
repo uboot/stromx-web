@@ -803,12 +803,18 @@ class ParameterObserversTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
-        
         self.model = model.Model('temp')
-        self.streamFile = self.model.files['0']
-        self.model.streams.addFile(self.streamFile)
+        
+    def setupEmptyView(self):
+        streamFile = self.model.files['0']
+        self.model.streams.addFile(streamFile)
+        
+    def setupView(self):
+        streamFile = self.model.files['1']
+        self.model.streams.addFile(streamFile)
         
     def testAddData(self):
+        self.setupEmptyView()
         data = {'parameterObserver': {'id': '0',
                                       'parameter': '2',
                                       'view': '0'}}
@@ -827,6 +833,16 @@ class ParameterObserversTest(unittest.TestCase):
         self.assertEqual([{'id': '0', 'type': 'parameterObserver'}],
                          viewModel.observers)
         
+    def testDelete(self):
+        self.setupView()
+        viewModel = self.model.views['0']
+        stromxView = viewModel.stromxView
+        
+        self.model.parameterObservers.delete('0')
+        
+        self.assertEqual(1, len(viewModel.observers))
+        self.assertEqual(1, len(stromxView.observers))
+        
     def tearDown(self):
         shutil.rmtree('temp', True)
         
@@ -834,12 +850,18 @@ class ConnectorObserversTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
-        
         self.model = model.Model('temp')
-        self.streamFile = self.model.files['0']
-        self.model.streams.addFile(self.streamFile)
+        
+    def setupEmptyView(self):
+        streamFile = self.model.files['0']
+        self.model.streams.addFile(streamFile)
+        
+    def setupView(self):
+        streamFile = self.model.files['1']
+        self.model.streams.addFile(streamFile)
         
     def testAddData(self):
+        self.setupEmptyView()
         data = {'connectorObserver': {'id': '0',
                                       'connector': '2',
                                       'view': '0'}}
@@ -858,6 +880,16 @@ class ConnectorObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],
                          viewModel.observers)
+        
+    def testDelete(self):
+        self.setupView()
+        viewModel = self.model.views['0']
+        stromxView = viewModel.stromxView
+        
+        self.model.connectorObservers.delete('0')
+        
+        self.assertEqual(1, len(viewModel.observers))
+        self.assertEqual(1, len(stromxView.observers))
         
     def tearDown(self):
         shutil.rmtree('temp', True)
