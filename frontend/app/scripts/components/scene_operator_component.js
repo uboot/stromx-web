@@ -17,7 +17,7 @@ App.SceneOperatorComponent = Ember.Component.extend({
       group.remove();
 
     var paper = new Snap('#stream-svg');
-    var group = paper.group();
+    group = paper.group();
     this.set('group', group);
 
     var op = this.get('operator');

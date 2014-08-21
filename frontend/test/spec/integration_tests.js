@@ -1,12 +1,13 @@
-/* global App, test, ok */
+/* global App, andThen, click, equal, expect, find, test, then, visit */
 
 App.rootElement = '#app-fixture';
+App.ApplicationAdapter = DS.FixtureAdapter;
 App.setupForTesting();
 App.injectTestHelpers();
 
 module('Integration Tests', {
   teardown: function() {
-    App.reset();
+    //App.reset();
   }
 });
 
