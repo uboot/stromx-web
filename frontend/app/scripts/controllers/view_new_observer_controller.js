@@ -45,13 +45,17 @@ App.ViewNewObserverController = Ember.Controller.extend({
             observer = store.createRecord('connector_observer', {
               connector: target,
               view: model,
-              zvalue: numObservers + 1
+              zvalue: numObservers + 1,
+              color: '#000000',
+              visualization: 'default'
             });
           } else if (target instanceof App.Parameter) {
             observer = store.createRecord('parameter_observer', {
               parameter: target,
               view: model,
-              zvalue: numObservers + 1
+              zvalue: numObservers + 1,
+              color: '#000000',
+              visualization: 'default'
             });
           }
 

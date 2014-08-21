@@ -26,16 +26,16 @@ App.SceneConnectionComponent = Ember.Component.extend({
     var promises = {
       sourceConnector: connection.get('sourceConnector'),
       targetConnector: connection.get('targetConnector'),
-      outputs: connection.get('sourceConnector.operator.connectors'),
-      inputs: connection.get('targetConnector.operator.connectors'),
+      sourceOpConnectors: connection.get('sourceConnector.operator.connectors'),
+      targetOpConnectors: connection.get('targetConnector.operator.connectors'),
       sourcePos: connection.get('sourceConnector.operator.position'),
       targetPos: connection.get('targetConnector.operator.position')
     };
 
     Ember.RSVP.hash(promises).then( function(values) {
-      if (values.inputs === undefined || values.outputs === undefined)
+      if (values.sourceOpConnectors === undefined || values.targetOpConnectors === undefined)
         return;
-      if (values.inputs === null || values.outputs === null)
+      if (values.sourceOpConnectors === null || values.targetOpConnectors === null)
         return;
 
       if (values.sourcePos === undefined || values.sourcePos === undefined)
@@ -43,11 +43,14 @@ App.SceneConnectionComponent = Ember.Component.extend({
       if (values.targetPos === null || values.targetPos === null)
         return;
 
-      var numInputs = values.inputs.filterBy('connectorType', 'input').get('length');
-      var numOutputs = values.outputs.filterBy('connectorType', 'output').get('length');
+      var outputs = values.sourceOpConnectors.filterBy('connectorType', 'output');
+      var inputs = values.targetOpConnectors.filterBy('connectorType', 'input');
 
-      var sourceIndex = values.outputs.indexOf(values.sourceConnector);
-      var targetIndex = values.inputs.indexOf(values.targetConnector);
+      var numInputs = inputs.get('length');
+      var numOutputs = outputs.get('length');
+
+      var sourceIndex = outputs.indexOf(values.sourceConnector);
+      var targetIndex = inputs.indexOf(values.targetConnector);
 
       if (sourceIndex === -1 || targetIndex === -1)
         return;

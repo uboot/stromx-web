@@ -5,10 +5,11 @@ App.StreamController = Ember.ObjectController.extend({
     close: function () {
       var stream = this.get('model');
       this.get('file').then(function(file) {
-        file.set('opened', false);
-        file.save();
         stream.set('saved', true);
-        stream.save();
+        stream.save().then(function() {
+          file.set('opened', false);
+          file.save();
+        });
       });
       this.transitionToRoute('files');
     },

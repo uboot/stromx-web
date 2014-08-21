@@ -761,8 +761,8 @@ class Threads(Items):
             self.__inputIsInInputSequence(stromxOp, stromxInput, 
                                           thread.stromxThread.inputSequence())
         ]
-        assert(len(threads) == 1)
-        return threads[0]
+        assert(len(threads) <= 1)
+        return threads[0] if len(threads) else None
         
     def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
         for connector in sequence:
