@@ -270,8 +270,8 @@ class Streams(Items):
     def findStreamModel(self, stromxStream):
         streamModels = filter(
             lambda stream: stream.stromxStream == stromxStream, self.values())
-        assert(len(streamModels) == 1)
-        return streamModels[0]
+        assert(len(streamModels) <= 1)
+        return streamModels[0] if len(streamModels) else None
         
 class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
@@ -448,6 +448,9 @@ class Stream(Item):
         stromxView = view.View(self.__stream)
         self.__stromxViews.append(stromxView)
         return stromxView
+    
+    def removeStromxView(self, view):
+        self.__stromxViews.remove(view)
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -935,6 +938,16 @@ class Views(Items):
         viewModel = self.addStromxView(stromxView)
         viewModel.set(data)
         return viewModel.data
+    
+    def delete(self, index):
+        viewModel = self[index]
+        streamIndex = viewModel.stream
+        
+        if streamIndex != None:
+            streamModel = self.model.streams[streamIndex]
+            streamModel.removeStromxView(viewModel.stromxView)
+        
+        super(Views, self).delete(index)
     
 class Observer(Item):
     properties = ['view', 'zvalue', 'visualization', 'color', 'active']

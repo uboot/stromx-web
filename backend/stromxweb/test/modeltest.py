@@ -737,6 +737,15 @@ class ViewsTest(unittest.TestCase):
                          'stream': '1'}}
         self.assertEqual(data, self.model.views['1'].data)
         
+    def testDelete(self):
+        self.setupViewData()
+        stream = self.model.streams['0']
+        
+        self.model.views.delete('0')
+        
+        self.assertEqual({}, self.model.views)
+        self.assertEqual([], stream.views)
+        
     def testDeleteStreamWithView(self):
         self.setupViewData()
         streamFile = self.model.files['1']
@@ -880,7 +889,7 @@ class ErrorsTest(unittest.TestCase):
         self.lastError = error
         
     def testAddData(self):
-        self.errors.errorHandlers.append(self.storeError)
+        self.errors.handlers.append(self.storeError)
         self.errors.addError('An error happened')
         self.assertEqual('An error happened',
                          self.lastError.data['error']['description'])
