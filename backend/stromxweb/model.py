@@ -1101,25 +1101,27 @@ class ConnectorValues(Items):
     def addStromxConnectorValue(self, stromxConnectorValue):
         connectorValue = ConnectorValue(stromxConnectorValue, self.model)
         self.addItem(connectorValue)
+        self.__handlers = []
+        
         return connectorValue
+    
+    @property
+    def handlers(self):
+        return self.__handlers
         
 class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
-        self.__errorHandlers = []
+        self.__handlers = []
     
     @property
-    def errorHandlers(self):
-        return self.__errorHandlers
-    
-    @errorHandlers.setter
-    def errorHandlers(self, value):
-        self.__errorHandlers = value
+    def handlers(self):
+        return self.__handlers
         
     def addError(self, description):
         error = Error(description)
         self.addItem(error)
-        for handler in self.__errorHandlers:
+        for handler in self.__handlers:
             handler(error)
         return error
    

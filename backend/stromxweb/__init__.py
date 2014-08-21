@@ -68,24 +68,24 @@ class ItemsHandler(tornado.web.RequestHandler):
             self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
-    
-class ErrorSocket(tornado.websocket.WebSocketHandler):
-    def initialize(self, errors):
-        self.errors = errors
+            
+class Socket(tornado.websocket.WebSocketHandler):
+    def initialize(self, items):
+        self.__items = items
         
-    def open(self):
-        self.errors.errorHandlers.append(self.sendError)
-    
-    def on_close(self):
-        self.errors.errorHandlers.remove(self.sendError)
-        
-    def doSend(self, error):
-        json = tornado.escape.json_encode(error.data)
+    def doSend(self, value):
+        json = tornado.escape.json_encode(value.data)
         self.write_message(json)
         
-    def sendError(self, error):
+    def sendValue(self, value):
         loop = tornado.ioloop.IOLoop.instance()
-        loop.add_callback(lambda: self.doSend(error))
+        loop.add_callback(lambda: self.doSend(value))
+        
+    def open(self):
+        self.__items.handlers.append(self.sendValue)
+    
+    def on_close(self):
+        self.__items.handlers.remove(self.sendValue)
 
 def start(files):
     appModel = model.Model(files)
@@ -121,7 +121,9 @@ def start(files):
              dict(items = appModel.threads)),
             (r"/threads/([0-9]+)", ItemsHandler,
              dict(items = appModel.threads)),
-            (r"/error_socket", ErrorSocket, dict(errors = appModel.errors)),
+            (r"/error_socket", Socket, dict(items = appModel.errors)),
+            (r"/connectorValue_socket", Socket,
+             dict(items = appModel.connectorValues)),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": files}),
         ],
