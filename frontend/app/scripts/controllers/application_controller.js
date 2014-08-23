@@ -1,6 +1,8 @@
 /* global App */
 
 App.ApplicationController = Ember.ArrayController.extend({
+  socket: null,
+
   init: function() {
     this._super();
     var url = 'ws://' + window.location.host + '/error_socket';
@@ -16,10 +18,17 @@ App.ApplicationController = Ember.ArrayController.extend({
         });
       });
     };
+    this.set('socket', ws);
   },
+
+  willDestroy: function() {
+    var ws = this.get('socket');
+    ws.close();
+  },
+
   sortProperties: ['time'],
   sortAscending: false,
-  
+
   actions: {
     clearErrors: function() {
       this.get('model').clear();
