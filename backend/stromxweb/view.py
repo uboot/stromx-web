@@ -23,6 +23,9 @@ class View(object):
         observer = ParameterObserver(self.__stream, op, index)
         self.__observers.append(observer)
         return observer
+    
+    def removeObserver(self, observer):
+        self.__observers.remove(observer)
         
     def deserialize(self, data):
         properties = data['View']

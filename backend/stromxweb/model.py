@@ -928,8 +928,8 @@ class Views(Items):
     def findViewModel(self, stromxView):
         viewModels = filter(lambda view: view.stromxView == stromxView, 
                             self.values())
-        assert(len(viewModels) == 1)
-        return viewModels[0]
+        assert(len(viewModels) <= 1)
+        return viewModels[0] if len(viewModels) else None
         
     def addData(self, data):
         streamIndex = data['view']['stream']
@@ -1060,8 +1060,18 @@ class ConnectorObserver(Observer):
         assert(len(observerValue) == 1)
         return observerValue[0]
         
-
-class ParameterObservers(Items):
+class Observers(Items):
+    def delete(self, index):
+        observerModel = self[index]
+        viewIndex = observerModel.view
+        if viewIndex != None:
+            viewModel = self.model.views[viewIndex]
+            stromxView = viewModel.stromxView
+            stromxView.removeObserver(observerModel.stromxObserver)
+        
+        super(Observers, self).delete(index)
+    
+class ParameterObservers(Observers):
     def addStromxObserver(self, stromxView, stromxObserver):
         observer = ParameterObserver(stromxView, stromxObserver, self.model)
         self.addItem(observer)
@@ -1076,7 +1086,7 @@ class ParameterObservers(Items):
         observerModel.set(data)
         return observerModel.data
 
-class ConnectorObservers(Items):
+class ConnectorObservers(Observers):
     def addStromxObserver(self, stromxView, stromxObserver):
         observer = ConnectorObserver(stromxView, stromxObserver, self.model)
         self.addItem(observer)
