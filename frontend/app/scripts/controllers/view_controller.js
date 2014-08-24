@@ -1,24 +1,24 @@
 /* global App */
 
 App.ViewController = Ember.ObjectController.extend({
-  socket: null,
+  isEditingName: false,
 
-  init: function() {
-    this._super();
-    var url = 'ws://' + window.location.host + '/connectorValue_socket';
-    var ws = new WebSocket(url);
-    var store = this.store;
-    var controller = this;
-    ws.onmessage = function(event) {
-      var payload = JSON.parse(event.data);
-      store.pushPayload('connector-value', payload);
-    };
-    this.set('socket', ws);
-  },
+  actions: {
+    saveName: function() {
+      var model = this.get('model');
+      model.save();
+      this.set('isEditingName', false);
+    },
 
-  willDestroy: function() {
-    var ws = this.get('socket');
-    ws.close();
+    rename: function() {
+      this.set('isEditingName', true);
+    },
+
+    remove: function () {
+        var view = this.get('model');
+        view.deleteRecord();
+        view.save();
+    }
   },
 
   parameterObservers: Ember.computed.alias('observers'),

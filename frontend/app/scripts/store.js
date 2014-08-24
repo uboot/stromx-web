@@ -1,9 +1,9 @@
 /* global App */
 
-App.ApplicationAdapter = DS.RESTAdapter.extend({
-  host: "http://localhost:8888"
-});
-// App.ApplicationAdapter = DS.FixtureAdapter;
+// App.ApplicationAdapter = DS.RESTAdapter.extend({
+//   host: "http://localhost:8888"
+// });
+App.ApplicationAdapter = DS.FixtureAdapter;
 
 // TODO: cf. http://discuss.emberjs.com/t/ember-data-fixture-adapter-saving-record-loses-has-many-relationships/2821/3
 DS.JSONSerializer.reopen({
