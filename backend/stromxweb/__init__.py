@@ -69,7 +69,7 @@ class ItemsHandler(tornado.web.RequestHandler):
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
             
-class Socket(tornado.websocket.WebSocketHandler):
+class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, items):
         self.__items = items
         
@@ -135,8 +135,8 @@ def start(files):
              dict(items = appModel.parameterObservers)),
             (r"/connectorValues/([0-9]+)", ItemsHandler,
              dict(items = appModel.connectorValues)),
-            (r"/error_socket", Socket, dict(items = appModel.errors)),
-            (r"/connectorValue_socket", Socket,
+            (r"/error_socket", SocketHandler, dict(items = appModel.errors)),
+            (r"/connectorValue_socket", SocketHandler,
              dict(items = appModel.connectorValues)),
             (r"/download/(.*)", tornado.web.StaticFileHandler,
              {"path": files}),
