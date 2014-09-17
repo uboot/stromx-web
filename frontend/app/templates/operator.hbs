@@ -41,7 +41,7 @@
           {{input value=name}}
           <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
         {{else}}
-          {{name}} 
+          {{name}}
           <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
         {{/if}}
       </td>
@@ -55,7 +55,7 @@
         <td>
           {{#if isEditing}}
             {{#if isEnum}}
-              {{view Ember.Select value=numberValue content=descriptions optionValuePath="content.value" 
+              {{view "select" value=numberValue content=descriptions optionValuePath="content.value"
                 optionLabelPath="content.title" disabled=writeOnly}}
             {{else}}
               {{input value=editValue}}
@@ -76,7 +76,7 @@
           {{#if isBool}}
             {{input type="checkbox" checked=boolValue disabled=writeOnly}}
           {{/if}}
-          {{displayValue}} 
+          {{displayValue}}
           {{#if editable}}
           {{#unless isEditing}}
             <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
@@ -87,4 +87,4 @@
     </tr>
     {{/each}}
   </tbody>
-</table> 
+</table>
