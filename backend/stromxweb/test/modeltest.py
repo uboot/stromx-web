@@ -873,7 +873,7 @@ class ConnectorObserversTest(unittest.TestCase):
                                          'connector': '2',
                                          'view': '0',
                                          'active': True,
-                                         'value': '0',
+                                         'value': None,
                                          'color': '#000000',
                                          'visualization': 'default',
                                          'zvalue': 0}}
@@ -903,10 +903,10 @@ class ConnectorValuesTest(unittest.TestCase):
         self.model = model.Model('temp')
         self.streamFile = self.model.files['1']
         self.stream = self.model.streams.addFile(self.streamFile)
-        self.data = None
+        self.value = None
         
-    def setData(self, data):
-        self.data = data
+    def setValue(self, value):
+        self.value = value
         
     def testData(self):
         refData = {'connectorValue': {'id': '0', 
@@ -915,12 +915,15 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertEqual(refData, self.model.connectorValues['0'].data)
         
     def testHandler(self):
-        self.model.connectorValues.handlers.append(self)
+        self.model.connectorValues.handlers.append(self.setValue)
         self.stream.active = True
         time.sleep(1)
         self.stream.active = False
         
-        self.assertNotEqual(None, self.data)
+        refData = {'connectorValueBase': {'variant': 'none',
+                                          'id': '0',
+                                          'value': None}}
+        self.assertEqual(refData, self.value.data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)

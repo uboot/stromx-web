@@ -1022,7 +1022,8 @@ class ConnectorObserver(Observer):
     def __init__(self, stromxView, stromxObserver, model):
         super(ConnectorObserver, self).__init__(stromxView, stromxObserver,
                                                 model)
-        self.model.connectorValues.addStromxConnectorValue(
+        if stromxObserver.connectorValue:
+            self.model.connectorValues.addStromxConnectorValue(
                                                 stromxObserver.connectorValue)
 
     @property
@@ -1047,7 +1048,11 @@ class ConnectorObserver(Observer):
     
     @property
     def value(self):
-        return self.__findConnectorValueModel().index
+        connectorValueModel = self.__findConnectorValueModel()
+        if connectorValueModel:
+            return connectorValueModel.index
+        else:
+            return None
     
     def delete(self):
         connectorValueModel = self.__findConnectorValueModel()
@@ -1057,8 +1062,11 @@ class ConnectorObserver(Observer):
         connectorValue = self.stromxObserver.connectorValue
         selector = lambda value: value.stromxConnectorValue == connectorValue
         observerValue = filter(selector, self.model.connectorValues.values())
-        assert(len(observerValue) == 1)
-        return observerValue[0]
+        assert(len(observerValue) <= 1)
+        if len(observerValue):
+            return observerValue[0]
+        else:
+            return None
         
 class Observers(Items):
     def delete(self, index):
@@ -1101,12 +1109,12 @@ class ConnectorObservers(Observers):
         observerModel.set(data)
         return observerModel.data
     
-class ConnectorValue(Item):
+class ConnectorValueBase(Item):
     properties = ['variant', 'value']
     
-    def __init__(self, stromxConnectorValue, model):
-        super(ConnectorValue, self).__init__(model)
-        self.__value = stromxConnectorValue
+    def __init__(self, data, model):
+        super(ConnectorValueBase, self).__init__(model)
+        self.__data = data
         
     @property
     def variant(self):
@@ -1120,6 +1128,28 @@ class ConnectorValue(Item):
     def stromxConnectorValue(self):
         return self.__value
     
+class ConnectorValue(ConnectorValueBase):
+    properties = ['variant', 'value']
+    
+    def __init__(self, stromxConnectorValue, model):
+        super(ConnectorValue, self).__init__(None, model)
+        stromxConnectorValue.handler = self.handleData
+        stromxConnectorValue.activate()
+        self.__value = stromxConnectorValue
+        
+    @property
+    def stromxConnectorValue(self):
+        return self.__value
+    
+    def handleData(self, data):
+        value = ConnectorValueBase(data, self.model)
+        value.index = self.index
+        self.model.connectorValues.sendValue(value)
+        
+    def delete(self):
+        self.__value.deactivate()
+        super(ConnectorValue, self).delete()
+    
 class ConnectorValues(Items):
     def addStromxConnectorValue(self, stromxConnectorValue):
         connectorValue = ConnectorValue(stromxConnectorValue, self.model)
@@ -1131,6 +1161,10 @@ class ConnectorValues(Items):
     @property
     def handlers(self):
         return self.__handlers
+    
+    def sendValue(self, connectorValue):
+        for handler in self.__handlers:
+            handler(connectorValue)
         
 class Errors(Items):
     def __init__(self):
