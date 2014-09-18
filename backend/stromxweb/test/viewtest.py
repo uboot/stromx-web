@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
+import json
+import time
 import unittest
 
 import stromx.runtime
@@ -59,10 +60,50 @@ class ViewTest(unittest.TestCase):
     def testDeserialize(self):
         self.view = view.View(self.stream)
         self.view.deserialize(_refData)
-        print self.view.serialize()
         self.assertEqual(_refData, self.view.serialize())
         
     def testSerialize(self):
         data = self.view.serialize()
         self.assertEqual(_refData, data)
+        
+class ConnectorValueTest(unittest.TestCase):
+    def setUp(self):
+        factory = stromx.runtime.Factory()
+        stromx.runtime.register(factory)
+        reader = stromx.runtime.XmlReader()
+        streamFile = 'data/views/view_with_observers.stromx'
+        
+        zipInput = stromx.runtime.ZipFileInput(str(streamFile))
+        stream = reader.readStream(zipInput, "stream.xml", factory)
+        
+        zipInput.initialize("", "views.json")
+        zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
+        viewData = json.load(zipInput.file())
+        testView = view.View(stream)
+        testView.deserialize(viewData[0])
+        
+        observer = testView.observers[0]
+        self.value = observer.connectorValue
+        self.stream = stream
+        self.data = None
+        
+    def setData(self, data):
+        self.data = data
+        
+    def testActivate(self):
+        self.value.activate()
+        
+    def testDeactivate(self):
+        self.value.activate()
+        
+    def testObserve(self):
+        self.value.handler = self.setData
+        self.value.activate()
+        
+        self.stream.start()
+        time.sleep(1)
+        self.stream.stop()
+        
+        self.assertNotEqual(None, self.data)
+    
         

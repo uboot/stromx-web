@@ -3,6 +3,7 @@
 import filecmp
 import os
 import shutil
+import time
 import unittest
 
 import stromx.cvsupport
@@ -901,13 +902,25 @@ class ConnectorValuesTest(unittest.TestCase):
         
         self.model = model.Model('temp')
         self.streamFile = self.model.files['1']
-        self.model.streams.addFile(self.streamFile)
+        self.stream = self.model.streams.addFile(self.streamFile)
+        self.data = None
+        
+    def setData(self, data):
+        self.data = data
         
     def testData(self):
         refData = {'connectorValue': {'id': '0', 
                                       'value': None, 
                                       'variant': 'none'}}
         self.assertEqual(refData, self.model.connectorValues['0'].data)
+        
+    def testHandler(self):
+        self.model.connectorValues.handlers.append(self)
+        self.stream.active = True
+        time.sleep(1)
+        self.stream.active = False
+        
+        self.assertNotEqual(None, self.data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)

@@ -122,14 +122,14 @@ class ParameterObserver(Observer):
         
     def deserialize(self, properties):
         super(ParameterObserver, self).deserialize(properties)
-        self.__index = properties['parameter']
+        self.__index = properties['parameter']      
         
 class ConnectorObserver(Observer):
     def __init__(self, stream, op = None, connectorType = None, index = None):
         super(ConnectorObserver, self).__init__(stream, op)
         self.__connectorType = connectorType
         self.__index = index
-        self.__value = ConnectorValue(self)
+        self.__value = None
     
     @property
     def connectorIndex(self):
@@ -158,10 +158,43 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).deserialize(properties)
         self.__index = properties['connector']
         self.__connectorType = properties['type']
+        self.__value = ConnectorValue(self.op, self.__connectorType,
+                                      self.__index)
+
+class ObserverCallback(stromx.runtime.ConnectorObserver):
+    connectorValue = None
+    
+    def observe(self, connector, data, thread):
+        self.connectorValue.observe(connector, data)
         
 class ConnectorValue(object):
-    def __init__(self, observer):
-        self.__observer = observer
+    def __init__(self, op, connectorType, connectorIndex):
+        self.__op = op
+        self.__connectorType = connectorType
+        self.__connectorIndex = connectorIndex
+        self.__callback = ObserverCallback()
+        self.__callback.connectorValue = self
+        self.__handler = None
+    
+    @property
+    def handler(self):
+        return self.__handler
+    
+    @handler.setter
+    def handler(self, value):
+        self.__handler = value
         
+    def activate(self):
+        self.__op.addObserver(self.__callback)
+        
+    def deactivate(self):
+        self.__op.removeObserver(self.__callback)
+      
+    def observe(self, connector, data):
+        if (connector.id() != self.__connectorIndex or 
+            connector.type() != self.__connectorType):
+            return
+        if self.__handler:
+            self.__handler(data)
         
     
