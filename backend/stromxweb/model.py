@@ -1112,13 +1112,19 @@ class ConnectorObservers(Observers):
 class ConnectorValueBase(Item):
     properties = ['variant', 'value']
     
-    def __init__(self, data, model):
+    def __init__(self, dataAccess, model):
         super(ConnectorValueBase, self).__init__(model)
-        self.__data = data
+        self.__access = None
+        if dataAccess != None:
+            self.__access = dataAccess
         
     @property
     def variant(self):
-        return 'none'
+        if self.__access == None:
+            return 'none'
+        
+        return _variantToString(self.__access.get().variant())
+        # FIXME: ReadAccess for empty data container should throw exception
     
     @property
     def value(self):
@@ -1142,9 +1148,10 @@ class ConnectorValue(ConnectorValueBase):
         return self.__value
     
     def handleData(self, data):
-        value = ConnectorValueBase(data, self.model)
-        value.index = self.index
-        self.model.connectorValues.sendValue(value)
+        with stromx.runtime.ReadAccess(data) as access:
+            value = ConnectorValueBase(access, self.model)
+            value.index = self.index
+            self.model.connectorValues.sendValue(value)
         
     def delete(self):
         self.__value.deactivate()

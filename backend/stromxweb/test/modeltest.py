@@ -903,10 +903,10 @@ class ConnectorValuesTest(unittest.TestCase):
         self.model = model.Model('temp')
         self.streamFile = self.model.files['1']
         self.stream = self.model.streams.addFile(self.streamFile)
-        self.value = None
+        self.data = None
         
     def setValue(self, value):
-        self.value = value
+        self.data = value.data
         
     def testData(self):
         refData = {'connectorValue': {'id': '0', 
@@ -920,10 +920,10 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(1)
         self.stream.active = False
         
-        refData = {'connectorValueBase': {'variant': 'none',
+        refData = {'connectorValueBase': {'variant': 'int',
                                           'id': '0',
                                           'value': None}}
-        self.assertEqual(refData, self.value.data)
+        self.assertEqual(refData, self.data)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
