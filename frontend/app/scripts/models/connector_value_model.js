@@ -107,5 +107,10 @@ App.ConnectorValue.FIXTURES = [
       'H+84N2hnnk/hH+00PmmjYehCfbmxQa4CbEiBqdtHeJULCQvPY+BylGeQnKvb7wwhfOaVK8' +
       'Y9vQl942wef5TfsTOJG2whVykOLLmzxiQAM8MbND5MD6z/9k='
     )}
+  },
+  {
+    id: 2,
+    variant: 'int',
+    value: 123.56
   }
 ];

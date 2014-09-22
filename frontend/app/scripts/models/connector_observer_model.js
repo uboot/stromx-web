@@ -25,5 +25,14 @@ App.ConnectorObserver.FIXTURES = [
     connector: 2,
     value: 1,
     view: 1
+  },
+  {
+    id: 3,
+    zvalue: 4,
+    visualization: 'default',
+    color: '#ff0000',
+    connector: 2,
+    value: 2,
+    view: 1
   }
 ];

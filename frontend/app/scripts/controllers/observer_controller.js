@@ -10,6 +10,8 @@ App.ObserverController = Ember.ObjectController.extend({
       return 'Lines';
     else if (visualization === 'slider')
       return 'Slider';
+    else if (visualization === 'default')
+      return 'Default';
     else
       return '';
   }.property('visualization'),

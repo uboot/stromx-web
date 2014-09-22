@@ -40,10 +40,19 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       group.remove();
 
       group = paper.group();
-      if (visualization === 'lines')
-        _this.paintLines(observer, group, value);
-      else if (visualization === 'image')
-        _this.paintImage(observer, group, value);
+      switch (visualization) {
+        case 'lines':
+          _this.paintLines(observer, group, value);
+          break;
+        case 'image':
+          _this.paintImage(observer, group, value);
+          break;
+        case 'default':
+          _this.paintDefault(observer, group, value);
+          break;
+        default:
+          break;
+      }
       _this.set('group', group);
       _this.updateZValue();
     });
@@ -70,6 +79,26 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     if (groupAbove)
       group.insertBefore(groupAbove);
   }.observes('connectorObserver.zvalue'),
+
+  paintDefault: function(observer, group, value) {
+    var variant = value.get('variant');
+    switch (variant) {
+      case 'int':
+        this.paintNumber(observer, group, value);
+        break;
+      default:
+        break;
+    }
+  },
+
+  paintNumber: function(observer, group, value) {
+    var value = value.get('value');
+    var color = observer.get('color');
+    var text = group.text(50, 50, value);
+    text.attr({
+      stroke: color
+    });
+  },
 
   paintLines: function(observer, group, value) {
     var matrix = value.get('value');

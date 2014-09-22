@@ -22,6 +22,10 @@ App.View.FIXTURES = [
       {
         id: 0,
         type: 'parameterObserver'
+      },
+      {
+        id: 3,
+        type: 'connectorObserver'
       }
     ],
     stream: 2
