@@ -920,9 +920,9 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(1)
         self.stream.active = False
         
-        refData = {'connectorValueBase': {'variant': 'int',
-                                          'id': '0',
-                                          'value': None}}
+        refData = {'connectorValue': {'variant': 'int',
+                                      'id': '0',
+                                      'value': 0}}
         self.assertEqual(refData, self.data)
         
     def tearDown(self):

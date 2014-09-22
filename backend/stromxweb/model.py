@@ -125,7 +125,7 @@ class Item(object):
     def data(self):
         props = {prop: self.__getattribute__(prop) for prop in self.properties}
         props['id'] = self.index
-        name = _resourceName(self.__class__.__name__)
+        name = self.modelName
         return {name: props}
            
     @property
@@ -139,6 +139,10 @@ class Item(object):
     @index.setter
     def index(self, value):
         self.__index = str(value)
+        
+    @property
+    def modelName(self):
+        return _resourceName(self.__class__.__name__)
         
     def set(self, data):
         name = _resourceName(self.__class__.__name__)
@@ -1124,15 +1128,22 @@ class ConnectorValueBase(Item):
             return 'none'
         
         return _variantToString(self.__access.get().variant())
-        # FIXME: ReadAccess for empty data container should throw exception
     
     @property
     def value(self):
-        return None
+        if self.__access == None:
+            return None
+        
+        return _toPythonValue(self.__access.get().variant(),
+                              self.__access.get())
         
     @property
     def stromxConnectorValue(self):
         return self.__value
+    
+    @property
+    def modelName(self):
+        return 'connectorValue'
     
 class ConnectorValue(ConnectorValueBase):
     properties = ['variant', 'value']
