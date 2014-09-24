@@ -4,16 +4,16 @@ App.ApplicationRoute = Ember.Route.extend({
   socket: null,
 
   activate: function() {
-    var url = 'ws://' + window.location.host + '/error_socket';
+    var url = 'ws://' + 'localhost:8888' + '/error_socket';
+    // var url = 'ws://' + window.location.host + '/error_socket';
     var ws = new WebSocket(url);
-    var store = this.store;
-    var controller = this;
+    var _this = this;
     ws.onmessage = function(event) {
       var payload = JSON.parse(event.data);
-      store.pushPayload('error', payload);
+      _this.store.pushPayload('error', payload);
       Ember.run.next(function() {
-        store.find('error', payload.error.id).then(function(error) {
-          controller.pushObject(error);
+        _this.store.find('error', payload.error.id).then(function(error) {
+          _this.controller.pushObject(error);
         });
       });
     };
