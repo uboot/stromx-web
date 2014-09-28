@@ -148,4 +148,4 @@ def start(files):
     
 def stop():
     ioLoop = tornado.ioloop.IOLoop.instance()
-    ioLoop.add_callback(ioLoop.stop)
+    ioLoop.add_callback_from_signal(ioLoop.stop)
