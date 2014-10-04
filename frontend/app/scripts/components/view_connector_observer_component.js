@@ -24,39 +24,38 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
   updateContent: function() {
     var observer = this.get('connectorObserver');
-    var value = observer.get('value');
+    var variant = this.get('variant');
+    var value = this.get('value');
     if (!value)
       return;
 
     var _this = this;
-    value.then( function(value) {
-      var paper = new Snap('#view-svg');
-      var visualization = observer.get('visualization');
+    var paper = new Snap('#view-svg');
+    var visualization = observer.get('visualization');
 
-      var group = _this.get('group');
-      if (! group)
-        return;
+    var group = _this.get('group');
+    if (! group)
+      return;
 
-      group.remove();
+    group.remove();
 
-      group = paper.group();
-      switch (visualization) {
-        case 'lines':
-          _this.paintLines(observer, group, value);
-          break;
-        case 'image':
-          _this.paintImage(observer, group, value);
-          break;
-        case 'default':
-          _this.paintDefault(observer, group, value);
-          break;
-        default:
-          break;
-      }
-      _this.set('group', group);
-      _this.updateZValue();
-    });
-  }.observes('connectorObserver.value', 'connectorObserver.value.value'),
+    group = paper.group();
+    switch (visualization) {
+      case 'lines':
+        _this.paintLines(observer, group, value);
+        break;
+      case 'image':
+        _this.paintImage(observer, group, value);
+        break;
+      case 'default':
+        _this.paintDefault(observer, group, value);
+        break;
+      default:
+        break;
+    }
+    _this.set('group', group);
+    _this.updateZValue();
+  }.observes('connectorObserver.color', 'value'),
 
   updateZValue: function() {
     var group = this.get('group');
@@ -81,7 +80,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   }.observes('connectorObserver.zvalue'),
 
   paintDefault: function(observer, group, value) {
-    var variant = value.get('variant');
+    var variant = this.get('variant');
     switch (variant) {
       case 'int':
       case 'float':
@@ -93,17 +92,16 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   },
 
   paintNumber: function(observer, group, value) {
-    var number = value.get('value');
     var color = observer.get('color');
-    var text = group.text(50, 50, number);
+    var text = group.text(50, 50, value);
     text.attr({
       stroke: color
     });
   },
 
   paintLines: function(observer, group, value) {
-    var matrix = value.get('value');
     var color = observer.get('color');
+    var matrix = value;
     matrix.values.forEach( function(row) {
       var line = group.line(row[0], row[1], row[2], row[3]);
       line.attr({
@@ -113,7 +111,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   },
 
   paintImage: function(observer, group, value) {
-    var image = value.get('value');
+    var image = value;
     var values = image.values;
     var width = image.width;
     var height = image.height;
