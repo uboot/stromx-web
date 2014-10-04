@@ -110,7 +110,7 @@ App.ConnectorValue.FIXTURES = [
   },
   {
     id: 2,
-    variant: 'int',
+    variant: 'float',
     value: 123.56
   }
 ];

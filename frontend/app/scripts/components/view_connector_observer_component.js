@@ -56,7 +56,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       _this.set('group', group);
       _this.updateZValue();
     });
-  }.observes('connectorObserver.value'),
+  }.observes('connectorObserver.value', 'connectorObserver.value.value'),
 
   updateZValue: function() {
     var group = this.get('group');
@@ -84,6 +84,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     var variant = value.get('variant');
     switch (variant) {
       case 'int':
+      case 'float':
         this.paintNumber(observer, group, value);
         break;
       default:
@@ -92,9 +93,9 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   },
 
   paintNumber: function(observer, group, value) {
-    var value = value.get('value');
+    var number = value.get('value');
     var color = observer.get('color');
-    var text = group.text(50, 50, value);
+    var text = group.text(50, 50, number);
     text.attr({
       stroke: color
     });
