@@ -287,7 +287,7 @@ class Stream(Item):
         self.__saved = False
         self.__operators = []
         self.__connections = []
-        self.__stromxViews = []
+        self.__views = []
         self.__threads = []
         
         if os.path.exists(streamFile.path):
@@ -302,8 +302,8 @@ class Stream(Item):
                 for data in viewData:
                     stromxView = view.View(self.stromxStream)
                     stromxView.deserialize(data)
-                    self.__stromxViews.append(stromxView)
-                    self.model.views.addStromxView(stromxView)
+                    viewModel = self.model.views.addStromxView(stromxView)
+                    self.__views.append(viewModel)
             except stromx.runtime.FileAccessFailed:
                 pass
         else:
@@ -398,7 +398,7 @@ class Stream(Item):
             return
         
         # compile the list of view data
-        viewData = [view.serialize() for view in self.__stromxViews]
+        viewData = [view.stromxView.serialize() for view in self.__views]
         
         # write the file
         writer = stromx.runtime.XmlWriter()
@@ -425,11 +425,8 @@ class Stream(Item):
     
     @property
     def views(self):
-        viewModels = [self.model.views.findViewModel(view) for
-                view in self.__stromxViews]
-        return [view.index for view in 
-                filter(lambda view: view != None, viewModels)]
-        
+        return [view.index for view in self.__views]
+    
     @property
     def threads(self):
         return map(lambda t: t.index, self.__threads)
@@ -448,13 +445,14 @@ class Stream(Item):
     def stromxStream(self):
         return self.__stream
             
-    def addStromxView(self):
+    def addView(self):
         stromxView = view.View(self.__stream)
-        self.__stromxViews.append(stromxView)
-        return stromxView
+        viewModel = View(stromxView, self.model)
+        self.__views.append(viewModel)
+        return viewModel
     
-    def removeStromxView(self, view):
-        self.__stromxViews.remove(view)
+    def removeView(self, view):
+        self.__views.remove(view)
         
 class Operators(Items):
     def addStromxOp(self, stromxOp):
@@ -938,10 +936,10 @@ class Views(Items):
     def addData(self, data):
         streamIndex = data['view']['stream']
         stream = self.model.streams[streamIndex]
-        stromxView = stream.addStromxView()
-        viewModel = self.addStromxView(stromxView)
-        viewModel.set(data)
-        return viewModel.data
+        view = stream.addView()
+        view.set(data)
+        self.addItem(view)
+        return view.data
     
     def delete(self, index):
         viewModel = self[index]
@@ -949,7 +947,7 @@ class Views(Items):
         
         if streamIndex != None:
             streamModel = self.model.streams[streamIndex]
-            streamModel.removeStromxView(viewModel.stromxView)
+            streamModel.removeView(viewModel)
         
         super(Views, self).delete(index)
     

@@ -275,7 +275,7 @@ class StreamsTest(unittest.TestCase):
         
     def testAddData(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.assertEqual({'streams': [_stream]}, self.streams.data)
         self.assertEqual(5, len(self.model.operators))
         self.assertEqual(3, len(self.model.threads))
@@ -291,13 +291,13 @@ class StreamsTest(unittest.TestCase):
         
     def testSetActivate(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.assertTrue(self.streams.data['streams'][0]['active'])
         
     def testSetActivateFails(self):
         self.setUpException()
-        self.streams.addFile(self.activateFile)
+        self.activateFile.opened = True
         
         self.streams.set('0', {'stream': {'active': True}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
@@ -305,7 +305,7 @@ class StreamsTest(unittest.TestCase):
         
     def testSetDeactivate(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
@@ -313,7 +313,7 @@ class StreamsTest(unittest.TestCase):
         
     def testSetDeactivateFails(self):
         self.setUpException()
-        self.streams.addFile(self.activateFile)
+        self.activateFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         
@@ -322,7 +322,7 @@ class StreamsTest(unittest.TestCase):
         
     def testSetDeactivateTwice(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.streams.set('0', {'stream': {'active': False}})
@@ -336,7 +336,7 @@ class StreamsTest(unittest.TestCase):
         
     def testSetResume(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'paused': True}})
         self.streams.set('0', {'stream': {'paused': False}})
@@ -344,7 +344,7 @@ class StreamsTest(unittest.TestCase):
         
     def testSetSaved(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.streams.set('0', {'stream': {'saved': True}})
         
@@ -354,20 +354,22 @@ class StreamsTest(unittest.TestCase):
         
     def testSetName(self):
         self.setUpStream()
-        self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):
         self.setUpStream()
-        stream = self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
+        stream = self.streams['0']
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators)  
         
     def testReadViews(self):
         self.setUpViews()
-        stream = self.streams.addFile(self.streamFile)
+        self.streamFile.opened = True
+        stream = self.streams['0']
         self.assertEqual(['0'], stream.data['stream']['views'])
         
     def tearDown(self):
