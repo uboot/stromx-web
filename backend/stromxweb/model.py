@@ -1025,8 +1025,9 @@ class ConnectorObserver(Observer):
     def __init__(self, stromxView, stromxObserver, model):
         super(ConnectorObserver, self).__init__(stromxView, stromxObserver,
                                                 model)
+        self.__value = None
         if stromxObserver.connectorValue:
-            self.model.connectorValues.addStromxConnectorValue(
+            self.__value = self.model.connectorValues.addStromxConnectorValue(
                                                 stromxObserver.connectorValue)
 
     @property
@@ -1051,25 +1052,13 @@ class ConnectorObserver(Observer):
     
     @property
     def value(self):
-        connectorValueModel = self.__findConnectorValueModel()
-        if connectorValueModel:
-            return connectorValueModel.index
+        if self.__value:
+            return self.__value.index
         else:
             return None
     
     def delete(self):
-        connectorValueModel = self.__findConnectorValueModel()
-        self.model.connectorValues.delete(connectorValueModel.index)
-    
-    def __findConnectorValueModel(self):
-        connectorValue = self.stromxObserver.connectorValue
-        selector = lambda value: value.stromxConnectorValue == connectorValue
-        observerValue = filter(selector, self.model.connectorValues.values())
-        assert(len(observerValue) <= 1)
-        if len(observerValue):
-            return observerValue[0]
-        else:
-            return None
+        self.model.connectorValues.delete(self.__value.index)
         
 class Observers(Items):
     def delete(self, index):
