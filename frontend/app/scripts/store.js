@@ -1,20 +1,17 @@
 /* global App */
 
-App.ApplicationAdapter = DS.RESTAdapter.extend({
+/*App.ApplicationAdapter = DS.RESTAdapter.extend({
   host: "http://localhost:8888",
   coalesceFindRequests: true
-});
-// App.ApplicationAdapter = DS.FixtureAdapter.extend();
+});*/
+App.ApplicationAdapter = DS.FixtureAdapter.extend();
 
 // TODO: cf. http://discuss.emberjs.com/t/ember-data-fixture-adapter-saving-record-loses-has-many-relationships/2821/3
 DS.JSONSerializer.reopen({
   serializeHasMany : function(record, json, relationship) {
     var key = relationship.key;
 
-    var relationshipType = DS.RelationshipChange.determineRelationshipType(
-      record.constructor, relationship);
-
-    if (relationshipType === 'manyToNone' || relationshipType === 'manyToMany' || relationshipType === 'manyToOne') {
+    if (relationship.kind === 'hasMany') {
       if (relationship.options.polymorphic) {
         json[key] = Ember.get(record, key).map(function(item) {
           return {

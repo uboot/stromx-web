@@ -85,6 +85,9 @@ App.SceneConnectionComponent = Ember.Component.extend({
       return;
 
     thread.then( function(thread) {
+      if (thread === null)
+        return;
+
       var color = thread.get('color');
 
       line.attr({
