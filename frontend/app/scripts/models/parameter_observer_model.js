@@ -3,7 +3,7 @@
 require('scripts/models/observer_model');
 
 App.ParameterObserver = App.Observer.extend({
-  parameter: DS.belongsTo('parameter')
+  parameter: DS.belongsTo('parameter', {async: true})
 });
 
 App.ParameterObserver.FIXTURES = [
