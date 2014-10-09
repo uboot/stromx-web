@@ -8,7 +8,6 @@ import stromx.runtime
 
 import view
 
-
 _refData = {
     'View': {
         'observers': [{

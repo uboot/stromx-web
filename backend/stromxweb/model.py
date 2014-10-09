@@ -8,6 +8,7 @@ import re
 
 import stromx.runtime
  
+import conversion
 import view
 
 class Model(object):
@@ -599,7 +600,7 @@ class Parameter(Item):
     @property
     def variant(self):
         variant = self.__param.variant()
-        return _variantToString(variant)
+        return conversion.variantToString(variant)
         
     @property
     def operator(self):
@@ -619,17 +620,17 @@ class Parameter(Item):
         assert(type(value) == str or type(value) == unicode or
                type(value) == float or type(value) == int)
         variant = self.__param.variant()
-        data = _toStromxData(variant, value)
+        data = conversion.toStromxData(variant, value)
         self.__setParameter(data)
         
     @property
     def minimum(self):
         variant = self.__param.variant()
-        if not _isNumber(variant):
+        if not conversion.isNumber(variant):
             return 0
         
         data = self.__param.min()
-        value = _toPythonValue(variant, data)
+        value = conversion.toPythonValue(variant, data)
         if value == None:
             return 0
         return value
@@ -637,11 +638,11 @@ class Parameter(Item):
     @property
     def maximum(self):
         variant = self.__param.variant()
-        if not _isNumber(variant):
+        if not conversion.isNumber(variant):
             return 0
         
         data = self.__param.max()
-        value = _toPythonValue(variant, data)
+        value = conversion.toPythonValue(variant, data)
         if value == None:
             return 0
         return value
@@ -667,7 +668,7 @@ class Parameter(Item):
         try:
             data = self.__op.getParameter(self.__param.id())
             self.__state = 'current'
-            value = _toPythonValue(variant, data)
+            value = conversion.toPythonValue(variant, data)
         except stromx.runtime.Exception as e:
             self.__state = 'accessFailed'
             value = ''
@@ -748,7 +749,7 @@ class Thread(Item):
     
     @property
     def color(self):
-        return _stromxColorToString(self.__thread.color())
+        return conversion.stromxColorToString(self.__thread.color())
     
     @property
     def stromxThread(self):
@@ -983,11 +984,11 @@ class Observer(Item):
         
     @property
     def color(self):
-        return _stromxColorToString(self.__observer.color)
+        return conversion.stromxColorToString(self.__observer.color)
         
     @color.setter
     def color(self, value):
-        self.__observer.color = _stringToStromxColor(value)
+        self.__observer.color = conversion.stringToStromxColor(value)
         
     @property
     def active(self):
@@ -1112,15 +1113,15 @@ class ConnectorValueBase(Item):
         if self.__access == None:
             return 'none'
         
-        return _variantToString(self.__access.get().variant())
+        return conversion.variantToString(self.__access.get().variant())
     
     @property
     def value(self):
         if self.__access == None:
             return None
         
-        return _toPythonValue(self.__access.get().variant(),
-                              self.__access.get())
+        return conversion.toPythonObserverValue(self.__access.get().variant(),
+                                      self.__access.get())
         
     @property
     def stromxConnectorValue(self):
@@ -1245,112 +1246,7 @@ def _parameterIsWritable(op, param):
     elif accessMode == AccessMode.ACTIVATED_WRITE and status != Status.NONE:
         return True
     else:
-        return False
-    
-def _isNumber(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.INT):
-        return True
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
-        return True
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
-        return True
-    else:
-        return False
-    
-def _isString(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return True
-    else:
-        return False
-    
-def _hasStringRepresentation(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return True
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
-        return True
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-        return True
-    else:
-        return False
-    
-def _toPythonValue(variant, data):
-    if data.variant().isVariant(stromx.runtime.DataVariant.NONE):
-        return None
-    
-    if variant.isVariant(stromx.runtime.DataVariant.INT):
-        return int(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
-        return float(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
-        return bool(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return str(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
-        return 0
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-        return "{0} x {1}".format(data.width(), data.height())
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
-        return "{0} x {1}".format(data.rows(), data.cols())
-    else:
-        return 0
-       
-def _toStromxData(variant, value):
-    if variant.isVariant(stromx.runtime.DataVariant.BOOL):
-        return stromx.runtime.Bool(bool(value))
-    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
-        return stromx.runtime.Enum(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_8):
-        return stromx.runtime.UInt8(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_16):
-        return stromx.runtime.UInt16(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_32):
-        return stromx.runtime.UInt32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_8):
-        return stromx.runtime.Int8(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_16):
-        return stromx.runtime.Int16(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_32):
-        return stromx.runtime.Int32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_32):
-        return stromx.runtime.Float32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_64):
-        return stromx.runtime.Float64(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return stromx.runtime.String(str(value))
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
-        return stromx.runtime.TriggerData()
-    else:
-        return None
-    
-def _variantToString(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
-        return 'float'
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
-        return 'trigger'
-    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
-        return 'enum'
-    elif variant.isVariant(stromx.runtime.DataVariant.INT):
-        return 'int'
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
-        return 'bool'
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
-        return 'string'
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-        return 'image'
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
-        return 'matrix'
-    else:
-        return 'none'
-
-def _stromxColorToString(color):
-    return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
-
-def _stringToStromxColor(string):
-    red = int(string[1:3], 16)
-    green = int(string[3:5], 16)
-    blue = int(string[5:], 16)
-    return stromx.runtime.Color(red, green, blue)
-    
+        return False  
     
 def _registerExtraPackages(factory):
         try:
