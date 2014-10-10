@@ -110,7 +110,6 @@ def variantToString(variant):
 def stromxImageToData(image):
     array = np.frombuffer(image.data(), dtype=np.ubyte)
     array = array.reshape((image.width(), image.height(), image.pixelSize()))
-    
     _, jpg = cv2.imencode('.jpg', array)
     data = "data:image/jpg;base64,{0}".format(
                                 base64.encodestring(jpg.data).replace("\n", ""))

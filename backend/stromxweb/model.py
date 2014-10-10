@@ -1107,7 +1107,8 @@ class ConnectorValueBase(Item):
         super(ConnectorValueBase, self).__init__(model)
         self.__access = None
         if dataAccess != None:
-            self.__access = dataAccess
+            if not dataAccess.empty():
+                self.__access = dataAccess
         
     @property
     def variant(self):
