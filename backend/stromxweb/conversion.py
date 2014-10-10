@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import base64
+import cv2
+import numpy as np
+
 import stromx.runtime
 
 def isNumber(variant):
@@ -30,7 +34,7 @@ def hasStringRepresentation(variant):
     
 def toPythonObserverValue(variant, data):
     if variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-        pass
+        return stromxImageToData(data)
     else:
         return toPythonValue(variant, data)
     
@@ -103,8 +107,14 @@ def variantToString(variant):
     else:
         return 'none'
     
-def stromxImageToNumpyArray(image):
-    pass
+def stromxImageToData(image):
+    array = np.frombuffer(image.data(), dtype=np.ubyte)
+    array = array.reshape((image.width(), image.height(), image.pixelSize()))
+    
+    _, jpg = cv2.imencode('.jpg', array)
+    data = "data:image/jpg;base64,{0}".format(
+                                base64.encodestring(jpg.data).replace("\n", ""))
+    return data
 
 def stromxColorToString(color):
     return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
