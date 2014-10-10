@@ -875,7 +875,7 @@ class ConnectorObserversTest(unittest.TestCase):
                                          'connector': '2',
                                          'view': '0',
                                          'active': True,
-                                         'value': None,
+                                         'value': '0',
                                          'color': '#000000',
                                          'visualization': 'default',
                                          'zvalue': 0}}
@@ -883,6 +883,12 @@ class ConnectorObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],
                          viewModel.observers)
+        refData = {'connectorValues': [{'variant': 'none',
+                                        'id': '0',
+                                        'value': None
+                                        }]
+                  }
+        self.assertEqual(refData, self.model.connectorValues.data)
         
     def testDelete(self):
         self.setupView()
@@ -903,8 +909,13 @@ class ConnectorValuesTest(unittest.TestCase):
         shutil.copytree('data/views', 'temp')
         
         self.model = model.Model('temp')
-        self.streamFile = self.model.files['1']
-        self.stream = self.model.streams.addFile(self.streamFile)
+        
+        observerFile = self.model.files['1']
+        self.observerStream = self.model.streams.addFile(observerFile)
+        
+        cameraFile = self.model.files['2']
+        self.cameraStream = self.model.streams.addFile(cameraFile)
+        
         self.data = None
         
     def setValue(self, value):
@@ -916,11 +927,22 @@ class ConnectorValuesTest(unittest.TestCase):
                                       'variant': 'none'}}
         self.assertEqual(refData, self.model.connectorValues['0'].data)
         
-    def testHandler(self):
+    def testHandlerObserver(self):
         self.model.connectorValues.handlers.append(self.setValue)
-        self.stream.active = True
+        self.observerStream.active = True
         time.sleep(1)
-        self.stream.active = False
+        self.observerStream.active = False
+        
+        refData = {'connectorValue': {'variant': 'int',
+                                      'id': '0',
+                                      'value': 0}}
+        self.assertEqual(refData, self.data)
+        
+    def testHandlerCamera(self):
+        self.model.connectorValues.handlers.append(self.setValue)
+        self.cameraStream.active = True
+        time.sleep(1)
+        self.cameraStream.active = False
         
         refData = {'connectorValue': {'variant': 'int',
                                       'id': '0',

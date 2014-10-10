@@ -7,7 +7,7 @@ App.StreamNewViewController = Ember.Controller.extend({
       var name = this.get('viewName');
       var view = this.store.createRecord('view', {
         name: name,
-        stream: stream,
+        stream: stream
       });
       view.save();
 

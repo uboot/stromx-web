@@ -74,10 +74,12 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.__items = items
         
     def doSend(self, json):
+        print json[:100]
         self.write_message(json)
         
     def sendValue(self, value):
         loop = tornado.ioloop.IOLoop.instance()
+        print 'send value'
         json = tornado.escape.json_encode(value.data)
         loop.add_callback(lambda: self.doSend(json))
         

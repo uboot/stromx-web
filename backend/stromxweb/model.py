@@ -1059,7 +1059,8 @@ class ConnectorObserver(Observer):
             return None
     
     def delete(self):
-        self.model.connectorValues.delete(self.__value.index)
+        if self.__value != None:
+            self.model.connectorValues.delete(self.__value.index)
         
 class Observers(Items):
     def delete(self, index):

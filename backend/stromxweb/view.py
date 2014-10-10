@@ -129,7 +129,8 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).__init__(stream, op)
         self.__connectorType = connectorType
         self.__index = index
-        self.__value = None
+        self.__value = ConnectorValue(self.op, self.__connectorType,
+                                      self.__index)
     
     @property
     def connectorIndex(self):
