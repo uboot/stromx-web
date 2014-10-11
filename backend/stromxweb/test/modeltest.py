@@ -70,7 +70,7 @@ zdHVkaW9QSwUGAAAAAAQABAD9AAAA8woAAAAA
 
 _parallelFile = {
     'id': '0',
-    'name': 'parallel.stromx',
+    'name': '0_parallel.stromx',
     'content': '',
     'opened': False,
     'stream': None
@@ -85,7 +85,7 @@ _renamedFile = {
 }
 
 _openedFile = {'id': '0', 
-    'name': 'parallel.stromx', 
+    'name': '0_parallel.stromx', 
     'content': '',
     'opened': True, 
     'stream': '0'
@@ -234,13 +234,13 @@ class FilesTest(unittest.TestCase):
         self.files.addData({'file': {'name': 'test.stromx', 'content': _content}})
         self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
-        self.assertTrue(filecmp.cmp('data/stream/parallel.stromx',
+        self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
                                     'temp/test.stromx'))
         
     def testAddDuplicate(self):
-        self.files.addData({'file': {'name': 'parallel.stromx'}})
+        self.files.addData({'file': {'name': '0_parallel.stromx'}})
         self.assertEqual({'files': [_parallelFile]}, self.files.data)
-        self.assertFalse(os.path.exists('temp/parallel.stromx'))
+        self.assertFalse(os.path.exists('temp/0_parallel.stromx'))
         
     def tearDown(self):
         shutil.rmtree('temp', True)
