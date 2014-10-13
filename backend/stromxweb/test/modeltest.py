@@ -945,10 +945,12 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(1)
         self.cameraStream.active = False
         
-        refData = {'connectorValue': {'variant': 'int',
-                                      'id': '0',
-                                      'value': 0}}
-        self.assertEqual(refData, self.data)
+        self.assertEqual('1', self.data['connectorValue']['id'])
+        self.assertEqual('image', self.data['connectorValue']['variant'])
+        self.assertEqual('data:image/jpg;base64,/9j/4AAQ',
+                         self.data['connectorValue']['value'][:30])
+        self.assertEqual('oL/8QAtRAAAgEDAwIEAwUFBAQAAAF9', 
+                         self.data['connectorValue']['value'][200:230])
         
     def tearDown(self):
         shutil.rmtree('temp', True)
