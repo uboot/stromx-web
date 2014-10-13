@@ -947,10 +947,13 @@ class ConnectorValuesTest(unittest.TestCase):
         
         self.assertEqual('1', self.data['connectorValue']['id'])
         self.assertEqual('image', self.data['connectorValue']['variant'])
-        self.assertEqual('data:image/jpg;base64,/9j/4AAQ',
-                         self.data['connectorValue']['value'][:30])
+        
+        value = self.data['connectorValue']['value']
+        self.assertEqual(125, value['width'])
+        self.assertEqual(128, value['height'])
+        self.assertEqual('data:image/jpg;base64,/9j/4AAQ', value['values'][:30])
         self.assertEqual('oL/8QAtRAAAgEDAwIEAwUFBAQAAAF9', 
-                         self.data['connectorValue']['value'][200:230])
+                         value['values'][200:230])
         
     def tearDown(self):
         shutil.rmtree('temp', True)

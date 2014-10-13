@@ -115,8 +115,14 @@ def stromxImageToData(image):
     if not image.variant().isVariant(stromx.runtime.DataVariant.MONO_IMAGE):
         array = array.reshape((rows, cols / 3, 3))
     _, jpg = cv2.imencode('.jpg', array)
-    data = "data:image/jpg;base64,{0}".format(
+    values = 'data:image/jpg;base64,{0}'.format(
                                 base64.encodestring(jpg.data).replace("\n", ""))
+    data = {
+        'width': image.width(),
+        'height': image.height(),
+        'values': values
+    }
+    
     return data
 
 def stromxColorToString(color):

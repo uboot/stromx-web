@@ -86,6 +86,9 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
       case 'float':
         this.paintNumber(observer, group, value);
         break;
+      case 'image':
+        this.paintImage(observer, group, value);
+        break;
       default:
         break;
     }
