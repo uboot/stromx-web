@@ -311,10 +311,11 @@ class Stream(Item):
             self.__stream = stromx.runtime.Stream()
             
         for stromxOp in self.__stream.operators():
-            self.__operators.append(self.model.operators.addStromxOp(stromxOp))
+            op = self.model.operators.addStromxOp(stromxOp, self)
+            self.__operators.append(op)
             
         for stromxThread in self.__stream.threads():
-            threadModel = self.model.threads.addStromxThread(stromxThread)
+            threadModel = self.model.threads.addStromxThread(stromxThread, self)
             self.__threads.append(threadModel)
             
         connectors = self.model.connectors
@@ -456,8 +457,8 @@ class Stream(Item):
         self.__views.remove(view)
         
 class Operators(Items):
-    def addStromxOp(self, stromxOp):
-        operator = Operator(stromxOp, self.model)
+    def addStromxOp(self, stromxOp, stream = None):
+        operator = Operator(stromxOp, stream, self.model)
         self.addItem(operator)
         return operator
     
@@ -468,16 +469,17 @@ class Operators(Items):
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
-                  "position", "connectors"]
+                  "position", "connectors", "stream"]
     
-    def __init__(self, op, model):
+    def __init__(self, stromxOp, stream, model):
         super(Operator, self).__init__(model)
-        self.__op = op
+        self.__op = stromxOp
+        self.__stream = stream
         
         self.__parameters = []
         parameters = self.model.parameters
         for param in self.__op.info().parameters():
-            if not _parameterIsReadable(op, param):
+            if not _parameterIsReadable(self.__op, param):
                 continue
             
             parameter = parameters.addStromxParameter(self.__op, param)
@@ -546,6 +548,10 @@ class Operator(Item):
     @property
     def connectors(self):
         return map(lambda model: model.index, self.__connectors)
+    
+    @property
+    def stream(self):
+        return self.__stream.index if self.__stream != None else None
     
     @property
     def stromxOp(self):
@@ -737,11 +743,12 @@ class Connections(Items):
         return connection
     
 class Thread(Item):
-    properties = ['name', 'color']
+    properties = ['name', 'color', 'stream']
     
-    def __init__(self, stromxThread, model):
+    def __init__(self, stromxThread, stream, model):
         super(Thread, self).__init__(model)
         self.__thread = stromxThread
+        self.__stream = stream
     
     @property
     def name(self):
@@ -752,12 +759,16 @@ class Thread(Item):
         return conversion.stromxColorToString(self.__thread.color())
     
     @property
+    def stream(self):
+        return self.__stream.index if self.__stream != None else None
+    
+    @property
     def stromxThread(self):
         return self.__thread
         
 class Threads(Items):
-    def addStromxThread(self, thread):
-        threadModel = Thread(thread, self.model)
+    def addStromxThread(self, thread, stream = None):
+        threadModel = Thread(thread, stream, self.model)
         self.addItem(threadModel)
         return threadModel
     

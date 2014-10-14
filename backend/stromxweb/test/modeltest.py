@@ -127,7 +127,8 @@ _fork = {
     'connectors': ['4', '5', '6'],
     'version': '0.1.0',
     'position': {'y': 0.0, 'x': 0.0},
-    'type': 'Fork', 'id': '2'
+    'type': 'Fork', 'id': '2',
+    'stream': '0'
 }
 
 
@@ -278,8 +279,15 @@ class StreamsTest(unittest.TestCase):
         self.setUpStream()
         self.streamFile.opened = True
         self.assertEqual({'streams': [_stream]}, self.streams.data)
+        
         self.assertEqual(5, len(self.model.operators))
+        for op in self.model.operators.values():
+            self.assertEqual('0', op.stream)
+            
         self.assertEqual(3, len(self.model.threads))
+        for thread in self.model.threads.values():
+            self.assertEqual('0', thread.stream)
+            
         self.assertEqual(10, len(self.model.connectors))
         self.assertEqual(5, len(self.model.connections))
         self.assertEqual({'operator': _fork}, self.model.operators['2'].data)
@@ -411,7 +419,8 @@ class OperatorsTest(unittest.TestCase):
                              'version': '0.1.0',
                              'parameters': ['0', '1'],
                              'connectors': ['0'],
-                             'position': {'x': 0.0, 'y': 0.0} }}
+                             'position': {'x': 0.0, 'y': 0.0},
+                             'stream': None}}
         self.assertEqual(data, self.operator.data)
         
     def testDataDeinitialized(self):
@@ -428,7 +437,8 @@ class OperatorsTest(unittest.TestCase):
                              'version': '0.1.0',
                              'parameters': [],
                              'connectors': [],
-                             'position': {'x': 0.0, 'y': 0.0} }}
+                             'position': {'x': 0.0, 'y': 0.0} ,
+                             'stream': None}}
         self.assertEqual(data, op.data)
     
     def testFindOperatorModel(self):
@@ -691,7 +701,8 @@ class ThreadsTest(unittest.TestCase):
         thread = self.threads.addStromxThread(self.thread)
         data = {'thread': {'color': '#ff0000',
                            'id': '0',
-                           'name': 'Thread'}}
+                           'name': 'Thread',
+                           'stream': None}}
         self.assertEqual(data, thread.data)
         
     def testFindThreadModel(self):
