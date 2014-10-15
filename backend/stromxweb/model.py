@@ -26,6 +26,7 @@ class Model(object):
         self.__parameterObservers = ParameterObservers(self)
         self.__connectorObservers = ConnectorObservers(self)
         self.__connectorValues = ConnectorValues(self)
+        self.__operatorTemplates = OperatorTemplates(self)
     
     @property
     def files(self):
@@ -78,6 +79,10 @@ class Model(object):
     @property
     def connectorValues(self):
         return self.__connectorValues
+    
+    @property
+    def operatorTemplates(self):
+        return self.__operatorTemplates
     
 class Items(dict):
     def __init__(self, model = None):
@@ -254,21 +259,10 @@ class File(Item):
         if os.path.exists(self.path):
             os.remove(self.path)
         
-class Streams(Items):
-    @property
-    def factory(self):
-        return self.__factory
-    
-    def __init__(self, model):
-        super(Streams, self).__init__(model)
-        
-        self.__factory = stromx.runtime.Factory()
-        stromx.runtime.register(self.__factory)
-        
-        _registerExtraPackages(self.__factory)
-        
+class Streams(Items):        
     def addFile(self, streamFile):
-        stream = Stream(streamFile, self.__factory, self.model)
+        factory = self.model.operatorTemplates.factory
+        stream = Stream(streamFile, factory, self.model)
         self.addItem(stream)
         return stream
     
@@ -454,6 +448,43 @@ class Stream(Item):
     
     def removeView(self, view):
         self.__views.remove(view)
+        
+class OperatorTemplate(Item):
+    properties = ["type", "package", "version"]
+    
+    def __init__(self, stromxOpKernel, model):
+        super(OperatorTemplate, self).__init__(model)
+        self.__op = stromxOpKernel
+        
+    @property
+    def type(self):
+        return self.__op.type()
+        
+    @property
+    def package(self):
+        return self.__op.package()
+        
+    @property
+    def version(self):
+        version = self.__op.version()
+        return '{0}.{1}.{2}'.format(version.major(), version.minor(),
+                                    version.revision())
+         
+class OperatorTemplates(Items):
+    def __init__(self, model):
+        super(OperatorTemplates, self).__init__(model)
+        self.__factory = stromx.runtime.Factory()
+        
+        stromx.runtime.register(self.__factory)
+        _registerExtraPackages(self.__factory)
+        
+        for op in self.__factory.availableOperators():
+            template = OperatorTemplate(op, self.model)
+            self.addItem(template)
+        
+    @property
+    def factory(self):
+        return self.__factory
         
 class Operators(Items):
     def addStromxOp(self, stromxOp, stream = None):

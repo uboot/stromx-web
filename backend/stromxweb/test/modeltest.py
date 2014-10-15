@@ -166,6 +166,23 @@ class ItemTest(unittest.TestCase):
         
     def testSet(self):
         self.item.set({'dummyItem': {'read': 0, 'write': 0}})
+        
+class OperatorTemplatesTest(unittest.TestCase):
+    def setUp(self):
+        shutil.rmtree('temp', True)
+        shutil.copytree('data/stream', 'temp')
+        self.model = model.Model('temp')
+        self.templates = self.model.operatorTemplates
+        
+    def testData(self):
+        
+        refData = {'operatorTemplate': {'id': '0',
+                                        'package': 'runtime',
+                                         'type': 'Block',
+                                         'version': '0.1.0'}}
+                                         
+        self.assertEqual(55, len(self.templates)) 
+        self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
     def setUp(self):
@@ -263,7 +280,7 @@ class StreamsTest(unittest.TestCase):
         
         self.model = model.Model('temp')
         self.streams = self.model.streams
-        stromx.test.register(self.streams.factory)
+        stromx.test.register(self.model.operatorTemplates.factory)
         self.activateFile = self.model.files['0']
         self.deactivateFile = self.model.files['1']
         self.deinitializeFile = self.model.files['2']
