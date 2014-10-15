@@ -436,9 +436,6 @@ class Stream(Item):
         for op in self.__operators:
             self.model.operators.delete(op.index)
             
-        for connection in self.__connections:
-            self.model.connections.delete(connection.index)
-            
         for viewIndex in self.views:
             self.model.views.delete(viewIndex)
             
@@ -717,6 +714,9 @@ class Connection(Item):
     properties = ['sourceConnector', 'targetConnector', 'thread']
     
     def __init__(self, sourceConnector, targetConnector, thread, model):
+        assert(sourceConnector != None)
+        assert(targetConnector != None)
+        
         super(Connection, self).__init__(model)
         self.__sourceConnector = sourceConnector
         self.__targetConnector = targetConnector
@@ -737,8 +737,13 @@ class Connection(Item):
         else:
             return None
         
+    def delete(self):
+        self.__sourceConnector.removeConnection(self)
+        self.__targetConnector.removeConnection(self)
+        
+        
 class Connections(Items):
-    def addConnection(self, sourceConnector, targetConnector, thread):
+    def addConnection(self, sourceConnector, targetConnector, thread):        
         connection = Connection(sourceConnector, targetConnector, thread,
                                 self.model)
         self.addItem(connection)
@@ -837,8 +842,18 @@ class Connector(Item):
     def connections(self):
         return [connection.index for connection in self.__connections]
     
+    def delete(self):
+        for connectionIndex in self.connections:
+            self.model.connections.delete(connectionIndex)
+    
     def addConnection(self, connection):
         self.__connections.append(connection)
+        
+    def removeConnection(self, connection):
+        try:
+            self.__connections.remove(connection)
+        except ValueError:
+            pass
         
 class Connectors(Items):
     def addStromxConnector(self, op, description, connectorType):

@@ -456,6 +456,7 @@ class OperatorsTest(unittest.TestCase):
         
         self.assertEqual(dict(), self.model.operators)
         self.assertEqual(dict(), self.model.connectors)
+        self.assertEqual(dict(), self.model.parameters)
         
     def tearDown(self):
         self.__stream = None
@@ -640,7 +641,7 @@ class EnumDescriptionsTest(unittest.TestCase):
                                     'value': 0}}
         self.assertEqual(data, desc.data)
         
-class ConnectionTest(unittest.TestCase):
+class ConnectionsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.connections = self.model.connections
@@ -673,7 +674,17 @@ class ConnectionTest(unittest.TestCase):
         self.assertEqual(['0'], source.data['connector']['connections'])
         self.assertEqual(['0'], target.data['connector']['connections'])
         
-class ConnectorTest(unittest.TestCase):
+    def testDelete(self):
+        source = self.model.connectors['0']
+        target = self.model.connectors['3']
+        self.connections.addConnection(source, target, self.thread)
+        
+        self.model.connections.delete('0')
+        
+        self.assertEqual([], source.data['connector']['connections'])
+        self.assertEqual([], target.data['connector']['connections'])
+        
+class ConnectorsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         
@@ -691,6 +702,16 @@ class ConnectorTest(unittest.TestCase):
                               'connectorType': 'output',
                               'connections': []}}
         self.assertEqual(data, connector.data)
+        
+    def testDelete(self):
+        source = self.model.connectors['0']
+        target = self.model.connectors['1']
+        self.model.connections.addConnection(source, target, None)
+        
+        self.model.connectors.delete('0')
+        
+        self.assertFalse(self.model.connectors.has_key('0'))
+        self.assertEqual(dict(), self.model.connections)
         
 class ThreadsTest(unittest.TestCase):
     def setUp(self):
