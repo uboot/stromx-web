@@ -340,7 +340,6 @@ class Stream(Item):
                 connection = self.model.connections.addConnection(
                                     sourceConnector, targetConnector, thread)
                 self.__connections.append(connection)
-
         
     @property
     def file(self):
@@ -740,6 +739,10 @@ class Connections(Items):
         connection = Connection(sourceConnector, targetConnector, thread,
                                 self.model)
         self.addItem(connection)
+        
+        sourceConnector.addConnection(connection)
+        targetConnector.addConnection(connection)
+        
         return connection
     
 class Thread(Item):
@@ -794,13 +797,14 @@ class Connector(Item):
     INPUT = 'input'
     OUTPUT = 'output'
     
-    properties = ['operator', 'title', 'connectorType']
+    properties = ['operator', 'title', 'connectorType', 'connections']
     
     def __init__(self, op, description, connectorType, model):
         super(Connector, self).__init__(model)
         self.__description = description
         self.__op = op
         self.__connectorType = connectorType
+        self.__connections = []
         
     @property
     def operator(self):
@@ -825,6 +829,13 @@ class Connector(Item):
     @property
     def stromxId(self):
         return self.__description.id()
+    
+    @property
+    def connections(self):
+        return [connection.index for connection in self.__connections]
+    
+    def addConnection(self, connection):
+        self.__connections.append(connection)
         
 class Connectors(Items):
     def addStromxConnector(self, op, description, connectorType):

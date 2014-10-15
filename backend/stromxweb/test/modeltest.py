@@ -662,6 +662,9 @@ class ConnectionTest(unittest.TestCase):
                                'targetConnector': '3'}}
         self.assertEqual(data, connection.data)
         
+        self.assertEqual(['0'], source.data['connector']['connections'])
+        self.assertEqual(['0'], target.data['connector']['connections'])
+        
 class ConnectorTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
@@ -677,7 +680,8 @@ class ConnectorTest(unittest.TestCase):
         data = {'connector': {'id': '2',
                               'operator': '0',
                               'title': 'Output 1',
-                              'connectorType': 'output'}}
+                              'connectorType': 'output',
+                              'connections': []}}
         self.assertEqual(data, connector.data)
         
 class ThreadsTest(unittest.TestCase):
