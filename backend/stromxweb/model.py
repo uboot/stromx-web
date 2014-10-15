@@ -430,7 +430,7 @@ class Stream(Item):
     
     @property
     def threads(self):
-        return map(lambda t: t.index, self.__threads)
+        return [thread.index for thread in self.__threads]
     
     def delete(self):
         for op in self.__operators:
@@ -441,6 +441,9 @@ class Stream(Item):
             
         for viewIndex in self.views:
             self.model.views.delete(viewIndex)
+            
+        for threadIndex in self.threads:
+            self.model.threads.delete(threadIndex)
     
     @property  
     def stromxStream(self):

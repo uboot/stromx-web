@@ -374,6 +374,8 @@ class StreamsTest(unittest.TestCase):
         stream = self.streams['0']
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators)  
+        self.assertEqual(dict(), self.model.connections)  
+        self.assertEqual(dict(), self.model.threads)    
         
     def testReadViews(self):
         self.setUpViews()
@@ -448,6 +450,12 @@ class OperatorsTest(unittest.TestCase):
     def testFindOutputPosition(self):
         pos = self.operator.findOutputPosition(0)
         self.assertEqual(0, pos)
+        
+    def testDelete(self):
+        self.operators.delete('0')
+        
+        self.assertEqual(dict(), self.model.operators)
+        self.assertEqual(dict(), self.model.connectors)
         
     def tearDown(self):
         self.__stream = None
