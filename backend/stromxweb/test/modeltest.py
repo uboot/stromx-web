@@ -717,6 +717,7 @@ class ConnectorsTest(unittest.TestCase):
                               'operator': '0',
                               'title': 'Output 1',
                               'connectorType': 'output',
+                              'observers': [],
                               'connections': []}}
         self.assertEqual(data, connector.data)
         

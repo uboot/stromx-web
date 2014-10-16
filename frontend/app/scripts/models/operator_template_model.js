@@ -6,7 +6,7 @@ App.OperatorTemplate = DS.Model.extend({
   version: DS.attr('string')
 });
 
-App.Operator.FIXTURES = [
+App.OperatorTemplate.FIXTURES = [
   {
     id: 0,
     type: 'Counter',

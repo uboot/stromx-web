@@ -289,18 +289,6 @@ class Stream(Item):
             zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(zipInput, "stream.xml", factory)
-            
-            zipInput.initialize("", "views.json")
-            try:
-                zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
-                viewData = json.load(zipInput.file())
-                for data in viewData:
-                    stromxView = view.View(self.stromxStream)
-                    stromxView.deserialize(data)
-                    viewModel = self.model.views.addStromxView(stromxView)
-                    self.__views.append(viewModel)
-            except stromx.runtime.FileAccessFailed:
-                pass
         else:
             self.__stream = stromx.runtime.Stream()
             
@@ -334,6 +322,19 @@ class Stream(Item):
                 connection = self.model.connections.addConnection(
                                     sourceConnector, targetConnector, thread)
                 self.__connections.append(connection)
+        
+        if os.path.exists(streamFile.path):
+            zipInput.initialize("", "views.json")
+            try:
+                zipInput.openFile(stromx.runtime.InputProvider.OpenMode.TEXT)
+                viewData = json.load(zipInput.file())
+                for data in viewData:
+                    stromxView = view.View(self.stromxStream)
+                    stromxView.deserialize(data)
+                    viewModel = self.model.views.addStromxView(stromxView)
+                    self.__views.append(viewModel)
+            except stromx.runtime.FileAccessFailed:
+                pass
         
     @property
     def file(self):
@@ -427,11 +428,11 @@ class Stream(Item):
         return [thread.index for thread in self.__threads]
     
     def delete(self):
-        for op in self.__operators:
-            self.model.operators.delete(op.index)
-            
         for viewIndex in self.views:
             self.model.views.delete(viewIndex)
+            
+        for op in self.__operators:
+            self.model.operators.delete(op.index)
             
         for threadIndex in self.threads:
             self.model.threads.delete(threadIndex)
@@ -836,7 +837,8 @@ class Connector(Item):
     INPUT = 'input'
     OUTPUT = 'output'
     
-    properties = ['operator', 'title', 'connectorType', 'connections']
+    properties = ['operator', 'title', 'connectorType', 'connections',
+                  'observers']
     
     def __init__(self, op, description, connectorType, model):
         super(Connector, self).__init__(model)
@@ -844,6 +846,7 @@ class Connector(Item):
         self.__op = op
         self.__connectorType = connectorType
         self.__connections = []
+        self.__observers = []
         
     @property
     def operator(self):
@@ -873,6 +876,10 @@ class Connector(Item):
     def connections(self):
         return [connection.index for connection in self.__connections]
     
+    @property
+    def observers(self):
+        return [observer.index for observer in self.__observers]
+    
     def delete(self):
         for connectionIndex in self.connections:
             self.model.connections.delete(connectionIndex)
@@ -885,6 +892,12 @@ class Connector(Item):
             self.__connections.remove(connection)
         except ValueError:
             pass
+    
+    def addObserver(self, observer):
+        self.__observers.append(observer)
+        
+    def removeObserver(self, observer):
+        self.__observers.remove(observer)
         
 class Connectors(Items):
     def addStromxConnector(self, op, description, connectorType):
@@ -1132,6 +1145,9 @@ class ConnectorObserver(Observer):
     def delete(self):
         if self.__value != None:
             self.model.connectorValues.delete(self.__value.index)
+        connectorId = self.connector
+        connector = self.model.connectors[connectorId]
+        connector.removeObserver(self)
         
 class Observers(Items):
     def delete(self, index):
@@ -1161,6 +1177,8 @@ class ConnectorObservers(Observers):
     def addStromxObserver(self, stromxView, stromxObserver):
         observer = ConnectorObserver(stromxView, stromxObserver, self.model)
         self.addItem(observer)
+        connectorId = observer.connector
+        self.model.connectors[connectorId].addObserver(observer)
         return observer
         
     def addData(self, data):
