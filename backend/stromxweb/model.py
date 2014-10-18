@@ -508,25 +508,12 @@ class Operator(Item):
         self.__stream = stream
         
         self.__parameters = []
-        parameters = self.model.parameters
-        for param in self.__op.info().parameters():
-            if not _parameterIsReadable(self.__op, param):
-                continue
-            
-            parameter = parameters.addStromxParameter(self.__op, param)
-            self.__parameters.append(parameter)
-            
+        self.__allocateParameters()
+        
+        # allocate connectors for initialized operators only
         self.__connectors = []
-        connectors = self.model.connectors
-        for description in self.__op.info().inputs():
-            connector = connectors.addStromxConnector(self.__op, description,
-                                                      Connector.INPUT)
-            self.__connectors.append(connector)
-            
-        for description in self.__op.info().outputs():
-            connector = connectors.addStromxConnector(self.__op, description,
-                                                      Connector.OUTPUT)
-            self.__connectors.append(connector)
+        if self.__op.status() != stromx.runtime.Operator.Status.NONE:
+            self.__allocateConnectors()
         
     @property
     def name(self):
@@ -546,6 +533,15 @@ class Operator(Item):
             return 'active'
         else:
             return 'undefined'
+        
+    @status.setter
+    def status(self, value):
+        if value == 'none':
+            self.__removeParameters()
+            self.__stream.stromxStream.deinitializeOperator(self.__op)
+            self.__addParameters()
+        else:
+            assert(False)          
         
     @property
     def type(self):
@@ -589,11 +585,8 @@ class Operator(Item):
         return self.__op
     
     def delete(self):
-        for param in self.__parameters:
-            self.model.parameters.delete(param.index)
-            
-        for connector in self.__connectors:
-            self.model.connectors.delete(connector.index)
+        self.__removeParameters()
+        self.__removeConnectors()            
     
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
@@ -601,6 +594,35 @@ class Operator(Item):
         assert(len(outputs) == 1)
         return outputs[0]
     
+    def __allocateConnectors(self):
+        connectors = self.model.connectors
+        for description in self.__op.info().inputs():
+            connector = connectors.addStromxConnector(self.__op, description,
+                                                      Connector.INPUT)
+            self.__connectors.append(connector)
+            
+        for description in self.__op.info().outputs():
+            connector = connectors.addStromxConnector(self.__op, description,
+                                                      Connector.OUTPUT)
+            self.__connectors.append(connector)
+            
+    def __allocateParameters(self):
+        parameters = self.model.parameters
+        for param in self.__op.info().parameters():
+            if not _parameterIsReadable(self.__op, param):
+                continue
+            
+            parameter = parameters.addStromxParameter(self.__op, param)
+            self.__parameters.append(parameter)
+            
+    def __removeConnectors(self):
+        for connector in self.__connectors:
+            self.model.connectors.delete(connector.index)
+        
+    def __removeParameters(self):
+        for param in self.__parameters:
+            self.model.parameters.delete(param.index)        
+            
 class Parameters(Items):
     def addStromxParameter(self, op, param):
         parameter = Parameter(op, param, self.model)
