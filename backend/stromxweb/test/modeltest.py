@@ -443,7 +443,7 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual(data, self.operator.data)
         
     def testDataDeinitialized(self):
-        kernel = stromx.runtime.Receive()
+        kernel = stromx.runtime.Fork()
         self.stream = stromx.runtime.Stream()
         stromxOp = self.stream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp)
@@ -451,10 +451,10 @@ class OperatorsTest(unittest.TestCase):
         data = {'operator': {'id': '1', 
                              'name': '',
                              'package': 'runtime',
-                             'type': 'Receive',
+                             'type': 'Fork',
                              'status': 'none',
                              'version': '0.1.0',
-                             'parameters': [],
+                             'parameters': ['2'],
                              'connectors': [],
                              'position': {'x': 0.0, 'y': 0.0} ,
                              'stream': None}}
@@ -467,6 +467,52 @@ class OperatorsTest(unittest.TestCase):
     def testFindOutputPosition(self):
         pos = self.operator.findOutputPosition(0)
         self.assertEqual(0, pos)
+        
+    def testSetStatusNone(self):
+        kernel = stromx.test.ParameterOperator()
+        self.stream = stromx.runtime.Stream()
+        stromxOp = self.stream.addOperator(kernel)
+        self.stream.initializeOperator(stromxOp)
+        op = self.operators.addStromxOp(stromxOp)
+        
+        self.operators.set('1', {'operator': 
+                                 {'status': 'none'}
+                                })
+                                
+        data = {'operator': {'id': '1', 
+                             'name': '',
+                             'package': 'test',
+                             'type': 'ParameterOperator',
+                             'status': 'none',
+                             'version': '1.2.3',
+                             'parameters': ['2'],
+                             'connectors': [],
+                             'position': {'x': 0.0, 'y': 0.0},
+                             'stream': None}}
+        self.assertEqual(data, op.data)         
+        
+    def testSetStatusInitialized(self):
+        kernel = stromx.test.ParameterOperator()
+        self.stream = stromx.runtime.Stream()
+        stromxOp = self.stream.addOperator(kernel)
+        op = self.operators.addStromxOp(stromxOp)
+        
+        self.operators.set('1', {'operator': 
+                                 {'status': 'initialized'}
+                                })
+                                
+        data = {'operator': {'id': '1', 
+                             'name': '',
+                             'package': 'test',
+                             'type': 'ParameterOperator',
+                             'status': 'initialized',
+                             'version': '1.2.3',
+                             'parameters': ['2', '3', '4', '5', '6', '7', '8',
+                                            '9'],
+                             'connectors': ['1', '2', '3', '4'],
+                             'position': {'x': 0.0, 'y': 0.0},
+                             'stream': None}}
+        self.assertEqual(data, op.data)       
         
     def testDelete(self):
         self.operators.delete('0')
@@ -993,23 +1039,19 @@ class ConnectorValuesTest(unittest.TestCase):
     def testHandlerObserver(self):
         self.model.connectorValues.handlers.append(self.setValue)
         self.observerStream.active = True
-        time.sleep(1)
+        time.sleep(0.2)
         self.observerStream.active = False
         
-        refData = {'connectorValue': {'variant': 'int',
-                                      'id': '0',
-                                      'value': 0}}
-        self.assertEqual(refData, self.data)
+        self.assertEqual('int', self.data['connectorValue']['variant'])
+        self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
         
     def testHandlerCamera(self):
         self.model.connectorValues.handlers.append(self.setValue)
         self.cameraStream.active = True
-        time.sleep(1)
+        time.sleep(0.2)
         self.cameraStream.active = False
         
-        self.assertEqual('1', self.data['connectorValue']['id'])
         self.assertEqual('image', self.data['connectorValue']['variant'])
-        
         value = self.data['connectorValue']['value']
         self.assertEqual(125, value['width'])
         self.assertEqual(128, value['height'])
