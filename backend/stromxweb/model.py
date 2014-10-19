@@ -261,10 +261,12 @@ class File(Item):
         
 class Streams(Items):        
     def addFile(self, streamFile):
-        factory = self.model.operatorTemplates.factory
-        stream = Stream(streamFile, factory, self.model)
+        stream = Stream(streamFile, self.model)
         self.addItem(stream)
         return stream
+    
+    def addStromxStream(self, stream):
+        pass
     
     def findStreamModel(self, stromxStream):
         streamModels = filter(
@@ -276,7 +278,7 @@ class Stream(Item):
     properties = ["name", "saved", "active", "paused", "file", "operators",
                   "connections", "views", "threads"]
     
-    def __init__(self, streamFile, factory, model):
+    def __init__(self, streamFile, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
         self.__saved = False
@@ -285,6 +287,7 @@ class Stream(Item):
         self.__views = []
         self.__threads = []
         
+        factory = self.model.operatorTemplates.factory
         if os.path.exists(streamFile.path):
             zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
             reader = stromx.runtime.XmlReader()

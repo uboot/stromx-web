@@ -409,9 +409,11 @@ class OperatorsTest(unittest.TestCase):
         self.operators = self.model.operators
         
         kernel = stromx.runtime.Receive()
-        self.stream = stromx.runtime.Stream()
-        self.stromxOp = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.stromxOp)
+        fileModel = model.File("", self.model)
+        self.stream = model.Stream(fileModel, self.model)
+        self.stromxStream = self.stream.stromxStream
+        self.stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(self.stromxOp)
         self.stromxOp.setName('Name')
         self.operator = self.operators.addStromxOp(self.stromxOp)
         
@@ -444,8 +446,8 @@ class OperatorsTest(unittest.TestCase):
         
     def testDataDeinitialized(self):
         kernel = stromx.runtime.Fork()
-        self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(kernel)
+        self.stromxStream = stromx.runtime.Stream()
+        stromxOp = self.stromxStream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp)
         
         data = {'operator': {'id': '1', 
@@ -470,9 +472,9 @@ class OperatorsTest(unittest.TestCase):
         
     def testSetStatusNone(self):
         kernel = stromx.test.ParameterOperator()
-        self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(stromxOp)
+        self.stromxStream = stromx.runtime.Stream()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(stromxOp)
         op = self.operators.addStromxOp(stromxOp)
         
         self.operators.set('1', {'operator': 
@@ -493,8 +495,8 @@ class OperatorsTest(unittest.TestCase):
         
     def testSetStatusInitialized(self):
         kernel = stromx.test.ParameterOperator()
-        self.stream = stromx.runtime.Stream()
-        stromxOp = self.stream.addOperator(kernel)
+        self.stromxStream = stromx.runtime.Stream()
+        stromxOp = self.stromxStream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp)
         
         self.operators.set('1', {'operator': 
