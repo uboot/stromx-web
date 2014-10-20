@@ -11,6 +11,8 @@ import stromx.runtime
 import conversion
 import view
 
+class AddDataFailed(Exception): pass
+
 class Model(object):
     def __init__(self, directory = ""):
         self.__files = Files(directory, self)
@@ -265,9 +267,6 @@ class Streams(Items):
         self.addItem(stream)
         return stream
     
-    def addStromxStream(self, stream):
-        pass
-    
     def findStreamModel(self, stromxStream):
         streamModels = filter(
             lambda stream: stream.stromxStream == stromxStream, self.values())
@@ -322,9 +321,8 @@ class Stream(Item):
                 thread = self.model.threads.findThreadModel(op.stromxOp,
                                                             stromxInput)
                 
-                connection = self.model.connections.addConnection(
+                connection = self.model.connections.addConnection(self,
                                     sourceConnector, targetConnector, thread)
-                self.__connections.append(connection)
         
         if os.path.exists(streamFile.path):
             zipInput.initialize("", "views.json")
@@ -355,6 +353,8 @@ class Stream(Item):
         status = self.__stream.status()
         if value and status == stromx.runtime.Stream.Status.INACTIVE:
             try:
+                sort = stromx.runtime.SortInputsAlgorithm()
+                sort.apply(self.__stream)
                 self.__stream.start()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
@@ -434,11 +434,14 @@ class Stream(Item):
         for viewIndex in self.views:
             self.model.views.delete(viewIndex)
             
-        for op in self.__operators:
-            self.model.operators.delete(op.index)
+        for connection in self.__connections:
+            self.model.connections.delete(connection.index)
             
         for threadIndex in self.threads:
             self.model.threads.delete(threadIndex)
+            
+        for op in self.__operators:
+            self.model.operators.delete(op.index)
     
     @property  
     def stromxStream(self):
@@ -452,6 +455,12 @@ class Stream(Item):
     
     def removeView(self, view):
         self.__views.remove(view)
+        
+    def addConnection(self, connection):
+        self.__connections.append(connection)
+        
+    def removeConnection(self, connection):
+        self.__connections.remove(connection)
         
 class OperatorTemplate(Item):
     properties = ["type", "package", "version"]
@@ -491,7 +500,7 @@ class OperatorTemplates(Items):
         return self.__factory
         
 class Operators(Items):
-    def addStromxOp(self, stromxOp, stream = None):
+    def addStromxOp(self, stromxOp, stream):
         operator = Operator(stromxOp, stream, self.model)
         self.addItem(operator)
         return operator
@@ -500,6 +509,22 @@ class Operators(Items):
         ops = [op for op in self.values() if op.stromxOp == stromxOp]
         assert(len(ops) == 1)
         return ops[0]
+        
+    def addData(self, data):
+        streamId = data['operator']['stream']
+        stream = self.model.streams[streamId]
+        
+        factory = self.model.operatorTemplates.factory
+        try:
+            opKernel = factory.newOperator(data['operator']['package'],
+                                           data['operator']['type'])
+        except stromx.runtime.OperatorAllocationFailed as e:
+            self.model.errors.addError(e)
+            raise AddDataFailed()
+        
+        stromxOp = stream.stromxStream.addOperator(opKernel)
+        op = self.addStromxOp(stromxOp, stream)
+        return op.data
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
@@ -541,8 +566,14 @@ class Operator(Item):
     def status(self, value):
         if value == 'none':
             self.__removeParameters()
+            self.__removeConnectors()
             self.__stream.stromxStream.deinitializeOperator(self.__op)
-            self.__addParameters()
+            self.__allocateParameters()
+        elif value == 'initialized':
+            self.__removeParameters()
+            self.__stream.stromxStream.initializeOperator(self.__op)
+            self.__allocateParameters()
+            self.__allocateConnectors()
         else:
             assert(False)          
         
@@ -589,7 +620,8 @@ class Operator(Item):
     
     def delete(self):
         self.__removeParameters()
-        self.__removeConnectors()            
+        self.__removeConnectors() 
+        self.__stream.stromxStream.removeOperator(self.__op)
     
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
@@ -621,10 +653,12 @@ class Operator(Item):
     def __removeConnectors(self):
         for connector in self.__connectors:
             self.model.connectors.delete(connector.index)
+        self.__connectors = []
         
     def __removeParameters(self):
         for param in self.__parameters:
-            self.model.parameters.delete(param.index)        
+            self.model.parameters.delete(param.index) 
+        self.__parameters = []       
             
 class Parameters(Items):
     def addStromxParameter(self, op, param):
@@ -768,9 +802,9 @@ class EnumDescription(Item):
         return self.__desc.title()
     
 class Connection(Item):
-    properties = ['sourceConnector', 'targetConnector', 'thread']
+    properties = ['sourceConnector', 'targetConnector', 'thread', 'stream']
     
-    def __init__(self, sourceConnector, targetConnector, thread, model):
+    def __init__(self, stream, sourceConnector, targetConnector, thread, model):
         assert(sourceConnector != None)
         assert(targetConnector != None)
         
@@ -778,6 +812,9 @@ class Connection(Item):
         self.__sourceConnector = sourceConnector
         self.__targetConnector = targetConnector
         self.__thread = thread
+        self.__stream = stream
+        
+        self.__stream.addConnection(self)
     
     @property
     def sourceConnector(self):
@@ -788,27 +825,64 @@ class Connection(Item):
         return self.__targetConnector.index
     
     @property
+    def stream(self):
+        return self.__stream.index
+    
+    @property
     def thread(self):
         if self.__thread != None:
             return self.__thread.index
         else:
             return None
+            
+    @thread.setter
+    def thread(self, value):
+        self.__thread = value
         
-    def delete(self):
+    def delete(self):        
         self.__sourceConnector.removeConnection(self)
         self.__targetConnector.removeConnection(self)
         
+        if self.__stream != None:
+            self.__stream.removeConnection(self)
         
 class Connections(Items):
-    def addConnection(self, sourceConnector, targetConnector, thread):        
-        connection = Connection(sourceConnector, targetConnector, thread,
-                                self.model)
+    def addConnection(self, stream, sourceConnector, targetConnector, thread):        
+        connection = Connection(stream, sourceConnector, targetConnector,
+                                thread, self.model)
         self.addItem(connection)
         
         sourceConnector.addConnection(connection)
         targetConnector.addConnection(connection)
         
         return connection
+        
+    def addData(self, data):
+        props = data['connection']
+        sourceConnector = self.model.connectors[props['sourceConnector']]
+        targetConnector = self.model.connectors[props['targetConnector']]
+        
+        sourceOp = self.model.operators[sourceConnector.operator]
+        targetOp = self.model.operators[targetConnector.operator]
+        assert(sourceOp.stream == targetOp.stream)
+        
+        try:
+            thread = self.model.threads[props['thread']]
+            assert(thread.stream == sourceOp.stream)
+        except KeyError:
+            thread = None
+        
+        stream = self.model.streams[sourceOp.stream]
+        stream.stromxStream.connect(sourceOp.stromxOp, sourceConnector.stromxId,
+                                    targetOp.stromxOp, targetConnector.stromxId)
+        if thread != None:
+            thread.stromxThread.addInput(targetOp.stromxOp,
+                                         targetConnector.stromxId)
+            
+        connection = self.addConnection(stream, sourceConnector,
+                                        targetConnector, thread)
+        
+        return connection.data
     
 class Thread(Item):
     properties = ['name', 'color', 'stream']
@@ -834,8 +908,14 @@ class Thread(Item):
     def stromxThread(self):
         return self.__thread
         
+    def delete(self):
+        self.__stream.stromxStream.removeThread(self.__thread)
+        for connectionIndex in self.__stream.connections:
+            connection = self.model.connections[connectionIndex]
+            connection.thread = None
+        
 class Threads(Items):
-    def addStromxThread(self, thread, stream = None):
+    def addStromxThread(self, thread, stream):
         threadModel = Thread(thread, stream, self.model)
         self.addItem(threadModel)
         return threadModel
@@ -951,13 +1031,11 @@ class View(Item):
         for observer in self.__view.observers:
             if isinstance(observer, view.ParameterObserver):
                 observers = self.model.parameterObservers
-                observerModel = observers.addStromxObserver(self.__view,
-                                                            observer)
+                observerModel = observers.addStromxObserver(self, observer)
                 self.__parameterObservers.append(observerModel)
             elif isinstance(observer, view.ConnectorObserver):
                 observers = self.model.connectorObservers
-                observerModel = observers.addStromxObserver(self.__view,
-                                                            observer)
+                observerModel = observers.addStromxObserver(self, observer)
                 self.__connectorObservers.append(observerModel)
             else:
                 assert(False)
@@ -989,6 +1067,11 @@ class View(Item):
         return self.__view
     
     def delete(self):
+        streamIndex = self.stream
+        if streamIndex != None:
+            streamModel = self.model.streams[streamIndex]
+            streamModel.removeView(self)
+            
         for observer in self.__parameterObservers:
             self.model.parameterObservers.delete(observer.index)
         
@@ -1000,7 +1083,7 @@ class View(Item):
         observer = self.__view.addParameterObserver(param.stromxOp,
                                                     param.stromxId)
         parameterObservers = self.model.parameterObservers
-        observerModel = parameterObservers.addStromxObserver(self.__view,
+        observerModel = parameterObservers.addStromxObserver(self,
                                                              observer)
         self.__parameterObservers.append(observerModel)
         return observerModel
@@ -1018,7 +1101,7 @@ class View(Item):
                                                     int(connectorType),
                                                     connector.stromxId)
         connectorObservers = self.model.connectorObservers
-        observerModel = connectorObservers.addStromxObserver(self.__view,
+        observerModel = connectorObservers.addStromxObserver(self,
                                                              observer)
         self.__connectorObservers.append(observerModel)
         return observerModel
@@ -1052,28 +1135,17 @@ class Views(Items):
         self.addItem(view)
         return view.data
     
-    def delete(self, index):
-        viewModel = self[index]
-        streamIndex = viewModel.stream
-        
-        if streamIndex != None:
-            streamModel = self.model.streams[streamIndex]
-            streamModel.removeView(viewModel)
-        
-        super(Views, self).delete(index)
-    
 class Observer(Item):
     properties = ['view', 'zvalue', 'visualization', 'color', 'active']
     
-    def __init__(self, stromxView, stromxObserver, model):
+    def __init__(self, view, stromxObserver, model):
         super(Observer, self).__init__(model)
-        self.__view = stromxView
+        self.__view = view
         self.__observer = stromxObserver
         
     @property
     def view(self):
-        viewModel = self.model.views.findViewModel(self.__view)
-        return viewModel.index if viewModel != None else None 
+        return self.__view.index if self.__view != None else None 
     
     @property
     def zvalue(self):
@@ -1110,12 +1182,18 @@ class Observer(Item):
     @property
     def stromxObserver(self):
         return self.__observer
+        
+    def delete(self):
+        if self.__view != None:
+            self.__view.removeObserver(self)
+            
+        super(Observer, self).delete()
     
 class ParameterObserver(Observer):
     properties = Observer.properties + ['parameter', 'view']
     
-    def __init__(self, stromxView, stromxObserver, model):
-        super(ParameterObserver, self).__init__(stromxView, stromxObserver, 
+    def __init__(self, view, stromxObserver, model):
+        super(ParameterObserver, self).__init__(view, stromxObserver, 
                                                 model)
         
     @property
@@ -1132,8 +1210,8 @@ class ParameterObserver(Observer):
 class ConnectorObserver(Observer):
     properties = Observer.properties + ['connector', 'value']
     
-    def __init__(self, stromxView, stromxObserver, model):
-        super(ConnectorObserver, self).__init__(stromxView, stromxObserver,
+    def __init__(self, view, stromxObserver, model):
+        super(ConnectorObserver, self).__init__(view, stromxObserver,
                                                 model)
         self.__value = None
         if stromxObserver.connectorValue:
@@ -1174,19 +1252,14 @@ class ConnectorObserver(Observer):
         connector = self.model.connectors[connectorId]
         connector.removeObserver(self)
         
-class Observers(Items):
-    def delete(self, index):
-        observerModel = self[index]
-        viewIndex = observerModel.view
-        if viewIndex != None:
-            viewModel = self.model.views[viewIndex]
-            viewModel.removeObserver(observerModel)
+        super(ConnectorObserver, self).delete()
         
-        super(Observers, self).delete(index)
+class Observers(Items):
+    pass
     
 class ParameterObservers(Observers):
-    def addStromxObserver(self, stromxView, stromxObserver):
-        observer = ParameterObserver(stromxView, stromxObserver, self.model)
+    def addStromxObserver(self, view, stromxObserver):
+        observer = ParameterObserver(view, stromxObserver, self.model)
         self.addItem(observer)
         return observer
         
@@ -1199,8 +1272,8 @@ class ParameterObservers(Observers):
         return observerModel.data
 
 class ConnectorObservers(Observers):
-    def addStromxObserver(self, stromxView, stromxObserver):
-        observer = ConnectorObserver(stromxView, stromxObserver, self.model)
+    def addStromxObserver(self, view, stromxObserver):
+        observer = ConnectorObserver(view, stromxObserver, self.model)
         self.addItem(observer)
         connectorId = observer.connector
         self.model.connectors[connectorId].addObserver(observer)

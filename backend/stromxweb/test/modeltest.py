@@ -181,7 +181,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                          'type': 'Block',
                                          'version': '0.1.0'}}
                                          
-        self.assertEqual(55, len(self.templates)) 
+        self.assertEqual(51, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -203,6 +203,7 @@ class FilesTest(unittest.TestCase):
     def testDeleteEmptyFile(self):
         self.files.addData({'file': {'name': 'test.stromx'}})
         self.files.delete('1')
+        self.assertEqual(1, len(self.files))
     
     def testDeleteOpenedFile(self):
         self.files.set('0', {'file': {'opened': True}})
@@ -410,12 +411,12 @@ class OperatorsTest(unittest.TestCase):
         
         kernel = stromx.runtime.Receive()
         fileModel = model.File("", self.model)
-        self.stream = model.Stream(fileModel, self.model)
+        self.stream = self.model.streams.addFile(fileModel)
         self.stromxStream = self.stream.stromxStream
         self.stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(self.stromxOp)
         self.stromxOp.setName('Name')
-        self.operator = self.operators.addStromxOp(self.stromxOp)
+        self.operator = self.operators.addStromxOp(self.stromxOp, self.stream)
         
     def testSetName(self):
         self.operators.set('0', {'operator': {'name': 'New name'}})
@@ -441,14 +442,40 @@ class OperatorsTest(unittest.TestCase):
                              'parameters': ['0', '1'],
                              'connectors': ['0'],
                              'position': {'x': 0.0, 'y': 0.0},
-                             'stream': None}}
+                             'stream': '0'}}
         self.assertEqual(data, self.operator.data)
+        
+    def testAddData(self):
+        data = {'operator': {'package': 'runtime',
+                             'type': 'Send',
+                             'stream': '0'}}
+        
+        returned = self.operators.addData(data)
+        
+        self.assertEqual(2, len(self.model.operators))
+        op = self.model.operators['1']
+        
+        self.assertEqual(returned, op.data)
+        self.assertEqual('1', op.data['operator']['id'])
+        self.assertEqual('runtime', op.data['operator']['package'])
+        self.assertEqual('Send', op.data['operator']['type'])
+        self.assertEqual('none', op.data['operator']['status'])
+        self.assertEqual('0', op.data['operator']['stream'])
+        
+    def testAddDataInvalidOperator(self):
+        data = {'operator': {'package': 'package',
+                             'type': 'Invalid',
+                             'stream': '0'}}
+        
+        self.assertRaises(model.AddDataFailed, self.operators.addData, data)
+        
+        self.assertEqual(1, len(self.model.operators))
+        self.assertEqual(1, len(self.model.errors))
         
     def testDataDeinitialized(self):
         kernel = stromx.runtime.Fork()
-        self.stromxStream = stromx.runtime.Stream()
         stromxOp = self.stromxStream.addOperator(kernel)
-        op = self.operators.addStromxOp(stromxOp)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
         
         data = {'operator': {'id': '1', 
                              'name': '',
@@ -459,7 +486,7 @@ class OperatorsTest(unittest.TestCase):
                              'parameters': ['2'],
                              'connectors': [],
                              'position': {'x': 0.0, 'y': 0.0} ,
-                             'stream': None}}
+                             'stream': '0'}}
         self.assertEqual(data, op.data)
     
     def testFindOperatorModel(self):
@@ -472,10 +499,9 @@ class OperatorsTest(unittest.TestCase):
         
     def testSetStatusNone(self):
         kernel = stromx.test.ParameterOperator()
-        self.stromxStream = stromx.runtime.Stream()
         stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(stromxOp)
-        op = self.operators.addStromxOp(stromxOp)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
         
         self.operators.set('1', {'operator': 
                                  {'status': 'none'}
@@ -487,17 +513,16 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'ParameterOperator',
                              'status': 'none',
                              'version': '1.2.3',
-                             'parameters': ['2'],
+                             'parameters': ['10'],
                              'connectors': [],
                              'position': {'x': 0.0, 'y': 0.0},
-                             'stream': None}}
+                             'stream': '0'}}
         self.assertEqual(data, op.data)         
         
     def testSetStatusInitialized(self):
         kernel = stromx.test.ParameterOperator()
-        self.stromxStream = stromx.runtime.Stream()
         stromxOp = self.stromxStream.addOperator(kernel)
-        op = self.operators.addStromxOp(stromxOp)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
         
         self.operators.set('1', {'operator': 
                                  {'status': 'initialized'}
@@ -509,16 +534,17 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'ParameterOperator',
                              'status': 'initialized',
                              'version': '1.2.3',
-                             'parameters': ['2', '3', '4', '5', '6', '7', '8',
-                                            '9'],
+                             'parameters': ['3', '4', '5', '6', '7', '8',
+                                            '9', '10'],
                              'connectors': ['1', '2', '3', '4'],
                              'position': {'x': 0.0, 'y': 0.0},
-                             'stream': None}}
+                             'stream': '0'}}
         self.assertEqual(data, op.data)       
         
     def testDelete(self):
         self.operators.delete('0')
         
+        self.assertFalse(self.stromxOp in self.stromxStream.operators())
         self.assertEqual(dict(), self.model.operators)
         self.assertEqual(dict(), self.model.connectors)
         self.assertEqual(dict(), self.model.parameters)
@@ -531,25 +557,28 @@ class ParametersTest(unittest.TestCase):
         self.model = model.Model()
         self.parameters = self.model.parameters
         
-        self.stream = stromx.runtime.Stream()
+        fileModel = model.File("", self.model)
+        self.stream = self.model.streams.addFile(fileModel)
+        self.stromxStream = self.stream.stromxStream
+        
         kernel = stromx.runtime.Receive()
-        self.receive = self.stream.addOperator(kernel)
+        self.receive = self.stromxStream.addOperator(kernel)
         kernel = stromx.runtime.Fork()
-        self.fork = self.stream.addOperator(kernel)
+        self.fork = self.stromxStream.addOperator(kernel)
         kernel = stromx.cvsupport.DummyCamera()
-        self.dummyCamera = self.stream.addOperator(kernel)
+        self.dummyCamera = self.stromxStream.addOperator(kernel)
         kernel = stromx.test.ExceptionOperator()
-        self.exceptionOperator = self.stream.addOperator(kernel)
+        self.exceptionOperator = self.stromxStream.addOperator(kernel)
         kernel = stromx.test.ParameterOperator()
-        self.parameterOperator = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.fork)
-        self.stream.initializeOperator(self.receive)
-        self.stream.initializeOperator(self.dummyCamera)
-        self.stream.initializeOperator(self.exceptionOperator)
-        self.stream.initializeOperator(self.parameterOperator)
+        self.parameterOperator = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(self.fork)
+        self.stromxStream.initializeOperator(self.receive)
+        self.stromxStream.initializeOperator(self.dummyCamera)
+        self.stromxStream.initializeOperator(self.exceptionOperator)
+        self.stromxStream.initializeOperator(self.parameterOperator)
         
     def testDataUrl(self):
-        self.model.operators.addStromxOp(self.receive)
+        self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['0']
         data = {'parameter': {'descriptions': [],
                               'id': '0',
@@ -564,21 +593,21 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(data, param.data)
         
     def testSetUrl(self):
-        self.model.operators.addStromxOp(self.receive)
+        self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': '127.0.0.1'}})
         self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testSetUrlUnicode(self):
-        self.model.operators.addStromxOp(self.receive)
+        self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': u'127.0.0.1'}})
         self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
         
     def testDataPort(self):
-        self.model.operators.addStromxOp(self.receive)
+        self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['1']
         data = {'parameter': {'descriptions': [],
                               'id': '1',
@@ -593,14 +622,14 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(data, param.data)
         
     def testSetPort(self):
-        self.model.operators.addStromxOp(self.receive)
+        self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['1']
         param.set({'parameter': {'id': '0',
                                  'value': 50000}})
         self.assertEqual(50000, self.receive.getParameter(1).get())
         
     def testDataNumberOfOutputs(self):
-        self.model.operators.addStromxOp(self.fork)
+        self.model.operators.addStromxOp(self.fork, self.stream)
         param = self.parameters['0']
         data = {'parameter': {'descriptions': [],
                               'id': '0',
@@ -615,15 +644,15 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(data, param.data)
         
     def testSetNumberOfOutputs(self):
-        self.model.operators.addStromxOp(self.fork)
-        self.stream.deinitializeOperator(self.fork)
+        self.model.operators.addStromxOp(self.fork, self.stream)
+        self.stromxStream.deinitializeOperator(self.fork)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': 3}})
         self.assertEqual(3, self.fork.getParameter(0).get())
         
     def testDataPixelType(self):
-        self.model.operators.addStromxOp(self.dummyCamera)
+        self.model.operators.addStromxOp(self.dummyCamera, self.stream)
         param = self.parameters['1']
         data = {'parameter': {'descriptions': ['0', '1', '2'],
                               'id': '1',
@@ -638,7 +667,7 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(data, param.data)
         
     def testSetPixelType(self):
-        self.model.operators.addStromxOp(self.dummyCamera)
+        self.model.operators.addStromxOp(self.dummyCamera, self.stream)
         param = self.parameters['1']
         param.set({'parameter': {'id': '1',
                                  'value': 1}})
@@ -665,13 +694,13 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(2, len(self.model.errors))
         
     def __activateExceptionOnParameter(self):
-        self.model.operators.addStromxOp(self.exceptionOperator)
+        self.model.operators.addStromxOp(self.exceptionOperator, self.stream)
         param = self.parameters['5']
         param.set({'parameter': {'id': '0',
                                  'value': 1}})
         
     def testDataTrigger(self):
-        self.model.operators.addStromxOp(self.parameterOperator)
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
         valueParam = self.parameters['6']
         param = self.parameters['7']
         
@@ -679,7 +708,7 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual(0, valueParam.data['parameter']['value'])
         
     def testSetTrigger(self):
-        self.model.operators.addStromxOp(self.parameterOperator)
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
         valueParam = self.parameters['6']
         param = self.parameters['7']
         
@@ -711,53 +740,106 @@ class ConnectionsTest(unittest.TestCase):
         self.model = model.Model()
         self.connections = self.model.connections
         
-        self.stream = stromx.runtime.Stream()
+        fileModel = model.File("", self.model)
+        self.stream = self.model.streams.addFile(fileModel)
+        self.stromxStream = self.stream.stromxStream
+        
         kernel = stromx.runtime.Fork()
-        stromxFork = self.stream.addOperator(kernel)
+        stromxFork = self.stromxStream.addOperator(kernel)
         kernel = stromx.runtime.Receive()
-        stromxReceive = self.stream.addOperator(kernel)
+        stromxReceive = self.stromxStream.addOperator(kernel)
         
-        self.stream.initializeOperator(stromxFork)
-        self.stream.initializeOperator(stromxReceive)
+        self.stromxStream.initializeOperator(stromxFork)
+        self.stromxStream.initializeOperator(stromxReceive)
         
-        self.fork = self.model.operators.addStromxOp(stromxFork)
-        self.receive = self.model.operators.addStromxOp(stromxReceive)
+        self.fork = self.model.operators.addStromxOp(stromxFork, self.stream)
+        self.receive = self.model.operators.addStromxOp(stromxReceive, 
+                                                        self.stream)
         
-        stromxThread = self.stream.addThread()
-        self.thread = self.model.threads.addStromxThread(stromxThread)
+        stromxThread = self.stromxStream.addThread()
+        self.thread = self.model.threads.addStromxThread(stromxThread,
+                                                         self.stream)
         
     def testData(self):
-        source = self.model.connectors['0']
-        target = self.model.connectors['3']
-        connection = self.connections.addConnection(source, target, self.thread)
+        source = self.model.connectors['3']
+        target = self.model.connectors['0']
+        connection = self.connections.addConnection(self.stream, source, target,
+                                                    self.thread)
+        
         data = {'connection': {'id': '0',
                                'thread': '0',
-                               'sourceConnector': '0', 
-                               'targetConnector': '3'}}
+                               'sourceConnector': '3', 
+                               'targetConnector': '0', 
+                               'stream': '0'}}
         self.assertEqual(data, connection.data)
         
         self.assertEqual(['0'], source.data['connector']['connections'])
         self.assertEqual(['0'], target.data['connector']['connections'])
         
+    def testAddData(self):
+        newData = {'connection': {'thread': '0',
+                                  'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+                               
+        returned = self.model.connections.addData(newData)
+        
+        output = self.stromxStream.connectionSource(self.fork.stromxOp, 0)
+        self.assertEqual(output.op(), self.receive.stromxOp)
+        self.assertEqual(output.id(), 0)
+        
+        self.assertEqual(['0'], self.model.streams['0'].connections)
+        
+        thread = self.thread.stromxThread
+        self.assertEqual(self.fork.stromxOp, thread.inputSequence()[0].op())
+        self.assertEqual(0, thread.inputSequence()[0].id())
+        
+        data = self.model.connections['0'].data
+        self.assertEqual(returned, data)
+        self.assertEqual('0', data['connection']['id'])
+        self.assertEqual('0', data['connection']['thread'])
+        self.assertEqual('3', data['connection']['sourceConnector'])
+        self.assertEqual('0', data['connection']['targetConnector'])
+        
+    def testAddDataNoThread(self):
+        newData = {'connection': {'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+                               
+        data = self.model.connections.addData(newData)
+        
+        self.assertEqual(None, data['connection']['thread'])
+        
+    def testAddDataNoneThread(self):
+        newData = {'connection': {'thread': None,
+                                  'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+                               
+        data = self.model.connections.addData(newData)
+        
+        self.assertEqual(None, data['connection']['thread'])
+        
     def testDelete(self):
         source = self.model.connectors['0']
         target = self.model.connectors['3']
-        self.connections.addConnection(source, target, self.thread)
+        self.connections.addConnection(self.stream, source, target, self.thread)
         
         self.model.connections.delete('0')
         
         self.assertEqual([], source.data['connector']['connections'])
         self.assertEqual([], target.data['connector']['connections'])
+        self.assertEqual([], self.stream.connections)
         
 class ConnectorsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         
-        self.stream = stromx.runtime.Stream()
+        fileModel = model.File("", self.model)
+        self.stream = self.model.streams.addFile(fileModel)
+        self.stromxStream = self.stream.stromxStream
+        
         kernel = stromx.runtime.Fork()
-        stromxOp = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(stromxOp)
-        self.model.operators.addStromxOp(stromxOp)
+        stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(stromxOp)
+        self.model.operators.addStromxOp(stromxOp, self.stream)
         
     def testData(self):
         connector = self.model.connectors['2']
@@ -772,7 +854,7 @@ class ConnectorsTest(unittest.TestCase):
     def testDelete(self):
         source = self.model.connectors['0']
         target = self.model.connectors['1']
-        self.model.connections.addConnection(source, target, None)
+        self.model.connections.addConnection(self.stream, source, target, None)
         
         self.model.connectors.delete('0')
         
@@ -784,31 +866,59 @@ class ThreadsTest(unittest.TestCase):
         self.model = model.Model()
         self.threads = self.model.threads
         
-        self.stream = stromx.runtime.Stream()
-        self.thread = self.stream.addThread()
+        fileModel = model.File("", self.model)
+        self.stream = self.model.streams.addFile(fileModel)
+        self.stromxStream = self.stream.stromxStream
         
+        self.stromxThread = self.stromxStream.addThread()
         color = stromx.runtime.Color(255, 0, 0)
-        self.thread.setColor(color)
-        self.thread.setName('Thread')
+        self.stromxThread.setColor(color)
+        self.stromxThread.setName('Thread')
+        self.thread = self.threads.addStromxThread(self.stromxThread, self.stream)
         
         kernel = stromx.runtime.Fork()
-        self.stromxFork = self.stream.addOperator(kernel)
-        self.stream.initializeOperator(self.stromxFork)
-        self.thread.addInput(self.stromxFork, 0)
+        self.stromxFork = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(self.stromxFork)
+        self.fork = self.model.operators.addStromxOp(self.stromxFork, 
+                                                     self.stream)
+                                                     
+        kernel = stromx.runtime.Receive()
+        self.stromxReceive = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(self.stromxReceive)
+        self.recive = self.model.operators.addStromxOp(self.stromxReceive, 
+                                                     self.stream)
+                                                     
+        data = {'connection': {'thread': '0',
+                               'sourceConnector': '3', 
+                               'targetConnector': '0'}}
+        self.model.connections.addData(data)
+        self.connection = self.model.connections['0']
         
     def testData(self):
-        thread = self.threads.addStromxThread(self.thread)
         data = {'thread': {'color': '#ff0000',
                            'id': '0',
                            'name': 'Thread',
-                           'stream': None}}
-        self.assertEqual(data, thread.data)
+                           'stream': '0'}}
+        self.assertEqual(data, self.thread.data)
         
     def testFindThreadModel(self):
-        thread = self.threads.addStromxThread(self.thread)
+        self.stromxThread.addInput(self.stromxFork, 0)   
         stromxInput = self.stromxFork.info().inputs()[0]
+        
         foundThread = self.threads.findThreadModel(self.stromxFork, stromxInput)
-        self.assertEqual(thread, foundThread)
+        
+        self.assertEqual(self.thread, foundThread)
+        
+    def testAddData(self):
+        self.threads.addData({'thread': {'color': '#ff0000',
+                                         'stream': '0'}})
+        
+    def testDelete(self):
+        self.model.threads.delete(self.thread.index)
+        
+        self.assertEqual(0, len(self.model.threads))
+        self.assertEqual(0, len(self.stromxStream.threads()))
+        self.assertEqual(None, self.connection.thread)
     
 class ViewsTest(unittest.TestCase):
     def setUp(self):
@@ -830,12 +940,13 @@ class ViewsTest(unittest.TestCase):
                              'observers': [],
                              'stream': '0'}}
         
-        self.model.views.addData(viewData)
+        returned = self.model.views.addData(viewData)
         
         refData = {'view': {'id': '0',
                             'name': 'View name',
                             'observers': [],
                             'stream': '0'}}
+        self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.views['0'].data)
         self.assertEqual(['0'], stream.views)
         
@@ -933,7 +1044,7 @@ class ParameterObserversTest(unittest.TestCase):
                                       'parameter': '2',
                                       'view': '0'}}
         
-        self.model.parameterObservers.addData(data)
+        returned = self.model.parameterObservers.addData(data)
         
         refData = {'parameterObserver': {'id': '0',
                                          'parameter': '2',
@@ -942,6 +1053,7 @@ class ParameterObserversTest(unittest.TestCase):
                                          'color': '#000000',
                                          'visualization': 'default',
                                          'zvalue': 0}}
+        self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.parameterObservers['0'].data)
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'parameterObserver'}],
@@ -980,7 +1092,7 @@ class ConnectorObserversTest(unittest.TestCase):
                                       'connector': '2',
                                       'view': '0'}}
         
-        self.model.connectorObservers.addData(data)
+        returned = self.model.connectorObservers.addData(data)
         
         refData = {'connectorObserver': {'id': '0',
                                          'connector': '2',
@@ -990,6 +1102,7 @@ class ConnectorObserversTest(unittest.TestCase):
                                          'color': '#000000',
                                          'visualization': 'default',
                                          'zvalue': 0}}
+        self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.connectorObservers['0'].data)
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],

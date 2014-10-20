@@ -57,10 +57,13 @@ class ItemsHandler(tornado.web.RequestHandler):
             self.set_status(httplib.NOT_FOUND)
         
     def post(self):
-        data = tornado.escape.json_decode(self.request.body)
-        item = self.items.addData(data)
-        json = tornado.escape.json_encode(item)
-        self.write(json)  
+        try:
+            data = tornado.escape.json_decode(self.request.body)
+            item = self.items.addData(data)
+            json = tornado.escape.json_encode(item)
+            self.write(json) 
+        except model.AddDataFailed:
+            self.set_status(httplib.NOT_FOUND)
     
     def delete(self, index):
         try:
