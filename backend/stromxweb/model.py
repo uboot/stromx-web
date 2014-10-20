@@ -928,6 +928,13 @@ class Threads(Items):
         ]
         assert(len(threads) <= 1)
         return threads[0] if len(threads) else None
+    
+    def addData(self, data):
+        stream = self.model.streams[data['thread']['stream']]
+        stromxThread = stream.stromxStream.addThread()
+        
+        thread = self.addStromxThread(stromxThread, stream)
+        return thread.data
         
     def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
         for connector in sequence:

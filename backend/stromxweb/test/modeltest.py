@@ -910,8 +910,14 @@ class ThreadsTest(unittest.TestCase):
         self.assertEqual(self.thread, foundThread)
         
     def testAddData(self):
-        self.threads.addData({'thread': {'color': '#ff0000',
-                                         'stream': '0'}})
+        self.threads.addData({'thread': {'stream': '0'}})
+        
+        refData = {'thread': {'color': '#000000',
+                              'id': '1', 'name': '',
+                              'stream': '0'}}
+        self.assertEqual(2, len(self.model.threads))
+        self.assertEqual(2, len(self.stromxStream.threads()))
+        self.assertEqual(refData, self.model.threads['1'].data)
         
     def testDelete(self):
         self.model.threads.delete(self.thread.index)
