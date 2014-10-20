@@ -896,9 +896,18 @@ class Thread(Item):
     def name(self):
         return self.__thread.name()
     
+    @name.setter
+    def name(self, value):
+        if self.name != str(value):
+            self.__thread.setName(str(value))
+    
     @property
     def color(self):
         return conversion.stromxColorToString(self.__thread.color())
+    
+    @color.setter
+    def color(self, value):
+        self.__thread.setColor(conversion.stringToStromxColor(value))
     
     @property
     def stream(self):

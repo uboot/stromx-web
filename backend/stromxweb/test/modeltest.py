@@ -808,6 +808,9 @@ class ConnectionsTest(unittest.TestCase):
         
         self.assertEqual(None, data['connection']['thread'])
         
+    def testSetThread(self):
+        assert(False)
+        
     def testAddDataNoneThread(self):
         newData = {'connection': {'thread': None,
                                   'sourceConnector': '3', 
@@ -908,6 +911,17 @@ class ThreadsTest(unittest.TestCase):
         foundThread = self.threads.findThreadModel(self.stromxFork, stromxInput)
         
         self.assertEqual(self.thread, foundThread)
+        
+    def testSetColor(self):
+        self.threads.set('0', {'thread': {'color': '#0000ff'}})
+        
+        self.assertEqual(stromx.runtime.Color(0, 0, 255),
+                         self.thread.stromxThread.color())
+        
+    def testSetName(self):
+        self.threads.set('0', {'thread': {'name': 'New name'}})
+        
+        self.assertEqual("New name", self.thread.stromxThread.name())
         
     def testAddData(self):
         self.threads.addData({'thread': {'stream': '0'}})
