@@ -807,9 +807,7 @@ class ConnectionsTest(unittest.TestCase):
         data = self.model.connections.addData(newData)
         
         self.assertEqual(None, data['connection']['thread'])
-        
-    def testSetThread(self):
-        assert(False)
+        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testAddDataNoneThread(self):
         newData = {'connection': {'thread': None,
@@ -819,6 +817,38 @@ class ConnectionsTest(unittest.TestCase):
         data = self.model.connections.addData(newData)
         
         self.assertEqual(None, data['connection']['thread'])
+        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
+        
+    def testAddDataInputConnected(self):
+        newData = {'connection': {'thread': None,
+                                  'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+        data = self.model.connections.addData(newData)
+        
+        self.assertRaises(model.AddDataFailed, self.model.connections.addData,
+                          newData)
+        
+    def testSetThread(self):
+        newData = {'connection': {'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+        self.model.connections.addData(newData)
+        
+        self.model.connections.set('0', {'connection': {'thread': '0'}})
+        
+        thread = self.thread.stromxThread
+        self.assertEqual(self.fork.stromxOp, thread.inputSequence()[0].op())
+        self.assertEqual(0, thread.inputSequence()[0].id())
+        
+    def testSetNoneThread(self):
+        newData = {'connection': {'thread': '0',
+                                  'sourceConnector': '3', 
+                                  'targetConnector': '0'}}
+        self.model.connections.addData(newData)
+        
+        self.model.connections.set('0', {'connection': {'thread': None}})
+        
+        thread = self.thread.stromxThread
+        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testDelete(self):
         source = self.model.connectors['0']
