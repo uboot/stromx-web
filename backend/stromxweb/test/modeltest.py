@@ -539,7 +539,30 @@ class OperatorsTest(unittest.TestCase):
                              'connectors': ['1', '2', '3', '4'],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
-        self.assertEqual(data, op.data)       
+        self.assertEqual(data, op.data)
+        
+    def testSetStatusInitializedAlreadyInitialized(self):
+        kernel = stromx.test.ParameterOperator()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(stromxOp)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
+        
+        self.operators.set('1', {'operator': 
+                                 {'status': 'initialized'}
+                                })
+                                
+        self.assertEqual('initialized', op.data['operator']['status'])    
+        
+    def testSetStatusNoneAlreadyNone(self):
+        kernel = stromx.test.ParameterOperator()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
+        
+        self.operators.set('1', {'operator': 
+                                 {'status': 'none'}
+                                })
+                                
+        self.assertEqual('none', op.data['operator']['status'])      
         
     def testDelete(self):
         self.operators.delete('0')

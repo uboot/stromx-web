@@ -566,6 +566,9 @@ class Operator(Item):
         
     @status.setter
     def status(self, value):
+        if value == self.status:
+            return
+            
         if value == 'none':
             self.__removeParameters()
             self.__removeConnectors()
