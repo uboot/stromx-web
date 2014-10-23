@@ -1,5 +1,11 @@
 /* global App, Snap */
 
+App.Constants = {
+  OPERATOR_SIZE: 50,
+  OPERATOR_RADIUS: 5,
+  CONNECTOR_SIZE: 10
+};
+
 App.SceneOperatorComponent = Ember.Component.extend({
   group: null,
 
@@ -26,7 +32,11 @@ App.SceneOperatorComponent = Ember.Component.extend({
     opName.attr({
       class: 'stromx-svg-operator-name'
     });
-    var opRect = paper.rect(0, 0, 50, 50, 5, 5);
+    var opRect = paper.rect(0, 0,
+                            App.Constants.OPERATOR_SIZE, 
+                            App.Constants.OPERATOR_SIZE,
+                            App.Constants.OPERATOR_RADIUS,
+                            App.Constants.OPERATOR_RADIUS);
     opRect.attr({
       class: 'stromx-svg-operator-rect'
     });
@@ -34,13 +44,17 @@ App.SceneOperatorComponent = Ember.Component.extend({
 
     op.get('inputs').then(function(inputs) {
       var numConnectors = inputs.get('length');
-      var offset = 30 - 10 * numConnectors;
+      var opCenter = (App.Constants.OPERATOR_SIZE +
+                      App.Constants.CONNECTOR_SIZE) / 2;
+      var offset = opCenter - App.Constants.CONNECTOR_SIZE * numConnectors;
 
       inputs.map( function(input, index) {
-        var x = -10;
-        var y = offset + 20 * index;
+        var x = - App.Constants.CONNECTOR_SIZE;
+        var y = offset + 2 * App.Constants.CONNECTOR_SIZE * index;
 
-        var inputRect = paper.rect(x, y, 10, 10);
+        var inputRect = paper.rect(x, y,
+                                   App.Constants.CONNECTOR_SIZE,
+                                   App.Constants.CONNECTOR_SIZE);
         inputRect.attr({
           class: 'stromx-svg-input-rect'
         });
@@ -50,13 +64,17 @@ App.SceneOperatorComponent = Ember.Component.extend({
 
     op.get('outputs').then(function(outputs) {
       var numConnectors = outputs.get('length');
-      var offset = 30 - 10 * numConnectors;
+      var opCenter = (App.Constants.OPERATOR_SIZE +
+                      App.Constants.CONNECTOR_SIZE) / 2;
+      var offset = opCenter - App.Constants.CONNECTOR_SIZE * numConnectors;
 
       outputs.map( function(output, index) {
-        var x = 50;
-        var y = offset + 20 * index;
+        var x = App.Constants.OPERATOR_SIZE;
+        var y = offset + 2 * App.Constants.CONNECTOR_SIZE * index;
 
-        var outputRect = paper.rect(x, y, 10, 10);
+        var outputRect = paper.rect(x, y,
+                                   App.Constants.CONNECTOR_SIZE,
+                                   App.Constants.CONNECTOR_SIZE);
         outputRect.attr({
           class: 'stromx-svg-input-rect'
         });

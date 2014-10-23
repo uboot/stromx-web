@@ -27,7 +27,7 @@ h1 {
 }
 
 .stromx-svg-operator-rect{
-  fill-opacity: 0.0;
+  fill: transparent;
   stroke: black;
   stroke-width: 2;
 }
@@ -36,7 +36,9 @@ h1 {
   text-anchor: middle;
 }
 
-.stromx-svg-connection-line{
+.stromx-svg-connection-path{
   stroke-width: 4;
+  fill: transparent;
+  pointer-events: stroke
 }
 
