@@ -2,7 +2,7 @@
 
 App.ModalDialogComponent = Ember.Component.extend({
   didInsertElement: function() {
-    Ember.run.next(this,function(){
+    Ember.run.scheduleOnce('afterRender', this, function() {
       this.$('.modal').modal('show');
     });
   },

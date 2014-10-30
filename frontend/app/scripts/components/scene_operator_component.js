@@ -88,6 +88,9 @@ App.SceneOperatorComponent = Ember.Component.extend({
       function(x, y) { _this.startDrag(x, y); },
       function(){ _this.endDrag(); }
     );
+    group.click( function(event) {
+      _this.onClick(event);
+    });
 
     this.updatePosition();
   },
@@ -130,5 +133,11 @@ App.SceneOperatorComponent = Ember.Component.extend({
   endDrag: function(dx, dy){
     var op = this.get('operator');
     op.send('save');
+  },
+  
+  onClick: function(event) {
+    var op = this.get('operator');
+    op.send('showContextMenu', 'operatorMenu', event, op);
+    return false;
   }
 });

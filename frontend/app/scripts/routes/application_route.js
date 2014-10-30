@@ -26,10 +26,10 @@ App.ApplicationRoute = Ember.Route.extend({
   },
 
   actions: {
-    showModal: function(modal, model) {
-      var controller = this.controllerFor(modal);
+    showModal: function(template, model) {
+      var controller = this.controllerFor(template);
       controller.set('model', model);
-      return this.render(modal, {
+      return this.render(template, {
         into: 'application',
         outlet: 'modal',
         controller: controller
@@ -39,6 +39,24 @@ App.ApplicationRoute = Ember.Route.extend({
       return this.disconnectOutlet({
         outlet: 'modal',
         parentView: 'application'
+      });
+    },
+    showContextMenu: function(template, event, controller) {
+      this.render(template, {
+        into: 'application',
+        outlet: 'context',
+        controller: controller
+      });
+      
+      Ember.run.scheduleOnce('afterRender', this, function() {
+        $('.context').show().css({
+          position: "absolute",
+          left: event.pageX,
+          top: event.pageY
+        });
+        $('body').click(function () {
+          $('.context').hide();
+        });
       });
     }
   }

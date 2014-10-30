@@ -1,6 +1,8 @@
 /* global App */
 
 App.OperatorController = Ember.ObjectController.extend({
+  needs: 'stream',
+  
   fullType: function() {
     return this.get('package') + '::' + this.get('type');
   }.property('type', 'package'),
@@ -44,6 +46,12 @@ App.OperatorController = Ember.ObjectController.extend({
     save: function() {
       var model = this.get('model');
       model.save();
+    },
+    initialize: function() {
+      console.log('initialize ' + this.get('name'));
+    },
+    deinitialize: function() {
+      console.log('deinitialize ' + this.get('name'));
     }
   }
 });
