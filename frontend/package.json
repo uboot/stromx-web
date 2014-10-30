@@ -20,7 +20,7 @@
     "grunt-contrib-qunit": "^0.4.0",
     "grunt-contrib-uglify": "^0.2.7",
     "grunt-contrib-watch": "^0.5.3",
-    "grunt-ember-templates": "^0.4.14",
+    "grunt-ember-templates": "^0.4.22",
     "grunt-neuter": "^0.5.0",
     "grunt-open": "~0.2.0",
     "grunt-replace": "^0.4.4",
