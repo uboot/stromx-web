@@ -4,24 +4,28 @@
   {{#if active}}
     {{#if paused}}
       <div class="btn-group">
-        {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
         <button type="button" {{action "resume" }} class="btn btn-default">Resume</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
       </div>
     {{else}}
       <div class="btn-group">
-        {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
         <button type="button" {{action "pause"}} class="btn btn-default">Pause</button>
         <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
       </div>
     {{/if}}
   {{else}}
     <div class="btn-group">
-      {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
       <button type="button" {{action "start"}} class="btn btn-default">Start</button>
       <button type="button" {{action "close"}} class="btn btn-default close-button">Close</button>
     </div>
   {{/if}}
+</div>
+
+<div class="stromx-center-buttons">
+  <div class="btn-group">
+    {{#link-to 'stream.newThread' type="button" class="btn btn-default"}}New Thread{{/link-to}}
+    {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
+  </div>
 </div>
 
 {{outlet}}
@@ -58,6 +62,44 @@
         </td>
         <td>
           {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+        </td>
+      </tr>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Thread</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each threads itemController="thread"}}
+      <tr>
+        <td>
+          {{#if isEditingName}}
+            {{input value=name}}
+          {{else}}
+            {{name}}
+          {{/if}}
+        </td>
+        <td>
+          {{#if isEditingName}}
+            <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+          {{else}}
+            <div class="btn-group">
+              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                Action <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a {{action "rename"}}>Rename</a></li>
+                <li><a {{action "showModal" "removeThread" this}}>Remove</a></li>
+              </ul>
+            </div>
+          {{/if}}
         </td>
       </tr>
     </tr>

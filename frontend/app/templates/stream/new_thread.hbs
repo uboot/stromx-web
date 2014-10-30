@@ -1,0 +1,9 @@
+ <div class="panel panel-default">
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="newThread">Name</label>
+      {{input valueBinding="viewName" class="form-control" placeholder="Enter thread name" id="newThread"}}
+    </div>
+    <button {{action 'saveView'}} type="submit" class="btn btn-default">Save</button>
+  </div>
+</div>
