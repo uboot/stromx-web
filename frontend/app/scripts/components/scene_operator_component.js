@@ -40,8 +40,33 @@ App.SceneOperatorComponent = Ember.Component.extend({
     opRect.attr({
       class: 'stromx-svg-operator-rect'
     });
-    group.add(opName, opRect);
 
+    opRect.drag(
+      this.moveOperatorDrag,
+      this.startOperatorDrag,
+      this.endOperatorDrag,
+      this, this, this
+    );
+    opRect.click(this.onClick, this);
+    
+    group.add(opName, opRect);
+    
+    this.updateConnectors();
+    this.updatePosition();
+  },
+
+  willDestroyElement: function() {
+    var group = this.get('group');
+    if (group)
+      group.remove();
+    this.set('group', null);
+  },
+  
+  updateConnectors: function() {
+    var group = this.get('group');
+    var op = this.get('operator');
+    var _this = this;
+    
     op.get('inputs').then(function(inputs) {
       var numConnectors = inputs.get('length');
       var opCenter = (App.Constants.OPERATOR_SIZE +
@@ -49,6 +74,7 @@ App.SceneOperatorComponent = Ember.Component.extend({
       var offset = opCenter - App.Constants.CONNECTOR_SIZE * numConnectors;
 
       inputs.map( function(input, index) {
+        var paper = new Snap('#stream-svg');
         var x = - App.Constants.CONNECTOR_SIZE;
         var y = offset + 2 * App.Constants.CONNECTOR_SIZE * index;
 
@@ -58,6 +84,12 @@ App.SceneOperatorComponent = Ember.Component.extend({
         inputRect.attr({
           class: 'stromx-svg-input-rect'
         });
+        inputRect.drag(
+          _this.moveConnectorDrag,
+          _this.startConnectorDrag,
+          _this.endConnectorDrag,
+          _this, _this, _this
+        );
         group.add(inputRect);
       });
     });
@@ -69,38 +101,25 @@ App.SceneOperatorComponent = Ember.Component.extend({
       var offset = opCenter - App.Constants.CONNECTOR_SIZE * numConnectors;
 
       outputs.map( function(output, index) {
+        var paper = new Snap('#stream-svg');
         var x = App.Constants.OPERATOR_SIZE;
         var y = offset + 2 * App.Constants.CONNECTOR_SIZE * index;
 
-        var outputRect = paper.rect(x, y,
-                                   App.Constants.CONNECTOR_SIZE,
-                                   App.Constants.CONNECTOR_SIZE);
+        var outputRect = paper.rect(x, y, App.Constants.CONNECTOR_SIZE,
+                                    App.Constants.CONNECTOR_SIZE);
         outputRect.attr({
-          class: 'stromx-svg-input-rect'
+          class: 'stromx-svg-output-rect'
         });
+        outputRect.drag(
+          _this.moveConnectorDrag,
+          _this.startConnectorDrag,
+          _this.endConnectorDrag,
+          _this, _this, _this
+        );
         group.add(outputRect);
       });
     });
-
-    var _this = this;
-    group.drag(
-      function(dx, dy) { _this.moveDrag(dx, dy); },
-      function(x, y) { _this.startDrag(x, y); },
-      function(){ _this.endDrag(); }
-    );
-    group.click( function(event) {
-      _this.onClick(event);
-    });
-
-    this.updatePosition();
-  },
-
-  willDestroyElement: function() {
-    var group = this.get('group');
-    if (group)
-      group.remove();
-    this.set('group', null);
-  },
+  }.observes('operator.connectors'),
 
   updatePosition: function() {
     var op = this.get('operator');
@@ -112,27 +131,80 @@ App.SceneOperatorComponent = Ember.Component.extend({
     group.transform(translation);
   }.observes('operator.position'),
 
-  startDrag: function(x, y) {
-    var op = this.get('operator');
-
-    this.set('startDragPos', op.get('position'));
+  startOperatorDrag: function(x, y) {
+    var paper = new Snap('#stream-svg');
+    var transform = paper.node.getScreenCTM().inverse();
+    var point = paper.node.createSVGPoint()
+    point.x = x;
+    point.y = y;
+    point = point.matrixTransform(transform);
+    
+    var opPos = this.get('operator.position');
+    this.set('dragOffset', {
+      x: point.x - opPos.x,
+      y: point.y - opPos.y
+    });
   },
 
-  moveDrag: function(dx, dy){
-    var group = this.get('group');
-    var op = this.get('operator');
-
-    var startDragPos = this.get('startDragPos');
+  moveOperatorDrag: function(dx, dy, x, y) {
+    var paper = new Snap('#stream-svg');
+    var transform = paper.node.getScreenCTM().inverse();
+    var point = paper.node.createSVGPoint()
+    point.x = x;
+    point.y = y;
+    point = point.matrixTransform(transform);
+    
+    var dragOffset = this.get('dragOffset');
     var pos = {
-      x: startDragPos.x + dx,
-      y: startDragPos.y + dy
+      x: point.x - dragOffset.x,
+      y: point.y - dragOffset.y
     };
+    
+    var op = this.get('operator');
     op.set('position', pos);
   },
 
-  endDrag: function(dx, dy){
+  endOperatorDrag: function(dx, dy){
     var op = this.get('operator');
     op.send('save');
+  },
+
+  startConnectorDrag: function(x, y) {
+    var paper = new Snap('#stream-svg');
+    var connection = paper.line();
+    var transform = connection.node.getScreenCTM().inverse();
+    var point = paper.node.createSVGPoint()
+    point.x = x;
+    point.y = y;
+    point = point.matrixTransform(transform);
+    connection.attr({
+      stroke: '#cccccc',
+      x1: point.x,
+      y1: point.y,
+      x2: point.x,
+      y2: point.y
+    });
+    
+    this.set('connection', connection);
+  },
+
+  moveConnectorDrag: function(dx, dy, x, y) {
+    var paper = new Snap('#stream-svg');
+    var connection = this.get('connection');
+    var transform = connection.node.getScreenCTM().inverse();
+    var point = paper.node.createSVGPoint(x, y).matrixTransform(transform);
+    point.x = x;
+    point.y = y;
+    point = point.matrixTransform(transform);
+    connection.attr({
+      x2: point.x,
+      y2: point.y
+    });
+  },
+
+  endConnectorDrag: function(dx, dy){
+    var connection = this.get('connection');
+    connection.remove();
   },
   
   onClick: function(event) {

@@ -16,29 +16,40 @@ h1 {
   height: 50px;
 }
 
-.stromx-stream-view{
+.stromx-stream-view {
   max-height: 300px;
   overflow: auto;
 }
 
-.stromx-view-view{
+.stromx-view-view {
   max-height: 300px;
   overflow: auto;
 }
 
-.stromx-svg-operator-rect{
+.stromx-svg-operator-rect {
   fill: transparent;
   stroke: black;
   stroke-width: 2;
 }
 
-.stromx-svg-operator-name{
+.stromx-svg-operator-name {
   text-anchor: middle;
 }
 
-.stromx-svg-connection-path{
+.stromx-svg-connection-path {
   stroke-width: 4;
   fill: transparent;
   pointer-events: stroke
+}
+
+.stromx-svg-connector-rect {
+}
+
+.stromx-svg-output-rect {
+  @extend .stromx-svg-connector-rect;
+}
+
+.stromx-svg-input-rect {
+  @extend .stromx-svg-connector-rect;
 }
 
