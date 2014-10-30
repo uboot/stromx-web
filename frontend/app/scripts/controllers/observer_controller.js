@@ -19,29 +19,31 @@ App.ObserverController = Ember.ObjectController.extend({
   title: function() {
     if (this.get('model') instanceof App.ParameterObserver)
       return this.get('parameterTitle');
-    else if (this.get('model') instanceof App.ConnectorObserver)
-      return this.get('connectorTitle');
+    else if (this.get('model') instanceof App.InputObserver)
+      return this.get('inputTitle');
     else
       return '';
-  }.property('parameterTitle', 'connectorTitle'),
+  }.property('parameterTitle', 'inputTitle'),
 
   parameterTitle: function() {
     var parameter = this.get('parameter');
-    var operator = parameter.get('operator');
-    if (operator)
-      return parameter.get('title') + " at " + operator.get('name');
-    else
-      return '';
+    var name = parameter.get('operator.name');
+    var title = parameter.get('title');
+    if (name)
+      title += " at " + name;
+    
+    return title;
   }.property('parameter.title', 'parameter.operator.name'),
 
-  connectorTitle: function() {
-    var connector = this.get('connector');
-    var operator = connector.get('operator');
-    if (operator)
-      return connector.get('title') + " at " + operator.get('name');
-    else
-      return '';
-  }.property('connector.title', 'connector.operator.name'),
+  inputTitle: function() {
+    var input = this.get('input');
+    var name = input.get('operator.name');
+    var title = input.get('title');
+    if (name)
+      title += " at " + name;
+    
+    return title;
+  }.property('input.title', 'input.operator.name'),
 
   actions: {
     moveUp: function() {

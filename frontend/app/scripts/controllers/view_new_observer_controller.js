@@ -24,7 +24,7 @@ App.ViewNewObserverController = Ember.Controller.extend({
     switch(targetType)
     {
     case 0:
-      return operator.get('connectors');
+      return operator.get('inputs');
     case 1:
       return operator.get('parameters');
     }
@@ -41,9 +41,9 @@ App.ViewNewObserverController = Ember.Controller.extend({
           var numObservers = observers.get('length');
           var observer = null;
 
-          if (target instanceof App.Connector) {
-            observer = store.createRecord('connector_observer', {
-              connector: target,
+          if (target instanceof App.Input) {
+            observer = store.createRecord('input_observer', {
+              input: target,
               view: model,
               zvalue: numObservers + 1,
               color: '#000000',

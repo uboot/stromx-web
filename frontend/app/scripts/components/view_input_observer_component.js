@@ -1,11 +1,11 @@
 /* global App, Snap */
 
-App.ViewConnectorObserverComponent = Ember.Component.extend({
+App.ViewInputObserverComponent = Ember.Component.extend({
   group: null,
 
   didInsertElement: function() {
     var paper = new Snap('#view-svg');
-    var observer = this.get('connectorObserver');
+    var observer = this.get('inputObservers');
 
     var group = paper.group();
     var zvalue = observer.get('zvalue');
@@ -23,7 +23,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
   },
 
   updateContent: function() {
-    var observer = this.get('connectorObserver');
+    var observer = this.get('inputObservers');
     var variant = this.get('variant');
     var value = this.get('value');
     if (!value)
@@ -55,11 +55,11 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
     }
     _this.set('group', group);
     _this.updateZValue();
-  }.observes('connectorObserver.color', 'value'),
+  }.observes('inputObservers.color', 'value'),
 
   updateZValue: function() {
     var group = this.get('group');
-    var observer = this.get('connectorObserver');
+    var observer = this.get('inputObservers');
     var zvalue = observer.get('zvalue');
     group.data('zvalue', zvalue);
 
@@ -77,7 +77,7 @@ App.ViewConnectorObserverComponent = Ember.Component.extend({
 
     if (groupAbove)
       group.insertBefore(groupAbove);
-  }.observes('connectorObserver.zvalue'),
+  }.observes('inputObservers.zvalue'),
 
   paintDefault: function(observer, group, value) {
     var variant = this.get('variant');

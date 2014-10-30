@@ -16,8 +16,8 @@
 {{#each parameterObservers itemController="parameterObserver"}}
 {{/each}}
 
-{{#each connectorObservers itemController="connectorObserver"}}
-  {{view-connector-observer connectorObserver=this variant=value.variant value=value.value}}
+{{#each inputObservers itemController="inputObserver"}}
+  {{view-input-observer inputObservers=this variant=value.variant value=value.value}}
 {{/each}}
 
 <table class="table">

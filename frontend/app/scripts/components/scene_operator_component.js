@@ -26,12 +26,6 @@ App.SceneOperatorComponent = Ember.Component.extend({
     group = paper.group();
     this.set('group', group);
 
-    var op = this.get('operator');
-    var name = op.get('name');
-    var opName = paper.text(25, 65, name);
-    opName.attr({
-      class: 'stromx-svg-operator-name'
-    });
     var opRect = paper.rect(0, 0,
                             App.Constants.OPERATOR_SIZE, 
                             App.Constants.OPERATOR_SIZE,
@@ -49,8 +43,9 @@ App.SceneOperatorComponent = Ember.Component.extend({
     );
     opRect.click(this.onClick, this);
     
-    group.add(opName, opRect);
+    group.add(opRect);
     
+    this.updateName();
     this.updateConnectors();
     this.updatePosition();
   },
@@ -61,6 +56,18 @@ App.SceneOperatorComponent = Ember.Component.extend({
       group.remove();
     this.set('group', null);
   },
+  
+  updateName: function() {
+    var paper = new Snap('#stream-svg');
+    var group = this.get('group');
+    var op = this.get('operator');
+    var name = op.get('name');
+    var opName = paper.text(25, 65, name);
+    opName.attr({
+      class: 'stromx-svg-operator-name'
+    });
+    group.add(opName);
+  }.observes('operator.name'),
   
   updateConnectors: function() {
     var group = this.get('group');
@@ -119,11 +126,15 @@ App.SceneOperatorComponent = Ember.Component.extend({
         group.add(outputRect);
       });
     });
-  }.observes('operator.connectors'),
+  }.observes('operator.inputs', 'operator.outputs'),
 
   updatePosition: function() {
     var op = this.get('operator');
     var pos = op.get('position');
+    
+    if (pos === undefined)
+      return;
+      
     var translation = new Snap.Matrix();
     translation.translate(pos.x, pos.y);
 

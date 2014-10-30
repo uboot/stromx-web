@@ -13,11 +13,11 @@ App.View.FIXTURES = [
     observers: [
       {
         id: 0,
-        type: 'connectorObserver'
+        type: 'inputObserver'
       },
       {
         id: 2,
-        type: 'connectorObserver'
+        type: 'inputObserver'
       },
       {
         id: 0,
@@ -25,7 +25,7 @@ App.View.FIXTURES = [
       },
       {
         id: 3,
-        type: 'connectorObserver'
+        type: 'inputObserver'
       }
     ],
     stream: 2

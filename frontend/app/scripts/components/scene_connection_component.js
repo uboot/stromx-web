@@ -160,18 +160,18 @@ App.SceneConnectionComponent = Ember.Component.extend({
     var path = this.get('path');
 
     var promises = {
-      sourceConnector: connection.get('sourceConnector'),
-      targetConnector: connection.get('targetConnector'),
-      sourceOpConnectors: connection.get('sourceConnector.operator.connectors'),
-      targetOpConnectors: connection.get('targetConnector.operator.connectors'),
-      sourcePos: connection.get('sourceConnector.operator.position'),
-      targetPos: connection.get('targetConnector.operator.position')
+      sourceConnector: connection.get('output'),
+      targetConnector: connection.get('input'),
+      sourceOpOutputs: connection.get('output.operator.outputs'),
+      targetOpInputs: connection.get('input.operator.inputs'),
+      sourcePos: connection.get('output.operator.position'),
+      targetPos: connection.get('input.operator.position')
     };
 
     Ember.RSVP.hash(promises).then( function(values) {
-      if (values.sourceOpConnectors === undefined || values.targetOpConnectors === undefined)
+      if (values.sourceOpOutputs === undefined || values.targetOpInputs === undefined)
         return;
-      if (values.sourceOpConnectors === null || values.targetOpConnectors === null)
+      if (values.sourceOpOutputs === null || values.targetOpInputs === null)
         return;
 
       if (values.sourcePos === undefined || values.sourcePos === undefined)
@@ -179,8 +179,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
       if (values.targetPos === null || values.targetPos === null)
         return;
 
-      var outputs = values.sourceOpConnectors.filterBy('connectorType', 'output');
-      var inputs = values.targetOpConnectors.filterBy('connectorType', 'input');
+      var outputs = values.sourceOpOutputs;
+      var inputs = values.targetOpInputs;
 
       var numInputs = inputs.get('length');
       var numOutputs = outputs.get('length');
@@ -211,8 +211,8 @@ App.SceneConnectionComponent = Ember.Component.extend({
         d: App.computePath(x1, y1, x2, y2)
       });
     });
-  }.observes('connection.sourceConnector.operator.position',
-              'connection.targetConnector.operator.position'),
+  }.observes('connection.output.operator.position',
+             'connection.input.operator.position'),
 
   updateColor: function() {
     var path = this.get('path');

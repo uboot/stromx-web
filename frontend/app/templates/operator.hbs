@@ -55,7 +55,7 @@
         <td>
           {{#if isEditing}}
             {{#if isEnum}}
-              {{view Ember.Select value=value content=descriptions optionValuePath="content.value"
+              {{view "select" value=value content=descriptions optionValuePath="content.value"
                 optionLabelPath="content.title" disabled=writeOnly}}
             {{else}}
               {{input value=editValue}}

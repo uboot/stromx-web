@@ -2,5 +2,5 @@
 
 require('scripts/controllers/observer_controller');
 
-App.ConnectorObserverController = App.ObserverController.extend({
+App.InputObserverController = App.ObserverController.extend({
 });
