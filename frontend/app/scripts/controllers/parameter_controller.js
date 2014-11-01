@@ -122,9 +122,9 @@ App.ParameterController = Ember.ObjectController.extend({
       return obj.get('title');
     });
 
-    var that = this;
+    var _this = this;
     title.then( function(title) {
-      that.set('displayValue', title);
+      _this.set('displayValue', title);
       value = title;
     });
 

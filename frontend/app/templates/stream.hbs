@@ -32,16 +32,31 @@
 
 <div class="stromx-stream-view panel panel-default">
   <svg width="1280" height="1024" id="stream-svg">
+    {{#each operators itemController="operator"}}
+      {{#svg-transform transform=transform}}
+        {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="save"}}
+          <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
+        {{/svg-drag}}
+        {{#svg-click mouseClick="showOperatorMenu"}}
+          <text x="25" y="65" class="stromx-svg-operator-name">{{name}}</text>
+        {{/svg-click}}
+        {{#each inputs itemController="input"}}
+          <rect x="-10" {{bind-attr y=y}} width=10 height=10 class="stromx-svg-input-rect"/>
+        {{/each}}
+        {{#each outputs itemController="output"}}
+          <rect x="50" {{bind-attr y=y}} width=10 height=10 class="stromx-svg-output-rect"/>
+        {{/each}}
+      {{/svg-transform}}
+    {{/each}}
+    {{#each connections itemController="connection"}}
+      {{#if noColor}}
+        <path {{bind-attr d=path}} stroke="#cccccc" class="stromx-svg-connection-path"/>
+      {{else}}
+        <path {{bind-attr d=path}}  {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
+      {{/if}}
+    {{/each}}
   </svg>
 </div>
-
-{{#each operators itemController="operator"}}
-  {{scene-operator operator=this}}
-{{/each}}
-
-{{#each connections itemController="connection"}}
-  {{scene-connection connection=this}}
-{{/each}}
 
 <table class="table">
   <thead>

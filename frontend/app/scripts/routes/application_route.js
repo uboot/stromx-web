@@ -41,7 +41,7 @@ App.ApplicationRoute = Ember.Route.extend({
         parentView: 'application'
       });
     },
-    showContextMenu: function(template, event, controller) {
+    showContextMenu: function(template, x, y, controller) {
       this.render(template, {
         into: 'application',
         outlet: 'context',
@@ -51,8 +51,8 @@ App.ApplicationRoute = Ember.Route.extend({
       Ember.run.scheduleOnce('afterRender', this, function() {
         $('.context').show().css({
           position: "absolute",
-          left: event.pageX,
-          top: event.pageY
+          left: x,
+          top: y
         });
         $('body').click(function () {
           $('.context').hide();
