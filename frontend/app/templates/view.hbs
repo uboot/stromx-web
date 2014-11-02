@@ -12,7 +12,7 @@
   <svg width="1280" height="1024" id="view-svg">
   {{#each svgObservers itemController="observer"}}
     {{#if isImage}}
-      <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}} {{bind-attr href=imageData}}/>
+      <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}} {{bind-attr xlink:href=imageData}}/>
     {{/if}}
     {{#if isText}}
       <text x="10" y="20" {{bind-attr stroke=color}}>{{textData}}</text>
