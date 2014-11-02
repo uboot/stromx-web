@@ -27,7 +27,9 @@ App.ViewController = Ember.ObjectController.extend({
     return observer instanceof App.InputObserver;
   }),
 
-  observerSorting: ['zvalue:desc'],
+  listSorting: ['zvalue:desc'],
+  svgSorting: ['zvalue:incr'],
 
-  sortedObservers: Ember.computed.sort('observers', 'observerSorting'),
+  listObservers: Ember.computed.sort('observers', 'listSorting'),
+  svgObservers: Ember.computed.sort('observers', 'svgSorting'),
 });

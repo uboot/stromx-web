@@ -10,15 +10,23 @@
 
 <div class="stromx-view-view panel panel-default">
   <svg width="1280" height="1024" id="view-svg">
+  {{#each svgObservers itemController="observer"}}
+    {{#if isImage}}
+      <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}} {{bind-attr href=imageData}}/>
+    {{/if}}
+    {{#if isText}}
+      <text x="10" y="20" {{bind-attr stroke=color}}>{{textData}}</text>
+    {{/if}}
+    {{#if isLines}}
+          {{#with this as observer}}
+          {{#each linesData itemController="view_line"}}
+            <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke=observer.color}}/>
+          {{/each}}
+        {{/with}}
+    {{/if}}
+  {{/each}}
   </svg>
 </div>
-
-{{#each parameterObservers itemController="parameterObserver"}}
-{{/each}}
-
-{{#each inputObservers itemController="inputObserver"}}
-  {{view-input-observer inputObservers=this variant=value.variant value=value.value}}
-{{/each}}
 
 <table class="table">
   <thead>
@@ -34,7 +42,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each sortedObservers itemController="observer"}}
+    {{#each listObservers itemController="observer"}}
     <tr>
       <td>
         {{title}}

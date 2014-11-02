@@ -31,7 +31,7 @@ App.ObserverController = Ember.ObjectController.extend({
     var title = parameter.get('title');
     if (name)
       title += " at " + name;
-    
+
     return title;
   }.property('parameter.title', 'parameter.operator.name'),
 
@@ -41,9 +41,74 @@ App.ObserverController = Ember.ObjectController.extend({
     var title = input.get('title');
     if (name)
       title += " at " + name;
-    
+
     return title;
   }.property('input.title', 'input.operator.name'),
+
+  svgType: function() {
+    var visualization = this.get('visualization');
+    var variant = this.get('value.variant');
+    switch (variant) {
+      case 'int':
+      case 'float':
+        return 'text';
+      case 'image':
+        return 'image'
+      case 'matrix':
+        return 'lines'
+      default:
+        break;
+    }
+  }.property('visualization', 'value.variant'),
+
+  isImage: Ember.computed.equal('svgType', 'image'),
+  isText: Ember.computed.equal('svgType', 'text'),
+  isLines: Ember.computed.equal('svgType', 'lines'),
+
+  imageData: function() {
+    var value = this.get('value.value');
+
+    if (value === undefined)
+      return;
+
+    return value.values;
+  }.property('value.value'),
+
+  imageWidth: function() {
+    var value = this.get('value.value');
+
+    if (value === undefined)
+      return;
+
+    return value.width;
+  }.property('value.value'),
+
+  imageHeight: function() {
+    var value = this.get('value.value');
+
+    if (value === undefined)
+      return;
+
+    return value.height;
+  }.property('value.value'),
+
+  textData: function() {
+    var value = this.get('value.value');
+
+    if (value === undefined)
+      return;
+
+    return value;
+  }.property('value.value'),
+
+  linesData: function() {
+    var value = this.get('value.value');
+
+    if (value === undefined)
+      return;
+
+    return value.values;
+  }.property('value.value'),
 
   actions: {
     moveUp: function() {
