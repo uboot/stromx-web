@@ -11,10 +11,6 @@ App.StreamNewThreadController = Ember.Controller.extend({
       });
       thread.save();
 
-      stream.get('threads').then(function(threads) {
-        threads.pushObject(thread);
-      });
-
       this.transitionToRoute('stream');
     }
   }
