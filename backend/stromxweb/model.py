@@ -865,6 +865,9 @@ class Connection(Item):
         if self.__stream != None:
             self.__stream.removeConnection(self)
         
+        if self.__thread != None:
+            self.__thread.removeConnection(self)
+        
 class Connections(Items):
     def addConnection(self, stream, sourceConnector, targetConnector, thread):        
         connection = Connection(stream, sourceConnector, targetConnector,
@@ -873,6 +876,9 @@ class Connections(Items):
         
         sourceConnector.addConnection(connection)
         targetConnector.addConnection(connection)
+        
+        if thread != None:
+            thread.addConnection(connection)
         
         return connection
         
@@ -899,23 +905,24 @@ class Connections(Items):
                                         targetConnector.stromxId)
         except stromx.runtime.OperatorError:
             raise AddDataFailed()
-                                      
+        
         if thread != None:
             thread.stromxThread.addInput(targetOp.stromxOp,
                                          targetConnector.stromxId)
             
         connection = self.addConnection(stream, sourceConnector,
                                         targetConnector, thread)
-        
+                                      
         return connection.data
     
 class Thread(Item):
-    properties = ['name', 'color', 'stream']
+    properties = ['name', 'color', 'stream', 'connections']
     
     def __init__(self, stromxThread, stream, model):
         super(Thread, self).__init__(model)
         self.__thread = stromxThread
         self.__stream = stream
+        self.__connections = []
     
     @property
     def name(self):
@@ -939,15 +946,25 @@ class Thread(Item):
         return self.__stream.index if self.__stream != None else None
     
     @property
+    def connections(self):
+        return [connection.index for connection in self.__connections]
+    
+    @property
     def stromxThread(self):
         return self.__thread
         
     def delete(self):
-        for connectionIndex in self.__stream.connections:
-            connection = self.model.connections[connectionIndex]
+        for connection in self.__connections:
             connection.thread = None
+        self.__connections = []
             
         self.__stream.stromxStream.removeThread(self.__thread)
+        
+    def addConnection(self, connection):
+        self.__connections.append(connection)
+    
+    def removeConnection(self, connection):
+        self.__connections.remove(connection)
         
 class Threads(Items):
     def addStromxThread(self, thread, stream):
