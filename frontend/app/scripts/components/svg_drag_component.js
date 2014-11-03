@@ -11,6 +11,7 @@ App.SvgDragComponent = Ember.Component.extend({
     var _this = this;
     $('body').mouseup(function (event) {
       $('body').off('mousemove');
+      $('body').off('mouseup');
       _this.sendAction('dragEnd');
       return false;
     });

@@ -48,7 +48,7 @@ App.OperatorController = Ember.ObjectController.extend({
       var model = this.get('model');
       model.save();
     },
-    showOperatorMenu: function(x, y) {
+    showMenu: function(x, y) {
       this.send('showContextMenu', 'operatorMenu', x, y, this);
     },
     dragStart: function() {

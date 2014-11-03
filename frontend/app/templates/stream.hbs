@@ -37,7 +37,7 @@
         {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="save"}}
           <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
         {{/svg-drag}}
-        {{#svg-click mouseClick="showOperatorMenu"}}
+        {{#svg-click mouseClick="showMenu"}}
           <text x="25" y="65" class="stromx-svg-operator-name">{{name}}</text>
         {{/svg-click}}
         {{#each inputs itemController="input"}}
@@ -56,11 +56,13 @@
       {{/svg-transform}}
     {{/each}}
     {{#each connections itemController="connection"}}
-      {{#if noColor}}
-        <path {{bind-attr d=path}} stroke="#cccccc" class="stromx-svg-connection-path"/>
-      {{else}}
-        <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
-      {{/if}}
+      {{#svg-click mouseClick="showMenu"}}
+        {{#if noColor}}
+          <path {{bind-attr d=path}} stroke="#cccccc" class="stromx-svg-connection-path"/>
+        {{else}}
+          <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
+        {{/if}}
+      {{/svg-click}}
     {{/each}}
   </svg>
 </div>
@@ -155,7 +157,7 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li>{{#link-to 'view' this}}Show{{/link-to}}</li>
+                <li>{{#link-to "view" this}}Show{{/link-to}}</li>
                 <li><a {{action "rename"}}>Rename</a></li>
                 <li><a {{action "showModal" "removeView" this}}>Remove</a></li>
               </ul>

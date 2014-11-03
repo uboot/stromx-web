@@ -201,5 +201,21 @@ App.ConnectionController = Ember.ObjectController.extend({
   }.property('x1', 'x2', 'y1', 'y2'),
 
   color: Ember.computed.alias('thread.color'),
-  noColor: Ember.computed.empty('thread.color')
+  noColor: Ember.computed.empty('thread.color'),
+  
+  actions: {
+    showMenu: function(x, y) {
+      this.send('showContextMenu', 'connectionMenu', x, y, this);
+    },
+    remove: function() {
+      var model = this.get('model');
+      model.deleteRecord();
+      model.save();
+    },
+    setThread: function(thread) {
+      this.set('thread', thread);
+      var model = this.get('model');
+      model.save();
+    }
+  }
 });
