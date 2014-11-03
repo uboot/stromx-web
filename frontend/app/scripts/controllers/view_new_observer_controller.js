@@ -58,13 +58,6 @@ App.ViewNewObserverController = Ember.Controller.extend({
               visualization: 'default'
             });
           }
-
-          if (observer) {
-            observer.save().then(function(observer) {
-              observers.pushObject(observer);
-              model.save();
-            });
-          }
         });
       }
       this.transitionToRoute('view');

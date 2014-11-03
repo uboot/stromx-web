@@ -10,7 +10,6 @@ h1 {
   text-align: center;
 }
 
-
 .stromx-center-buttons {
   text-align: center;
   height: 50px;
@@ -36,20 +35,22 @@ h1 {
   text-anchor: middle;
 }
 
+.stromx-svg-drag-line {
+  stroke: black;
+  pointer-events: none;
+}
+
 .stromx-svg-connection-path {
   stroke-width: 4;
   fill: transparent;
-  pointer-events: stroke
+  pointer-events: stroke;
 }
 
 .stromx-svg-connector-rect {
 }
 
-.stromx-svg-output-rect {
-  @extend .stromx-svg-connector-rect;
+.stromx-red {
+  fill: red;
 }
 
-.stromx-svg-input-rect {
-  @extend .stromx-svg-connector-rect;
-}
 

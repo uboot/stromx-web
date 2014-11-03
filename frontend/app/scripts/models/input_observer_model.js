@@ -10,7 +10,7 @@ App.InputObserver = App.Observer.extend({
 App.InputObserver.FIXTURES = [
   {
     id: 0,
-    zvalue: 1,
+    zvalue: 2,
     visualization: 'lines',
     color: '#0000ff',
     input: 1,
@@ -19,7 +19,7 @@ App.InputObserver.FIXTURES = [
   },
   {
     id: 2,
-    zvalue: 2,
+    zvalue: 1,
     visualization: 'image',
     color: '#00ff00',
     input: 2,

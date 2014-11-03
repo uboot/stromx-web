@@ -11,18 +11,18 @@
 <div class="stromx-view-view panel panel-default">
   <svg width="1280" height="1024" id="view-svg">
   {{#each svgObservers itemController="observer"}}
-    {{#if isImage}}
+    {{#if svgImage}}
       <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}} {{bind-attr xlink:href=imageData}}/>
     {{/if}}
-    {{#if isText}}
-      <text x="10" y="20" {{bind-attr stroke=color}}>{{textData}}</text>
+    {{#if svgText}}
+      <text x="10" y="20" {{bind-attr fill=color}}>{{textData}}</text>
     {{/if}}
-    {{#if isLines}}
-          {{#with this as observer}}
-          {{#each linesData itemController="view_line"}}
-            <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke=observer.color}}/>
-          {{/each}}
-        {{/with}}
+    {{#if svgLines}}
+      {{#with this as observer}}
+        {{#each linesData itemController="view_line"}}
+          <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke=observer.color}}/>
+        {{/each}}
+      {{/with}}
     {{/if}}
   {{/each}}
   </svg>

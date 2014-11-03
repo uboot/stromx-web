@@ -44,26 +44,41 @@ App.ObserverController = Ember.ObjectController.extend({
 
     return title;
   }.property('input.title', 'input.operator.name'),
-
+  
   svgType: function() {
     var visualization = this.get('visualization');
     var variant = this.get('value.variant');
-    switch (variant) {
-      case 'int':
-      case 'float':
+    
+    if (variant === undefined)
+      return;
+    
+    if (visualization === 'default') {
+      switch (variant) {
+        case 'int':
+        case 'float':
+          return 'text';
+        case 'image':
+          return 'image';
+        default:
+          return '';
+      }
+    }
+    
+    switch (visualization) {
+      case 'text':
         return 'text';
       case 'image':
         return 'image'
-      case 'matrix':
+      case 'lines':
         return 'lines'
       default:
         break;
     }
   }.property('visualization', 'value.variant'),
 
-  isImage: Ember.computed.equal('svgType', 'image'),
-  isText: Ember.computed.equal('svgType', 'text'),
-  isLines: Ember.computed.equal('svgType', 'lines'),
+  svgImage: Ember.computed.equal('svgType', 'image'),
+  svgText: Ember.computed.equal('svgType', 'text'),
+  svgLines: Ember.computed.equal('svgType', 'lines'),
 
   imageData: function() {
     var value = this.get('value.value');

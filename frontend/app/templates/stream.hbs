@@ -41,10 +41,17 @@
           <text x="25" y="65" class="stromx-svg-operator-name">{{name}}</text>
         {{/svg-click}}
         {{#each inputs itemController="input"}}
-          <rect x="-10" {{bind-attr y=y}} width=10 height=10 class="stromx-svg-input-rect"/>
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
+            <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
+          {{/svg-drag}}
+          {{#if isDraggingConnection}}
+            <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke-width=strokeWidth}} class="stromx-svg-drag-line"/>
+          {{/if}}
         {{/each}}
         {{#each outputs itemController="output"}}
-          <rect x="50" {{bind-attr y=y}} width=10 height=10 class="stromx-svg-output-rect"/>
+          {{#svg-drag enter="enter" leave="leave"}}
+            <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
+          {{/svg-drag}}
         {{/each}}
       {{/svg-transform}}
     {{/each}}
@@ -52,7 +59,7 @@
       {{#if noColor}}
         <path {{bind-attr d=path}} stroke="#cccccc" class="stromx-svg-connection-path"/>
       {{else}}
-        <path {{bind-attr d=path}}  {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
+        <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
       {{/if}}
     {{/each}}
   </svg>

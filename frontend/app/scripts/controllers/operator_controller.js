@@ -65,11 +65,18 @@ App.OperatorController = Ember.ObjectController.extend({
     });
     },
     initialize: function(e) {
-      console.log(e);
-      console.log('initialize ' + this.get('name'));
+      this.set('status', 'initialized');
+      this.model.save();
     },
     deinitialize: function() {
-      console.log('deinitialize ' + this.get('name'));
+      this.set('status', 'none');
+      var model = this.get('model');
+      model.save();
+    },
+    remove: function() {
+      var model = this.get('model');
+      model.deleteRecord();
+      model.save();
     }
   }
 });

@@ -1,6 +1,8 @@
 /* global App */
 
 App.StreamController = Ember.ObjectController.extend({
+  activeOutput: null,
+  
   actions: {
     close: function () {
       var stream = this.get('model');
