@@ -98,6 +98,8 @@ def start(files):
         [
             (r"/", tornado.web.RedirectHandler,
              {"url": "/static/index.html"}),
+            (r"/operatorTemplates", ItemsHandler, 
+             dict(items = appModel.operatorTemplates)),
             (r"/files", ItemsHandler, dict(items = appModel.files)),
             (r"/files/([0-9]+)", ItemsHandler, dict(items = appModel.files)),
             (r"/streams", ItemsHandler, dict(items = appModel.streams)),

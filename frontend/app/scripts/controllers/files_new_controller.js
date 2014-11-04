@@ -5,7 +5,8 @@ App.FilesNewController = Ember.Controller.extend({
     newFile: function () {
       var name = this.get('name');
       var file = this.store.createRecord('file', {
-        name: name
+        name: name,
+        content: ''
       });
       
       file.save();
