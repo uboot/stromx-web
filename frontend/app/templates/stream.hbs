@@ -42,7 +42,7 @@
           <text x="25" y="65" class="stromx-svg-operator-name">{{name}}</text>
         {{/svg-click}}
         {{#each inputs itemController="input"}}
-          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
             <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
           {{#if isDraggingConnection}}
@@ -50,9 +50,12 @@
           {{/if}}
         {{/each}}
         {{#each outputs itemController="output"}}
-          {{#svg-drag enter="enter" leave="leave"}}
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
             <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
+          {{#if isDraggingConnection}}
+            <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke-width=strokeWidth}} class="stromx-svg-drag-line"/>
+          {{/if}}
         {{/each}}
       {{/svg-transform}}
     {{/each}}

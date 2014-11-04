@@ -2,6 +2,7 @@
 
 App.StreamController = Ember.ObjectController.extend({
   activeOutput: null,
+  activeInput: null,
   
   actions: {
     close: function () {
