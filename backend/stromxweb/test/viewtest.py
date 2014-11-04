@@ -38,6 +38,7 @@ class ViewTest(unittest.TestCase):
         factory = stromx.runtime.Factory()
         stromx.runtime.register(factory)
         reader = stromx.runtime.XmlReader()
+        
         self.stream = reader.readStream('data/stream/0_parallel.stromx', factory)
         
         self.view = view.View(self.stream)

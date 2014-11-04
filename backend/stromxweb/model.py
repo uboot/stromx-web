@@ -22,11 +22,13 @@ class Model(object):
         self.__parameters = Parameters(self)
         self.__enumDescriptions = EnumDescriptions(self)
         self.__connectors = Connectors(self)
+        self.__inputs = Inputs(self)
+        self.__outputs = Outputs(self)
         self.__connections = Connections(self)
         self.__threads = Threads(self)
         self.__views = Views(self)
         self.__parameterObservers = ParameterObservers(self)
-        self.__connectorObservers = ConnectorObservers(self)
+        self.__inputObservers = InputObservers(self)
         self.__connectorValues = ConnectorValues(self)
         self.__operatorTemplates = OperatorTemplates(self)
     
@@ -63,6 +65,14 @@ class Model(object):
         return self.__connectors
     
     @property
+    def inputs(self):
+        return self.__inputs
+    
+    @property
+    def outputs(self):
+        return self.__outputs
+    
+    @property
     def threads(self):
         return self.__threads
     
@@ -75,8 +85,8 @@ class Model(object):
         return self.__parameterObservers
     
     @property
-    def connectorObservers(self):
-        return self.__connectorObservers
+    def inputObservers(self):
+        return self.__inputObservers
     
     @property
     def connectorValues(self):
@@ -302,7 +312,8 @@ class Stream(Item):
             threadModel = self.model.threads.addStromxThread(stromxThread, self)
             self.__threads.append(threadModel)
             
-        connectors = self.model.connectors
+        inputs = self.model.inputs
+        outputs = self.model.outputs
         for op in self.__operators:
             for stromxInput in op.stromxOp.info().inputs():
                 source = self.__stream.connectionSource(op.stromxOp,
@@ -310,19 +321,19 @@ class Stream(Item):
                 if source.op() == None:
                     continue
                 
-                sourceConnector = connectors.findConnectorModel(
-                                source.op(), source.id(), Connector.OUTPUT)
-                assert(sourceConnector)
+                outputConnector = outputs.findOutputModel(source.op(),
+                                                          source.id())
+                assert(outputConnector)
                 
-                targetConnector = connectors.findConnectorModel(
-                                op.stromxOp, stromxInput.id(), Connector.INPUT)
-                assert(targetConnector)
+                inputConnector = inputs.findInputModel(op.stromxOp,
+                                                        stromxInput.id())
+                assert(inputConnector)
                 
                 thread = self.model.threads.findThreadModel(op.stromxOp,
                                                             stromxInput)
                 
                 connection = self.model.connections.addConnection(self,
-                                    sourceConnector, targetConnector, thread)
+                                    outputConnector, inputConnector, thread)
         
         if os.path.exists(streamFile.path):
             zipInput.initialize("", "views.json")
@@ -530,7 +541,7 @@ class Operators(Items):
         
 class Operator(Item):
     properties = ["name", "status", "type", "package", "version", "parameters",
-                  "position", "connectors", "stream"]
+                  "position", "inputs", "outputs", "stream"]
     
     def __init__(self, stromxOp, stream, model):
         super(Operator, self).__init__(model)
@@ -541,7 +552,8 @@ class Operator(Item):
         self.__allocateParameters()
         
         # allocate connectors for initialized operators only
-        self.__connectors = []
+        self.__inputs = []
+        self.__outputs = []
         if self.__op.status() != stromx.runtime.Operator.Status.NONE:
             self.__allocateConnectors()
         
@@ -612,8 +624,12 @@ class Operator(Item):
         return [op.index for op in self.__parameters]
         
     @property
-    def connectors(self):
-        return map(lambda model: model.index, self.__connectors)
+    def inputs(self):
+        return map(lambda model: model.index, self.__inputs)
+        
+    @property
+    def outputs(self):
+        return map(lambda model: model.index, self.__outputs)
     
     @property
     def stream(self):
@@ -635,16 +651,15 @@ class Operator(Item):
         return outputs[0]
     
     def __allocateConnectors(self):
-        connectors = self.model.connectors
+        inputs = self.model.inputs
+        outputs = self.model.outputs
         for description in self.__op.info().inputs():
-            connector = connectors.addStromxConnector(self.__op, description,
-                                                      Connector.INPUT)
-            self.__connectors.append(connector)
+            connector = inputs.addStromxInput(self.__op, description)
+            self.__inputs.append(connector)
             
         for description in self.__op.info().outputs():
-            connector = connectors.addStromxConnector(self.__op, description,
-                                                      Connector.OUTPUT)
-            self.__connectors.append(connector)
+            connector = outputs.addStromxOutput(self.__op, description)
+            self.__outputs.append(connector)
             
     def __allocateParameters(self):
         parameters = self.model.parameters
@@ -656,9 +671,13 @@ class Operator(Item):
             self.__parameters.append(parameter)
             
     def __removeConnectors(self):
-        for connector in self.__connectors:
-            self.model.connectors.delete(connector.index)
-        self.__connectors = []
+        for connector in self.__inputs:
+            self.model.inputs.delete(connector.index)
+        self.__inputs = []
+        
+        for connector in self.__outputs:
+            self.model.outputs.delete(connector.index)
+        self.__outputs = []
         
     def __removeParameters(self):
         for param in self.__parameters:
@@ -807,27 +826,27 @@ class EnumDescription(Item):
         return self.__desc.title()
     
 class Connection(Item):
-    properties = ['sourceConnector', 'targetConnector', 'thread', 'stream']
+    properties = ['output', 'input', 'thread', 'stream']
     
-    def __init__(self, stream, sourceConnector, targetConnector, thread, model):
-        assert(sourceConnector != None)
-        assert(targetConnector != None)
+    def __init__(self, stream, outputConnector, inputConnector, thread, model):
+        assert(outputConnector != None)
+        assert(inputConnector != None)
         
         super(Connection, self).__init__(model)
-        self.__sourceConnector = sourceConnector
-        self.__targetConnector = targetConnector
+        self.__output = outputConnector
+        self.__input = inputConnector
         self.__thread = thread
         self.__stream = stream
         
         self.__stream.addConnection(self)
     
     @property
-    def sourceConnector(self):
-        return self.__sourceConnector.index
+    def output(self):
+        return self.__output.index
     
     @property
-    def targetConnector(self):
-        return self.__targetConnector.index
+    def input(self):
+        return self.__input.index
     
     @property
     def stream(self):
@@ -849,8 +868,8 @@ class Connection(Item):
         if value != None:
             newThread = self.model.threads[value]
         
-        stromxOp = self.__targetConnector.stromxOp
-        stromxId = self.__targetConnector.stromxId
+        stromxOp = self.__input.stromxOp
+        stromxId = self.__input.stromxId
         if self.__thread != None:
             self.__thread.stromxThread.removeInput(stromxOp, stromxId)
             
@@ -859,8 +878,8 @@ class Connection(Item):
             self.__thread.stromxThread.addInput(stromxOp, stromxId)
         
     def delete(self):        
-        self.__sourceConnector.removeConnection(self)
-        self.__targetConnector.removeConnection(self)
+        self.__output.removeConnection(self)
+        self.__input.setConnection(None)
         
         if self.__stream != None:
             self.__stream.removeConnection(self)
@@ -869,13 +888,13 @@ class Connection(Item):
             self.__thread.removeConnection(self)
         
 class Connections(Items):
-    def addConnection(self, stream, sourceConnector, targetConnector, thread):        
-        connection = Connection(stream, sourceConnector, targetConnector,
+    def addConnection(self, stream, outputConnector, inputConnector, thread):        
+        connection = Connection(stream, outputConnector, inputConnector,
                                 thread, self.model)
         self.addItem(connection)
         
-        sourceConnector.addConnection(connection)
-        targetConnector.addConnection(connection)
+        outputConnector.addConnection(connection)
+        inputConnector.setConnection(connection)
         
         if thread != None:
             thread.addConnection(connection)
@@ -884,11 +903,11 @@ class Connections(Items):
         
     def addData(self, data):
         props = data['connection']
-        sourceConnector = self.model.connectors[props['sourceConnector']]
-        targetConnector = self.model.connectors[props['targetConnector']]
+        outputConnector = self.model.outputs[props['output']]
+        inputConnector = self.model.inputs[props['input']]
         
-        sourceOp = self.model.operators[sourceConnector.operator]
-        targetOp = self.model.operators[targetConnector.operator]
+        sourceOp = self.model.operators[outputConnector.operator]
+        targetOp = self.model.operators[inputConnector.operator]
         assert(sourceOp.stream == targetOp.stream)
         
         try:
@@ -900,19 +919,19 @@ class Connections(Items):
         stream = self.model.streams[sourceOp.stream]
         try:
             stream.stromxStream.connect(sourceOp.stromxOp,
-                                        sourceConnector.stromxId,
+                                        outputConnector.stromxId,
                                         targetOp.stromxOp,
-                                        targetConnector.stromxId)
+                                        inputConnector.stromxId)
         except stromx.runtime.OperatorError:
             raise AddDataFailed()
         
         if thread != None:
             thread.stromxThread.addInput(targetOp.stromxOp,
-                                         targetConnector.stromxId)
+                                         inputConnector.stromxId)
             
-        connection = self.addConnection(stream, sourceConnector,
-                                        targetConnector, thread)
-                                      
+        connection = self.addConnection(stream, outputConnector,
+                                        inputConnector, thread)
+
         return connection.data
     
 class Thread(Item):
@@ -1078,6 +1097,117 @@ class Connectors(Items):
         ]
         assert(len(connectors) == 1)
         return connectors[0]
+
+class ConnectorBase(Item):
+    properties = ['operator', 'title']
+    
+    def __init__(self, op, description, model):
+        super(ConnectorBase, self).__init__(model)
+        self.__description = description
+        self.__op = op
+        
+    @property
+    def operator(self):
+        op = self.model.operators.findOperatorModel(self.__op)
+        if op:
+            return op.index
+        else:
+            assert(False)
+    
+    @property
+    def title(self):
+        return self.__description.title()
+    
+    @property
+    def stromxOp(self):
+        return self.__op
+    
+    @property
+    def stromxId(self):
+        return self.__description.id()
+        
+class Input(ConnectorBase):
+    properties = ConnectorBase.properties + ['connection', 'observers']
+    
+    def __init__(self, op, description, model):
+        super(Input, self).__init__(op, description, model)
+        self.__connection = None
+        self.__observers = []
+    
+    @property
+    def connection(self):
+        return self.__connection.index if self.__connection != None else None
+    
+    @property
+    def observers(self):
+        return [observer.index for observer in self.__observers]
+    
+    def delete(self):
+        if self.__connection != None:
+            self.model.connections.delete(self.connection)
+    
+    def setConnection(self, connection):
+        self.__connection = connection
+    
+    def addObserver(self, observer):
+        self.__observers.append(observer)
+        
+    def removeObserver(self, observer):
+        self.__observers.remove(observer)
+        
+class Inputs(Items):
+    def addStromxInput(self, op, description):
+        connector = Input(op, description, self.model)
+        self.addItem(connector)
+        return connector
+    
+    def findInputModel(self, stromxOp, connectorId):
+        connectors = [
+            connector for connector in self.values()
+            if (connector.stromxOp == stromxOp and 
+                connector.stromxId == connectorId)
+        ]
+        assert(len(connectors) == 1)
+        return connectors[0]
+    
+class Output(ConnectorBase):
+    properties = ConnectorBase.properties + ['connections']
+    
+    def __init__(self, op, description, model):
+        super(Output, self).__init__(op, description, model)
+        self.__connections = []
+    
+    @property
+    def connections(self):
+        return [connection.index for connection in self.__connections]
+    
+    def delete(self):
+        for connectionIndex in self.connections:
+            self.model.connections.delete(connectionIndex)
+    
+    def addConnection(self, connection):
+        self.__connections.append(connection)
+        
+    def removeConnection(self, connection):
+        try:
+            self.__connections.remove(connection)
+        except ValueError:
+            pass
+        
+class Outputs(Items):
+    def addStromxOutput(self, op, description):
+        connector = Output(op, description, self.model)
+        self.addItem(connector)
+        return connector
+    
+    def findOutputModel(self, stromxOp, connectorId):
+        connectors = [
+            connector for connector in self.values()
+            if (connector.stromxOp == stromxOp and 
+                connector.stromxId == connectorId)
+        ]
+        assert(len(connectors) == 1)
+        return connectors[0]
         
 class View(Item):
     properties = ['name', 'observers', 'stream']
@@ -1085,7 +1215,7 @@ class View(Item):
     def __init__(self, stromxView, model):
         super(View, self).__init__(model)
         self.__view = stromxView
-        self.__connectorObservers = []
+        self.__inputObservers = []
         self.__parameterObservers = []
         for observer in self.__view.observers:
             if isinstance(observer, view.ParameterObserver):
@@ -1093,9 +1223,9 @@ class View(Item):
                 observerModel = observers.addStromxObserver(self, observer)
                 self.__parameterObservers.append(observerModel)
             elif isinstance(observer, view.ConnectorObserver):
-                observers = self.model.connectorObservers
+                observers = self.model.inputObservers
                 observerModel = observers.addStromxObserver(self, observer)
-                self.__connectorObservers.append(observerModel)
+                self.__inputObservers.append(observerModel)
             else:
                 assert(False)
         
@@ -1112,8 +1242,8 @@ class View(Item):
         data = []
         data.extend([{ 'id': model.index, 'type': 'parameterObserver'} for
                      model in self.__parameterObservers])
-        data.extend([{ 'id': model.index, 'type': 'connectorObserver'} for
-                     model in self.__connectorObservers])
+        data.extend([{ 'id': model.index, 'type': 'inputObserver'} for
+                     model in self.__inputObservers])
         return data
     
     @property
@@ -1134,8 +1264,8 @@ class View(Item):
         for observer in self.__parameterObservers:
             self.model.parameterObservers.delete(observer.index)
         
-        for observer in self.__connectorObservers:
-            self.model.connectorObservers.delete(observer.index)
+        for observer in self.__inputObservers:
+            self.model.inputObservers.delete(observer.index)
     
     def addParameterObserver(self, parameterIndex):
         param = self.model.parameters[parameterIndex]
@@ -1147,28 +1277,21 @@ class View(Item):
         self.__parameterObservers.append(observerModel)
         return observerModel
     
-    def addConnectorObserver(self, connectorIndex):
-        connector = self.model.connectors[connectorIndex]
-        if connector.connectorType == Connector.INPUT:
-            connectorType = stromx.runtime.Connector.Type.INPUT
-        elif connector.connectorType == Connector.OUTPUT:
-            connectorType = stromx.runtime.Connector.Type.OUTPUT
-        else:
-            assert(False)
-            
+    def addInputObserver(self, connectorIndex):
+        connector = self.model.inputs[connectorIndex]
+        connectorType = view.stromx.runtime.Connector.Type.INPUT
         observer = self.__view.addConnectorObserver(connector.stromxOp,
-                                                    int(connectorType),
+                                                    connectorType, 
                                                     connector.stromxId)
-        connectorObservers = self.model.connectorObservers
-        observerModel = connectorObservers.addStromxObserver(self,
-                                                             observer)
-        self.__connectorObservers.append(observerModel)
+        inputObservers = self.model.inputObservers
+        observerModel = inputObservers.addStromxObserver(self, observer)
+        self.__inputObservers.append(observerModel)
         return observerModel
     
     def removeObserver(self, observerModel):
         self.__view.removeObserver(observerModel.stromxObserver)
-        if observerModel in self.__connectorObservers:
-            self.__connectorObservers.remove(observerModel)
+        if observerModel in self.__inputObservers:
+            self.__inputObservers.remove(observerModel)
         elif observerModel in self.__parameterObservers:
             self.__parameterObservers.remove(observerModel)
         else:
@@ -1266,34 +1389,33 @@ class ParameterObserver(Observer):
         assert(len(parameterModels) == 1)
         return parameterModels[0].index
 
-class ConnectorObserver(Observer):
-    properties = Observer.properties + ['connector', 'value']
+class InputObserver(Observer):
+    properties = Observer.properties + ['input', 'value']
     
     def __init__(self, view, stromxObserver, model):
-        super(ConnectorObserver, self).__init__(view, stromxObserver,
-                                                model)
+        super(InputObserver, self).__init__(view, stromxObserver, model)
         self.__value = None
         if stromxObserver.connectorValue:
             self.__value = self.model.connectorValues.addStromxConnectorValue(
                                                 stromxObserver.connectorValue)
 
     @property
-    def connector(self):
+    def input(self):
         index = self.stromxObserver.connectorIndex
         op = self.stromxObserver.op
+        
+        selector = lambda connector: (connector.stromxOp == op and
+                                      connector.stromxId == index)
+                                      
         if (self.stromxObserver.connectorType 
             == stromx.runtime.Connector.Type.INPUT):
-            connectorType = Connector.INPUT 
+            connectorModel = filter(selector, self.model.inputs.values())
         elif (self.stromxObserver.connectorType
               == stromx.runtime.Connector.Type.OUTPUT):
-            connectorType = Connector.OUTPUT 
+            connectorModel = filter(selector, self.model.outputs.values())
         else:
             assert(False)
             
-        selector = lambda connector: (connector.stromxOp == op and
-                                      connector.stromxId == index and
-                                      connector.connectorType == connectorType)
-        connectorModel = filter(selector, self.model.connectors.values())
         assert(len(connectorModel) == 1)
         return connectorModel[0].index
     
@@ -1307,11 +1429,11 @@ class ConnectorObserver(Observer):
     def delete(self):
         if self.__value != None:
             self.model.connectorValues.delete(self.__value.index)
-        connectorId = self.connector
-        connector = self.model.connectors[connectorId]
-        connector.removeObserver(self)
+        inputId = self.input
+        inputConnector = self.model.inputs[inputId]
+        inputConnector.removeObserver(self)
         
-        super(ConnectorObserver, self).delete()
+        super(InputObserver, self).delete()
         
 class Observers(Items):
     pass
@@ -1330,19 +1452,19 @@ class ParameterObservers(Observers):
         observerModel.set(data)
         return observerModel.data
 
-class ConnectorObservers(Observers):
+class InputObservers(Observers):
     def addStromxObserver(self, view, stromxObserver):
-        observer = ConnectorObserver(view, stromxObserver, self.model)
+        observer = InputObserver(view, stromxObserver, self.model)
         self.addItem(observer)
-        connectorId = observer.connector
-        self.model.connectors[connectorId].addObserver(observer)
+        inputId = observer.input
+        self.model.inputs[inputId].addObserver(observer)
         return observer
         
     def addData(self, data):
-        viewIndex = data['connectorObserver']['view']
+        viewIndex = data['inputObserver']['view']
         view = self.model.views[viewIndex]
-        connectorIndex = data['connectorObserver']['connector']
-        observerModel = view.addConnectorObserver(connectorIndex)
+        inputIndex = data['inputObserver']['input']
+        observerModel = view.addInputObserver(inputIndex)
         observerModel.set(data)
         return observerModel.data
     

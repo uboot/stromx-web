@@ -124,7 +124,8 @@ _fork = {
     'name': 'Fork',
     'parameters': ['1'],
     'package': 'runtime',
-    'connectors': ['4', '5', '6'],
+    'outputs': ['1', '2'],
+    'inputs': ['3'],
     'version': '0.1.0',
     'position': {'y': 0.0, 'x': 0.0},
     'type': 'Fork', 'id': '2',
@@ -306,7 +307,8 @@ class StreamsTest(unittest.TestCase):
         for thread in self.model.threads.values():
             self.assertEqual('0', thread.stream)
             
-        self.assertEqual(10, len(self.model.connectors))
+        self.assertEqual(5, len(self.model.inputs))
+        self.assertEqual(5, len(self.model.outputs))
         self.assertEqual(5, len(self.model.connections))
         self.assertEqual({'operator': _fork}, self.model.operators['2'].data)
         
@@ -440,7 +442,8 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'initialized',
                              'version': '0.1.0',
                              'parameters': ['0', '1'],
-                             'connectors': ['0'],
+                             'outputs': ['0'],
+                             'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
         self.assertEqual(data, self.operator.data)
@@ -484,7 +487,8 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'none',
                              'version': '0.1.0',
                              'parameters': ['2'],
-                             'connectors': [],
+                             'outputs': [],
+                             'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0} ,
                              'stream': '0'}}
         self.assertEqual(data, op.data)
@@ -514,7 +518,8 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'none',
                              'version': '1.2.3',
                              'parameters': ['10'],
-                             'connectors': [],
+                             'outputs': [],
+                             'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
         self.assertEqual(data, op.data)         
@@ -536,7 +541,8 @@ class OperatorsTest(unittest.TestCase):
                              'version': '1.2.3',
                              'parameters': ['3', '4', '5', '6', '7', '8',
                                             '9', '10'],
-                             'connectors': ['1', '2', '3', '4'],
+                             'inputs': ['0', '1'],
+                             'outputs': ['1', '2'],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
         self.assertEqual(data, op.data)
@@ -784,25 +790,25 @@ class ConnectionsTest(unittest.TestCase):
                                                          self.stream)
         
     def testData(self):
-        source = self.model.connectors['3']
-        target = self.model.connectors['0']
+        source = self.model.outputs['2']
+        target = self.model.inputs['0']
         connection = self.connections.addConnection(self.stream, source, target,
                                                     self.thread)
         
         data = {'connection': {'id': '0',
                                'thread': '0',
-                               'sourceConnector': '3', 
-                               'targetConnector': '0', 
+                               'output': '2', 
+                               'input': '0', 
                                'stream': '0'}}
         self.assertEqual(data, connection.data)
         
-        self.assertEqual(['0'], source.data['connector']['connections'])
-        self.assertEqual(['0'], target.data['connector']['connections'])
+        self.assertEqual(['0'], source.data['output']['connections'])
+        self.assertEqual('0', target.data['input']['connection'])
         
     def testAddData(self):
         newData = {'connection': {'thread': '0',
-                                  'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+                                  'output': '2', 
+                                  'input': '0'}}
                                
         returned = self.model.connections.addData(newData)
         
@@ -820,12 +826,12 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual(returned, data)
         self.assertEqual('0', data['connection']['id'])
         self.assertEqual('0', data['connection']['thread'])
-        self.assertEqual('3', data['connection']['sourceConnector'])
-        self.assertEqual('0', data['connection']['targetConnector'])
+        self.assertEqual('2', data['connection']['output'])
+        self.assertEqual('0', data['connection']['input'])
         
     def testAddDataNoThread(self):
-        newData = {'connection': {'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+        newData = {'connection': {'output': '1', 
+                                  'input': '0'}}
                                
         data = self.model.connections.addData(newData)
         
@@ -834,8 +840,8 @@ class ConnectionsTest(unittest.TestCase):
         
     def testAddDataNoneThread(self):
         newData = {'connection': {'thread': None,
-                                  'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+                                  'output': '2', 
+                                  'input': '0'}}
                                
         data = self.model.connections.addData(newData)
         
@@ -844,16 +850,16 @@ class ConnectionsTest(unittest.TestCase):
         
     def testAddDataInputConnected(self):
         newData = {'connection': {'thread': None,
-                                  'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+                                  'output': '2', 
+                                  'input': '0'}}
         data = self.model.connections.addData(newData)
         
         self.assertRaises(model.AddDataFailed, self.model.connections.addData,
                           newData)
         
     def testSetThread(self):
-        newData = {'connection': {'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+        newData = {'connection': {'output': '2', 
+                                  'input': '0'}}
         self.model.connections.addData(newData)
         
         self.model.connections.set('0', {'connection': {'thread': '0'}})
@@ -864,8 +870,8 @@ class ConnectionsTest(unittest.TestCase):
         
     def testSetNoneThread(self):
         newData = {'connection': {'thread': '0',
-                                  'sourceConnector': '3', 
-                                  'targetConnector': '0'}}
+                                  'output': '2', 
+                                  'input': '0'}}
         self.model.connections.addData(newData)
         
         self.model.connections.set('0', {'connection': {'thread': None}})
@@ -874,17 +880,17 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testDelete(self):
-        source = self.model.connectors['0']
-        target = self.model.connectors['3']
+        source = self.model.outputs['2']
+        target = self.model.inputs['0']
         self.connections.addConnection(self.stream, source, target, self.thread)
         
         self.model.connections.delete('0')
         
-        self.assertEqual([], source.data['connector']['connections'])
-        self.assertEqual([], target.data['connector']['connections'])
+        self.assertEqual([], source.data['output']['connections'])
+        self.assertEqual(None, target.data['input']['connection'])
         self.assertEqual([], self.stream.connections)
         
-class ConnectorsTest(unittest.TestCase):
+class InputsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         
@@ -898,23 +904,53 @@ class ConnectorsTest(unittest.TestCase):
         self.model.operators.addStromxOp(stromxOp, self.stream)
         
     def testData(self):
-        connector = self.model.connectors['2']
-        data = {'connector': {'id': '2',
-                              'operator': '0',
-                              'title': 'Output 1',
-                              'connectorType': 'output',
-                              'observers': [],
-                              'connections': []}}
+        connector = self.model.inputs['0']
+        data = {'input': {'id': '0',
+                          'operator': '0',
+                          'title': 'Input',
+                          'observers': [],
+                          'connection': None}}
         self.assertEqual(data, connector.data)
         
     def testDelete(self):
-        source = self.model.connectors['0']
-        target = self.model.connectors['1']
+        source = self.model.outputs['0']
+        target = self.model.inputs['0']
         self.model.connections.addConnection(self.stream, source, target, None)
         
-        self.model.connectors.delete('0')
+        self.model.inputs.delete('0')
         
-        self.assertFalse(self.model.connectors.has_key('0'))
+        self.assertFalse(self.model.inputs.has_key('0'))
+        self.assertEqual(dict(), self.model.connections)
+        
+class OutputsTest(unittest.TestCase):
+    def setUp(self):
+        self.model = model.Model()
+        
+        fileModel = model.File("", self.model)
+        self.stream = self.model.streams.addFile(fileModel)
+        self.stromxStream = self.stream.stromxStream
+        
+        kernel = stromx.runtime.Fork()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(stromxOp)
+        self.model.operators.addStromxOp(stromxOp, self.stream)
+        
+    def testData(self):
+        connector = self.model.outputs['1']
+        data = {'output': {'id': '1',
+                           'operator': '0',
+                           'title': 'Output 1',
+                           'connections': []}}
+        self.assertEqual(data, connector.data)
+        
+    def testDelete(self):
+        source = self.model.outputs['0']
+        target = self.model.inputs['0']
+        self.model.connections.addConnection(self.stream, source, target, None)
+        
+        self.model.outputs.delete('0')
+        
+        self.assertFalse(self.model.outputs.has_key('0'))
         self.assertEqual(dict(), self.model.connections)
         
 class ThreadsTest(unittest.TestCase):
@@ -945,8 +981,8 @@ class ThreadsTest(unittest.TestCase):
                                                      self.stream)
                                                      
         data = {'connection': {'thread': '0',
-                               'sourceConnector': '3', 
-                               'targetConnector': '0'}}
+                               'output': '2', 
+                               'input': '0'}}
         self.model.connections.addData(data)
         self.connection = self.model.connections['0']
         
@@ -1033,7 +1069,7 @@ class ViewsTest(unittest.TestCase):
         data = {'view': {'id': '1',
                          'name': 'View name',
                          'observers': [{'id': '0', 'type': 'parameterObserver'},
-                                       {'id': '0', 'type': 'connectorObserver'}],
+                                       {'id': '0', 'type': 'inputObserver'}],
                          'stream': '1'}}
         self.assertEqual(data, self.model.views['1'].data)
         
@@ -1053,7 +1089,7 @@ class ViewsTest(unittest.TestCase):
         
         self.model.streams.delete(stream.index)
         self.assertEqual(1, len(self.model.views))
-        self.assertEqual(0, len(self.model.connectorObservers))
+        self.assertEqual(0, len(self.model.inputObservers))
         self.assertEqual(0, len(self.model.parameterObservers))
         self.assertEqual(0, len(self.model.connectorValues))
         
@@ -1077,23 +1113,23 @@ class ObserversTest(unittest.TestCase):
         self.streamFile = self.model.files['1']
         self.model.streams.addFile(self.streamFile)
         
-        self.observer = self.model.connectorObservers['0']
+        self.observer = self.model.inputObservers['0']
         self.stromxObserver = self.observer.stromxObserver
         
     def testSetVisualization(self):
-        self.observer.set({'connectorObserver': {'id': '0',
-                                                 'visualization': 'lines'}})
+        self.observer.set({'inputObserver': {'id': '0',
+                                             'visualization': 'lines'}})
         self.assertEqual('lines', self.stromxObserver.visualization)
         
     def testSetColor(self):
-        self.observer.set({'connectorObserver': {'id': '0',
-                                                 'color': '#ff00ff'}})
+        self.observer.set({'inputObserver': {'id': '0',
+                                             'color': '#ff00ff'}})
         self.assertEqual(stromx.runtime.Color(255, 0, 255),
                          self.stromxObserver.color)
         
     def testSetActive(self):
-        self.observer.set({'connectorObserver': {'id': '0',
-                                                 'active': False}})
+        self.observer.set({'inputObserver': {'id': '0',
+                                             'active': False}})
         self.assertEqual(False, self.stromxObserver.active)
         
     def tearDown(self):
@@ -1147,7 +1183,7 @@ class ParameterObserversTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree('temp', True)
         
-class ConnectorObserversTest(unittest.TestCase):
+class InputObserversTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
@@ -1163,24 +1199,24 @@ class ConnectorObserversTest(unittest.TestCase):
         
     def testAddData(self):
         self.setupEmptyView()
-        data = {'connectorObserver': {'id': '0',
-                                      'connector': '2',
-                                      'view': '0'}}
+        data = {'inputObserver': {'id': '0',
+                                  'input': '2',
+                                  'view': '0'}}
         
-        returned = self.model.connectorObservers.addData(data)
+        returned = self.model.inputObservers.addData(data)
         
-        refData = {'connectorObserver': {'id': '0',
-                                         'connector': '2',
-                                         'view': '0',
-                                         'active': True,
-                                         'value': '0',
-                                         'color': '#000000',
-                                         'visualization': 'default',
-                                         'zvalue': 0}}
+        refData = {'inputObserver': {'id': '0',
+                                     'input': '2',
+                                     'view': '0',
+                                     'active': True,
+                                     'value': '0',
+                                     'color': '#000000',
+                                     'visualization': 'default',
+                                     'zvalue': 0}}
         self.assertEqual(refData, returned)
-        self.assertEqual(refData, self.model.connectorObservers['0'].data)
+        self.assertEqual(refData, self.model.inputObservers['0'].data)
         viewModel = self.model.views['0']
-        self.assertEqual([{'id': '0', 'type': 'connectorObserver'}],
+        self.assertEqual([{'id': '0', 'type': 'inputObserver'}],
                          viewModel.observers)
         refData = {'connectorValues': [{'variant': 'none',
                                         'id': '0',
@@ -1194,7 +1230,7 @@ class ConnectorObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         stromxView = viewModel.stromxView
         
-        self.model.connectorObservers.delete('0')
+        self.model.inputObservers.delete('0')
         
         self.assertEqual(1, len(viewModel.observers))
         self.assertEqual(1, len(stromxView.observers))
