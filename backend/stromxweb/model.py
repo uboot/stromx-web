@@ -202,9 +202,10 @@ class Files(Items):
             f = File(data["file"]["name"], self.model)
             self.addItem(f)
         
+        
         content = data["file"].get("content", "")
-        content = re.sub("data:.*;base64,", "", content, re.MULTILINE)
-        if content != "":
+        if content != "" and  content != None:
+            content = re.sub("data:.*;base64,", "", content, re.MULTILINE)
             with file(f.path, 'w') as streamFile:
                 streamFile.write(base64.decodestring(content))
         else:
@@ -218,7 +219,7 @@ class File(Item):
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
-        self.__name = name
+        self.__name = str(name)
         self.__opened = False
         self.__stream = None
     
@@ -264,7 +265,7 @@ class File(Item):
             newPath = os.path.join(self.model.files.directory, name)
             if os.path.exists(self.path):
                 os.rename(self.path, newPath)
-            self.__name = name
+            self.__name = str(name)
         
     def delete(self):
         self.opened = False
@@ -315,6 +316,10 @@ class Stream(Item):
         inputs = self.model.inputs
         outputs = self.model.outputs
         for op in self.__operators:
+            # no need to investigate connections of non-initialized operators
+            if op.status == 'none':
+                continue
+            
             for stromxInput in op.stromxOp.info().inputs():
                 source = self.__stream.connectionSource(op.stromxOp,
                                                         stromxInput.id())
@@ -332,8 +337,10 @@ class Stream(Item):
                 thread = self.model.threads.findThreadModel(op.stromxOp,
                                                             stromxInput)
                 
-                connection = self.model.connections.addConnection(self,
-                                    outputConnector, inputConnector, thread)
+                # the connection added below assigns itself to the stream, so 
+                # there is no need to store it in self.__connections
+                self.model.connections.addConnection(self, outputConnector, 
+                                                     inputConnector, thread)
         
         if os.path.exists(streamFile.path):
             zipInput.initialize("", "views.json")
@@ -475,6 +482,13 @@ class Stream(Item):
     def removeConnection(self, connection):
         self.__connections.remove(connection)
         
+    def addOperator(self, op):
+        self.__operators.append(op)
+        
+    def removeOperator(self, op):
+        self.stromxStream.removeOperator(op.stromxOp)
+        self.__operators.remove(op)
+        
 class OperatorTemplate(Item):
     properties = ["type", "package", "version"]
     
@@ -529,14 +543,16 @@ class Operators(Items):
         
         factory = self.model.operatorTemplates.factory
         try:
-            opKernel = factory.newOperator(data['operator']['package'],
-                                           data['operator']['type'])
+            opKernel = factory.newOperator(str(data['operator']['package']),
+                                           str(data['operator']['type']))
         except stromx.runtime.OperatorAllocationFailed as e:
             self.model.errors.addError(e)
             raise AddDataFailed()
         
         stromxOp = stream.stromxStream.addOperator(opKernel)
         op = self.addStromxOp(stromxOp, stream)
+        op.set(data)
+        stream.addOperator(op)
         return op.data
         
 class Operator(Item):
@@ -642,7 +658,7 @@ class Operator(Item):
     def delete(self):
         self.__removeParameters()
         self.__removeConnectors() 
-        self.__stream.stromxStream.removeOperator(self.__op)
+        self.__stream.removeOperator(self)
     
     def findOutputPosition(self, index):
         outputs = [i for i, output in enumerate(self.__op.info().outputs())
@@ -958,6 +974,10 @@ class Thread(Item):
     
     @color.setter
     def color(self, value):
+        if value == None:
+            self.__thread.setColor(stromx.runtime.Color(0, 0, 0))
+            return
+            
         self.__thread.setColor(conversion.stringToStromxColor(value))
     
     @property
@@ -1005,6 +1025,7 @@ class Threads(Items):
         stromxThread = stream.stromxStream.addThread()
         
         thread = self.addStromxThread(stromxThread, stream)
+        thread.set(data)
         return thread.data
         
     def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
@@ -1525,10 +1546,13 @@ class ConnectorValue(ConnectorValueBase):
         super(ConnectorValue, self).delete()
     
 class ConnectorValues(Items):
+    def __init__(self, model = None):
+        super(ConnectorValues, self).__init__(model)
+        self.__handlers = []
+        
     def addStromxConnectorValue(self, stromxConnectorValue):
         connectorValue = ConnectorValue(stromxConnectorValue, self.model)
         self.addItem(connectorValue)
-        self.__handlers = []
         
         return connectorValue
     
@@ -1643,9 +1667,9 @@ def _registerExtraPackages(factory):
 #         except ImportError:
 #             pass
         
-        try:
-            import stromx.raspi as raspi
-            raspi.register(factory)
-        except ImportError:
-            pass
+#         try:
+#             import stromx.raspi as raspi
+#             raspi.register(factory)
+#         except ImportError:
+#             pass
         

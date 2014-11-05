@@ -4,8 +4,8 @@ App.ApplicationRoute = Ember.Route.extend({
   socket: null,
 
   activate: function() {
-    var url = 'ws://' + 'localhost:8888' + '/error_socket';
-    // var url = 'ws://' + window.location.host + '/error_socket';
+    // var url = 'ws://' + 'localhost:8888' + '/error_socket';
+    var url = 'ws://' + window.location.host + '/error_socket';
     var ws = new WebSocket(url);
     var _this = this;
     ws.onmessage = function(event) {
@@ -47,7 +47,7 @@ App.ApplicationRoute = Ember.Route.extend({
         outlet: 'context',
         controller: controller
       });
-      
+
       Ember.run.scheduleOnce('afterRender', this, function() {
         $('.context').show().css({
           position: "absolute",

@@ -245,14 +245,21 @@ class FilesTest(unittest.TestCase):
         self.assertTrue(os.path.exists('temp/renamed.stromx'))
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
-    def testAddEmpty(self):
+    def testAddNoContent(self):
         self.files.addData({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
+    def testAddNoneContent(self):
+        self.files.addData({'file': {'name': 'test.stromx', 'content': None}})
+        self.assertEqual({'files': [_testFile, _parallelFile]},
+                         self.files.data)
+        self.assertFalse(os.path.exists('temp/test.stromx'))
+        
     def testAddData(self):
-        self.files.addData({'file': {'name': 'test.stromx', 'content': _content}})
+        self.files.addData({'file': {'name': 'test.stromx',
+                                     'content': _content}})
         self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
@@ -272,6 +279,13 @@ class StreamsTest(unittest.TestCase):
         
     def setUpStream(self):
         shutil.copytree('data/stream', 'temp')
+        
+        self.model = model.Model('temp')
+        self.streams = self.model.streams
+        self.streamFile = self.model.files['0']
+        
+    def setUpDeinitialized(self):
+        shutil.copytree('data/deinitialized', 'temp')
         
         self.model = model.Model('temp')
         self.streams = self.model.streams
@@ -311,6 +325,12 @@ class StreamsTest(unittest.TestCase):
         self.assertEqual(5, len(self.model.outputs))
         self.assertEqual(5, len(self.model.connections))
         self.assertEqual({'operator': _fork}, self.model.operators['2'].data)
+        
+    def testAddDataDeinitialized(self):
+        self.setUpDeinitialized()
+        self.streamFile.opened = True
+        
+        self.assertEqual(True, self.streamFile.data['file']['opened'])
         
     def testAddNoFile(self):
         self.setUpStream()
@@ -381,6 +401,17 @@ class StreamsTest(unittest.TestCase):
         self.streamFile.set({'file': {'opened': True}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
         
+    def testSetSavedNewFile(self):
+        self.setUpStream()
+        data = self.model.files.addData({'file': {'name': u'new.stromx'}})
+        newFile = self.model.files[data['file']['id']]
+        newFile.opened = True 
+        streamIndex = newFile.stream
+        
+        self.streams.set(streamIndex, {'stream': {'saved': True}})
+        
+        self.assertTrue(os.path.exists('temp/new.stromx'))
+        
     def testSetName(self):
         self.setUpStream()
         self.streamFile.opened = True
@@ -449,21 +480,28 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual(data, self.operator.data)
         
     def testAddData(self):
-        data = {'operator': {'package': 'runtime',
-                             'type': 'Send',
-                             'stream': '0'}}
+        data = {'operator': {'package': u'runtime',
+                             'type': u'Send',
+                             'stream': '0',
+                             'name': 'New operator'}}
         
         returned = self.operators.addData(data)
         
         self.assertEqual(2, len(self.model.operators))
         op = self.model.operators['1']
         
+        self.assertTrue('1' in self.stream.operators)
         self.assertEqual(returned, op.data)
         self.assertEqual('1', op.data['operator']['id'])
         self.assertEqual('runtime', op.data['operator']['package'])
         self.assertEqual('Send', op.data['operator']['type'])
         self.assertEqual('none', op.data['operator']['status'])
+        self.assertEqual('New operator', op.data['operator']['name'])
         self.assertEqual('0', op.data['operator']['stream'])
+        self.assertEqual(2, len(self.model.operators))
+        self.assertEqual(0, len(self.model.inputs))
+        self.assertEqual(1, len(self.model.outputs))
+        self.assertEqual(2, len(self.model.parameters))
         
     def testAddDataInvalidOperator(self):
         data = {'operator': {'package': 'package',
@@ -571,12 +609,20 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual('none', op.data['operator']['status'])      
         
     def testDelete(self):
-        self.operators.delete('0')
+        data = {'operator': {'package': 'runtime',
+                             'type': 'Dump',
+                             'stream': '0'}}
+        opId = self.operators.addData(data)['operator']['id']
+        opModel = self.model.operators[opId]
         
-        self.assertFalse(self.stromxOp in self.stromxStream.operators())
-        self.assertEqual(dict(), self.model.operators)
-        self.assertEqual(dict(), self.model.connectors)
-        self.assertEqual(dict(), self.model.parameters)
+        self.operators.delete(opId)
+        
+        self.assertFalse(opModel.stromxOp in self.stromxStream.operators())
+        self.assertFalse(opId in self.stream.operators)
+        self.assertEqual(1, len(self.model.operators))
+        self.assertEqual(0, len(self.model.inputs))
+        self.assertEqual(1, len(self.model.outputs))
+        self.assertEqual(2, len(self.model.parameters))
         
     def tearDown(self):
         self.__stream = None
@@ -1014,11 +1060,14 @@ class ThreadsTest(unittest.TestCase):
         self.assertEqual("New name", self.thread.stromxThread.name())
         
     def testAddData(self):
-        self.threads.addData({'thread': {'stream': '0'}})
+        self.threads.addData({'thread': {'stream': '0',
+                                         'name': 'New thread',
+                                         'color': None}})
         
         refData = {'thread': {'color': '#000000',
                               'id': '1', 'name': '',
                               'connections': [],
+                              'name': 'New thread',
                               'stream': '0'}}
         self.assertEqual(2, len(self.model.threads))
         self.assertEqual(2, len(self.stromxStream.threads()))
