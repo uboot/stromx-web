@@ -33,6 +33,13 @@
 
 <div class="stromx-stream-view panel panel-default">
   <svg width="1280" height="1024" id="stream-svg">
+
+    <defs>
+      <g id="arrows" transform="scale(5)">
+        <path d="M-1.5,0L-2.0,-1.0L-1.0,-1.0L-0.5,0.0L-1.0,1.0L-2.0,1.0Z"/>
+        <path d="M0.5,0L0.0,-1.0L1.0,-1.0L1.5,0.0L1.0,1.0L0.0,1.0Z"/>
+      </g>
+    </defs>
     {{#each operators itemController="operator"}}
       {{#svg-transform transform=transform}}
         {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="save"}}
@@ -61,12 +68,17 @@
     {{/each}}
     {{#each connections itemController="connection"}}
       {{#svg-click mouseClick="showMenu"}}
-        {{#if noColor}}
-          <path {{bind-attr d=path}} stroke="#cccccc" class="stromx-svg-connection-path"/>
-        {{else}}
-          <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
+        <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
+        {{#if displayStartArrow}}
+          <use id="startArrows" xlink:href="#arrows" {{bind-attr transform=startArrowTransform}}/>
         {{/if}}
-      {{/svg-click}}
+        {{#if displayCenterArrow}}
+          <use id="centerArrows" xlink:href="#arrows" {{bind-attr transform=centerArrowTransform}}/>
+        {{/if}}
+        {{#if displayEndArrow}}
+          <use id="endArrows" xlink:href="#arrows" {{bind-attr transform=endArrowTransform}}/>
+        {{/if}}
+        {{/svg-click}}
     {{/each}}
   </svg>
 </div>

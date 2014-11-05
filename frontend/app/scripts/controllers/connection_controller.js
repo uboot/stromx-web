@@ -28,6 +28,14 @@ App.drawLine = function (x, y) {
   return 'L' + x + ',' + y;
 };
 
+App.translate = function(x, y) {
+  return 'translate(' + x + ',' + y + ')';
+};
+
+App.rotate = function(angle) {
+  return 'rotate(' + angle + ')';
+};
+
 App.computePath = function (x1, y1, x2, y2) {
   if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined)
     return 'M0,0';
@@ -200,9 +208,106 @@ App.ConnectionController = Ember.ObjectController.extend({
     return App.computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));
   }.property('x1', 'x2', 'y1', 'y2'),
 
-  color: Ember.computed.alias('thread.color'),
-  noColor: Ember.computed.empty('thread.color'),
-  
+  color: function(key, value) {
+    if (value !== undefined)
+      return value;
+
+    var _this = this;
+    this.get('thread').then(function(thread) {
+      if (thread === null)
+        _this.set('color', '#cccccc');
+      else
+        _this.set('color', thread.get('color'));
+    });
+  }.property('thread.color'),
+
+  displayStartArrow: false,
+  displayCenterArrow: false,
+  displayEndArrow: false,
+
+  startArrowTransform: '',
+  centerArrowTransform: '',
+  endArrowTransform: '',
+
+  updateArrows: function() {
+    var x1 = this.get('x1');
+    var y1 = this.get('y1');
+    var x2 = this.get('x2');
+    var y2 = this.get('y2');
+
+    if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined)
+      return;
+
+    var ARROW_LENGTH = 2 * App.Constants.CONNECTOR_SIZE;
+    var RADIUS = 1.5 * App.Constants.CONNECTOR_SIZE;
+    var EXTRA_HEIGHT = 20;
+
+    var xDiff = x2 - x1;
+    var yDiff = y2 - y1;
+    var yOffset = 0;
+
+    if (yDiff <= 0)
+      yOffset = yDiff;
+
+    // hide all arrows
+    this.set('displayStartArrow', false);
+    this.set('displayCenterArrow', false);
+    this.set('displayEndArrow', false);
+
+    var transform = '';
+    if (xDiff > 0) {
+      // the connections points forward
+
+      if (xDiff > 2*RADIUS) {
+        // start and end are so far from each other that the can
+        // be directly connected (without loop)
+
+        if (xDiff > 2*RADIUS + 2*ARROW_LENGTH) {
+          this.set('displayStartArrow', true);
+          var transform = App.translate(x1 + (xDiff - 2*RADIUS)/4, y1);
+          this.set('startArrowTransform', transform);
+
+          this.set('displayEndArrow', true);
+          var transform = App.translate(x2 - (xDiff - 2*RADIUS)/4, y2);
+          this.set('endArrowTransform', transform);
+        }
+
+        if(Math.abs(yDiff) > 2*RADIUS + ARROW_LENGTH)
+        {
+          // start and end point are so far from each other that a
+          // center arrow can be drawn
+          this.set('displayCenterArrow', true);
+          transform = App.translate(x1 + xDiff/2, y1 + yDiff/2);
+
+          var rotation = '';
+          if(yDiff > 0) // the connection points downwards
+            transform += App.rotate(90);
+          else // the connection points upwards
+            transform += App.rotate(-90);
+          this.set('centerArrowTransform', transform);
+        }
+      } else {
+        // start and end are so close to each other to each other
+        // that the connections must have loop
+        if(Math.abs(yDiff) > ARROW_LENGTH)
+        {
+          if(yOffset < 0)
+          {
+            this.set('displayStartArrow', true);
+            transform = App.translate(x1 + xDiff/2 + RADIUS, y1 - RADIUS + yDiff/2);
+            transform += App.rotate(-90);
+            this.set('startArrowTransform', transform);
+          } else {
+            this.set('displayEndArrow', true);
+            transform = App.translate(x1 + xDiff/2 - RADIUS, y1 - RADIUS + yDiff/2);
+            transform += App.rotate(90);
+            this.set('endArrowTransform', transform);
+          }
+        }
+      }
+    }
+  }.observes('x1', 'x2', 'y1', 'y2'),
+
   actions: {
     showMenu: function(x, y) {
       this.send('showContextMenu', 'connectionMenu', x, y, this);
