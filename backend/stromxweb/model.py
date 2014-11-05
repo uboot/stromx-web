@@ -454,14 +454,14 @@ class Stream(Item):
         for viewIndex in self.views:
             self.model.views.delete(viewIndex)
             
-        for connection in self.__connections:
-            self.model.connections.delete(connection.index)
+        for connectionIndex in self.connections:
+            self.model.connections.delete(connectionIndex)
             
         for threadIndex in self.threads:
             self.model.threads.delete(threadIndex)
             
-        for op in self.__operators:
-            self.model.operators.delete(op.index)
+        for opIndex in self.operators:
+            self.model.operators.delete(opIndex)
     
     @property  
     def stromxStream(self):
@@ -476,6 +476,13 @@ class Stream(Item):
     def removeView(self, view):
         self.__views.remove(view)
         
+    def addThread(self, thread):
+        self.__threads.append(thread)
+        
+    def removeThread(self, thread):
+        self.__stream.removeThread(thread.stromxThread)
+        self.__threads.remove(thread)
+        
     def addConnection(self, connection):
         self.__connections.append(connection)
         
@@ -486,7 +493,7 @@ class Stream(Item):
         self.__operators.append(op)
         
     def removeOperator(self, op):
-        self.stromxStream.removeOperator(op.stromxOp)
+        self.__stream.removeOperator(op.stromxOp)
         self.__operators.remove(op)
         
 class OperatorTemplate(Item):
@@ -997,7 +1004,7 @@ class Thread(Item):
             connection.thread = None
         self.__connections = []
             
-        self.__stream.stromxStream.removeThread(self.__thread)
+        self.__stream.removeThread(self)
         
     def addConnection(self, connection):
         self.__connections.append(connection)
@@ -1026,6 +1033,7 @@ class Threads(Items):
         
         thread = self.addStromxThread(stromxThread, stream)
         thread.set(data)
+        stream.addThread(thread)
         return thread.data
         
     def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):

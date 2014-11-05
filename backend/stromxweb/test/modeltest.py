@@ -898,7 +898,7 @@ class ConnectionsTest(unittest.TestCase):
         newData = {'connection': {'thread': None,
                                   'output': '2', 
                                   'input': '0'}}
-        data = self.model.connections.addData(newData)
+        self.model.connections.addData(newData)
         
         self.assertRaises(model.AddDataFailed, self.model.connections.addData,
                           newData)
@@ -922,7 +922,7 @@ class ConnectionsTest(unittest.TestCase):
         
         self.model.connections.set('0', {'connection': {'thread': None}})
         
-        thread = self.thread.stromxThread
+        self.thread.stromxThread
         self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testDelete(self):
@@ -1069,13 +1069,18 @@ class ThreadsTest(unittest.TestCase):
                               'connections': [],
                               'name': 'New thread',
                               'stream': '0'}}
+        self.assertTrue('1' in self.stream.threads)
         self.assertEqual(2, len(self.model.threads))
         self.assertEqual(2, len(self.stromxStream.threads()))
         self.assertEqual(refData, self.model.threads['1'].data)
         
     def testDelete(self):
-        self.model.threads.delete(self.thread.index)
+        index = self.thread.index
+        self.stream.addThread(self.thread)
         
+        self.model.threads.delete(index)
+        
+        self.assertFalse(index in self.stream.threads)
         self.assertEqual(0, len(self.model.threads))
         self.assertEqual(0, len(self.stromxStream.threads()))
         self.assertEqual(None, self.connection.thread)
