@@ -910,9 +910,10 @@ class ConnectionsTest(unittest.TestCase):
         
         self.model.connections.set('0', {'connection': {'thread': '0'}})
         
-        thread = self.thread.stromxThread
-        self.assertEqual(self.fork.stromxOp, thread.inputSequence()[0].op())
-        self.assertEqual(0, thread.inputSequence()[0].id())
+        stromxThread = self.thread.stromxThread
+        self.assertEqual(['0'], self.thread.connections)
+        self.assertEqual(self.fork.stromxOp, stromxThread.inputSequence()[0].op())
+        self.assertEqual(0, stromxThread.inputSequence()[0].id())
         
     def testSetNoneThread(self):
         newData = {'connection': {'thread': '0',
