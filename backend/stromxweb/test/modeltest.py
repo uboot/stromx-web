@@ -926,15 +926,25 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testDelete(self):
+        newData = {'connection': {'thread': '0',
+                                  'output': '2', 
+                                  'input': '0'}}
+        self.model.connections.addData(newData)
+        
         source = self.model.outputs['2']
         target = self.model.inputs['0']
-        self.connections.addConnection(self.stream, source, target, self.thread)
         
         self.model.connections.delete('0')
         
         self.assertEqual([], source.data['output']['connections'])
         self.assertEqual(None, target.data['input']['connection'])
         self.assertEqual([], self.stream.connections)
+        
+        output = self.stromxStream.connectionSource(self.fork.stromxOp, 0)
+        self.assertFalse(output.valid())
+        
+        thread = self.thread.stromxThread
+        self.assertEqual(0, len(thread.inputSequence()))
         
 class InputsTest(unittest.TestCase):
     def setUp(self):

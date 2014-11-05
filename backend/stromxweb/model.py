@@ -487,6 +487,8 @@ class Stream(Item):
         self.__connections.append(connection)
         
     def removeConnection(self, connection):
+        self.__stream.disconnect(connection.stromxTargetOp, 
+                                 connection.stromxTargetId)
         self.__connections.remove(connection)
         
     def addOperator(self, op):
@@ -899,16 +901,24 @@ class Connection(Item):
         self.__thread = newThread
         if self.__thread != None:
             self.__thread.stromxThread.addInput(stromxOp, stromxId)
+            
+    @property
+    def stromxTargetOp(self):
+        return self.__input.stromxOp
+    
+    @property
+    def stromxTargetId(self):
+        return self.__input.stromxId
         
     def delete(self):        
         self.__output.removeConnection(self)
         self.__input.setConnection(None)
         
-        if self.__stream != None:
-            self.__stream.removeConnection(self)
-        
         if self.__thread != None:
             self.__thread.removeConnection(self)
+        
+        if self.__stream != None:
+            self.__stream.removeConnection(self)
         
 class Connections(Items):
     def addConnection(self, stream, outputConnector, inputConnector, thread):        
@@ -1010,6 +1020,8 @@ class Thread(Item):
         self.__connections.append(connection)
     
     def removeConnection(self, connection):
+        self.__thread.removeInput(connection.stromxTargetOp,
+                                  connection.stromxTargetId)
         self.__connections.remove(connection)
         
 class Threads(Items):
