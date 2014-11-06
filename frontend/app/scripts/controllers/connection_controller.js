@@ -240,6 +240,7 @@ App.ConnectionController = Ember.ObjectController.extend({
 
     var ARROW_LENGTH = 2 * App.Constants.CONNECTOR_SIZE;
     var RADIUS = 1.5 * App.Constants.CONNECTOR_SIZE;
+    var ARC_RECT_SIZE = 2*RADIUS;
     var EXTRA_HEIGHT = 20;
 
     var xDiff = x2 - x1;
@@ -304,6 +305,60 @@ App.ConnectionController = Ember.ObjectController.extend({
             this.set('endArrowTransform', transform);
           }
         }
+      }
+    } else { // the connections points backward
+
+      // the backward section is long enough to display an arrow
+      if(Math.abs(xDiff) > ARROW_LENGTH)
+        this.set('displayCenterArrow', true);
+
+      if(Math.abs(yDiff) > 4*RADIUS)
+      {
+        // start and end are so far from each other that the can
+        // be directly with a line between the to operators
+        if(Math.abs(yDiff) > 4*RADIUS + 2*ARROW_LENGTH)
+        {
+          this.set('displayStartArrow', true);
+
+          transform = App.translate(x1 + RADIUS, y1 + yDiff/4);
+          if(yDiff > 0)
+            transform += App.rotate(90);
+          else
+            transform += App.rotate(-90);
+          this.set('startArrowTransform', transform);
+
+          this.set('displayEndArrow', true);
+          transform = App.translate(x2 - RADIUS, y2 - yDiff/4);
+          if(yDiff > 0)
+            transform += App.rotate(90);
+          else
+            transform += App.rotate(-90);
+          this.set('endArrowTransform', transform);
+        }
+
+        transform = App.translate(x1 + xDiff/2, y1 + yDiff/2);
+        transform += App.rotate(180);
+        this.set('centerArrowTransform', transform);
+      }
+      else
+      {
+        // start and end are so close to each other to each other
+        // that the connection must run around one of the operators
+
+        this.set('displayStartArrow', true);
+        transform = App.translate(x1 + RADIUS, y1 + (yOffset - EXTRA_HEIGHT)/2 - RADIUS);
+        transform += App.rotate(-90);
+        this.set('startArrowTransform', transform);
+
+        this.set('displayEndArrow', true);
+        transform = App.translate(x2 - RADIUS, y2 - RADIUS - ((yDiff - yOffset) + EXTRA_HEIGHT)/2);
+        transform += App.rotate(90);
+        this.set('endArrowTransform', transform);
+
+        this.set('displayCenterArrow', true);
+        transform = App.translate(x1 + xDiff/2, y1 + yOffset - EXTRA_HEIGHT - ARC_RECT_SIZE);
+        transform += App.rotate(180);
+        this.set('centerArrowTransform', transform);
       }
     }
   }.observes('x1', 'x2', 'y1', 'y2'),
