@@ -363,9 +363,17 @@ module.exports = function (grunt) {
         'concurrent:test',
         'connect:test',
         'neuter:app',
-        //'open',
-        //'watch'
         'qunit'
+    ]);
+
+    grunt.registerTask('serve-test', [
+        'clean:server',
+        'replace:app',
+        'concurrent:test',
+        'connect:test',
+        'neuter:app',
+        'open',
+        'watch'
     ]);
 
     grunt.registerTask('build', [

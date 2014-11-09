@@ -11,7 +11,7 @@ App.Thread.FIXTURES = [
   {
     id: 1,
     name: 'Thread',
-    color: '#ff0000',
+    color: '#be202e',
     stream: 2,
     connections: [1]
   }

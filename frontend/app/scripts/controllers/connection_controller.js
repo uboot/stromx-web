@@ -215,7 +215,7 @@ App.ConnectionController = Ember.ObjectController.extend({
     var _this = this;
     this.get('thread').then(function(thread) {
       if (thread === null)
-        _this.set('color', '#cccccc');
+        _this.set('color', '#808080');
       else
         _this.set('color', thread.get('color'));
     });

@@ -26,7 +26,7 @@ h1 {
 }
 
 .stromx-svg-operator-rect {
-  fill: transparent;
+  fill: white;
   stroke: black;
   stroke-width: 2;
 }
@@ -49,8 +49,14 @@ h1 {
 .stromx-svg-connector-rect {
 }
 
-.stromx-red {
-  fill: red;
+.stromx-svg-arrows {
+  fill: #ffffff;
+  fill-opacity: 0.3;
 }
 
+.stromx-svg-grid {
+  fill: none;
+  stroke: gray;
+  stroke-width: 0.5;
+}
 

@@ -62,7 +62,15 @@ App.OperatorController = Ember.ObjectController.extend({
       this.set('position', {
         x: this.dragStartPosition.x + dx,
         y: this.dragStartPosition.y + dy
-    });
+      });
+    },
+    dragEnd: function() {
+      var pos = this.get('position');
+      this.set('position', {
+        x: 25 * Math.round(pos.x / 25),
+        y: 25 * Math.round(pos.y / 25)
+      });
+      this.send('save');
     },
     initialize: function(e) {
       this.set('status', 'initialized');
