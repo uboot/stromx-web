@@ -1,4 +1,4 @@
-/* global App, Snap */
+/* global App, Snap, $ */
 
 App.SvgDragComponent = Ember.Component.extend({
   tagName: 'g',

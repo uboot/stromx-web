@@ -45,6 +45,7 @@ module.exports = function (grunt) {
                 },
                 files: [
                     '.tmp/scripts/*.js',
+                    'test/spec/*.js',
                     '<%= yeoman.app %>/*.html',
                     '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
                     '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
@@ -72,6 +73,7 @@ module.exports = function (grunt) {
                 options: {
                     middleware: function (connect) {
                         return [
+                            lrSnippet,
                             mountFolder(connect, 'test'),
                             mountFolder(connect, yeomanConfig.app),
                             mountFolder(connect, '.tmp')

@@ -68,9 +68,9 @@ App.ObserverController = Ember.ObjectController.extend({
       case 'text':
         return 'text';
       case 'image':
-        return 'image'
+        return 'image';
       case 'lines':
-        return 'lines'
+        return 'lines';
       default:
         break;
     }

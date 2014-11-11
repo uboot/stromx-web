@@ -69,6 +69,7 @@
         {{/each}}
       {{/svg-transform}}
     {{/each}}
+    
     {{#each connections itemController="connection"}}
       {{#svg-click mouseClick="showMenu"}}
         <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
@@ -81,7 +82,7 @@
         {{#if displayEndArrow}}
           <use id="endArrows" xlink:href="#arrows" {{bind-attr transform=endArrowTransform}}/>
         {{/if}}
-        {{/svg-click}}
+      {{/svg-click}}
     {{/each}}
   </svg>
 </div>

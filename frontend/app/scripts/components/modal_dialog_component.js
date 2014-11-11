@@ -9,16 +9,12 @@ App.ModalDialogComponent = Ember.Component.extend({
   
   actions: {
     cancel: function() {
-      var component = this;
-      this.$('.modal').modal('hide').one('hidden.bs.modal', function(ev) {
-        component.sendAction("cancel");
-      });
+      this.$('.modal').modal('hide');
+      this.sendAction("cancel");
     },
     accept: function() {
-      var component = this;
-      this.$('.modal').modal('hide').one('hidden.bs.modal', function(ev) {
-        component.sendAction("accept");
-      });
+      this.$('.modal').modal('hide');
+      this.sendAction("accept");
     }
   }
 }); 

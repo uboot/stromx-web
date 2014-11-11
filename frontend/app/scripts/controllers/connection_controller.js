@@ -265,11 +265,11 @@ App.ConnectionController = Ember.ObjectController.extend({
 
         if (xDiff > 2*RADIUS + 2*ARROW_LENGTH) {
           this.set('displayStartArrow', true);
-          var transform = App.translate(x1 + (xDiff - 2*RADIUS)/4, y1);
+          transform = App.translate(x1 + (xDiff - 2*RADIUS)/4, y1);
           this.set('startArrowTransform', transform);
 
           this.set('displayEndArrow', true);
-          var transform = App.translate(x2 - (xDiff - 2*RADIUS)/4, y2);
+          transform = App.translate(x2 - (xDiff - 2*RADIUS)/4, y2);
           this.set('endArrowTransform', transform);
         }
 

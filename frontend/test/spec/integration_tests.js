@@ -7,7 +7,7 @@ App.injectTestHelpers();
 
 module('Integration Tests', {
   teardown: function() {
-    //App.reset();
+    App.reset();
   }
 });
 
@@ -16,7 +16,18 @@ test('index route', function() {
 
   visit('/');
   andThen(function() {
-    equal(find('tr').length, 3, 'A list of two files is shown');
+    equal(find('tbody tr').length, 2, 'A list of two files is shown');
+  });
+});
+
+test('remove file', function() {
+  expect(1);
+
+  visit('/');
+  click('li:nth-child(3) a');
+  click('button.btn-primary');
+  andThen(function() {
+    equal(find('tbody tr').length, 1, 'A list of one file is shown');
   });
 });
 
@@ -26,6 +37,6 @@ test('close stream', function() {
   visit('/streams/2');
   click('button.close-button');
   andThen(function() {
-    equal(find('tr').length, 3, 'A list of two files is shown');
+    equal(find('tbody tr').length, 2, 'A list of two files is shown');
   });
 });

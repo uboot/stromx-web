@@ -2,7 +2,7 @@
   <div class="panel-body">
     <div class="form-group">
       <label for="uploadFile">File</label>
-      {{view App.UploadFileView valueBinding="name" content=content id="uploadFile"}}
+      {{view "upload-file" valueBinding="name" content=content id="uploadFile"}}
       <p class="help-block">Choose a stromx file.</p>
     </div>
     <button {{action 'addFile'}} type="submit" class="btn btn-default">Upload</button>

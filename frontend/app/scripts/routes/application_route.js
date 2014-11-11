@@ -1,4 +1,4 @@
-/* global App */
+/* global App, $ */
 
 App.ApplicationRoute = Ember.Route.extend({
   socket: null,
@@ -28,11 +28,23 @@ App.ApplicationRoute = Ember.Route.extend({
   actions: {
     showModal: function(template, model) {
       var controller = this.controllerFor(template);
+      var _this = this;
       controller.set('model', model);
-      return this.render(template, {
+      this.render(template, {
         into: 'application',
         outlet: 'modal',
         controller: controller
+      });
+      
+      Ember.run.scheduleOnce('afterRender', this, function() {
+        $('.modal').one('hidden.bs.modal', function(ev) {
+          Ember.run(function() {
+            _this.disconnectOutlet({
+              outlet: 'modal',
+              parentView: 'application'
+            });
+          });
+        });
       });
     },
     closeModal: function() {
