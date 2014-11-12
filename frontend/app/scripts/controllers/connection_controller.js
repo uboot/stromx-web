@@ -2,13 +2,13 @@
 
 require('scripts/controllers/operator_controller');
 
-App.computeAngle = function (radius, height) {
+computeAngle = function (radius, height) {
   var c = Math.abs(height)/Math.abs(radius);
   var sin = Math.sqrt(c/2);
   return 2 * Math.asin(sin) * 180 / Math.PI;
 };
 
-App.computeWidth = function (height, angle) {
+computeWidth = function (height, angle) {
   var EPSILON = 0.1;
   if (Math.abs(height) < EPSILON)
     return 0.0;
@@ -16,7 +16,7 @@ App.computeWidth = function (height, angle) {
     return Math.abs(height) / Math.tan(angle / 2 / 180 * Math.PI);
 };
 
-App.drawArc = function (large, ccw, x, y) {
+drawArc = function (large, ccw, x, y) {
   var RADIUS = 1.5 * App.Constants.CONNECTOR_SIZE;
   var largeArcSweepFlag = large === 1 ? 1 : 0;
   var sweepFlag = ccw === 1 ? 0 : 1;
@@ -24,19 +24,19 @@ App.drawArc = function (large, ccw, x, y) {
          largeArcSweepFlag + ',' + sweepFlag + ',' + x + ',' + y;
 };
 
-App.drawLine = function (x, y) {
+drawLine = function (x, y) {
   return 'L' + x + ',' + y;
 };
 
-App.translate = function(x, y) {
+translate = function(x, y) {
   return 'translate(' + x + ',' + y + ')';
 };
 
-App.rotate = function(angle) {
+rotate = function(angle) {
   return 'rotate(' + angle + ')';
 };
 
-App.computePath = function (x1, y1, x2, y2) {
+computePath = function (x1, y1, x2, y2) {
   if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined)
     return 'M0,0';
 
@@ -48,8 +48,8 @@ App.computePath = function (x1, y1, x2, y2) {
   var yDiff = y2 - y1;
   var yOffset = 0;
 
-  var angle = App.computeAngle(RADIUS, yDiff/2);
-  var width = App.computeWidth(yDiff/2, angle);
+  var angle = computeAngle(RADIUS, yDiff/2);
+  var width = computeWidth(yDiff/2, angle);
 
   if (yDiff <= 0)
     yOffset = yDiff;
@@ -67,15 +67,15 @@ App.computePath = function (x1, y1, x2, y2) {
         if (Math.abs(yDiff) < 2*RADIUS) {
           // start and end point are so close too each other that
           // the arcs must be less than 90 degrees
-          path += App.drawLine(x1 + xDiff/2 - width, y1);
-          path += App.drawArc(0, 0, x1 + xDiff/2, y1 + yDiff / 2);
-          path += App.drawArc(0, 1, x1 + xDiff/2 + width, y1 + yDiff);
+          path += drawLine(x1 + xDiff/2 - width, y1);
+          path += drawArc(0, 0, x1 + xDiff/2, y1 + yDiff / 2);
+          path += drawArc(0, 1, x1 + xDiff/2 + width, y1 + yDiff);
         } else {
           // two 90 degree arcs are possible
-          path += App.drawLine(x1 + xDiff/2 - RADIUS, y1);
-          path += App.drawArc(0, 0, x1 + xDiff/2, y1 + RADIUS);
-          path += App.drawLine(x1 + xDiff/2, y2 - RADIUS);
-          path += App.drawArc(0, 1, x1 + xDiff/2 + RADIUS, y2);
+          path += drawLine(x1 + xDiff/2 - RADIUS, y1);
+          path += drawArc(0, 0, x1 + xDiff/2, y1 + RADIUS);
+          path += drawLine(x1 + xDiff/2, y2 - RADIUS);
+          path += drawArc(0, 1, x1 + xDiff/2 + RADIUS, y2);
         }
       } else {
         // the connection points upwards
@@ -83,28 +83,28 @@ App.computePath = function (x1, y1, x2, y2) {
         {
           // start and end point are so close too each other that
           // the arcs must be less than 90 degrees
-          path += App.drawLine(x1 + xDiff/2 - width, y1);
-          path += App.drawArc(0, 1, x1 + xDiff/2, y1 + yDiff / 2);
-          path += App.drawArc(0, 0, x1 + xDiff/2 + width, y1 + yDiff);
+          path += drawLine(x1 + xDiff/2 - width, y1);
+          path += drawArc(0, 1, x1 + xDiff/2, y1 + yDiff / 2);
+          path += drawArc(0, 0, x1 + xDiff/2 + width, y1 + yDiff);
         }
         else
         {
           // two 90 degree arcs are possible
-          path += App.drawLine(x1 + xDiff/2 - RADIUS, y1);
-          path += App.drawArc(0, 1, x1 + xDiff/2, y1 - RADIUS);
-          path += App.drawLine(x1 + xDiff/2, y2 + RADIUS);
-          path += App.drawArc(0, 0, x1 + xDiff/2 + RADIUS, y2);
+          path += drawLine(x1 + xDiff/2 - RADIUS, y1);
+          path += drawArc(0, 1, x1 + xDiff/2, y1 - RADIUS);
+          path += drawLine(x1 + xDiff/2, y2 + RADIUS);
+          path += drawArc(0, 0, x1 + xDiff/2 + RADIUS, y2);
         }
       }
     } else {
       // start and end are so close to each other to each other
       // that the connections must have loop
-      path += App.drawLine(x1 + xDiff/2, y1);
-      path += App.drawArc(0, 1, x1 + xDiff/2 + RADIUS, y1 - RADIUS);
-      path += App.drawLine(x1 + xDiff/2 + RADIUS, y1 + yOffset - RADIUS);
-      path += App.drawArc(1, 1, x1 + xDiff/2 - RADIUS, y1 + yOffset - RADIUS);
-      path += App.drawLine(x1 + xDiff/2 - RADIUS, y2 - RADIUS);
-      path += App.drawArc(0, 1, x1 + xDiff/2, y2);
+      path += drawLine(x1 + xDiff/2, y1);
+      path += drawArc(0, 1, x1 + xDiff/2 + RADIUS, y1 - RADIUS);
+      path += drawLine(x1 + xDiff/2 + RADIUS, y1 + yOffset - RADIUS);
+      path += drawArc(1, 1, x1 + xDiff/2 - RADIUS, y1 + yOffset - RADIUS);
+      path += drawLine(x1 + xDiff/2 - RADIUS, y2 - RADIUS);
+      path += drawArc(0, 1, x1 + xDiff/2, y2);
     }
   } else {
     // the connections points backward
@@ -113,36 +113,36 @@ App.computePath = function (x1, y1, x2, y2) {
       // be directly with a line between the two operators
       if (yDiff > 0) {
         // the connection points downwards
-        path += App.drawArc(0, 0, x1 + RADIUS, y1 + RADIUS);
-        path += App.drawLine(x1 + RADIUS, y1 + yDiff/2 - RADIUS);
-        path += App.drawArc(0, 0, x1, y1 + yDiff/2);
-        path += App.drawLine(x2, y1 + yDiff/2);
-        path += App.drawArc(0, 1, x2 - RADIUS, y1 + yDiff/2 + RADIUS);
-        path += App.drawLine(x2 - RADIUS, y2 - RADIUS);
-        path += App.drawArc(0, 1, x2, y2);
+        path += drawArc(0, 0, x1 + RADIUS, y1 + RADIUS);
+        path += drawLine(x1 + RADIUS, y1 + yDiff/2 - RADIUS);
+        path += drawArc(0, 0, x1, y1 + yDiff/2);
+        path += drawLine(x2, y1 + yDiff/2);
+        path += drawArc(0, 1, x2 - RADIUS, y1 + yDiff/2 + RADIUS);
+        path += drawLine(x2 - RADIUS, y2 - RADIUS);
+        path += drawArc(0, 1, x2, y2);
       } else {
         // the connection points upwards
-        path += App.drawArc(0, 1, x1 + RADIUS, y1 - RADIUS);
-        path += App.drawLine(x1 + RADIUS, y1 + yDiff/2 + RADIUS);
-        path += App.drawArc(0, 1, x1, y1 + yDiff/2);
-        path += App.drawLine(x2, y1 + yDiff/2);
-        path += App.drawArc(0, 0, x2 - RADIUS, y1 + yDiff/2 - RADIUS);
-        path += App.drawLine(x2 - RADIUS, y2 + RADIUS);
-        path += App.drawArc(0, 0, x2, y2);
+        path += drawArc(0, 1, x1 + RADIUS, y1 - RADIUS);
+        path += drawLine(x1 + RADIUS, y1 + yDiff/2 + RADIUS);
+        path += drawArc(0, 1, x1, y1 + yDiff/2);
+        path += drawLine(x2, y1 + yDiff/2);
+        path += drawArc(0, 0, x2 - RADIUS, y1 + yDiff/2 - RADIUS);
+        path += drawLine(x2 - RADIUS, y2 + RADIUS);
+        path += drawArc(0, 0, x2, y2);
       }
     } else {
       // start and end are so close to each other
       // that the connection must run around one of the operators
-      path += App.drawArc(0, 1, x1 + RADIUS, y1 - RADIUS);
-      path += App.drawLine(x1 + RADIUS, y1 - RADIUS + yOffset - EXTRA_HEIGHT);
-      path += App.drawArc(0, 1, x1, y1 - 2*RADIUS + yOffset - EXTRA_HEIGHT);
-      path += App.drawLine(x2, y1 - 2*RADIUS + yOffset - EXTRA_HEIGHT);
-      path += App.drawArc(0, 1, x2 - RADIUS, y1 - RADIUS + yOffset - EXTRA_HEIGHT);
-      path += App.drawLine(x2 - RADIUS, y2 - RADIUS);
-      path += App.drawArc(0, 1, x2, y2);
+      path += drawArc(0, 1, x1 + RADIUS, y1 - RADIUS);
+      path += drawLine(x1 + RADIUS, y1 - RADIUS + yOffset - EXTRA_HEIGHT);
+      path += drawArc(0, 1, x1, y1 - 2*RADIUS + yOffset - EXTRA_HEIGHT);
+      path += drawLine(x2, y1 - 2*RADIUS + yOffset - EXTRA_HEIGHT);
+      path += drawArc(0, 1, x2 - RADIUS, y1 - RADIUS + yOffset - EXTRA_HEIGHT);
+      path += drawLine(x2 - RADIUS, y2 - RADIUS);
+      path += drawArc(0, 1, x2, y2);
     }
   }
-  path += App.drawLine(x2, y2);
+  path += drawLine(x2, y2);
 
   return path;
 };
@@ -205,7 +205,7 @@ App.ConnectionController = Ember.ObjectController.extend({
   }.property('input.operator.position'),
 
   path: function() {
-    return App.computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));
+    return computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));
   }.property('x1', 'x2', 'y1', 'y2'),
 
   color: function(key, value) {
@@ -265,11 +265,11 @@ App.ConnectionController = Ember.ObjectController.extend({
 
         if (xDiff > 2*RADIUS + 2*ARROW_LENGTH) {
           this.set('displayStartArrow', true);
-          transform = App.translate(x1 + (xDiff - 2*RADIUS)/4, y1);
+          transform = translate(x1 + (xDiff - 2*RADIUS)/4, y1);
           this.set('startArrowTransform', transform);
 
           this.set('displayEndArrow', true);
-          transform = App.translate(x2 - (xDiff - 2*RADIUS)/4, y2);
+          transform = translate(x2 - (xDiff - 2*RADIUS)/4, y2);
           this.set('endArrowTransform', transform);
         }
 
@@ -278,13 +278,13 @@ App.ConnectionController = Ember.ObjectController.extend({
           // start and end point are so far from each other that a
           // center arrow can be drawn
           this.set('displayCenterArrow', true);
-          transform = App.translate(x1 + xDiff/2, y1 + yDiff/2);
+          transform = translate(x1 + xDiff/2, y1 + yDiff/2);
 
           var rotation = '';
           if(yDiff > 0) // the connection points downwards
-            transform += App.rotate(90);
+            transform += rotate(90);
           else // the connection points upwards
-            transform += App.rotate(-90);
+            transform += rotate(-90);
           this.set('centerArrowTransform', transform);
         }
       } else {
@@ -295,13 +295,13 @@ App.ConnectionController = Ember.ObjectController.extend({
           if(yOffset < 0)
           {
             this.set('displayStartArrow', true);
-            transform = App.translate(x1 + xDiff/2 + RADIUS, y1 - RADIUS + yDiff/2);
-            transform += App.rotate(-90);
+            transform = translate(x1 + xDiff/2 + RADIUS, y1 - RADIUS + yDiff/2);
+            transform += rotate(-90);
             this.set('startArrowTransform', transform);
           } else {
             this.set('displayEndArrow', true);
-            transform = App.translate(x1 + xDiff/2 - RADIUS, y1 - RADIUS + yDiff/2);
-            transform += App.rotate(90);
+            transform = translate(x1 + xDiff/2 - RADIUS, y1 - RADIUS + yDiff/2);
+            transform += rotate(90);
             this.set('endArrowTransform', transform);
           }
         }
@@ -320,24 +320,24 @@ App.ConnectionController = Ember.ObjectController.extend({
         {
           this.set('displayStartArrow', true);
 
-          transform = App.translate(x1 + RADIUS, y1 + yDiff/4);
+          transform = translate(x1 + RADIUS, y1 + yDiff/4);
           if(yDiff > 0)
-            transform += App.rotate(90);
+            transform += rotate(90);
           else
-            transform += App.rotate(-90);
+            transform += rotate(-90);
           this.set('startArrowTransform', transform);
 
           this.set('displayEndArrow', true);
-          transform = App.translate(x2 - RADIUS, y2 - yDiff/4);
+          transform = translate(x2 - RADIUS, y2 - yDiff/4);
           if(yDiff > 0)
-            transform += App.rotate(90);
+            transform += rotate(90);
           else
-            transform += App.rotate(-90);
+            transform += rotate(-90);
           this.set('endArrowTransform', transform);
         }
 
-        transform = App.translate(x1 + xDiff/2, y1 + yDiff/2);
-        transform += App.rotate(180);
+        transform = translate(x1 + xDiff/2, y1 + yDiff/2);
+        transform += rotate(180);
         this.set('centerArrowTransform', transform);
       }
       else
@@ -346,18 +346,18 @@ App.ConnectionController = Ember.ObjectController.extend({
         // that the connection must run around one of the operators
 
         this.set('displayStartArrow', true);
-        transform = App.translate(x1 + RADIUS, y1 + (yOffset - EXTRA_HEIGHT)/2 - RADIUS);
-        transform += App.rotate(-90);
+        transform = translate(x1 + RADIUS, y1 + (yOffset - EXTRA_HEIGHT)/2 - RADIUS);
+        transform += rotate(-90);
         this.set('startArrowTransform', transform);
 
         this.set('displayEndArrow', true);
-        transform = App.translate(x2 - RADIUS, y2 - RADIUS - ((yDiff - yOffset) + EXTRA_HEIGHT)/2);
-        transform += App.rotate(90);
+        transform = translate(x2 - RADIUS, y2 - RADIUS - ((yDiff - yOffset) + EXTRA_HEIGHT)/2);
+        transform += rotate(90);
         this.set('endArrowTransform', transform);
 
         this.set('displayCenterArrow', true);
-        transform = App.translate(x1 + xDiff/2, y1 + yOffset - EXTRA_HEIGHT - ARC_RECT_SIZE);
-        transform += App.rotate(180);
+        transform = translate(x1 + xDiff/2, y1 + yOffset - EXTRA_HEIGHT - ARC_RECT_SIZE);
+        transform += rotate(180);
         this.set('centerArrowTransform', transform);
       }
     }
