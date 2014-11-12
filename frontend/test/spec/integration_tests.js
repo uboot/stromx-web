@@ -5,7 +5,29 @@ App.ApplicationAdapter = DS.FixtureAdapter;
 App.setupForTesting();
 App.injectTestHelpers();
 
+function restoreFixtures() {
+  App.File.FIXTURES = [
+    {
+      id: 1,
+      name: 'test.stromx',
+      content: '',
+      opened: true,
+      stream: 2
+    },
+    {
+      id: 2,
+      name: 'hough.stromx',
+      content: '',
+      opened: false,
+      stream: 3
+    }
+  ];
+}
+
 module('Integration Tests', {
+  setup: function() {
+    restoreFixtures();
+  },
   teardown: function() {
     App.reset();
   }
@@ -40,3 +62,4 @@ test('close stream', function() {
     equal(find('tbody tr').length, 2, 'A list of two files is shown');
   });
 });
+
