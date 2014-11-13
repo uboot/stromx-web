@@ -42,7 +42,7 @@
         <path d="M25,0L25,25L0,25" class="stromx-svg-grid"/>
       </pattern>
     </defs>
-    <rect width="100%" height="100%" fill="url(#grid)" />
+    <rect width="100%" height="100%" fill="url(#grid)"/>
     {{#each operators itemController="operator"}}
       {{#svg-transform transform=transform}}
         {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
@@ -69,7 +69,7 @@
         {{/each}}
       {{/svg-transform}}
     {{/each}}
-    
+
     {{#each connections itemController="connection"}}
       {{#svg-click mouseClick="showMenu"}}
         <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>

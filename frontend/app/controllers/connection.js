@@ -1,8 +1,8 @@
 import Ember from "ember";
 
-import Constants from 'stromx-web/controllers/operator';
+import { Constants } from 'stromx-web/controllers/operator';
 import OutputController from 'stromx-web/controllers/output';
-import InputController from 'stromx-web/controllers/output';
+import InputController from 'stromx-web/controllers/input';
 
 function computeAngle(radius, height) {
   var c = Math.abs(height)/Math.abs(radius);
