@@ -3,8 +3,10 @@
 .project
 .pydevproject
 .settings
+backend/stromxweb/static
+bower_components
 build
 dist
 MANIFEST
-backend/stromxweb/static
+tmp
 
