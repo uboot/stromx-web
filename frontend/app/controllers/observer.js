@@ -1,5 +1,8 @@
 import Ember from "ember";
 
+import ParameterObserver from 'stromx-web/models/parameter-observer';
+import InputObserver from 'stromx-web/models/input-observer';
+
 export default Ember.ObjectController.extend({
   visualizationLabel: function() {
     var visualization = this.get('visualization');
@@ -17,9 +20,9 @@ export default Ember.ObjectController.extend({
   }.property('visualization'),
 
   title: function() {
-    if (this.get('model') instanceof App.ParameterObserver)
+    if (this.get('model') instanceof ParameterObserver)
       return this.get('parameterTitle');
-    else if (this.get('model') instanceof App.InputObserver)
+    else if (this.get('model') instanceof InputObserver)
       return this.get('inputTitle');
     else
       return '';
@@ -44,14 +47,14 @@ export default Ember.ObjectController.extend({
 
     return title;
   }.property('input.title', 'input.operator.name'),
-  
+
   svgType: function() {
     var visualization = this.get('visualization');
     var variant = this.get('value.variant');
-    
+
     if (variant === undefined)
       return;
-    
+
     if (visualization === 'default') {
       switch (variant) {
         case 'int':
@@ -63,7 +66,7 @@ export default Ember.ObjectController.extend({
           return '';
       }
     }
-    
+
     switch (visualization) {
       case 'text':
         return 'text';

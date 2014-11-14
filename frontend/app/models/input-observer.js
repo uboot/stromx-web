@@ -1,8 +1,8 @@
 import DS from "ember-data";
 
-import ObserverModel from 'stromx-web/models/observer';
+import Observer from 'stromx-web/models/observer';
 
-var InputObserver = ObserverModel.extend({
+var InputObserver = Observer.extend({
   input: DS.belongsTo('input', {async: true}),
   value: DS.belongsTo('connector-value', {async: true}),
 });

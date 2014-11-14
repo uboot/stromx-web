@@ -1,5 +1,8 @@
 import Ember from "ember";
 
+import Parameter from 'stromx-web/models/parameter';
+import Input from 'stromx-web/models/input';
+
 export default Ember.Controller.extend({
   stream: function() {
     var model = this.get('model');
@@ -41,7 +44,7 @@ export default Ember.Controller.extend({
           var numObservers = observers.get('length');
           var observer = null;
 
-          if (target instanceof App.Input) {
+          if (target instanceof Input) {
             observer = store.createRecord('input_observer', {
               input: target,
               view: model,
@@ -49,7 +52,7 @@ export default Ember.Controller.extend({
               color: '#000000',
               visualization: 'default'
             });
-          } else if (target instanceof App.Parameter) {
+          } else if (target instanceof Parameter) {
             observer = store.createRecord('parameter_observer', {
               parameter: target,
               view: model,
