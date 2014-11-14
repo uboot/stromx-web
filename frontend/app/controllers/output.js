@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-import { Operator, Constants } from 'stromx-web/controllers/operator';
+import { Constants } from 'stromx-web/controllers/operator';
 
 export default Ember.ObjectController.extend({
   x: Constants.OPERATOR_SIZE,

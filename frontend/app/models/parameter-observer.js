@@ -1,8 +1,8 @@
 import DS from "ember-data";
 
-import Observer from 'stromx-web/models/observer';
+import ObserverModel from 'stromx-web/models/observer';
 
-var ParameterObserver = Observer.extend({
+var ParameterObserver = ObserverModel.extend({
   parameter: DS.belongsTo('parameter', {async: true})
 });
 

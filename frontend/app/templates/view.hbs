@@ -19,7 +19,7 @@
     {{/if}}
     {{#if svgLines}}
       {{#with this as observer}}
-        {{#each linesData itemController="view_line"}}
+        {{#each linesData itemController="view.line"}}
           <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke=observer.color}}/>
         {{/each}}
       {{/with}}
