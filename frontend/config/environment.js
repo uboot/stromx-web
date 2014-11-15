@@ -4,7 +4,7 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'stromx-web',
     environment: environment,
-    baseURL: '/',
+    // baseURL: '/',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {

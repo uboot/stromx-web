@@ -1,4 +1,4 @@
-import { FileController } from 'stromx-web/controllers/file';
+import FileController from 'stromx-web/controllers/file';
 
 export default FileController.extend({
   actions: {

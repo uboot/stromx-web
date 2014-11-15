@@ -1,4 +1,4 @@
-import { ThreadController } from 'stromx-web/controllers/thread';
+import ThreadController from 'stromx-web/controllers/thread';
 
 export default ThreadController.extend({
   actions: {

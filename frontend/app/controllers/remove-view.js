@@ -1,4 +1,4 @@
-import { ViewController } from 'stromx-web/controllers/view';
+import ViewController from 'stromx-web/controllers/view';
 
 export default ViewController.extend({
   actions: {
