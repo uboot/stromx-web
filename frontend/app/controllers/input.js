@@ -32,11 +32,12 @@ export default Ember.ObjectController.extend({
   y2: 0,
 
   actions: {
-    dragStart: function(x, y) {
+    dragStart: function() {
       var _this = this;
       this.get('connection').then(function(connection) {
-        if (connection !== null)
+        if (connection !== null) {
           return;
+        }
 
         _this.setProperties({
           'x2': _this.get('x1'),
@@ -46,8 +47,9 @@ export default Ember.ObjectController.extend({
       });
     },
     dragMove: function(dx, dy, x, y) {
-      if (! this.isDraggingConnection)
+      if (! this.isDraggingConnection) {
         return;
+      }
 
       var opPos = this.get('parentController.position');
       this.setProperties({
@@ -56,15 +58,17 @@ export default Ember.ObjectController.extend({
       });
     },
     dragEnd: function() {
-      if (! this.isDraggingConnection)
+      if (! this.isDraggingConnection) {
         return;
+      }
 
       this.set('isDraggingConnection', false);
 
       var streamController = this.get('parentController.parentController');
       var output = streamController.get('activeOutput');
-      if (output === null)
+      if (output === null) {
         return;
+      }
 
       var input = this.get('model');
       var store = this.get('store');
@@ -79,8 +83,9 @@ export default Ember.ObjectController.extend({
     enter: function() {
       var _this = this;
       this.get('connection').then(function(connection) {
-        if (connection !== null)
+        if (connection !== null) {
           return;
+        }
 
         var stream = _this.get('parentController.parentController');
         stream.set('activeInput', _this.get('model'));

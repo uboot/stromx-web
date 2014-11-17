@@ -8,15 +8,17 @@ function computeAngle(radius, height) {
   var c = Math.abs(height)/Math.abs(radius);
   var sin = Math.sqrt(c/2);
   return 2 * Math.asin(sin) * 180 / Math.PI;
-};
+}
 
 function computeWidth(height, angle) {
   var EPSILON = 0.1;
-  if (Math.abs(height) < EPSILON)
+  if (Math.abs(height) < EPSILON) {
     return 0.0;
-  else
+  }
+  else {
     return Math.abs(height) / Math.tan(angle / 2 / 180 * Math.PI);
-};
+  }
+}
 
 function drawArc(large, ccw, x, y) {
   var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
@@ -24,26 +26,26 @@ function drawArc(large, ccw, x, y) {
   var sweepFlag = ccw === 1 ? 0 : 1;
   return 'A' + RADIUS + ',' + RADIUS + ',0,' +
          largeArcSweepFlag + ',' + sweepFlag + ',' + x + ',' + y;
-};
+}
 
 function drawLine(x, y) {
   return 'L' + x + ',' + y;
-};
+}
 
 function translate(x, y) {
   return 'translate(' + x + ',' + y + ')';
-};
+}
 
 function rotate(angle) {
   return 'rotate(' + angle + ')';
-};
+}
 
 function computePath(x1, y1, x2, y2) {
-  if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined)
+  if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined) {
     return 'M0,0';
+  }
 
   var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
-  var ARC = 'A' + RADIUS + ',' + RADIUS + ',0,0,1';
   var EXTRA_HEIGHT = 20;
 
   var xDiff = x2 - x1;
@@ -53,8 +55,9 @@ function computePath(x1, y1, x2, y2) {
   var angle = computeAngle(RADIUS, yDiff/2);
   var width = computeWidth(yDiff/2, angle);
 
-  if (yDiff <= 0)
+  if (yDiff <= 0) {
     yOffset = yDiff;
+  }
 
   // move to the starting point
   var path = 'M' + x1 + ',' + y1;
@@ -147,26 +150,29 @@ function computePath(x1, y1, x2, y2) {
   path += drawLine(x2, y2);
 
   return path;
-};
+}
 
 export default Ember.ObjectController.extend({
-  x1: function(key, value) {
+  x1: function() {
     var pos = this.get('output.operator.position');
 
-    if (pos === undefined)
+    if (pos === undefined) {
       return;
+    }
 
     return pos.x + Constants.OPERATOR_SIZE + Constants.CONNECTOR_SIZE;
   }.property('output.operator.position'),
 
   y1: function(key, value) {
-    if (value !== undefined)
+    if (value !== undefined) {
       return value;
+    }
 
     var _this = this;
-    var promise = this.get('output').then(function(connector) {
-      if (connector === null)
+    this.get('output').then(function(connector) {
+      if (connector === null) {
         return;
+      }
 
       var connectorController = OutputController.create({
         model: connector
@@ -178,23 +184,26 @@ export default Ember.ObjectController.extend({
     });
   }.property('output.operator.position'),
 
-  x2: function(key, value) {
+  x2: function() {
     var pos = this.get('input.operator.position');
 
-    if (pos === undefined)
+    if (pos === undefined) {
       return;
+    }
 
     return pos.x - Constants.CONNECTOR_SIZE;
   }.property('input.operator.position'),
 
   y2: function(key, value) {
-    if (value !== undefined)
+    if (value !== undefined) {
       return value;
+    }
 
     var _this = this;
-    var promise = this.get('input').then(function(connector) {
-      if (connector === null)
+    this.get('input').then(function(connector) {
+      if (connector === null) {
         return;
+      }
 
       var connectorController = InputController.create({
         model: connector
@@ -211,15 +220,18 @@ export default Ember.ObjectController.extend({
   }.property('x1', 'x2', 'y1', 'y2'),
 
   color: function(key, value) {
-    if (value !== undefined)
+    if (value !== undefined) {
       return value;
+    }
 
     var _this = this;
     this.get('thread').then(function(thread) {
-      if (thread === null)
+      if (thread === null) {
         _this.set('color', '#808080');
-      else
+      }
+      else {
         _this.set('color', thread.get('color'));
+      }
     });
   }.property('thread.color'),
 
@@ -237,8 +249,9 @@ export default Ember.ObjectController.extend({
     var x2 = this.get('x2');
     var y2 = this.get('y2');
 
-    if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined)
+    if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined) {
       return;
+    }
 
     var ARROW_LENGTH = 2 * Constants.CONNECTOR_SIZE;
     var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
@@ -249,8 +262,9 @@ export default Ember.ObjectController.extend({
     var yDiff = y2 - y1;
     var yOffset = 0;
 
-    if (yDiff <= 0)
+    if (yDiff <= 0) {
       yOffset = yDiff;
+    }
 
     // hide all arrows
     this.set('displayStartArrow', false);
@@ -282,11 +296,11 @@ export default Ember.ObjectController.extend({
           this.set('displayCenterArrow', true);
           transform = translate(x1 + xDiff/2, y1 + yDiff/2);
 
-          var rotation = '';
-          if(yDiff > 0) // the connection points downwards
+          if(yDiff > 0) { // the connection points downwards
             transform += rotate(90);
-          else // the connection points upwards
+          } else { // the connection points upwards
             transform += rotate(-90);
+          }
           this.set('centerArrowTransform', transform);
         }
       } else {
@@ -309,10 +323,10 @@ export default Ember.ObjectController.extend({
         }
       }
     } else { // the connections points backward
-
       // the backward section is long enough to display an arrow
-      if(Math.abs(xDiff) > ARROW_LENGTH)
+      if(Math.abs(xDiff) > ARROW_LENGTH) {
         this.set('displayCenterArrow', true);
+      }
 
       if(Math.abs(yDiff) > 4*RADIUS)
       {
@@ -323,18 +337,20 @@ export default Ember.ObjectController.extend({
           this.set('displayStartArrow', true);
 
           transform = translate(x1 + RADIUS, y1 + yDiff/4);
-          if(yDiff > 0)
+          if(yDiff > 0) {
             transform += rotate(90);
-          else
+          } else {
             transform += rotate(-90);
+          }
           this.set('startArrowTransform', transform);
 
           this.set('displayEndArrow', true);
           transform = translate(x2 - RADIUS, y2 - yDiff/4);
-          if(yDiff > 0)
+          if(yDiff > 0) {
             transform += rotate(90);
-          else
+          } else {
             transform += rotate(-90);
+          }
           this.set('endArrowTransform', transform);
         }
 

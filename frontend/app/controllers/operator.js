@@ -12,23 +12,26 @@ export default Ember.ObjectController.extend({
 
   statusLabel: function() {
     var status = this.get('model').get('status');
-
-    if (status === 'none')
-      return 'Not initialized';
-    else if (status === 'initialized')
-      return 'Initialized';
-    else if (status === 'active')
-      return 'Active';
-    else
-      return 'Not defined';
+    
+    switch (status) {
+      case 'none':
+        return 'Not initialized';
+      case 'initialized':
+        return 'Initialized';
+      case 'active':
+        return 'Active';
+      default:
+        return 'Not defined';
+    }
   }.property('status'),
 
   isEditingName: false,
 
   transform: function() {
     var pos = this.get('position');
-    if (pos === undefined)
+    if (pos === undefined) {
       return '';
+    }
 
     return 'translate(' + pos.x + ' ' + pos.y + ')';
   }.property('position'),

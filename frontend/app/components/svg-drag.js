@@ -11,7 +11,7 @@ export default Ember.Component.extend({
     this.sendAction('dragStart', this.start.x, this.start.y);
 
     var _this = this;
-    $('body').mouseup(function (event) {
+    $('body').mouseup(function () {
       $('body').off('mousemove');
       $('body').off('mouseup');
       _this.sendAction('dragEnd');
@@ -28,12 +28,12 @@ export default Ember.Component.extend({
     return false;
   },
 
-  mouseEnter: function(event) {
+  mouseEnter: function() {
     this.sendAction('enter');
     return false;
   },
 
-  mouseLeave: function(event) {
+  mouseLeave: function() {
     this.sendAction('leave');
     return false;
   },

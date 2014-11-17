@@ -1,11 +1,11 @@
 import DS from "ember-data";
 
-var Error = DS.Model.extend({
+var ErrorModel = DS.Model.extend({
   time: DS.attr('date'),
   description: DS.attr('string')
 });
 
-Error.reopenClass({
+ErrorModel.reopenClass({
   FIXTURES: [
     {
       id: 1,
@@ -20,4 +20,4 @@ Error.reopenClass({
   ]
 });
 
-export default Error;
+export default ErrorModel;

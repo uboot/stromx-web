@@ -7,33 +7,37 @@ export default Ember.ObjectController.extend({
   visualizationLabel: function() {
     var visualization = this.get('visualization');
 
-    if (visualization === 'image')
-      return 'Image';
-    else if (visualization === 'lines')
-      return 'Lines';
-    else if (visualization === 'slider')
-      return 'Slider';
-    else if (visualization === 'default')
-      return 'Default';
-    else
-      return '';
+    switch (visualization) {
+      case 'image':
+        return 'Image';
+      case 'lines':
+        return 'Lines';
+      case 'slider':
+        return 'Slider';
+      case 'default':
+        return 'Default';
+      default:
+        return '';
+    }
   }.property('visualization'),
 
   title: function() {
-    if (this.get('model') instanceof ParameterObserver)
+    if (this.get('model') instanceof ParameterObserver) {
       return this.get('parameterTitle');
-    else if (this.get('model') instanceof InputObserver)
+    } else if (this.get('model') instanceof InputObserver) {
       return this.get('inputTitle');
-    else
+    } else {
       return '';
+    }
   }.property('parameterTitle', 'inputTitle'),
 
   parameterTitle: function() {
     var parameter = this.get('parameter');
     var name = parameter.get('operator.name');
     var title = parameter.get('title');
-    if (name)
+    if (name) {
       title += " at " + name;
+    }
 
     return title;
   }.property('parameter.title', 'parameter.operator.name'),
@@ -42,8 +46,9 @@ export default Ember.ObjectController.extend({
     var input = this.get('input');
     var name = input.get('operator.name');
     var title = input.get('title');
-    if (name)
+    if (name) {
       title += " at " + name;
+    }
 
     return title;
   }.property('input.title', 'input.operator.name'),
@@ -52,8 +57,9 @@ export default Ember.ObjectController.extend({
     var visualization = this.get('visualization');
     var variant = this.get('value.variant');
 
-    if (variant === undefined)
+    if (variant === undefined) {
       return;
+    }
 
     if (visualization === 'default') {
       switch (variant) {
@@ -86,8 +92,9 @@ export default Ember.ObjectController.extend({
   imageData: function() {
     var value = this.get('value.value');
 
-    if (value === undefined)
+    if (value === undefined) {
       return;
+    }
 
     return value.values;
   }.property('value.value'),
@@ -95,8 +102,9 @@ export default Ember.ObjectController.extend({
   imageWidth: function() {
     var value = this.get('value.value');
 
-    if (value === undefined)
+    if (value === undefined) {
       return;
+    }
 
     return value.width;
   }.property('value.value'),
@@ -104,8 +112,9 @@ export default Ember.ObjectController.extend({
   imageHeight: function() {
     var value = this.get('value.value');
 
-    if (value === undefined)
+    if (value === undefined) {
       return;
+    }
 
     return value.height;
   }.property('value.value'),
@@ -113,8 +122,9 @@ export default Ember.ObjectController.extend({
   textData: function() {
     var value = this.get('value.value');
 
-    if (value === undefined)
+    if (value === undefined) {
       return;
+    }
 
     return value;
   }.property('value.value'),
@@ -122,8 +132,9 @@ export default Ember.ObjectController.extend({
   linesData: function() {
     var value = this.get('value.value');
 
-    if (value === undefined)
+    if (value === undefined) {
       return;
+    }
 
     return value.values;
   }.property('value.value'),
@@ -173,8 +184,9 @@ export default Ember.ObjectController.extend({
         observers.then(function(observers) {
           observers.forEach(function(observer) {
             var thisZValue = observer.get('zvalue');
-            if (thisZValue > zvalue)
+            if (thisZValue > zvalue) {
               observer.set('zvalue', thisZValue - 1);
+            }
           });
         });
       });

@@ -1,3 +1,5 @@
+/*global $:false */
+
 import Ember from "ember";
 
 export default Ember.Route.extend({
@@ -37,7 +39,7 @@ export default Ember.Route.extend({
       });
       
       Ember.run.scheduleOnce('afterRender', this, function() {
-        $('.modal').one('hidden.bs.modal', function(ev) {
+        $('.modal').one('hidden.bs.modal', function() {
           Ember.run(function() {
             _this.disconnectOutlet({
               outlet: 'modal',

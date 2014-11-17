@@ -51,12 +51,13 @@ export default Ember.ObjectController.extend({
 
   editValue:  function(key, value) {
     if (value === undefined) {
-      if (this.get('isInt') || this.get('isFloat'))
+      if (this.get('isInt') || this.get('isFloat')) {
         return this.get('value');
-      else if (this.get('isString'))
+      } else if (this.get('isString')) {
         return this.get('value');
-      else
+      } else {
         return '';
+      }
     }
     else {
       var v;
@@ -90,32 +91,36 @@ export default Ember.ObjectController.extend({
   }.property('value'),
 
   displayValue: function(key, value) {
-    if (value !== undefined)
+    if (value !== undefined) {
       return value;
+    }
 
-    if (! this.get('current'))
+    if (! this.get('current')) {
       return '';
+    }
 
-    if (this.get('isEditing'))
+    if (this.get('isEditing')) {
       return '';
+    }
 
-    if (this.get('isInt'))
+    if (this.get('isInt')) {
       return this.get('value');
-    else if (this.get('isFloat'))
+    } else if (this.get('isFloat')) {
       return this.get('value');
-    else if (this.get('isEnum'))
+    } else if (this.get('isEnum')) {
       return this.updateEnumTitle(this.get('value'));
-    else if (this.get('isBool'))
+    } else if (this.get('isBool')) {
       return "";
-    else
+    } else {
       return this.get('value');
+    }
   }.property('value', 'variant', 'isEditing'),
 
   // cf. http://stackoverflow.com/q/20623027
   updateEnumTitle: function(enumValue) {
     var value = enumValue;
     var title = this.get('descriptions').then( function(value){
-      return value.find( function(item, index, enumerable) {
+      return value.find( function(item) {
          return item.get('value') === enumValue;
       });
     }).then( function(obj) {

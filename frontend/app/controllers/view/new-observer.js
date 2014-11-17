@@ -20,8 +20,9 @@ export default Ember.Controller.extend({
 
   targets: function() {
     var operator = this.get('operator');
-    if (! operator)
+    if (! operator) {
       return;
+    }
 
     var targetType = this.get('targetType');
     switch(targetType)
@@ -62,8 +63,9 @@ export default Ember.Controller.extend({
             });
           }
 
-          if (observer !== null)
+          if (observer !== null) {
             observers.save();
+          }
         });
       }
       this.transitionToRoute('view');
