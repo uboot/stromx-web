@@ -32,6 +32,7 @@ test('remove file', function() {
 
 test('close stream', function() {
   visit('/streams/2');
+  
   click('button.close-button');
   
   andThen(function() {
