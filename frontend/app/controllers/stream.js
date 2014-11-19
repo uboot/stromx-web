@@ -1,8 +1,17 @@
 import Ember from "ember";
 
 export default Ember.ObjectController.extend({
+  needs: ['application'],
   activeOutput: null,
   activeInput: null,
+  
+  patternUri: function() {
+    return 'url(' + this.get('target.url') + '#grid)';
+  }.property('target.url'),
+  
+  arrowsUri: function() {
+    return this.get('target.url') + '#arrows';
+  }.property('target.url'),
   
   actions: {
     close: function () {

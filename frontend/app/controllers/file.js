@@ -1,9 +1,14 @@
 import Ember from "ember";
+import ENV from '../config/environment';
 
 export default Ember.ObjectController.extend({
   closed: Ember.computed.not('opened'),
   url: function() {
-    return '../download/' + this.get('name');
+    if (ENV.APP.API_HOST) {
+      return ENV.APP.API_HOST + '/download/' + this.get('name');
+    } else {
+      return 'download/' + this.get('name');
+    }
   }.property(name),
   actions: {
     remove: function () {

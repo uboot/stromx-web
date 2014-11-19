@@ -1,11 +1,16 @@
 import Ember from "ember";
+import ENV from '../config/environment';
 
 export default Ember.Route.extend({
   socket: null,
 
   activate: function() {
-    var url = 'ws://' + 'localhost:8888' + '/connectorValue_socket';
-    // var url = 'ws://' + window.location.host + '/connectorValue_socket';
+    var host = 'ws://' + window.location.host;
+    if (ENV.APP.SOCKET_HOST) {
+      host = ENV.APP.SOCKET_HOST;
+    }
+    var url = host + '/socket/connectorValue';
+    
     var ws = new WebSocket(url);
     var _this = this;
     ws.onmessage = function(event) {
