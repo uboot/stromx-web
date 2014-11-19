@@ -27,5 +27,5 @@ module.exports = function(app) {
       }
     ]});
   });
-  app.use('/api/streams', streamsRouter);
+  app.use('/api/streams/*', streamsRouter);
 };

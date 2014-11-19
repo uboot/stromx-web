@@ -27,5 +27,5 @@ module.exports = function(app) {
       }
     ]});
   });
-  app.use('/api/views', viewsRouter);
+  app.use('/api/views/*', viewsRouter);
 };

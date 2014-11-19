@@ -9,7 +9,7 @@ var Parameter = DS.Model.extend({
   state: DS.attr('string'),
   writable: DS.attr('boolean'),
   operator: DS.belongsTo('operator', {async: true}),
-  descriptions: DS.hasMany('enumDescription', {async: true})
+  descriptions: DS.hasMany('enum-description', {async: true})
 });
 
 Parameter.reopenClass({
@@ -158,7 +158,7 @@ Parameter.reopenClass({
       writable: true,
       descriptions: [3, 4, 5],
       operator: 2
-    },
+    }
   ]
 });
 
