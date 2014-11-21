@@ -37,6 +37,36 @@ export default Ember.ObjectController.extend({
   }.property('position'),
 
   dragStartPosition: {x: 0, y: 0},
+  
+  removeConnections: function() {
+    var removeIncoming = this.get('model.inputs').then(function(inputs) {
+      var connections = inputs.map(function(input) {
+        return input.get('connection');
+      });
+      return Ember.RSVP.all(connections);
+    }).then(function(connections) {
+      connections.map(function(connection) {
+        connection.deleteRecord();
+        connection.save();
+      });
+    });
+    
+    var removeOutgoing = this.get('model.outputs').then(function(outputs) {
+      var connections = outputs.map(function(output) {
+        return output.get('connection');
+      });
+      return Ember.RSVP.all(connections);
+    }).then(function(connections) {
+      connections.map(function(connection) {
+        if (connection) {
+          connection.deleteRecord();
+          connection.save();
+        }
+      });
+    });
+    
+    return Ember.RSVP.all([removeIncoming, removeOutgoing]);
+  },
 
   actions: {
     editName: function() {
@@ -80,9 +110,12 @@ export default Ember.ObjectController.extend({
       this.model.save();
     },
     deinitialize: function() {
-      this.set('status', 'none');
-      var model = this.get('model');
-      model.save();
+      var _this = this;
+      this.removeConnections().then(function() {
+        _this.set('status', 'none');
+        var model = _this.get('model');
+        model.save();
+      });
     },
     remove: function() {
       var model = this.get('model');
