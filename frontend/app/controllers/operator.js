@@ -12,7 +12,7 @@ export default Ember.ObjectController.extend({
 
   statusLabel: function() {
     var status = this.get('model').get('status');
-    
+
     switch (status) {
       case 'none':
         return 'Not initialized';
@@ -37,23 +37,11 @@ export default Ember.ObjectController.extend({
   }.property('position'),
 
   dragStartPosition: {x: 0, y: 0},
-  
+
   removeConnections: function() {
     var removeIncoming = this.get('model.inputs').then(function(inputs) {
       var connections = inputs.map(function(input) {
         return input.get('connection');
-      });
-      return Ember.RSVP.all(connections);
-    }).then(function(connections) {
-      connections.map(function(connection) {
-        connection.deleteRecord();
-        connection.save();
-      });
-    });
-    
-    var removeOutgoing = this.get('model.outputs').then(function(outputs) {
-      var connections = outputs.map(function(output) {
-        return output.get('connection');
       });
       return Ember.RSVP.all(connections);
     }).then(function(connections) {
@@ -64,7 +52,21 @@ export default Ember.ObjectController.extend({
         }
       });
     });
-    
+
+    var removeOutgoing = this.get('model.outputs').then(function(outputs) {
+      var connectionLists = outputs.map(function(output) {
+        return output.get('connections');
+      });
+      return Ember.RSVP.all(connectionLists);
+    }).then(function(connectionLists) {
+      connectionLists.map(function(connections) {
+        connections.map(function(connection){
+          connection.deleteRecord();
+          connection.save();
+        });
+      });
+    });
+
     return Ember.RSVP.all([removeIncoming, removeOutgoing]);
   },
 

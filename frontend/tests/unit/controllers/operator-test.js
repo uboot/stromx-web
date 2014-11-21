@@ -63,22 +63,26 @@ test('deinitialize', function() {
   wait();
 });
 
-var setupConnection = function(store) {
+var setupConnection = function(store, noIncoming, noOutgoing) {
   var stream = createRecord(store, 'stream');
   var operator = createRecord(store, 'operator');
   var sourceOutput = createRecord(store, 'output');
   var targetInput = createRecord(store, 'input');
   var output = createRecord(store, 'output', { operator: operator });
   var input = createRecord(store, 'input', { operator: operator });
+
+  var inConnectionTarget = noIncoming ? targetInput : input;
   var inConnection = createRecord(store, 'connection', {
     stream: stream,
-    input: input,
+    input: inConnectionTarget,
     output: sourceOutput
   });
+
+  var outConnectionSource = noOutgoing ? sourceOutput : output;
   var outConnection = createRecord(store, 'connection', {
     stream: stream,
     input: targetInput,
-    output: output
+    output: outConnectionSource
   });
 
   var promises = Ember.run(function() {
@@ -96,7 +100,7 @@ var setupConnection = function(store) {
   return Ember.RSVP.hash(promises);
 };
 
-test('deinitialize and remove connection', function() {
+test('remove two connections', function() {
   var store = this.store();
 
   var promises = setupConnection(store);
@@ -108,15 +112,61 @@ test('deinitialize and remove connection', function() {
     var outConnection = values.outConnection;
 
     controller.set('model', operator);
-    controller.send('deinitialize');
+    controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
       equal(stream.get('connections.length'), 0,
-        'Deinitializing an operator removes its connections from the stream');
-      ok(inConnection.get('isSaving'),
-        'Deinitializing an operator saves the removed incoming connection');
-      ok(outConnection.get('isSaving'),
-        'Deinitializing an operator saves the removed outgoing connection');
+        'The connections of the operator are removed from the stream');
+      ok(inConnection.get('isSaving'), 'The incoming connection is saved');
+      ok(outConnection.get('isSaving'), 'The outgoing connection is saved');
+    });
+  });
+
+  wait();
+});
+
+
+test('remove outgoing connection', function() {
+  var store = this.store();
+
+  var promises = setupConnection(store, true); // no incoming connection
+  var controller = this.subject();
+  promises.then(function(values) {
+    var operator = values.operator;
+    var stream = values.stream;
+    var inConnection = values.inConnection;
+    var outConnection = values.outConnection;
+
+    controller.set('model', operator);
+    controller.send('deinitialize');
+
+    Ember.run.schedule('destroy', this, function(){
+      equal(stream.get('connections.length'), 1,
+        'The incoming connection is removed from the stream');
+    });
+  });
+
+  wait();
+});
+
+
+test('deinitialize and remove incoming connection', function() {
+  var store = this.store();
+
+  var promises = setupConnection(store, false, true); // no outgoing connection
+  var controller = this.subject();
+  promises.then(function(values) {
+    var operator = values.operator;
+    var stream = values.stream;
+    var inConnection = values.inConnection;
+    var outConnection = values.outConnection;
+
+    controller.set('model', operator);
+    controller.send('deinitialize');
+
+    Ember.run.schedule('destroy', this, function(){
+      equal(stream.get('connections.length'), 1,
+        'The outgoing connection is removed from the stream');
     });
   });
 
