@@ -100,7 +100,7 @@ var setupConnection = function(store, noIncoming, noOutgoing) {
   return Ember.RSVP.hash(promises);
 };
 
-test('remove two connections', function() {
+test('remove incoming and outgoing connections', function() {
   var store = this.store();
 
   var promises = setupConnection(store);
@@ -125,7 +125,6 @@ test('remove two connections', function() {
   wait();
 });
 
-
 test('remove outgoing connection', function() {
   var store = this.store();
 
@@ -138,19 +137,18 @@ test('remove outgoing connection', function() {
     var outConnection = values.outConnection;
 
     controller.set('model', operator);
-    controller.send('deinitialize');
+    controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
       equal(stream.get('connections.length'), 1,
-        'The incoming connection is removed from the stream');
+        'The outgoing connection is removed from the stream');
     });
   });
 
   wait();
 });
 
-
-test('deinitialize and remove incoming connection', function() {
+test('remove incoming connection', function() {
   var store = this.store();
 
   var promises = setupConnection(store, false, true); // no outgoing connection
@@ -162,7 +160,7 @@ test('deinitialize and remove incoming connection', function() {
     var outConnection = values.outConnection;
 
     controller.set('model', operator);
-    controller.send('deinitialize');
+    controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
       equal(stream.get('connections.length'), 1,

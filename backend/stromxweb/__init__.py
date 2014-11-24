@@ -12,7 +12,7 @@ import model
 
 class ItemsHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "http://0.0.0.0:4200")
+        self.set_header('Access-Control-Allow-Origin', 'http://192.168.1.101:4200')
     
     def options(self, *args, **kwargs):
         self.set_header('Access-Control-Allow-Headers', 
@@ -90,68 +90,70 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def on_close(self):
         self.__items.handlers.remove(self.sendValue)
 
-def start(files):
-    appModel = model.Model(files)
+class MainHandler(tornado.web.RequestHandler):
+    def get(self, _):
+        self.render("index.html")
+        
+def start(filesDir):
+    appModel = model.Model(filesDir)
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
-    application = tornado.web.Application(
-        [
-            (r"/", tornado.web.RedirectHandler,
-             {"url": "/static/index.html"}),
-            (r"/operatorTemplates", ItemsHandler, 
-             dict(items = appModel.operatorTemplates)),
-            (r"/api/files", ItemsHandler, dict(items = appModel.files)),
-            (r"/api/files/([0-9]+)", ItemsHandler, dict(items = appModel.files)),
-            (r"/api/streams", ItemsHandler, dict(items = appModel.streams)),
-            (r"/api/streams/([0-9]+)", ItemsHandler, dict(items = appModel.streams)),
-            (r"/api/operators", ItemsHandler, dict(items = appModel.operators)),
-            (r"/api/operators/([0-9]+)", ItemsHandler,
-             dict(items = appModel.operators)),
-            (r"/api/parameters", ItemsHandler, dict(items = appModel.parameters)),
-            (r"/api/parameters/([0-9]+)", ItemsHandler,
-             dict(items = appModel.parameters)),
-            (r"/api/enumDescriptions", ItemsHandler, 
-             dict(items = appModel.enumDescriptions)),
-            (r"/api/enumDescriptions/([0-9]+)", ItemsHandler,
-             dict(items = appModel.enumDescriptions)),
-            (r"/api/connections", ItemsHandler, 
-             dict(items = appModel.connections)),
-            (r"/api/connections/([0-9]+)", ItemsHandler,
-             dict(items = appModel.connections)),
-            (r"/api/inputs", ItemsHandler, 
-             dict(items = appModel.inputs)),
-            (r"/api/inputs/([0-9]+)", ItemsHandler,
-             dict(items = appModel.inputs)),
-            (r"/api/outputs", ItemsHandler, 
-             dict(items = appModel.outputs)),
-            (r"/api/outputs/([0-9]+)", ItemsHandler,
-             dict(items = appModel.outputs)),
-            (r"/api/threads", ItemsHandler, 
-             dict(items = appModel.threads)),
-            (r"/api/threads/([0-9]+)", ItemsHandler,
-             dict(items = appModel.threads)),
-            (r"/api/views", ItemsHandler, 
-             dict(items = appModel.views)),
-            (r"/api/views/([0-9]+)", ItemsHandler,
-             dict(items = appModel.views)),
-            (r"/api/inputObservers", ItemsHandler, 
-             dict(items = appModel.inputObservers)),
-            (r"/api/inputObservers/([0-9]+)", ItemsHandler,
-             dict(items = appModel.inputObservers)),
-            (r"v/parameterObservers", ItemsHandler, 
-             dict(items = appModel.parameterObservers)),
-            (r"/api/parameterObservers/([0-9]+)", ItemsHandler,
-             dict(items = appModel.parameterObservers)),
-            (r"/api/connectorValues/([0-9]+)", ItemsHandler,
-             dict(items = appModel.connectorValues)),
-            (r"/error_socket", SocketHandler, dict(items = appModel.errors)),
-            (r"/connectorValue_socket", SocketHandler,
-             dict(items = appModel.connectorValues)),
-            (r"/download/(.*)", tornado.web.StaticFileHandler,
-             {"path": files}),
-        ],
-        static_path = staticDir
-    )
+    assetDir = os.path.join(staticDir, "assets")
+    handlers = [
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetDir}),
+        (r"/api/operatorTemplates", ItemsHandler, 
+         dict(items = appModel.operatorTemplates)),
+        (r"/api/files", ItemsHandler, dict(items = appModel.files)),
+        (r"/api/files/([0-9]+)", ItemsHandler, dict(items = appModel.files)),
+        (r"/api/streams", ItemsHandler, dict(items = appModel.streams)),
+        (r"/api/streams/([0-9]+)", ItemsHandler, dict(items = appModel.streams)),
+        (r"/api/operators", ItemsHandler, dict(items = appModel.operators)),
+        (r"/api/operators/([0-9]+)", ItemsHandler,
+         dict(items = appModel.operators)),
+        (r"/api/parameters", ItemsHandler, dict(items = appModel.parameters)),
+        (r"/api/parameters/([0-9]+)", ItemsHandler,
+         dict(items = appModel.parameters)),
+        (r"/api/enumDescriptions", ItemsHandler, 
+         dict(items = appModel.enumDescriptions)),
+        (r"/api/enumDescriptions/([0-9]+)", ItemsHandler,
+         dict(items = appModel.enumDescriptions)),
+        (r"/api/connections", ItemsHandler, 
+         dict(items = appModel.connections)),
+        (r"/api/connections/([0-9]+)", ItemsHandler,
+         dict(items = appModel.connections)),
+        (r"/api/inputs", ItemsHandler, 
+         dict(items = appModel.inputs)),
+        (r"/api/inputs/([0-9]+)", ItemsHandler,
+         dict(items = appModel.inputs)),
+        (r"/api/outputs", ItemsHandler, 
+         dict(items = appModel.outputs)),
+        (r"/api/outputs/([0-9]+)", ItemsHandler,
+         dict(items = appModel.outputs)),
+        (r"/api/threads", ItemsHandler, 
+         dict(items = appModel.threads)),
+        (r"/api/threads/([0-9]+)", ItemsHandler,
+         dict(items = appModel.threads)),
+        (r"/api/views", ItemsHandler, 
+         dict(items = appModel.views)),
+        (r"/api/views/([0-9]+)", ItemsHandler,
+         dict(items = appModel.views)),
+        (r"/api/inputObservers", ItemsHandler, 
+         dict(items = appModel.inputObservers)),
+        (r"/api/inputObservers/([0-9]+)", ItemsHandler,
+         dict(items = appModel.inputObservers)),
+        (r"/api/parameterObservers", ItemsHandler, 
+         dict(items = appModel.parameterObservers)),
+        (r"/api/parameterObservers/([0-9]+)", ItemsHandler,
+         dict(items = appModel.parameterObservers)),
+        (r"/api/connectorValues/([0-9]+)", ItemsHandler,
+         dict(items = appModel.connectorValues)),
+        (r"/socket/error", SocketHandler, dict(items = appModel.errors)),
+        (r"/socket/connectorValue", SocketHandler,
+         dict(items = appModel.connectorValues)),
+        (r"/download/(.*)", tornado.web.StaticFileHandler, {"path": filesDir}),
+        (r"/(.*)", MainHandler)
+    ]
+    application = tornado.web.Application(handlers, template_path = staticDir)
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
     
