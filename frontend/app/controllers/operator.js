@@ -120,9 +120,12 @@ export default Ember.ObjectController.extend({
       });
     },
     remove: function() {
-      var model = this.get('model');
-      model.deleteRecord();
-      model.save();
+      var _this = this;
+      this.removeConnections().then(function() {
+        var model = _this.get('model');
+        model.deleteRecord();
+        model.save();
+      });
     }
   }
 });
