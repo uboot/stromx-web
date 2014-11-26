@@ -16,17 +16,18 @@ var app = new EmberApp();
 // modules that you would like to import into your application
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
-app.import('bower_components/bootstrap-sass/js/affix.js');
-app.import('bower_components/bootstrap-sass/js/alert.js');
-app.import('bower_components/bootstrap-sass/js/button.js');
-app.import('bower_components/bootstrap-sass/js/carousel.js');
-app.import('bower_components/bootstrap-sass/js/collapse.js');
-app.import('bower_components/bootstrap-sass/js/dropdown.js');
-app.import('bower_components/bootstrap-sass/js/modal.js');
-app.import('bower_components/bootstrap-sass/js/tooltip.js');
-app.import('bower_components/bootstrap-sass/js/popover.js');
-app.import('bower_components/bootstrap-sass/js/scrollspy.js');
-app.import('bower_components/bootstrap-sass/js/tab.js');
-app.import('bower_components/bootstrap-sass/js/transition.js');
+app.import('bower_components/bootstrap/dist/js/bootstrap.js');
+app.import('bower_components/bootstrap/fonts/glyphicons-halflings-regular.eot', {
+    destDir: 'fonts'
+});
+app.import('bower_components/bootstrap/fonts/glyphicons-halflings-regular.svg', {
+    destDir: 'fonts'
+});
+app.import('bower_components/bootstrap/fonts/glyphicons-halflings-regular.ttf', {
+    destDir: 'fonts'
+});
+app.import('bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff', {
+    destDir: 'fonts'
+});
 
 module.exports = app.toTree();
