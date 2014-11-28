@@ -91,8 +91,15 @@ module.exports = function(app) {
         id: 8,
         title: 'Matrix parameter',
         variant: 'matrix',
-        stringValue: '3 x 3 float',
-        numberValue: 0,
+        value: {
+          rows: 3,
+          cols: 4,
+          values: [
+            [10, 10, 200, 200],
+            [10, 20, 200, 300],
+            [10, 30, 200, 400]
+          ]
+        },
         minimum: 0,
         maximum: 0,
         state: 'current',

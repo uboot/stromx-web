@@ -47,39 +47,39 @@
       </td>
     </tr>
   </tr>
-    {{#each parameters itemController="parameter"}}
+    {{#each param in parameters itemController="parameter"}}
       <tr>
         <td>
-          {{title}}
+          {{param.title}}
         </td>
         <td>
-          {{#if isEditing}}
-            {{#if isEnum}}
-              {{view "select" value=value content=descriptions optionValuePath="content.value"
+          {{#if param.isEditing}}
+            {{#if param.isEnum}}
+              {{view "select" value=param.value content=param.descriptions optionValuePath="content.value"
                 optionLabelPath="content.title" disabled=writeOnly}}
             {{else}}
-              {{input value=editValue}}
+              {{input value=param.editValue}}
             {{/if}}
-            <button type="button" {{action "saveValue"}} class="btn btn-default btn-xs">Save</button>
+            <button type="button" {{action "saveValue" param}} class="btn btn-default btn-xs">Save</button>
           {{/if}}
-          {{#if timedOut}}
+          {{#if param.timedOut}}
             <em>Access timed out</em>
-            <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+            <button type="button" {{action "reload" param}} class="btn btn-default btn-xs">Retry</button>
           {{/if}}
-          {{#if accessFailed}}
+          {{#if param.accessFailed}}
             <em>Access failed</em>
-            <button type="button" {{action "reload"}} class="btn btn-default btn-xs">Retry</button>
+            <button type="button" {{action "reload" param}} class="btn btn-default btn-xs">Retry</button>
           {{/if}}
-          {{#if isTrigger}}
-            <button type="button" {{action "trigger"}} class="btn btn-default btn-xs">Trigger</button>
+          {{#if param.isTrigger}}
+            <button type="button" {{action "trigger" param}} class="btn btn-default btn-xs">Trigger</button>
           {{/if}}
-          {{#if isBool}}
-            {{input type="checkbox" checked=boolValue disabled=writeOnly}}
+          {{#if param.isBool}}
+            {{input type="checkbox" checked=param.boolValue disabled=param.writeOnly}}
           {{/if}}
-          {{displayValue}}
-          {{#if editable}}
-          {{#unless isEditing}}
-            <button type="button" {{action "editValue"}} class="btn btn-default btn-xs">Edit</button>
+          {{param.displayValue}}
+          {{#if param.editable}}
+          {{#unless param.isEditing}}
+            <button type="button" {{action "editValue" param}} class="btn btn-default btn-xs">Edit</button>
           {{/unless}}
           {{/if}}
         </td>

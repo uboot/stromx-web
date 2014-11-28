@@ -7,7 +7,9 @@ module.exports = function(app) {
         id: 0,
         zvalue: 2,
         visualization: 'lines',
-        color: '#0000ff',
+        properties: {
+          color: '#0000ff'
+        },
         input: 1,
         value: 0,
         view: 1
@@ -16,7 +18,9 @@ module.exports = function(app) {
         id: 2,
         zvalue: 1,
         visualization: 'image',
-        color: '#00ff00',
+        properties: {
+          color: '#00ff00'
+        },
         input: 2,
         value: 1,
         view: 1
@@ -25,7 +29,9 @@ module.exports = function(app) {
         id: 3,
         zvalue: 4,
         visualization: 'default',
-        color: '#ff0000',
+        properties: {
+          color: '#ff0000'
+        },
         input: 2,
         value: 2,
         view: 1

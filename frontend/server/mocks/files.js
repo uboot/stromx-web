@@ -20,4 +20,5 @@ module.exports = function(app) {
     ]});
   });
   app.use('/api/files', filesRouter);
+  app.use('/api/files/*', filesRouter);
 };

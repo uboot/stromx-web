@@ -10,19 +10,17 @@
 
 <div class="stromx-view-view panel panel-default">
   <svg width="1280" height="1024" id="view-svg">
-  {{#each svgObservers itemController="observer"}}
-    {{#if svgImage}}
-      <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}} {{bind-attr xlink:href=imageData}}/>
+  {{#each observer in svgObservers itemController="observer"}}
+    {{#if observer.svgImage}}
+      <image {{bind-attr width=observer.imageWidth}} {{bind-attr height=observer.imageHeight}} {{bind-attr xlink:href=observer.imageData}}/>
     {{/if}}
-    {{#if svgText}}
-      <text x="10" y="20" {{bind-attr fill=color}}>{{textData}}</text>
+    {{#if observer.svgText}}
+      <text x="10" y="20" {{bind-attr fill=observer.color}}>{{observer.textData}}</text>
     {{/if}}
-    {{#if svgLines}}
-      {{#with this as observer}}
-        {{#each linesData itemController="view.line"}}
-          <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke=observer.color}}/>
-        {{/each}}
-      {{/with}}
+    {{#if observer.svgLines}}
+      {{#each line in observer.linesData itemController="view.line"}}
+        <line {{bind-attr x1=line.x1}} {{bind-attr y1=line.y1}} {{bind-attr x2=line.x2}} {{bind-attr y2=line.y2}} {{bind-attr stroke=observer.color}}/>
+      {{/each}}
     {{/if}}
   {{/each}}
   </svg>
@@ -42,13 +40,13 @@
     </tr>
   </thead>
   <tbody>
-    {{#each listObservers itemController="observer"}}
+    {{#each observer in listObservers itemController="observer"}}
     <tr>
       <td>
-        {{title}}
+        {{observer.title}}
       </td>
       <td>
-        {{visualizationLabel}}
+        {{observer.visualizationLabel}}
       </td>
       <td>
         <div class="btn-group">
@@ -56,9 +54,9 @@
             Action <span class="caret"></span>
           </button>
             <ul class="dropdown-menu" role="menu">
-              <li><a {{action "moveUp"}}>Up</a></li>
-              <li><a {{action "moveDown"}}>Down</a></li>
-              <li><a {{action "remove"}}>Remove</a></li>
+              <li><a {{action "moveUp" observer}}>Up</a></li>
+              <li><a {{action "moveDown" observer}}>Down</a></li>
+              <li><a {{action "remove" observer}}>Remove</a></li>
             </ul>
           </div>
      </td>

@@ -138,6 +138,11 @@ export default Ember.ObjectController.extend({
 
     return value.values;
   }.property('value.value'),
+  
+  color: function() {
+    var props = this.get('properties');
+    return props.color || '#000000';
+  }.property('properties'),
 
   actions: {
     moveUp: function() {

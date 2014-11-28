@@ -18,29 +18,29 @@
     </tr>
   </thead>
   <tbody>
-    {{#each itemController="file"}}
+    {{#each file in this itemController="file"}}
       <tr>
         <td>
-          {{name}}
+          {{file.name}}
         </td>
         <td>
-          {{#if closed}}
+          {{#if file.closed}}
             Closed
           {{else}}
             Loaded
           {{/if}}
         </td>
         <td>
-          {{#if closed}}
+          {{#if file.closed}}
             <div class="btn-group">
               <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a {{action "open"}}>Open</a></li>
-                <li><a {{action "rename"}}>Rename</a></li>
-                <li><a {{action "showModal" "removeFile" this}}>Remove</a></li>
-                <li><a {{bind-attr href=url}} download>Download</a></li>
+                <li><a {{action "open" file}}>Open</a></li>
+                <li><a {{action "rename" file}}>Rename</a></li>
+                <li><a {{action "showModal" "removeFile"  file}}>Remove</a></li>
+                <li><a {{bind-attr href=file.url}} download>Download</a></li>
               </ul>
             </div>
           {{else}}
@@ -49,10 +49,10 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                {{#if stream}}
-                  <li>{{#link-to 'stream' stream}}Show{{/link-to}}</li>
+                {{#if file.stream}}
+                  <li>{{#link-to 'stream' file.stream}}Show{{/link-to}}</li>
                 {{/if}}
-                <li><a {{bind-attr href=url}}>Download</a></li>
+                <li><a {{bind-attr href=file.url}}>Download</a></li>
               </ul>
             </div>
           {{/if}}

@@ -43,49 +43,47 @@
       </pattern>
     </defs>
     <rect width="100%" height="100%" {{bind-attr fill=patternUri}}/>
-    {{#with this as stream}}
-      {{#each operators itemController="operator"}}
-        {{#svg-transform transform=transform}}
-          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
-            <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
-          {{/svg-drag}}
-          {{#svg-click mouseClick="showMenu"}}
-            <text x="25" y="65" class="stromx-svg-operator-name">{{name}}</text>
-          {{/svg-click}}
-          {{#each inputs itemController="input"}}
-            {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
-              <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
-            {{/svg-drag}}
-            {{#if isDraggingConnection}}
-              <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke-width=strokeWidth}} class="stromx-svg-drag-line"/>
-            {{/if}}
-          {{/each}}
-          {{#each outputs itemController="output"}}
-            {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
-              <rect {{bind-attr x=x}} {{bind-attr y=y}} width=10 height=10 class="stromx-svg-connector-rect"/>
-            {{/svg-drag}}
-            {{#if isDraggingConnection}}
-              <line {{bind-attr x1=x1}} {{bind-attr y1=y1}} {{bind-attr x2=x2}} {{bind-attr y2=y2}} {{bind-attr stroke-width=strokeWidth}} class="stromx-svg-drag-line"/>
-            {{/if}}
-          {{/each}}
-        {{/svg-transform}}
-      {{/each}}
-
-      {{#each connections itemController="connection"}}
+    {{#each op in operators itemController="operator"}}
+      {{#svg-transform transform=op.transform}}
+        {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
+          <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
+        {{/svg-drag}}
         {{#svg-click mouseClick="showMenu"}}
-          <path {{bind-attr d=path}} {{bind-attr stroke=color}} class="stromx-svg-connection-path"/>
-          {{#if displayStartArrow}}
-            <use id="startArrows" {{bind-attr xlink:href=stream.arrowsUri}} {{bind-attr transform=startArrowTransform}}/>
-          {{/if}}
-          {{#if displayCenterArrow}}
-            <use id="centerArrows" {{bind-attr xlink:href=stream.arrowsUri}} {{bind-attr transform=centerArrowTransform}}/>
-          {{/if}}
-          {{#if displayEndArrow}}
-            <use id="endArrows" {{bind-attr xlink:href=stream.arrowsUri}} {{bind-attr transform=endArrowTransform}}/>
-          {{/if}}
+          <text x="25" y="65" class="stromx-svg-operator-name">{{op.name}}</text>
         {{/svg-click}}
-      {{/each}}
-    {{/with}}
+        {{#each input in op.inputs itemController="input"}}
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
+            <rect {{bind-attr x=input.x}} {{bind-attr y=input.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
+          {{/svg-drag}}
+          {{#if input.isDraggingConnection}}
+            <line {{bind-attr x1=input.x1}} {{bind-attr y1=input.y1}} {{bind-attr x2=input.x2}} {{bind-attr y2=input.y2}} {{bind-attr stroke-width=input.strokeWidth}} class="stromx-svg-drag-line"/>
+          {{/if}}
+        {{/each}}
+        {{#each output in op.outputs itemController="output"}}
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
+            <rect {{bind-attr x=output.x}} {{bind-attr y=output.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
+          {{/svg-drag}}
+          {{#if output.isDraggingConnection}}
+            <line {{bind-attr x1=output.x1}} {{bind-attr y1=output.y1}} {{bind-attr x2=output.x2}} {{bind-attr y2=output.y2}} {{bind-attr stroke-width=output.strokeWidth}} class="stromx-svg-drag-line"/>
+          {{/if}}
+        {{/each}}
+      {{/svg-transform}}
+    {{/each}}
+
+    {{#each connection in connections itemController="connection"}}
+      {{#svg-click mouseClick="showMenu"}}
+        <path {{bind-attr d=connection.path}} {{bind-attr stroke=connection.color}} class="stromx-svg-connection-path"/>
+        {{#if connection.displayStartArrow}}
+          <use id="startArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.startArrowTransform}}/>
+        {{/if}}
+        {{#if connection.displayCenterArrow}}
+          <use id="centerArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.centerArrowTransform}}/>
+        {{/if}}
+        {{#if connection.displayEndArrow}}
+          <use id="endArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.endArrowTransform}}/>
+        {{/if}}
+      {{/svg-click}}
+    {{/each}}
   </svg>
 </div>
 
@@ -98,16 +96,16 @@
     </tr>
   </thead>
   <tbody>
-    {{#each operators itemController="operator"}}
+    {{#each op in operators itemController="operator"}}
       <tr>
         <td>
-          {{name}}
+          {{op.name}}
         </td>
         <td>
-          {{fullType}}
+          {{op.fullType}}
         </td>
         <td>
-          {{#link-to 'operator' this type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
+          {{#link-to 'operator' op type="button" class="btn btn-default btn-xs"}}Show{{/link-to}}
         </td>
       </tr>
     </tr>
@@ -123,17 +121,17 @@
     </tr>
   </thead>
   <tbody>
-    {{#each threads itemController="thread"}}
+    {{#each thread in threads itemController="thread"}}
       <tr>
         <td>
-          {{#if isEditingName}}
-            {{input value=name}}
+          {{#if thread.isEditingName}}
+            {{input value=thread.name}}
           {{else}}
-            {{name}}
+            {{thread.name}}
           {{/if}}
         </td>
         <td>
-          {{#if isEditingName}}
+          {{#if thread.isEditingName}}
             <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
           {{else}}
             <div class="btn-group">
@@ -142,7 +140,7 @@
               </button>
               <ul class="dropdown-menu" role="menu">
                 <li><a {{action "rename"}}>Rename</a></li>
-                <li><a {{action "showModal" "removeThread" this}}>Remove</a></li>
+                <li><a {{action "showModal" "removeThread" thread}}>Remove</a></li>
               </ul>
             </div>
           {{/if}}
@@ -161,17 +159,17 @@
     </tr>
   </thead>
   <tbody>
-    {{#each views itemController="view"}}
+    {{#each view in views itemController="view"}}
       <tr>
         <td>
-          {{#if isEditingName}}
-            {{input value=name}}
+          {{#if view.isEditingName}}
+            {{input value=view.name}}
           {{else}}
-            {{name}}
+            {{view.name}}
           {{/if}}
         </td>
         <td>
-          {{#if isEditingName}}
+          {{#if view.isEditingName}}
             <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
           {{else}}
             <div class="btn-group">
@@ -179,9 +177,9 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li>{{#link-to "view" this}}Show{{/link-to}}</li>
+                <li>{{#link-to "view" view}}Show{{/link-to}}</li>
                 <li><a {{action "rename"}}>Rename</a></li>
-                <li><a {{action "showModal" "removeView" this}}>Remove</a></li>
+                <li><a {{action "showModal" "removeView" view}}>Remove</a></li>
               </ul>
             </div>
           {{/if}}

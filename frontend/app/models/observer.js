@@ -3,8 +3,7 @@ import DS from "ember-data";
 export default DS.Model.extend({
   zvalue: DS.attr('number'),
   visualization: DS.attr('string'),
-  color: DS.attr('string'),
+  properties: DS.attr(),
   active: DS.attr('boolean'),
-  view: DS.belongsTo('view', {async: true}),
-  title: ''
+  view: DS.belongsTo('view', {async: true})
 });
