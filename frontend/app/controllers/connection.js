@@ -31,6 +31,9 @@ export default Ember.ObjectController.extend({
       });
 
       var pos = connector.get('operator.position');
+      if (pos === undefined) {
+        return;
+      }
       var y = pos.y + connectorController.get('y') + Constants.CONNECTOR_SIZE / 2;
       _this.set('y1', y);
     });

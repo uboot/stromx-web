@@ -27,5 +27,8 @@ module.exports = function(app) {
       }
     ]});
   });
+  streamsRouter.put('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/streams/*', streamsRouter);
 };

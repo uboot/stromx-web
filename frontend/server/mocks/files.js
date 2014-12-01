@@ -22,6 +22,9 @@ module.exports = function(app) {
   filesRouter.delete('/', function(req, res) {
     res.send('null');
   });
+  filesRouter.put('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/files', filesRouter);
   app.use('/api/files/*', filesRouter);
 };
