@@ -137,7 +137,7 @@ class DummyItems(model.Items):
     pass
 
 class DummyItem(model.Item):
-    properties = ['read', 'write']
+    _properties = ['read', 'write']
     
     def __init__(self):
         self.__write = 0
@@ -1186,11 +1186,12 @@ class ObserversTest(unittest.TestCase):
                                              'visualization': 'lines'}})
         self.assertEqual('lines', self.stromxObserver.visualization)
         
-    def testSetColor(self):
+    def testSetProperties(self):
+        properties = {'color': '#ff00ff'}
         self.observer.set({'inputObserver': {'id': '0',
-                                             'color': '#ff00ff'}})
-        self.assertEqual(stromx.runtime.Color(255, 0, 255),
-                         self.stromxObserver.color)
+                                             'properties': properties
+                                            }})
+        self.assertEqual('#ff00ff', self.stromxObserver.properties['color'])
         
     def testSetActive(self):
         self.observer.set({'inputObserver': {'id': '0',
@@ -1226,7 +1227,7 @@ class ParameterObserversTest(unittest.TestCase):
                                          'parameter': '2',
                                          'view': '0',
                                          'active': True,
-                                         'color': '#000000',
+                                         'properties': {},
                                          'visualization': 'default',
                                          'zvalue': 0}}
         self.assertEqual(refData, returned)
@@ -1266,6 +1267,7 @@ class InputObserversTest(unittest.TestCase):
         self.setupEmptyView()
         data = {'inputObserver': {'id': '0',
                                   'input': '2',
+                                  'properties': {'color': '#00ff00'},
                                   'view': '0'}}
         
         returned = self.model.inputObservers.addData(data)
@@ -1275,7 +1277,7 @@ class InputObserversTest(unittest.TestCase):
                                      'view': '0',
                                      'active': True,
                                      'value': '0',
-                                     'color': '#000000',
+                                     'properties': {'color': '#00ff00'},
                                      'visualization': 'default',
                                      'zvalue': 0}}
         self.assertEqual(refData, returned)

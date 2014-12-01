@@ -132,7 +132,7 @@ class Items(dict):
         raise NotImplementedError()
             
 class Item(object):
-    properties = []
+    _properties = []
     
     def __init__(self, model = None):
         self.__index = ""
@@ -140,7 +140,7 @@ class Item(object):
         
     @property
     def data(self):
-        props = {prop: self.__getattribute__(prop) for prop in self.properties}
+        props = {prop: self.__getattribute__(prop) for prop in self._properties}
         props['id'] = self.index
         name = self.modelName
         return {name: props}
@@ -163,11 +163,11 @@ class Item(object):
         
     def set(self, data):
         name = _resourceName(self.__class__.__name__)
-        properties = data[name]
+        _properties = data[name]
         
-        for key in properties:
+        for key in _properties:
             try:
-                self.__setattr__(key, properties[key])
+                self.__setattr__(key, _properties[key])
             except AttributeError:
                 pass
             
@@ -214,7 +214,7 @@ class Files(Items):
         return f.data
         
 class File(Item):
-    properties = ["content", "opened", "stream", "name"]
+    _properties = ["content", "opened", "stream", "name"]
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
@@ -284,7 +284,7 @@ class Streams(Items):
         return streamModels[0] if len(streamModels) else None
         
 class Stream(Item):
-    properties = ["name", "saved", "active", "paused", "file", "operators",
+    _properties = ["name", "saved", "active", "paused", "file", "operators",
                   "connections", "views", "threads"]
     
     def __init__(self, streamFile, model):
@@ -498,7 +498,7 @@ class Stream(Item):
         self.__operators.remove(op)
         
 class OperatorTemplate(Item):
-    properties = ["type", "package", "version"]
+    _properties = ["type", "package", "version"]
     
     def __init__(self, stromxOpKernel, model):
         super(OperatorTemplate, self).__init__(model)
@@ -564,7 +564,7 @@ class Operators(Items):
         return op.data
         
 class Operator(Item):
-    properties = ["name", "status", "type", "package", "version", "parameters",
+    _properties = ["name", "status", "type", "package", "version", "parameters",
                   "position", "inputs", "outputs", "stream"]
     
     def __init__(self, stromxOp, stream, model):
@@ -715,7 +715,7 @@ class Parameters(Items):
         return parameter
     
 class Parameter(Item):
-    properties = ['title', 'variant', 'operator', 'value',
+    _properties = ['title', 'variant', 'operator', 'value',
                   'minimum', 'maximum', 'writable', 'descriptions', 'state']
     
     def __init__(self, op, param, model):
@@ -835,7 +835,7 @@ class EnumDescriptions(Items):
         return description
     
 class EnumDescription(Item):
-    properties = ['value', 'title']
+    _properties = ['value', 'title']
     
     def __init__(self, desc, model):
         super(EnumDescription, self).__init__(model)
@@ -850,7 +850,7 @@ class EnumDescription(Item):
         return self.__desc.title()
     
 class Connection(Item):
-    properties = ['output', 'input', 'thread', 'stream']
+    _properties = ['output', 'input', 'thread', 'stream']
     
     def __init__(self, stream, outputConnector, inputConnector, thread, model):
         assert(outputConnector != None)
@@ -971,7 +971,7 @@ class Connections(Items):
         return connection.data
     
 class Thread(Item):
-    properties = ['name', 'color', 'stream', 'connections']
+    _properties = ['name', 'color', 'stream', 'connections']
     
     def __init__(self, stromxThread, stream, model):
         super(Thread, self).__init__(model)
@@ -1059,7 +1059,7 @@ class Threads(Items):
         return False
 
 class ConnectorBase(Item):
-    properties = ['operator', 'title']
+    _properties = ['operator', 'title']
     
     def __init__(self, op, description, model):
         super(ConnectorBase, self).__init__(model)
@@ -1087,7 +1087,7 @@ class ConnectorBase(Item):
         return self.__description.id()
         
 class Input(ConnectorBase):
-    properties = ConnectorBase.properties + ['connection', 'observers']
+    _properties = ConnectorBase._properties + ['connection', 'observers']
     
     def __init__(self, op, description, model):
         super(Input, self).__init__(op, description, model)
@@ -1131,7 +1131,7 @@ class Inputs(Items):
         return connectors[0]
     
 class Output(ConnectorBase):
-    properties = ConnectorBase.properties + ['connections']
+    _properties = ConnectorBase._properties + ['connections']
     
     def __init__(self, op, description, model):
         super(Output, self).__init__(op, description, model)
@@ -1170,7 +1170,7 @@ class Outputs(Items):
         return connectors[0]
         
 class View(Item):
-    properties = ['name', 'observers', 'stream']
+    _properties = ['name', 'observers', 'stream']
     
     def __init__(self, stromxView, model):
         super(View, self).__init__(model)
@@ -1278,7 +1278,7 @@ class Views(Items):
         return view.data
     
 class Observer(Item):
-    properties = ['view', 'zvalue', 'visualization', 'color', 'active']
+    _properties = ['view', 'zvalue', 'visualization', 'properties', 'active']
     
     def __init__(self, view, stromxObserver, model):
         super(Observer, self).__init__(model)
@@ -1306,12 +1306,12 @@ class Observer(Item):
         self.__observer.visualization = value
         
     @property
-    def color(self):
-        return conversion.stromxColorToString(self.__observer.color)
+    def properties(self):
+        return self.__observer.properties
         
-    @color.setter
-    def color(self, value):
-        self.__observer.color = conversion.stringToStromxColor(value)
+    @properties.setter
+    def properties(self, value):
+        self.__observer.properties = value
         
     @property
     def active(self):
@@ -1332,7 +1332,7 @@ class Observer(Item):
         super(Observer, self).delete()
     
 class ParameterObserver(Observer):
-    properties = Observer.properties + ['parameter', 'view']
+    _properties = Observer._properties + ['parameter', 'view']
     
     def __init__(self, view, stromxObserver, model):
         super(ParameterObserver, self).__init__(view, stromxObserver, 
@@ -1350,7 +1350,7 @@ class ParameterObserver(Observer):
         return parameterModels[0].index
 
 class InputObserver(Observer):
-    properties = Observer.properties + ['input', 'value']
+    _properties = Observer._properties + ['input', 'value']
     
     def __init__(self, view, stromxObserver, model):
         super(InputObserver, self).__init__(view, stromxObserver, model)
@@ -1429,7 +1429,7 @@ class InputObservers(Observers):
         return observerModel.data
     
 class ConnectorValueBase(Item):
-    properties = ['variant', 'value']
+    _properties = ['variant', 'value']
     
     def __init__(self, dataAccess, model):
         super(ConnectorValueBase, self).__init__(model)
@@ -1462,7 +1462,7 @@ class ConnectorValueBase(Item):
         return 'connectorValue'
     
 class ConnectorValue(ConnectorValueBase):
-    properties = ['variant', 'value']
+    _properties = ['variant', 'value']
     
     def __init__(self, stromxConnectorValue, model):
         super(ConnectorValue, self).__init__(None, model)
@@ -1523,7 +1523,7 @@ class Errors(Items):
         self.items.clear()
         
 class Error(Item):
-    properties = ["time", "description"]
+    _properties = ["time", "description"]
     
     def __init__(self, description):
         super(Error, self).__init__()

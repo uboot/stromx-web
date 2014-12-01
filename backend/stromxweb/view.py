@@ -54,43 +54,59 @@ class View(object):
     
 class Observer(object):
     def __init__(self, stream, op):
-        self.color = stromx.runtime.Color(0, 0, 0)
         self.zvalue = 0
         self.active = True
         self.visualization = 'default'
+        self.__properties = dict()
         self.__stream = stream
         self.__op = op
         
     @property
     def op(self):
         return self.__op
+        
+    @property
+    def properties(self):
+        return self.__properties
+        
+    @properties.setter
+    def properties(self, value):
+        self.__properties = value
     
     def serialize(self):
-        colorStr = '#{0:02x}{1:02x}{2:02x}'.format(self.color.r(),
-                                                   self.color.g(),
-                                                   self.color.b())
         data = {
            'Observer': {
-                'color': colorStr,
+                'properties': self.__serializeProperties(),
                 'op': self.__opId,
                 'zvalue': self.zvalue,
                 'active': self.active,
                 'visualization': self.visualization
-           }
+            }
         }
         
         return data
+            
+    def deserialize(self, values):
+        self.zvalue = values['zvalue']
+        self.active = values['active']
+        self.visualization = values['visualization']
+        self.__op = self.__stream.operators()[values['op']]   
+
+        self.__deserializeProperties(values['properties'])
     
-    def deserialize(self, properties):
-        red = int(properties['color'][1:3], 16)
-        green = int(properties['color'][3:5], 16)
-        blue = int(properties['color'][5:], 16)
+    def __serializeProperties(self):
+      properties = dict()
+      
+      for key in self.__properties:
+          value = self.__properties[key]
+          properties[key] = value
+      
+      return properties
         
-        self.zvalue = properties['zvalue']
-        self.active = properties['active']
-        self.visualization = properties['visualization']
-        self.color = stromx.runtime.Color(red, green, blue)
-        self.__op = self.__stream.operators()[properties['op']]
+    def __deserializeProperties(self, properties):
+      for key in properties:
+          value = properties[key]
+          self.__properties[key] = value
         
     @property
     def __opId(self):

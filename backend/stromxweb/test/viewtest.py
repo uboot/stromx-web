@@ -12,7 +12,9 @@ _refData = {
     'View': {
         'observers': [{
             'ParameterObserver': {
-                'color': '#ff0000',
+                'properties': {
+                  'color': '#ff0000',
+                },
                 'zvalue': 1,
                 'parameter': 0,
                 'active': False,
@@ -21,7 +23,9 @@ _refData = {
              }, {
             'ConnectorObserver': {
                 'connector': 0,
-                'color': '#0000ff', 
+                'properties': {
+                  'color': '#0000ff',
+                },
                 'zvalue': 0, 
                 'type': 2, 
                 'active': True,
@@ -46,16 +50,21 @@ class ViewTest(unittest.TestCase):
         
         delay = self.stream.operators()[4]
         parameterObserver = self.view.addParameterObserver(delay, 0)
-        parameterObserver.color = stromx.runtime.Color(255, 0, 0)
+        parameterObserver.properties['color'] = '#ff0000'
         parameterObserver.visualization = 'slider'
         
         counter = self.stream.operators()[3]
         connectorType = stromx.runtime.Connector.Type.OUTPUT
         connectorObserver = self.view.addConnectorObserver(counter, 
                                                            connectorType, 0)
-        connectorObserver.color = stromx.runtime.Color(0, 0, 255)
+        connectorObserver.properties['color'] = '#0000ff'
         parameterObserver.zvalue = 1
         parameterObserver.active = False
+        
+    def testSetProperties(self):
+        observer = self.view.observers[0]
+        observer.properties = {'height': 500 }
+        self.assertEqual(500, observer.properties['height'])
         
     def testDeserialize(self):
         self.view = view.View(self.stream)
