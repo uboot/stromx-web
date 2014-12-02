@@ -6,7 +6,7 @@ module.exports = function(app) {
       {
         id: 0,
         zvalue: 2,
-        visualization: 'lines',
+        visualization: 'line_segments',
         properties: {
           color: '#0000ff'
         },
@@ -17,7 +17,7 @@ module.exports = function(app) {
       {
         id: 2,
         zvalue: 1,
-        visualization: 'image',
+        visualization: 'image_2d',
         properties: {
           color: '#00ff00'
         },

@@ -8,10 +8,10 @@ export default Ember.ObjectController.extend({
     var visualization = this.get('visualization');
 
     switch (visualization) {
-      case 'image':
+      case 'image_2d':
         return 'Image';
-      case 'lines':
-        return 'Lines';
+      case 'line_segments':
+        return 'Line segments';
       case 'slider':
         return 'Slider';
       case 'default':
@@ -76,9 +76,9 @@ export default Ember.ObjectController.extend({
     switch (visualization) {
       case 'text':
         return 'text';
-      case 'image':
+      case 'image_2d':
         return 'image';
-      case 'lines':
+      case 'line_segments':
         return 'lines';
       default:
         break;
@@ -138,7 +138,7 @@ export default Ember.ObjectController.extend({
 
     return value.values;
   }.property('value.value'),
-  
+
   color: function() {
     var props = this.get('properties');
     return props.color || '#000000';

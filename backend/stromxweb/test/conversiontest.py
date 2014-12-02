@@ -28,3 +28,15 @@ class ConversionTest(unittest.TestCase):
         values = data['values']
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
         self.assertEqual('oL/8QAtRAAAgEDAwIEAwUFBAQAAAF9', values[200:230])
+        
+    def testStromxMatrixToData(self):
+        valueType = stromx.cvsupport.Matrix.ValueType.INT_32
+        matrix = stromx.cvsupport.Matrix.eye(3, 4, valueType)
+        data = conversion.stromxMatrixToData(matrix)
+        
+        refData = {'cols': 4, 
+                   'rows': 3, 
+                   'values': [[1, 0, 0, 0], 
+                              [0, 0, 0, 0], 
+                               [0, 0, 0, 0]]}
+        self.assertEqual(refData, data)

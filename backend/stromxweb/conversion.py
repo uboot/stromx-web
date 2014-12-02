@@ -125,6 +125,18 @@ def stromxImageToData(image):
     
     return data
 
+def stromxMatrixToData(matrix):
+    array = np.asarray(matrix.data())
+    
+    data = {
+        'rows': matrix.rows(),
+        'cols': matrix.cols(),
+        'values': array.tolist()
+    }
+    
+    return data
+    
+
 def stromxColorToString(color):
     return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
 
