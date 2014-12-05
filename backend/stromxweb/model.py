@@ -11,6 +11,9 @@ import stromx.runtime
 import conversion
 import view
 
+def _str(value):
+    return str(value.encode('utf-8'))
+
 class AddDataFailed(Exception): pass
 
 class Model(object):
@@ -191,14 +194,14 @@ class Files(Items):
         self.addItems(files)
         
     def addData(self, data):
-        filename = data["file"]["name"]
+        filename = _str(data["file"]["name"])
         duplicates = [f for f in self.values() if f.name == filename]
         assert(len(duplicates) <= 1)
         
         if len(duplicates):
             f = duplicates[0]
         else:         
-            f = File(data["file"]["name"], self.model)
+            f = File(_str(data["file"]["name"]), self.model)
             self.addItem(f)
         
         
@@ -218,7 +221,7 @@ class File(Item):
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
-        self.__name = str(name)
+        self.__name = name
         self.__opened = False
         self.__stream = None
     
@@ -260,11 +263,11 @@ class File(Item):
     
     @name.setter
     def name(self, name):
-        if self.__name != name:
+        if self.__name != _str(name):
             newPath = os.path.join(self.model.files.directory, name)
             if os.path.exists(self.path):
                 os.rename(self.path, newPath)
-            self.__name = str(name)
+            self.__name = _str(name)
         
     def delete(self):
         self.opened = False
@@ -298,7 +301,7 @@ class Stream(Item):
         
         factory = self.model.operatorTemplates.factory
         if os.path.exists(streamFile.path):
-            zipInput = stromx.runtime.ZipFileInput(str(streamFile.path))
+            zipInput = stromx.runtime.ZipFileInput(streamFile.path)
             reader = stromx.runtime.XmlReader()
             self.__stream = reader.readStream(zipInput, "stream.xml", factory)
         else:
@@ -400,8 +403,8 @@ class Stream(Item):
     
     @name.setter
     def name(self, value):
-        if self.name != str(value):
-            self.__stream.setName(str(value))
+        if self.name != _str(value):
+            self.__stream.setName(_str(value))
         
     @property
     def saved(self):
@@ -551,8 +554,8 @@ class Operators(Items):
         
         factory = self.model.operatorTemplates.factory
         try:
-            opKernel = factory.newOperator(str(data['operator']['package']),
-                                           str(data['operator']['type']))
+            opKernel = factory.newOperator(_str(data['operator']['package']),
+                                           _str(data['operator']['type']))
         except stromx.runtime.OperatorAllocationFailed as e:
             self.model.errors.addError(e)
             raise AddDataFailed()
@@ -587,7 +590,7 @@ class Operator(Item):
     
     @name.setter
     def name(self, value):
-        self.__op.setName(str(value))
+        self.__op.setName(_str(value))
         
     @property
     def status(self):
@@ -985,8 +988,8 @@ class Thread(Item):
     
     @name.setter
     def name(self, value):
-        if self.name != str(value):
-            self.__thread.setName(str(value))
+        if self.name != _str(value):
+            self.__thread.setName(_str(value))
     
     @property
     def color(self):
@@ -1191,11 +1194,11 @@ class View(Item):
         
     @property
     def name(self):
-        return str(self.__view.name)
+        return self.__view.name
     
     @name.setter
     def name(self, value):
-        self.__view.name = str(value)
+        self.__view.name = _str(value)
         
     @property
     def observers(self):
@@ -1597,6 +1600,12 @@ def _registerExtraPackages(factory):
         try:
             import stromx.cvcore as cvcore
             cvcore.register(factory)
+        except ImportError:
+            pass
+        
+        try:
+            import stromx.test as test
+            test.register(factory)
         except ImportError:
             pass
         

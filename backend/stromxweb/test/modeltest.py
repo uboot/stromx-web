@@ -456,6 +456,10 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual('New name',
                          self.operator.data['operator']['name'])
         
+    def testSetNameUmlaut(self):
+        self.operators.set('0', {'operator': {'name': u'\xe4'}})
+        self.assertEqual('ä', self.operator.data['operator']['name'])
+        
     def testSetPosition(self):
         self.operators.set('0', {'operator': 
                                  {'position': {'x': 20.5, 'y': 30.5}}
@@ -1318,6 +1322,9 @@ class ConnectorValuesTest(unittest.TestCase):
         cameraFile = self.model.files['2']
         self.cameraStream = self.model.streams.addFile(cameraFile)
         
+        testDataFile = self.model.files['3']
+        self.testData = self.model.streams.addFile(testDataFile)
+        
         self.data = None
         
     def setValue(self, value):
@@ -1351,6 +1358,18 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', value['values'][:30])
         self.assertEqual('oL/8QAtRAAAgEDAwIEAwUFBAQAAAF9', 
                          value['values'][200:230])
+        
+    def testHandlerLines(self):
+        self.model.connectorValues.handlers.append(self.setValue)
+        self.testData.active = True
+        time.sleep(0.2)
+        self.testData.active = False
+        
+        self.assertEqual('matrix', self.data['connectorValue']['variant'])
+        value = self.data['connectorValue']['value']
+        self.assertEqual(20, value['rows'])
+        self.assertEqual(4, value['cols'])
+        self.assertEqual([], value['values'][2:4])
         
     def tearDown(self):
         shutil.rmtree('temp', True)
