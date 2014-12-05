@@ -56,7 +56,7 @@
           {{#if param.isEditing}}
             {{#if param.isEnum}}
               {{view "select" value=param.value content=param.descriptions optionValuePath="content.value"
-                optionLabelPath="content.title" disabled=writeOnly}}
+                optionLabelPath="content.title" disabled=readOnly}}
             {{else}}
               {{input value=param.editValue}}
             {{/if}}
@@ -74,13 +74,13 @@
             <button type="button" {{action "trigger" param}} class="btn btn-default btn-xs">Trigger</button>
           {{/if}}
           {{#if param.isBool}}
-            {{input type="checkbox" checked=param.boolValue disabled=param.writeOnly}}
+            {{input type="checkbox" checked=param.boolValue disabled=param.readOnly}}
           {{/if}}
           {{param.displayValue}}
           {{#if param.editable}}
-          {{#unless param.isEditing}}
-            <button type="button" {{action "editValue" param}} class="btn btn-default btn-xs">Edit</button>
-          {{/unless}}
+            {{#unless param.isEditing}}
+              <button type="button" {{action "editValue" param}} class="btn btn-default btn-xs">Edit</button>
+            {{/unless}}
           {{/if}}
         </td>
       </tr>

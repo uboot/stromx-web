@@ -27,5 +27,9 @@ module.exports = function(app) {
       }
     ]});
   });
+  viewsRouter.post('/', function(req, res) {
+    res.send('null');
+  });
+  app.use('/api/views', viewsRouter);
   app.use('/api/views/*', viewsRouter);
 };

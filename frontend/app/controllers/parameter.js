@@ -7,18 +7,6 @@ export default Ember.ObjectController.extend({
     return this.get('variant') === 'enum';
   }.property('variant'),
 
-  isString: function() {
-    return this.get('variant') === 'string';
-  }.property('variant'),
-
-  isInt: function() {
-    return this.get('variant') === 'int';
-  }.property('variant'),
-
-  isFloat: function() {
-    return this.get('variant') === 'float';
-  }.property('variant'),
-
   isBool: function() {
     return this.get('variant') === 'bool';
   }.property('variant'),
@@ -36,14 +24,13 @@ export default Ember.ObjectController.extend({
   }.property('state'),
 
   editable: function() {
-    var typeIsKnown = (this.get('isString') ||
-                       this.get('isEnum') ||
-                       this.get('isInt') ||
-                       this.get('isFloat'));
-    return this.get('writable') && this.get('current') && typeIsKnown;
-  }.property('writable', 'isString', 'isInt', 'isFloat', 'state'),
+    var variant = this.get('variant');
+    var knownTypes = ['string', 'enum', 'int', 'float'];
+    return this.get('writable') && this.get('current') &&
+      knownTypes.contains(variant);
+  }.property('writable', 'current', 'variant'),
 
-  writeOnly: Ember.computed.not('writable'),
+  readOnly: Ember.computed.not('writable'),
 
   accessFailed: function() {
     return this.get('state') === 'accessFailed';
@@ -51,30 +38,35 @@ export default Ember.ObjectController.extend({
 
   editValue:  function(key, value) {
     if (value === undefined) {
-      if (this.get('isInt') || this.get('isFloat')) {
-        return this.get('value');
-      } else if (this.get('isString')) {
-        return this.get('value');
-      } else {
-        return '';
+      switch (this.get('variant')) {
+        case 'int':
+        case 'float':
+        case 'string':
+          return this.get('value');
+        default:
+          return '';
       }
-    }
-    else {
-      var v;
-      if (this.get('isInt')) {
-        v = parseInt(value, 10);
-        this.set('value', v);
-        return v;
+    } else {
+      var v = '';
+      switch (this.get('variant')) {
+        case 'int':
+          v = parseInt(value, 10);
+          break;
+        case 'float':
+          v = parseFloat(value);
+          break;
+        case 'string':
+          v = value;
+          break;
+        default:
       }
-      else if (this.get('isFloat')) {
-        v = parseFloat(value);
-        this.set('value', v);
-        return v;
-      }
-      else if (this.get('isString')) {
-        this.set('value', value);
+      
+      if (isNaN(v)) {
         return value;
       }
+        
+      this.set('value', v);
+      return v;
     }
   }.property('value', 'variant'),
 
@@ -103,16 +95,16 @@ export default Ember.ObjectController.extend({
       return '';
     }
 
-    if (this.get('isInt')) {
-      return this.get('value');
-    } else if (this.get('isFloat')) {
-      return this.get('value');
-    } else if (this.get('isEnum')) {
-      return this.updateEnumTitle(this.get('value'));
-    } else if (this.get('isBool')) {
-      return "";
-    } else {
-      return this.get('value');
+    switch (this.get('variant')) {
+      case 'int':
+      case 'float':
+        return this.get('value');
+      case 'enum':
+        return this.updateEnumTitle(this.get('value'));
+      case 'bool':
+        return '';
+      default:
+        return this.get('value');
     }
   }.property('value', 'variant', 'isEditing'),
 
