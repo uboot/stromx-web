@@ -33,9 +33,8 @@ class ConversionTest(unittest.TestCase):
         valueType = stromx.cvsupport.Matrix.ValueType.INT_32
         matrix = stromx.cvsupport.Matrix.eye(3, 4, valueType)
         data = conversion.stromxMatrixToData(matrix)
-        
-        refData = {'cols': 4, 
-                   'rows': 3, 
+        refData = {'rows': 3,
+                   'cols': 4,
                    'values': [[1, 0, 0, 0], 
                               [0, 1, 0, 0], 
                               [0, 0, 1, 0]]}

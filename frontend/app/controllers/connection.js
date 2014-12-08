@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-import { Constants } from 'stromx-web/controllers/operator';
+import { Constant } from 'stromx-web/controllers/operator';
 import OutputController from 'stromx-web/controllers/output';
 import InputController from 'stromx-web/controllers/input';
 
@@ -12,7 +12,7 @@ export default Ember.ObjectController.extend({
       return;
     }
 
-    return pos.x + Constants.OPERATOR_SIZE + Constants.CONNECTOR_SIZE;
+    return pos.x + Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE;
   }.property('output.operator.position'),
 
   y1: function(key, value) {
@@ -34,7 +34,7 @@ export default Ember.ObjectController.extend({
       if (pos === undefined) {
         return;
       }
-      var y = pos.y + connectorController.get('y') + Constants.CONNECTOR_SIZE / 2;
+      var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
       _this.set('y1', y);
     });
   }.property('output.operator.position'),
@@ -46,7 +46,7 @@ export default Ember.ObjectController.extend({
       return;
     }
 
-    return pos.x - Constants.CONNECTOR_SIZE;
+    return pos.x - Constant.CONNECTOR_SIZE;
   }.property('input.operator.position'),
 
   y2: function(key, value) {
@@ -65,7 +65,7 @@ export default Ember.ObjectController.extend({
       });
 
       var pos = connector.get('operator.position');
-      var y = pos.y + connectorController.get('y') + Constants.CONNECTOR_SIZE / 2;
+      var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
       _this.set('y2', y);
     });
   }.property('input.operator.position'),
@@ -108,8 +108,8 @@ export default Ember.ObjectController.extend({
       return;
     }
 
-    var ARROW_LENGTH = 2 * Constants.CONNECTOR_SIZE;
-    var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
+    var ARROW_LENGTH = 2 * Constant.CONNECTOR_SIZE;
+    var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
     var ARC_RECT_SIZE = 2*RADIUS;
     var EXTRA_HEIGHT = 20;
 
@@ -270,7 +270,7 @@ var computeWidth = function(height, angle) {
 };
 
 var drawArc = function(large, ccw, x, y) {
-  var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
+  var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
   var largeArcSweepFlag = large === 1 ? 1 : 0;
   var sweepFlag = ccw === 1 ? 0 : 1;
   return 'A' + RADIUS + ',' + RADIUS + ',0,' +
@@ -294,7 +294,7 @@ var computePath = function(x1, y1, x2, y2) {
     return 'M0,0';
   }
 
-  var RADIUS = 1.5 * Constants.CONNECTOR_SIZE;
+  var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
   var EXTRA_HEIGHT = 20;
 
   var xDiff = x2 - x1;

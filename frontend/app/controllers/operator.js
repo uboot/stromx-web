@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export var Constants = {
+export var Constant = {
   OPERATOR_SIZE: 50,
   CONNECTOR_SIZE: 10
 };

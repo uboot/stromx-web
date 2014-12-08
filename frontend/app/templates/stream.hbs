@@ -139,6 +139,10 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
+                <li><a {{action "setColor" "RED"}}>Red</a></li>
+                <li><a {{action "setColor" "GREEN"}}>Green</a></li>
+                <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
+                <li class="divider"></li>
                 <li><a {{action "rename"}}>Rename</a></li>
                 <li><a {{action "showModal" "removeThread" thread}}>Remove</a></li>
               </ul>

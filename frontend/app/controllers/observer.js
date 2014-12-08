@@ -2,23 +2,24 @@ import Ember from "ember";
 
 import ParameterObserver from 'stromx-web/models/parameter-observer';
 import InputObserver from 'stromx-web/models/input-observer';
+import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
+  isEditing: false,
+  
+  visualizations: [
+    {label: 'Default', value: 'default'},
+    {label: 'Image', value: 'image_2d'}, 
+    {label: 'Line segments', value: 'line_segments'},
+    {label: 'Slider', value: 'slider'}
+  ],
+  
   visualizationLabel: function() {
     var visualization = this.get('visualization');
-
-    switch (visualization) {
-      case 'image_2d':
-        return 'Image';
-      case 'line_segments':
-        return 'Line segments';
-      case 'slider':
-        return 'Slider';
-      case 'default':
-        return 'Default';
-      default:
-        return '';
-    }
+    
+    var array = Ember.ArrayProxy.create({content: this.visualizations});
+    var record = array.findBy('value', visualization);
+    return record ? record['label'] : '';
   }.property('visualization'),
 
   title: function() {
@@ -53,98 +54,17 @@ export default Ember.ObjectController.extend({
     return title;
   }.property('input.title', 'input.operator.name'),
 
-  svgType: function() {
-    var visualization = this.get('visualization');
-    var variant = this.get('value.variant');
-
-    if (variant === undefined) {
-      return;
-    }
-
-    if (visualization === 'default') {
-      switch (variant) {
-        case 'int':
-        case 'float':
-          return 'text';
-        case 'image':
-          return 'image';
-        default:
-          return '';
-      }
-    }
-
-    switch (visualization) {
-      case 'text':
-        return 'text';
-      case 'image_2d':
-        return 'image';
-      case 'line_segments':
-        return 'lines';
-      default:
-        break;
-    }
-  }.property('visualization', 'value.variant'),
-
-  svgImage: Ember.computed.equal('svgType', 'image'),
-  svgText: Ember.computed.equal('svgType', 'text'),
-  svgLines: Ember.computed.equal('svgType', 'lines'),
-
-  imageData: function() {
-    var value = this.get('value.value');
-
-    if (value === undefined) {
-      return;
-    }
-
-    return value.values;
-  }.property('value.value'),
-
-  imageWidth: function() {
-    var value = this.get('value.value');
-
-    if (value === undefined) {
-      return;
-    }
-
-    return value.width;
-  }.property('value.value'),
-
-  imageHeight: function() {
-    var value = this.get('value.value');
-
-    if (value === undefined) {
-      return;
-    }
-
-    return value.height;
-  }.property('value.value'),
-
-  textData: function() {
-    var value = this.get('value.value');
-
-    if (value === undefined) {
-      return;
-    }
-
-    return value;
-  }.property('value.value'),
-
-  linesData: function() {
-    var value = this.get('value.value');
-
-    if (value === undefined) {
-      return;
-    }
-
-    return value.values;
-  }.property('value.value'),
-
-  color: function() {
-    var props = this.get('properties');
-    return props.color || '#000000';
-  }.property('properties'),
-
   actions: {
+    edit: function() {
+      this.set('isEditing', true);
+    },
+    
+    save: function() {
+      this.set('isEditing', false);
+      var model = this.get('model');
+      model.save();
+    },
+    
     moveUp: function() {
       var zvalue = this.get('zvalue');
       var model = this.get('model');
@@ -173,6 +93,15 @@ export default Ember.ObjectController.extend({
           model.save();
         }
       });
+    },
+
+    setColor: function(key) {
+      var model = this.get('model');
+      var properties = model.get('properties');
+      var color = Color[key];
+      properties['color'] = color;
+      model.set('properties', properties);
+      model.save();
     },
 
     remove: function () {

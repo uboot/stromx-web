@@ -1,19 +1,19 @@
 import Ember from "ember";
 
-import { Constants } from 'stromx-web/controllers/operator';
+import { Constant } from 'stromx-web/controllers/operator';
 
 export default Ember.ObjectController.extend({
-  x: Constants.OPERATOR_SIZE,
+  x: Constant.OPERATOR_SIZE,
   y: function() {
     var inputs = this.get('operator.outputs');
     var numConnectors = inputs.get('length');
     var index = inputs.indexOf(this.get('model'));
 
-    var opCenter = (Constants.OPERATOR_SIZE +
-                     Constants.CONNECTOR_SIZE) / 2;
-    var offset = opCenter - Constants.CONNECTOR_SIZE * numConnectors;
+    var opCenter = (Constant.OPERATOR_SIZE +
+                    Constant.CONNECTOR_SIZE) / 2;
+    var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
 
-    return offset + 2 * Constants.CONNECTOR_SIZE * index;
+    return offset + 2 * Constant.CONNECTOR_SIZE * index;
   }.property('operator.position', 'operator.outputs'),
 
   isDraggingConnection: false,
@@ -23,7 +23,7 @@ export default Ember.ObjectController.extend({
     return output === null ? 2 : 4;
   }.property('parentController.parentController.activeInput'),
 
-  x1: Constants.OPERATOR_SIZE + Constants.CONNECTOR_SIZE / 2,
+  x1: Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE / 2,
   y1: function() {
     return this.get('y') + 5;
   }.property('y'),

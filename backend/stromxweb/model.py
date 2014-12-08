@@ -5,6 +5,7 @@ import datetime
 import json
 import os
 import re
+import threading
 
 import stromx.runtime
  
@@ -286,6 +287,13 @@ class Streams(Items):
         assert(len(streamModels) <= 1)
         return streamModels[0] if len(streamModels) else None
         
+    
+class ExceptionObserver(stromx.runtime.ExceptionObserver):
+    stream = None
+    
+    def observe(self, phase, message, thread):
+        self.stream.observeException(message)
+        
 class Stream(Item):
     _properties = ["name", "saved", "active", "paused", "file", "operators",
                   "connections", "views", "threads"]
@@ -298,6 +306,8 @@ class Stream(Item):
         self.__connections = []
         self.__views = []
         self.__threads = []
+        self.__exceptionObserver = ExceptionObserver()
+        self.__exceptionObserver.stream = self
         
         factory = self.model.operatorTemplates.factory
         if os.path.exists(streamFile.path):
@@ -306,6 +316,9 @@ class Stream(Item):
             self.__stream = reader.readStream(zipInput, "stream.xml", factory)
         else:
             self.__stream = stromx.runtime.Stream()
+            
+        # install the exception observer
+        self.__stream.addObserver(self.__exceptionObserver)
             
         for stromxOp in self.__stream.operators():
             op = self.model.operators.addStromxOp(stromxOp, self)
@@ -499,6 +512,9 @@ class Stream(Item):
     def removeOperator(self, op):
         self.__stream.removeOperator(op.stromxOp)
         self.__operators.remove(op)
+        
+    def observeException(self, message):
+        self.model.errors.addError(message)
         
 class OperatorTemplate(Item):
     _properties = ["type", "package", "version"]
@@ -1510,6 +1526,7 @@ class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
         self.__handlers = []
+        self.__lock = threading.Lock()
     
     @property
     def handlers(self):
@@ -1517,7 +1534,10 @@ class Errors(Items):
         
     def addError(self, description):
         error = Error(description)
-        self.addItem(error)
+        # TODO: protect read access (which is, however, currently only used for 
+        # unit tests)
+        with self.__lock:
+          self.addItem(error)
         for handler in self.__handlers:
             handler(error)
         return error

@@ -10,7 +10,7 @@
 
 <div class="stromx-view-view panel panel-default">
   <svg width="1280" height="1024" id="view-svg">
-  {{#each observer in svgObservers itemController="observer"}}
+  {{#each observer in svgObservers itemController="observer-svg"}}
     {{#if observer.svgImage}}
       <image {{bind-attr width=observer.imageWidth}} {{bind-attr height=observer.imageHeight}} {{bind-attr xlink:href=observer.imageData}}/>
     {{/if}}
@@ -45,8 +45,14 @@
       <td>
         {{observer.title}}
       </td>
-      <td>
-        {{observer.visualizationLabel}}
+      <td>   
+        {{#if observer.isEditing}}
+          {{view "select" value=observer.visualization content=observer.visualizations optionValuePath="content.value" optionLabelPath="content.label"}}
+          <button type="button" {{action "save"}} class="btn btn-default btn-xs">Save</button>
+        {{else}}
+          {{observer.visualizationLabel}}    
+          <button type="button" {{action "edit"}} class="btn btn-default btn-xs">Edit</button>
+        {{/if}}
       </td>
       <td>
         <div class="btn-group">
@@ -57,6 +63,10 @@
               <li><a {{action "moveUp" observer}}>Up</a></li>
               <li><a {{action "moveDown" observer}}>Down</a></li>
               <li><a {{action "remove" observer}}>Remove</a></li>
+              <li class="divider"></li>
+              <li><a {{action "setColor" "RED"}}>Red</a></li>
+              <li><a {{action "setColor" "GREEN"}}>Green</a></li>
+              <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
             </ul>
           </div>
      </td>

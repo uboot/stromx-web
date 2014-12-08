@@ -1,4 +1,5 @@
 import Ember from "ember";
+import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
   isEditingName: false,
@@ -12,6 +13,13 @@ export default Ember.ObjectController.extend({
 
     rename: function() {
       this.set('isEditingName', true);
+    },
+
+    setColor: function(key) {
+      var model = this.get('model');
+      var color = Color[key];
+      model.set('color', color);
+      model.save();
     },
 
     remove: function () {

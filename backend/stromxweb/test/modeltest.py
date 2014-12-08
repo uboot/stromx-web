@@ -182,7 +182,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                          'type': 'Block',
                                          'version': '0.1.0'}}
                                          
-        self.assertEqual(51, len(self.templates)) 
+        self.assertEqual(56, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -296,10 +296,10 @@ class StreamsTest(unittest.TestCase):
         
         self.model = model.Model('temp')
         self.streams = self.model.streams
-        stromx.test.register(self.model.operatorTemplates.factory)
         self.activateFile = self.model.files['0']
         self.deactivateFile = self.model.files['1']
         self.deinitializeFile = self.model.files['2']
+        self.executeFile = self.model.files['3']
         
     def setUpViews(self):
         shutil.copytree('data/views', 'temp')
@@ -352,6 +352,17 @@ class StreamsTest(unittest.TestCase):
         self.assertFalse(self.streams.data['streams'][0]['active'])
         self.assertEqual(1, len(self.model.errors))
         
+    def testExecuteFails(self):
+        self.setUpException()
+        self.executeFile.opened = True
+        
+        self.streams.set('0', {'stream': {'active': True}})
+        time.sleep(0.3)
+        
+        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual('Failed to execute operator.',
+                         self.model.errors['0'].description)
+        
     def testSetDeactivate(self):
         self.setUpStream()
         self.streamFile.opened = True
@@ -360,7 +371,7 @@ class StreamsTest(unittest.TestCase):
         self.assertFalse(self.streams.data['streams'][0]['active'])
         self.streams.set('0', {'stream': {'active': False}})
         
-    def testSetDeactivateFails(self):
+    def testSetDeactivateAfterFail(self):
         self.setUpException()
         self.activateFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
@@ -375,6 +386,18 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'active': True}})
         self.streams.set('0', {'stream': {'active': False}})
         self.streams.set('0', {'stream': {'active': False}})
+        
+    def testSetDeactivateFails(self):
+        self.setUpException()
+        self.deactivateFile.opened = True
+        self.streams.set('0', {'stream': {'active': True}})
+        self.assertEqual(0, len(self.model.errors))
+        
+        self.streams.set('0', {'stream': {'active': False}})
+        
+        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual('Failed to deactivate operator.',
+                         self.model.errors['0'].description)
         
     def testSetPause(self):
         self.setUpStream()
@@ -417,6 +440,7 @@ class StreamsTest(unittest.TestCase):
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
+        self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):
@@ -1369,7 +1393,8 @@ class ConnectorValuesTest(unittest.TestCase):
         value = self.data['connectorValue']['value']
         self.assertEqual(20, value['rows'])
         self.assertEqual(4, value['cols'])
-        self.assertEqual([], value['values'][2:4])
+        self.assertEqual([[101.0, 0.0, 101.0, 50.0], [151.0, 0.0, 151.0, 50.0]],
+                         value['values'][2:4])
         
     def tearDown(self):
         shutil.rmtree('temp', True)
