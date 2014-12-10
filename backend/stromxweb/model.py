@@ -629,7 +629,7 @@ class Operator(Item):
             self.__removeConnectors()
             
             try:
-              self.__stream.stromxStream.deinitializeOperator(self.__op)
+                self.__stream.stromxStream.deinitializeOperator(self.__op)
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
                 
@@ -638,7 +638,7 @@ class Operator(Item):
             self.__removeParameters()
             
             try:
-              self.__stream.stromxStream.initializeOperator(self.__op)
+                self.__stream.stromxStream.initializeOperator(self.__op)
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
                 
