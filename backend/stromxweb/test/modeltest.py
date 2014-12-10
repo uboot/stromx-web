@@ -3,6 +3,7 @@
 import filecmp
 import os
 import shutil
+import threading
 import time
 import unittest
 
@@ -132,6 +133,14 @@ _fork = {
     'stream': '0'
 }
 
+class ErrorSink(object):
+    def __init__(self):
+        self.__lock = threading.Lock()
+        self.errors = []
+        
+    def handleError(self, error):
+        with self.__lock:
+            self.errors.append(error)
 
 class DummyItems(model.Items):
     pass
@@ -190,8 +199,10 @@ class FilesTest(unittest.TestCase):
         shutil.rmtree('temp', True)
         shutil.copytree('data/stream', 'temp')
         
-        self.files = model.Model('temp').files
-        self.streams = self.files.model.streams
+        self.model = model.Model('temp')
+        self.files = self.model.files
+        self.streams = self.model.streams
+        self.errorSink = ErrorSink()
 
     def testData(self):
         self.assertEqual({'files': [_parallelFile]}, self.files.data)
@@ -231,13 +242,14 @@ class FilesTest(unittest.TestCase):
         os.mkdir('temp')
         with file('temp/invalid.stromx', 'w') as f:
             f.write("nonsense")
-        self.files = model.Model('temp').files
-        self.streams = self.files.model.streams
+        self.model = model.Model('temp')
+        self.files = self.model.files
+        self.model.errors.handlers.append(self.errorSink.handleError)
              
         f = self.files.set('0', {'file': {'opened': True}})
         
         self.assertEqual(False, f['file']['opened'])
-        self.assertEqual(1, len(self.files.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetName(self):
         f = self.files.set('0', {'file': {'name': 'renamed.stromx'}})
@@ -276,6 +288,7 @@ class FilesTest(unittest.TestCase):
 class StreamsTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
+        self.errorSink = ErrorSink()
         
     def setUpStream(self):
         shutil.copytree('data/stream', 'temp')
@@ -295,6 +308,7 @@ class StreamsTest(unittest.TestCase):
         shutil.copytree('data/exception', 'temp')
         
         self.model = model.Model('temp')
+        self.model.errors.handlers.append(self.errorSink.handleError)
         self.streams = self.model.streams
         self.activateFile = self.model.files['0']
         self.deactivateFile = self.model.files['1']
@@ -350,7 +364,7 @@ class StreamsTest(unittest.TestCase):
         
         self.streams.set('0', {'stream': {'active': True}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testExecuteFails(self):
         self.setUpException()
@@ -359,9 +373,9 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'active': True}})
         time.sleep(0.3)
         
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         self.assertEqual('Failed to execute operator.',
-                         self.model.errors['0'].description)
+                         self.errorSink.errors[0].description)
         
     def testSetDeactivate(self):
         self.setUpStream()
@@ -378,7 +392,7 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'active': False}})
         
         self.assertFalse(self.streams.data['streams'][0]['active'])
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetDeactivateTwice(self):
         self.setUpStream()
@@ -391,13 +405,13 @@ class StreamsTest(unittest.TestCase):
         self.setUpException()
         self.deactivateFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
-        self.assertEqual(0, len(self.model.errors))
+        self.assertEqual(0, len(self.errorSink.errors))
         
         self.streams.set('0', {'stream': {'active': False}})
         
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         self.assertEqual('Failed to deactivate operator.',
-                         self.model.errors['0'].description)
+                         self.errorSink.errors[0].description)
         
     def testSetPause(self):
         self.setUpStream()
@@ -464,12 +478,15 @@ class StreamsTest(unittest.TestCase):
 class OperatorsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
+        self.errorSink = ErrorSink()
+        self.model.errors.handlers.append(self.errorSink.handleError)
         self.operators = self.model.operators
         
-        kernel = stromx.runtime.Receive()
         fileModel = model.File("", self.model)
         self.stream = self.model.streams.addFile(fileModel)
         self.stromxStream = self.stream.stromxStream
+        
+        kernel = stromx.runtime.Receive()
         self.stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(self.stromxOp)
         self.stromxOp.setName('Name')
@@ -539,7 +556,7 @@ class OperatorsTest(unittest.TestCase):
         self.assertRaises(model.AddDataFailed, self.operators.addData, data)
         
         self.assertEqual(1, len(self.model.operators))
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testDataDeinitialized(self):
         kernel = stromx.runtime.Fork()
@@ -567,7 +584,7 @@ class OperatorsTest(unittest.TestCase):
         pos = self.operator.findOutputPosition(0)
         self.assertEqual(0, pos)
         
-    def testSetStatusNone(self):
+    def testSetNone(self):
         kernel = stromx.test.ParameterOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(stromxOp)
@@ -590,7 +607,7 @@ class OperatorsTest(unittest.TestCase):
                              'stream': '0'}}
         self.assertEqual(data, op.data)         
         
-    def testSetStatusInitialized(self):
+    def testSetInitialized(self):
         kernel = stromx.test.ParameterOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp, self.stream)
@@ -613,7 +630,7 @@ class OperatorsTest(unittest.TestCase):
                              'stream': '0'}}
         self.assertEqual(data, op.data)
         
-    def testSetStatusInitializedAlreadyInitialized(self):
+    def testSetInitializedAlreadyInitialized(self):
         kernel = stromx.test.ParameterOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(stromxOp)
@@ -623,18 +640,45 @@ class OperatorsTest(unittest.TestCase):
                                  {'status': 'initialized'}
                                 })
                                 
-        self.assertEqual('initialized', op.data['operator']['status'])    
+        self.assertEqual('initialized', op.data['operator']['status'])
         
-    def testSetStatusNoneAlreadyNone(self):
+    def testSetInitializedFails(self):
+        kernel = stromx.test.ExceptionOperator()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
+        stromxOp.setParameter(0, stromx.runtime.Bool(True))
+        
+        self.operators.set('1', {'operator': {'status': 'initialized'}})
+                                
+        self.assertEqual('none', op.data['operator']['status'])
+        self.assertEqual(1, len(self.errorSink.errors))
+        self.assertEqual('Failed to initialize operator.',
+                         self.errorSink.errors[0].description)
+        
+    def testSetNoneAlreadyNone(self):
         kernel = stromx.test.ParameterOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
+        op = self.operators.addStromxOp(stromxOp, self.stream)
+        
+        self.operators.set('1', {'operator': {'status': 'none'}})
+                                
+        self.assertEqual('none', op.data['operator']['status'])  
+        
+    def testSetNoneFails(self):
+        kernel = stromx.test.ExceptionOperator()
+        stromxOp = self.stromxStream.addOperator(kernel)
+        self.stromxStream.initializeOperator(stromxOp)
+        stromxOp.setParameter(4, stromx.runtime.Bool(True))
         op = self.operators.addStromxOp(stromxOp, self.stream)
         
         self.operators.set('1', {'operator': 
                                  {'status': 'none'}
                                 })
                                 
-        self.assertEqual('none', op.data['operator']['status'])      
+        self.assertEqual('none', op.data['operator']['status'])
+        self.assertEqual(1, len(self.errorSink.errors))
+        self.assertEqual('Failed to deinitialize operator.',
+                         self.errorSink.errors[0].description)    
         
     def testDelete(self):
         data = {'operator': {'package': 'runtime',
@@ -658,6 +702,8 @@ class OperatorsTest(unittest.TestCase):
 class ParametersTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
+        self.errorSink = ErrorSink()
+        self.model.errors.handlers.append(self.errorSink.handleError)
         self.parameters = self.model.parameters
         
         fileModel = model.File("", self.model)
@@ -782,7 +828,7 @@ class ParametersTest(unittest.TestCase):
         
         state = param.data['parameter']['state']
         self.assertEqual('accessFailed', state)
-        self.assertEqual(1, len(self.model.errors))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetParameterException(self):
         self.__activateExceptionOnParameter()
@@ -794,7 +840,7 @@ class ParametersTest(unittest.TestCase):
                                         'value': 1}})
         state = data['parameter']['state']
         self.assertEqual('accessFailed', state)
-        self.assertEqual(2, len(self.model.errors))
+        self.assertEqual(2, len(self.errorSink.errors))
         
     def __activateExceptionOnParameter(self):
         self.model.operators.addStromxOp(self.exceptionOperator, self.stream)

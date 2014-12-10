@@ -627,11 +627,21 @@ class Operator(Item):
         if value == 'none':
             self.__removeParameters()
             self.__removeConnectors()
-            self.__stream.stromxStream.deinitializeOperator(self.__op)
+            
+            try:
+              self.__stream.stromxStream.deinitializeOperator(self.__op)
+            except stromx.runtime.Exception as e:
+                self.model.errors.addError(e)
+                
             self.__allocateParameters()
         elif value == 'initialized':
             self.__removeParameters()
-            self.__stream.stromxStream.initializeOperator(self.__op)
+            
+            try:
+              self.__stream.stromxStream.initializeOperator(self.__op)
+            except stromx.runtime.Exception as e:
+                self.model.errors.addError(e)
+                
             self.__allocateParameters()
             self.__allocateConnectors()
         else:
@@ -1534,10 +1544,13 @@ class Errors(Items):
         
     def addError(self, description):
         error = Error(description)
-        # TODO: protect read access (which is, however, currently only used for 
-        # unit tests)
+        # Add an index to the error by adding it to the error list. This is done
+        # in a thread-safe way.
+        # TODO: Do not allow access to the error list from outside because this
+        # access would not be thread-safe.
         with self.__lock:
-          self.addItem(error)
+            self.addItem(error)
+            
         for handler in self.__handlers:
             handler(error)
         return error

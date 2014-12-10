@@ -96,11 +96,12 @@ export default Ember.ObjectController.extend({
     },
 
     setColor: function(key) {
-      var model = this.get('model');
-      var properties = model.get('properties');
+      var properties = this.get('properties');
       var color = Color[key];
       properties['color'] = color;
-      model.set('properties', properties);
+      this.set('properties', properties);
+      
+      var model = this.get('model');
       model.save();
     },
 
