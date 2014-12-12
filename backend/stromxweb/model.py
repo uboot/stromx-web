@@ -265,11 +265,11 @@ class File(Item):
     @name.setter
     def name(self, name):
         basename = File.secureName(name)
-        if self.__name != _str(basename):
+        if self.__name != basename:
             newPath = os.path.join(self.model.files.directory, basename)
             if os.path.exists(self.path):
                 os.rename(self.path, newPath)
-            self.__name = _str(basename)
+            self.__name = basename
         
     def delete(self):
         self.opened = False
@@ -278,13 +278,14 @@ class File(Item):
     
     @staticmethod
     def secureName(name):
-      secureName = os.path.basename(name)
-      secureName = secureName.lstrip('.')
-      secureName = secureName.lstrip('.')
-      secureName = secureName.translate(None, '\\')
-      if os.path.splitext(secureName)[1] != '.stromx':
-          secureName += '.stromx'
-      return secureName
+        secureName = _str(name)
+        secureName = os.path.basename(secureName)
+        secureName = secureName.lstrip('.')
+        secureName = secureName.lstrip('.')
+        secureName = secureName.translate(None, '\\')
+        if os.path.splitext(secureName)[1] != '.stromx':
+            secureName += '.stromx'
+        return secureName
         
 class Streams(Items):        
     def addFile(self, streamFile):

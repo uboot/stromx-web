@@ -296,9 +296,13 @@ class FilesTest(unittest.TestCase):
         self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
                                     'temp/test.stromx'))
         
-    def testSecureNameNoStromxSuffix(self):
+    def testSecureName(self):
         self.assertEqual('test.stromx',
                          model.File.secureName('test.stromx'))
+        
+    def testSecureNameUnicode(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName(u'test.stromx'))
                                     
     def testSecureNameUpDirectory(self):
         self.assertEqual('test.stromx', model.File.secureName('../test.stromx'))

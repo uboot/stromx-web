@@ -3,12 +3,46 @@
 import httplib
 import os
 import re
+import tornado.auth
 import tornado.escape
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
 import model
+
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        user_json = self.get_secure_cookie("authdemo_user")
+        if not user_json: return None
+        return tornado.escape.json_decode(user_json)
+        
+class AuthHandler(BaseHandler, tornado.auth.GoogleOAuth2Mixin):
+    @tornado.gen.coroutine
+    def get(self):
+        if self.get_argument('code', False):
+            user = yield self.get_authenticated_user(
+                redirect_uri='http://your.site.com/auth/google',
+                code=self.get_argument('code'))
+            # Save the user with e.g. set_secure_cookie
+        else:
+            yield self.authorize_redirect(
+                redirect_uri='http://your.site.com/auth/google',
+                client_id=self.settings['google_oauth']['key'],
+                scope=['profile', 'email'],
+                response_type='code',
+                extra_params={'approval_prompt': 'auto'})
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        # This logs the user out of this demo app, but does not log them
+        # out of Google.  Since Google remembers previous authorizations,
+        # returning to this app will log them back in immediately with no
+        # interaction (unless they have separately logged out of Google in
+        # the meantime).
+        self.clear_cookie("authdemo_user")
+        self.write('You are now logged out. '
+                   'Click <a href="/">here</a> to log back in.')
 
 class ItemsHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
@@ -99,7 +133,10 @@ def start(filesDir):
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
     assetDir = os.path.join(staticDir, "assets")
+    
     handlers = [
+        (r"/auth/login", AuthHandler),
+        (r"/auth/logout", LogoutHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetDir}),
         (r"/api/operatorTemplates", ItemsHandler, 
          dict(items = appModel.operatorTemplates)),
@@ -153,7 +190,15 @@ def start(filesDir):
         (r"/download/(.*)", tornado.web.StaticFileHandler, {"path": filesDir}),
         (r"/(.*)", MainHandler)
     ]
-    application = tornado.web.Application(handlers, template_path = staticDir)
+    
+    settings = dict(
+        cookie_secret = "__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+        google_oauth = {"key": "CLIENT_ID", "secret": "CLIENT_SECRET"},
+        login_url = "/auth/login",
+        template_path = staticDir
+    )
+        
+    application = tornado.web.Application(handlers, **settings)
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
     
