@@ -257,6 +257,12 @@ class FilesTest(unittest.TestCase):
         self.assertTrue(os.path.exists('temp/renamed.stromx'))
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
+    def testSetNameWithInsecurePath(self):
+        f = self.files.set('0', {'file': {'name': '../renamed.stromx'}})
+        self.assertEqual({'file': _renamedFile}, f)
+        self.assertTrue(os.path.exists('temp/renamed.stromx'))
+        self.assertFalse(os.path.exists('temp/parallel.stromx'))
+        
     def testAddNoContent(self):
         self.files.addData({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
@@ -281,6 +287,37 @@ class FilesTest(unittest.TestCase):
         self.files.addData({'file': {'name': '0_parallel.stromx'}})
         self.assertEqual({'files': [_parallelFile]}, self.files.data)
         self.assertFalse(os.path.exists('temp/0_parallel.stromx'))
+        
+    def testAddWithInsecurePath(self):
+        self.files.addData({'file': {'name': '../test.stromx',
+                                     'content': _content}})
+        self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
+        self.assertTrue(os.path.exists('temp/test.stromx'))
+        self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
+                                    'temp/test.stromx'))
+        
+    def testSecureNameNoStromxSuffix(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName('test.stromx'))
+                                    
+    def testSecureNameUpDirectory(self):
+        self.assertEqual('test.stromx', model.File.secureName('../test.stromx'))
+        
+    def testSecureNameDownDirectory(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName('dir/test.stromx'))
+        
+    def testSecureNameNoStromxSuffix(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName('test'))
+        
+    def testSecureNameStartsWithDot(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName('..test.stromx'))
+        
+    def testSecureNameContainsBackslash(self):
+        self.assertEqual('test.stromx',
+                         model.File.secureName('\\test.stromx'))
         
     def tearDown(self):
         shutil.rmtree('temp', True)

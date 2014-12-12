@@ -222,7 +222,7 @@ class File(Item):
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
-        self.__name = name
+        self.__name = File.secureName(name)
         self.__opened = False
         self.__stream = None
     
@@ -264,16 +264,27 @@ class File(Item):
     
     @name.setter
     def name(self, name):
-        if self.__name != _str(name):
-            newPath = os.path.join(self.model.files.directory, name)
+        basename = File.secureName(name)
+        if self.__name != _str(basename):
+            newPath = os.path.join(self.model.files.directory, basename)
             if os.path.exists(self.path):
                 os.rename(self.path, newPath)
-            self.__name = _str(name)
+            self.__name = _str(basename)
         
     def delete(self):
         self.opened = False
         if os.path.exists(self.path):
             os.remove(self.path)
+    
+    @staticmethod
+    def secureName(name):
+      secureName = os.path.basename(name)
+      secureName = secureName.lstrip('.')
+      secureName = secureName.lstrip('.')
+      secureName = secureName.translate(None, '\\')
+      if os.path.splitext(secureName)[1] != '.stromx':
+          secureName += '.stromx'
+      return secureName
         
 class Streams(Items):        
     def addFile(self, streamFile):
@@ -1549,7 +1560,12 @@ class Errors(Items):
         # TODO: Do not allow access to the error list from outside because this
         # access would not be thread-safe.
         with self.__lock:
+            # set the in index of this item by adding it to the error list
             self.addItem(error)
+            
+            # remove it right after to make sure the error list does not grow
+            # indefinitely
+            self.delete(error.index)
             
         for handler in self.__handlers:
             handler(error)
