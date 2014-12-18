@@ -16,8 +16,8 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      // API_HOST: 'http://192.168.1.101:8888',
-      // SOCKET_HOST: 'ws://192.168.1.101:8888'
+      API_HOST: 'http://192.168.1.101:8080',
+      SOCKET_HOST: 'ws://192.168.1.101:8080'
     }
   };
 

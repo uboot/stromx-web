@@ -26,5 +26,6 @@ setup(name='stromx-web',
       package_data={'stromxweb': static_files},
       scripts=['scripts/stromx_server_start.py',
                'scripts/stromx_server.py'],
-      requires=['tornado(>=3.0)', 'daemon(>=1.5)']
+      data_files=[('/etc', ['stromx.conf'])],
+      requires=['tornado(>=4.0)', 'daemon(>=1.5)']
 )

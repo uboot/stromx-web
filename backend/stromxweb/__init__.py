@@ -5,15 +5,18 @@ import os
 import re
 import tornado.auth
 import tornado.escape
+import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
 import model
 
+config = {}
+      
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
-        user_json = self.get_secure_cookie("authdemo_user")
+        user_json = self.get_secure_cookie(config['USER_COOKIE'])
         if not user_json: return None
         return tornado.escape.json_decode(user_json)
         
@@ -22,12 +25,14 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleOAuth2Mixin):
     def get(self):
         if self.get_argument('code', False):
             user = yield self.get_authenticated_user(
-                redirect_uri='http://your.site.com/auth/google',
+                redirect_uri='https://' + config['HOST'] + '/auth/google',
                 code=self.get_argument('code'))
             # Save the user with e.g. set_secure_cookie
+            self.set_secure_cookie(config['USER_COOKIE'],
+                                   tornado.escape.json_encode(user))
         else:
             yield self.authorize_redirect(
-                redirect_uri='http://your.site.com/auth/google',
+                redirect_uri='https://' + config['HOST'] + '/auth/google',
                 client_id=self.settings['google_oauth']['key'],
                 scope=['profile', 'email'],
                 response_type='code',
@@ -40,13 +45,16 @@ class LogoutHandler(BaseHandler):
         # returning to this app will log them back in immediately with no
         # interaction (unless they have separately logged out of Google in
         # the meantime).
-        self.clear_cookie("authdemo_user")
+        self.clear_cookie(config['USER_COOKIE'])
         self.write('You are now logged out. '
                    'Click <a href="/">here</a> to log back in.')
 
-class ItemsHandler(tornado.web.RequestHandler):
+class ItemsHandler(BaseHandler):
+    # FIXME: disable cross-origin connections by removing the function below
     def set_default_headers(self):
-        self.set_header('Access-Control-Allow-Origin', 'http://192.168.1.101:4200')
+        # ember server runs on port 4200
+        self.set_header('Access-Control-Allow-Origin',
+                        'http://192.168.1.101:4200')
     
     def options(self, *args, **kwargs):
         self.set_header('Access-Control-Allow-Headers', 
@@ -105,7 +113,7 @@ class ItemsHandler(tornado.web.RequestHandler):
             self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
-            
+           
 class SocketHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, items):
         self.__items = items
@@ -117,25 +125,43 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         loop = tornado.ioloop.IOLoop.instance()
         json = tornado.escape.json_encode(value.data)
         loop.add_callback(lambda: self.doSend(json))
-        
+    
     def open(self):
+        user_json = self.get_secure_cookie(config['USER_COOKIE'])
+        # FIXME: allow authenticated access only by uncommenting the lines
+        # below: http://stackoverflow.com/a/8412743 
+        #if not user_json: 
+        #    self.close()
+        #    return
+            
         self.__items.handlers.append(self.sendValue)
     
     def on_close(self):
         self.__items.handlers.remove(self.sendValue)
+        
+    # FIXME: disable cross-origin websocket connections by removing the function
+    # below
+    def check_origin(self, origin):
+        return True
 
-class MainHandler(tornado.web.RequestHandler):
+class MainHandler(BaseHandler):
     def get(self, _):
         self.render("index.html")
         
-def start(filesDir):
-    appModel = model.Model(filesDir)
+class RedirectHandler(tornado.web.RequestHandler):
+    def get(self, _):
+        self.redirect('https://' + config['HOST'])
+        
+def start(configFile):
+    execfile(configFile, config) 
+    
+    appModel = model.Model(config['DATA_DIR'])
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
     assetDir = os.path.join(staticDir, "assets")
     
     handlers = [
-        (r"/auth/login", AuthHandler),
+        (r"/auth/google", AuthHandler),
         (r"/auth/logout", LogoutHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetDir}),
         (r"/api/operatorTemplates", ItemsHandler, 
@@ -187,19 +213,42 @@ def start(filesDir):
         (r"/socket/error", SocketHandler, dict(items = appModel.errors)),
         (r"/socket/connectorValue", SocketHandler,
          dict(items = appModel.connectorValues)),
-        (r"/download/(.*)", tornado.web.StaticFileHandler, {"path": filesDir}),
+        (r"/download/(.*)", tornado.web.StaticFileHandler,
+         {"path": config['DATA_DIR']}),
         (r"/(.*)", MainHandler)
     ]
     
     settings = dict(
-        cookie_secret = "__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
-        google_oauth = {"key": "CLIENT_ID", "secret": "CLIENT_SECRET"},
-        login_url = "/auth/login",
+        cookie_secret = config['COOKIE_SECRET'],
+        google_oauth = {"key": config['GOOGLE_OAUTH_KEY'],
+                        "secret":config['GOOGLE_OAUTH_SECRET']},
+        login_url = "/auth/google",
         template_path = staticDir
     )
+    
+    # FIXME: Redirect standard ports to the ports below
+    # iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+    # iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8443
+
+    if config['SECURE_SERVER']:
+        # serve the application with https
+        application = tornado.web.Application(handlers, **settings)
+        server = tornado.httpserver.HTTPServer(application, ssl_options = {
+          'certfile': config['CERT_FILE'],
+          'keyfile': config['KEY_FILE']
+        })
+        server.listen(8443)
         
-    application = tornado.web.Application(handlers, **settings)
-    application.listen(8888)
+        # redirect all http requests to https
+        redirect = tornado.web.Application([
+            (r"/(.*)", RedirectHandler)
+        ])
+        redirect.listen(8080)
+    else:
+        # serve the application with http
+        application = tornado.web.Application(handlers, **settings)
+        application.listen(8080)
+    
     tornado.ioloop.IOLoop.instance().start()
     
 def stop():

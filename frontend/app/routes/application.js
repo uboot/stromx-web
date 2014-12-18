@@ -7,7 +7,8 @@ export default Ember.Route.extend({
   socket: null,
 
   activate: function() {
-    var host = 'ws://' + window.location.host;
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var host = protocol + '//' + window.location.host;
     if (ENV.APP.SOCKET_HOST) {
       host = ENV.APP.SOCKET_HOST;
     }

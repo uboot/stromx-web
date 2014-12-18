@@ -10,7 +10,7 @@ def stopServer(signum, frame):
 
 class App():
     def __init__(self):
-        self.pidfile_path =  '/tmp/stromxweb.pid'
+        self.pidfile_path = '/tmp/stromxweb.pid'
         self.pidfile_timeout = 5
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
@@ -18,7 +18,7 @@ class App():
  
     def run(self):
         signal.signal(signal.SIGTERM, stopServer)
-        stromxweb.start('/tmp/stromx-web')
+        stromxweb.start('/etc/stromx.conf')
 
 app = App()
 daemon_runner = runner.DaemonRunner(app)

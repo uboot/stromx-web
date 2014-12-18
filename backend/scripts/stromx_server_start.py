@@ -4,8 +4,9 @@ import argparse
 import stromxweb
 
 parser = argparse.ArgumentParser()
-parser.add_argument('directory', help=('the directory in which the stromx '
-                                       'stream files will be stored'))
+parser.add_argument('--config',
+                    help = ('the configuration file for the stromx server'),
+                    default = 'stromx.conf')
 args = parser.parse_args()
 
-stromxweb.start(args.directory)
+stromxweb.start(args.config)

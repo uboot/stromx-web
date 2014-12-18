@@ -38,54 +38,68 @@ export default Ember.ObjectController.extend({
   svgLines: Ember.computed.equal('svgType', 'lines'),
 
   imageData: function() {
+    var variant = this.get('value.variant');
+    if (!variant || variant !== 'image') {
+      return;
+    }
     var value = this.get('value.value');
-
     if (value === undefined) {
       return;
     }
 
     return value.values;
-  }.property('value.value'),
+  }.property('value.variant', 'value.value'),
 
   imageWidth: function() {
+    var variant = this.get('value.variant');
+    if (!variant || variant !== 'image') {
+      return;
+    }
+    
     var value = this.get('value.value');
-
     if (!value) {
       return;
     }
 
     return value.width;
-  }.property('value.value'),
+  }.property('value.variant', 'value.value'),
 
   imageHeight: function() {
+    var variant = this.get('value.variant');
+    if (!variant || variant !== 'image') {
+      return;
+    }
+    
     var value = this.get('value.value');
-
     if (!value) {
       return;
     }
 
     return value.height;
-  }.property('value.value'),
+  }.property('value.variant', 'value.value'),
 
   textData: function() {
     var value = this.get('value.value');
-
     if (!value) {
       return;
     }
 
     return value;
-  }.property('value.value'),
+  }.property('value.variant', 'value.value'),
 
   linesData: function() {
+    var variant = this.get('value.variant');
+    if (!variant || variant !== 'matrix') {
+      return;
+    }
+    
     var value = this.get('value.value');
-
-    if (!value) {
+    if (!value || value.cols !== 4) {
       return;
     }
 
     return value.values;
-  }.property('value.value'),
+  }.property('value.variant', 'value.value'),
 
   color: function() {
     var props = this.get('properties');
