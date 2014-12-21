@@ -18,7 +18,7 @@ class App():
  
     def run(self):
         signal.signal(signal.SIGTERM, stopServer)
-        stromxweb.start('/etc/stromx.conf')
+        stromxweb.start('/etc/stromx/stromx.conf')
 
 app = App()
 daemon_runner = runner.DaemonRunner(app)
