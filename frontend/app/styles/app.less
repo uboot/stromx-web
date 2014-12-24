@@ -2,11 +2,11 @@
 
 /* Put your CSS here */
 h1 {
-  text-align: center;
+ text-align: center;
 }
 
 .stromx-subtitle {
-  text-align: center;
+ text-align: center;
 }
 
 .stromx-center-buttons {
@@ -27,7 +27,7 @@ h1 {
 .stromx-svg-operator-rect {
   fill: white;
   stroke: black;
-  stroke-width: 2;
+  stroke-width: 2px;
 }
 
 .stromx-svg-operator-name {
@@ -40,7 +40,7 @@ h1 {
 }
 
 .stromx-svg-connection-path {
-  stroke-width: 10;
+  stroke-width: 10px;
   fill: transparent;
   pointer-events: stroke;
 }
@@ -56,6 +56,34 @@ h1 {
 .stromx-svg-grid {
   fill: none;
   stroke: gray;
-  stroke-width: 0.5;
+  stroke-width: 0.5px;
+}
+
+.status-indicator {
+  float: left;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 5px;
+}
+
+.status-indicator.opened {
+  background-color: #6cc644;
+  box-shadow: 0 0 10px rgba(108,198,68,0.5);
+}
+
+.status-indicator.closed {
+  box-shadow: 0 1px 0 #fff;
+  background-color: #ccc;
+  background-image: linear-gradient(#aaa, #ccc);
+  background-repeat: repeat-x;
+}
+
+.stromx-file-name {
+  margin-left: 20px;
+}
+
+.stromx-button-column {
+  text-align: right;
 }
 

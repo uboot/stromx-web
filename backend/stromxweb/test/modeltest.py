@@ -263,6 +263,10 @@ class FilesTest(unittest.TestCase):
         self.assertTrue(os.path.exists('temp/renamed.stromx'))
         self.assertFalse(os.path.exists('temp/parallel.stromx'))
         
+    def testSetNameEmpty(self):
+        f = self.files.set('0', {'file': {'name': ''}})
+        self.assertEqual({'file': _parallelFile}, f)
+        
     def testAddNoContent(self):
         self.files.addData({'file': {'name': 'test.stromx'}})
         self.assertEqual({'files': [_testFile, _parallelFile]},
@@ -322,6 +326,10 @@ class FilesTest(unittest.TestCase):
     def testSecureNameContainsBackslash(self):
         self.assertEqual('test.stromx',
                          model.File.secureName('\\test.stromx'))
+        
+    def testSecureNameEmpty(self):
+        self.assertEqual('',
+                         model.File.secureName(''))
         
     def tearDown(self):
         shutil.rmtree('temp', True)
@@ -469,7 +477,7 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'paused': False}})
         self.assertFalse(self.streams.data['streams'][0]['paused'])
         
-    def testSetSaved(self):
+    def testSetSavedNewName(self):
         self.setUpStream()
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
@@ -478,6 +486,14 @@ class StreamsTest(unittest.TestCase):
         self.streamFile.set({'file': {'opened': False}})
         self.streamFile.set({'file': {'opened': True}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
+        
+    def testSetSaved(self):
+        self.setUpStream()
+        self.streamFile.opened = True
+        
+        self.streams.set('0', {'stream': {'saved': True}})
+        
+        self.assertFalse(self.streams.data['streams'][0]['saved'])
         
     def testSetSavedNewFile(self):
         self.setUpStream()
@@ -495,7 +511,6 @@ class StreamsTest(unittest.TestCase):
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
-        self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):

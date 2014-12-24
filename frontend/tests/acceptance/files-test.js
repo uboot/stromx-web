@@ -22,7 +22,7 @@ test('visit /', function() {
 
 test('remove file', function() {
   visit('/');
-  click('li:nth-child(3) a');
+  click('a.stromx-delete-file');
   click('button.btn-primary');
   
   andThen(function() {

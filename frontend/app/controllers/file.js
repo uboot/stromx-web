@@ -2,6 +2,7 @@ import Ember from "ember";
 import ENV from '../config/environment';
 
 export default Ember.ObjectController.extend({
+  isEditing: false,
   closed: Ember.computed.not('opened'),
   url: function() {
     if (ENV.APP.API_HOST) {
@@ -11,12 +12,17 @@ export default Ember.ObjectController.extend({
     }
   }.property(name),
   actions: {
-    remove: function () {
-        var file = this.get('model');
-        file.deleteRecord();
-        file.save();
+    edit: function() {
+      this.set('isEditing', true);
     },
-
+    saveChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').save();
+    },
+    discardChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').rollback();
+    },
     open: function () {
       this.set('opened', true);
       var controller = this;
@@ -32,7 +38,6 @@ export default Ember.ObjectController.extend({
         }
       });
     },
-
     close: function () {
       this.set('opened', false);
       var file = this.get('model');

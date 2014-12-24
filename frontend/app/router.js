@@ -9,6 +9,9 @@ Router.map(function () {
   this.resource('files', { path: '/'}, function() {
     this.route('add');
     this.route('new');
+    this.resource('file', { path: 'files/:file_id' }, function() {
+      this.route('delete');
+    });
   });
   this.resource('streams', function() {
     this.resource('stream', { path: '/:stream_id' }, function() {

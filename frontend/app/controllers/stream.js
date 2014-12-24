@@ -10,26 +10,33 @@ export default Ember.ObjectController.extend({
   needs: ['application'],
   activeOutput: null,
   activeInput: null,
-  
+
   patternUri: function() {
     return 'url(' + this.get('target.url') + '#grid)';
   }.property('target.url'),
-  
+
   arrowsUri: function() {
     return this.get('target.url') + '#arrows';
   }.property('target.url'),
-  
+
   actions: {
     close: function () {
       var stream = this.get('model');
+      var _this = this;
       this.get('file').then(function(file) {
         stream.set('saved', true);
         stream.save().then(function() {
           file.set('opened', false);
-          file.save();
+          file.save().then(function() {
+            _this.transitionToRoute('files');
+          });
         });
       });
-      this.transitionToRoute('files');
+    },
+    save: function () {
+      var stream = this.get('model');
+      stream.set('saved', true);
+      stream.save();
     },
     start: function () {
         this.set('active', true);

@@ -21,40 +21,34 @@
     {{#each file in this itemController="file"}}
       <tr>
         <td>
-          {{file.name}}
-        </td>
-        <td>
-          {{#if file.closed}}
-            Closed
-          {{else}}
-            Loaded
-          {{/if}}
-        </td>
-        <td>
-          {{#if file.closed}}
-            <div class="btn-group">
-              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                Action <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a {{action "open" file}}>Open</a></li>
-                <li><a {{action "rename" file}}>Rename</a></li>
-                <li><a {{action "showModal" "removeFile"  file}}>Remove</a></li>
-                <li><a {{bind-attr href=file.url}} download>Download</a></li>
-              </ul>
+          {{#unless file.isEditing}}
+            {{#if file.closed}}
+              <span class="status-indicator closed" data-toggle="tooltip" title="Opened"/>
+            {{else}}
+              <span class="status-indicator opened" data-toggle="tooltip" title="Closed"/>
+            {{/if}}
+            <div class="stromx-file-name">
+              {{#if file.closed}}
+                <a {{action "open" file}}>{{file.name}}</a>
+              {{else}}
+                {{#link-to 'stream' file.stream}}{{file.name}}{{/link-to}}
+              {{/if}}
             </div>
           {{else}}
-            <div class="btn-group">
-              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                Action <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                {{#if file.stream}}
-                  <li>{{#link-to 'stream' file.stream}}Show{{/link-to}}</li>
-                {{/if}}
-                <li><a {{bind-attr href=file.url}}>Download</a></li>
-              </ul>
-            </div>
+            {{focus-input class="edit" value=todo.title focus-out="saveChanges" insert-newline="saveChanges" escape-up="discardChanges"}}
+          {{/unless}}
+        </td>
+        <td class="stromx-button-column">
+          <button {{action "edit" file}} class="btn btn-default btn-xs">
+            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          </button>
+          <button {{bind-attr href=file.url}} download class="btn btn-default btn-xs">
+            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+          </button>
+          {{#if file.closed}}
+            {{#link-to 'file.delete' file type="button" class="btn btn-default btn-xs stromx-delete-file"}}
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            {{/link-to}}
           {{/if}}
         </td>
       </tr>

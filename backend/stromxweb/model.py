@@ -265,6 +265,10 @@ class File(Item):
     @name.setter
     def name(self, name):
         basename = File.secureName(name)
+        
+        if not basename:
+            return
+            
         if self.__name != basename:
             newPath = os.path.join(self.model.files.directory, basename)
             if os.path.exists(self.path):
@@ -283,8 +287,13 @@ class File(Item):
         secureName = secureName.lstrip('.')
         secureName = secureName.lstrip('.')
         secureName = secureName.translate(None, '\\')
+        
+        if not secureName:
+            return ''
+            
         if os.path.splitext(secureName)[1] != '.stromx':
             secureName += '.stromx'
+            
         return secureName
         
 class Streams(Items):        
@@ -313,7 +322,6 @@ class Stream(Item):
     def __init__(self, streamFile, model):
         super(Stream, self).__init__(model)
         self.__file = streamFile
-        self.__saved = False
         self.__operators = []
         self.__connections = []
         self.__views = []
@@ -433,7 +441,7 @@ class Stream(Item):
         
     @property
     def saved(self):
-        return self.__saved
+        return False
     
     @saved.setter
     def saved(self, value):
@@ -454,8 +462,6 @@ class Stream(Item):
             zipOutput.openFile("json", stromx.runtime.OutputProvider.OpenMode.TEXT)
             json.dump(viewData, zipOutput.file())
             zipOutput.close()
-            
-            self.__saved = True
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
     
