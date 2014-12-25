@@ -5,7 +5,7 @@ export default Ember.TextField.extend({
     this.$().focus();
   }.on('didInsertElement'),
   keyUp: function(event) {
-    if (event.keyCode === 27) {
+    if (event.keyCode === 27) { // escape key
       this.sendAction('escape-up', event);
     } else {
       this._super(event);
