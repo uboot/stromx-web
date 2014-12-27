@@ -54,7 +54,7 @@ class ItemsHandler(BaseHandler):
     def set_default_headers(self):
         # ember server runs on port 4200
         self.set_header('Access-Control-Allow-Origin',
-                        'http://192.168.1.101:4200')
+                        'http://0.0.0.0:4200')
     
     def options(self, *args, **kwargs):
         self.set_header('Access-Control-Allow-Headers', 

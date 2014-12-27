@@ -7,7 +7,7 @@ var Router = Ember.Router.extend({
 
 Router.map(function () {
   this.resource('files', { path: '/'}, function() {
-    this.route('add');
+    this.route('upload');
     this.route('new');
     this.resource('file', { path: 'files/:file_id' }, function() {
       this.route('delete');
@@ -18,6 +18,12 @@ Router.map(function () {
       this.route('newOperator');
       this.route('newThread');
       this.route('newView');
+      this.resource('operators', function() {
+        this.resource('operator', { path: '/:operator_id' }, function() {
+          this.route('delete');
+        });
+        this.route('new');
+      });
     });
   });
   this.resource('operators', function() {

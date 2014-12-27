@@ -11,7 +11,7 @@ export default Ember.Route.extend({
       host = ENV.APP.SOCKET_HOST;
     }
     var url = host + '/socket/connectorValue';
-    
+
     var ws = new WebSocket(url);
     var _this = this;
     ws.onmessage = function(event) {
@@ -24,5 +24,6 @@ export default Ember.Route.extend({
   deactivate: function() {
     var ws = this.get('socket');
     ws.close();
+    this.set('socket', null);
   },
 });

@@ -13,7 +13,7 @@ export default Ember.Route.extend({
       host = ENV.APP.SOCKET_HOST;
     }
     var url = host + '/socket/error';
-    
+
     var ws = new WebSocket(url);
     var _this = this;
     ws.onmessage = function(event) {
@@ -33,24 +33,25 @@ export default Ember.Route.extend({
     ws.close();
   },
 
+  // TODO: remove support for modal dialog?
   actions: {
     showModal: function(template, model) {
       var controller = this.controllerFor(template);
       var _this = this;
       controller.set('model', model);
-      
+
       // add the controller to the DOM
       this.render(template, {
         into: 'application',
         outlet: 'modal',
         controller: controller
       });
-      
+
       // after has been added to the DOM...
       Ember.run.scheduleOnce('afterRender', this, function() {
         // ...show it
         $('.modal').modal('show');
-        
+
         // remove it from the DOM after it has been hidden again
         $('.modal').one('hidden.bs.modal', function() {
           Ember.run(function() {
@@ -62,7 +63,7 @@ export default Ember.Route.extend({
         });
       });
     },
-    
+
     showContextMenu: function(template, x, y, controller) {
       // add the menu to the DOM
       this.render(template, {
@@ -70,7 +71,7 @@ export default Ember.Route.extend({
         outlet: 'context',
         controller: controller
       });
-      
+
       // after has been added to the DOM...
       Ember.run.scheduleOnce('afterRender', this, function() {
         // ...show it at the mouse position
@@ -79,7 +80,7 @@ export default Ember.Route.extend({
           left: x,
           top: y
         });
-        
+
         // hide it at the first mouse click
         $('body').click(function () {
           $('.context').hide();

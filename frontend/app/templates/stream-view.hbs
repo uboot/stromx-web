@@ -1,0 +1,23 @@
+<div class="stromx-center-buttons">
+  <div class="btn-group">
+    <button type="button" {{action "closeView"}} class="btn btn-default">Close</button>
+  </div>
+</div>
+
+<div class="stromx-view-view panel panel-default">
+  <svg width="1280" height="1024" id="view-svg">
+  {{#each observer in svgObservers itemController="observer-svg"}}
+    {{#if observer.svgImage}}
+      <image {{bind-attr width=observer.imageWidth}} {{bind-attr height=observer.imageHeight}} {{bind-attr xlink:href=observer.imageData}}/>
+    {{/if}}
+    {{#if observer.svgText}}
+      <text x="10" y="20" {{bind-attr fill=observer.color}}>{{observer.textData}}</text>
+    {{/if}}
+    {{#if observer.svgLines}}
+      {{#each line in observer.linesData itemController="view.line"}}
+        <line {{bind-attr x1=line.x1}} {{bind-attr y1=line.y1}} {{bind-attr x2=line.x2}} {{bind-attr y2=line.y2}} {{bind-attr stroke=observer.color}}/>
+      {{/each}}
+    {{/if}}
+  {{/each}}
+  </svg>
+</div>

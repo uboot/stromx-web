@@ -1,0 +1,13 @@
+ <div class="panel panel-default">
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="operatorType">Operator</label>
+      {{view "select" value=operator content=operators optionLabelPath="content.type" prompt="Select an operator" id="operatorType"}}
+    </div>
+    <div class="form-group">
+      <label for="newOperator">Name</label>
+      {{input valueBinding="name" class="form-control" placeholder="Enter operator name" id="newOperator"}}
+    </div>
+    <button {{action 'saveOperator'}} {{bind-attr class=":btn :btn-default saveIsDisabled:disabled"}} type="submit">Save</button>
+  </div>
+</div>
