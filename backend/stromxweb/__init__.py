@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import httplib
+import mimetypes
 import os
 import re
 import tornado.auth
@@ -158,12 +159,14 @@ def start(configFile):
     appModel = model.Model(config['DATA_DIR'])
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
-    assetDir = os.path.join(staticDir, "assets")
+    assetsDir = os.path.join(staticDir, "assets")
+    fontsDir = os.path.join(staticDir, "fonts")
     
     handlers = [
         (r"/auth/google", AuthHandler),
         (r"/auth/logout", LogoutHandler),
-        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetDir}),
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetsDir}),
+        (r"/fonts/(.*)", tornado.web.StaticFileHandler, {"path": fontsDir}),
         (r"/api/operatorTemplates", ItemsHandler, 
          dict(items = appModel.operatorTemplates)),
         (r"/api/files", ItemsHandler, dict(items = appModel.files)),

@@ -4,7 +4,7 @@ import ENV from '../config/environment';
 export default Ember.Route.extend({
   socket: null,
   connectSocket: function() {
-    var ws = this.get('socket')
+    var ws = this.get('socket');
     if (ws) {
       return;
     }
@@ -56,7 +56,7 @@ export default Ember.Route.extend({
         model: view
       });
     },
-    closeView: function(view) {
+    closeView: function() {
       this.send('showStream');
     }
   }
