@@ -328,7 +328,7 @@ class ExceptionObserver(stromx.runtime.ExceptionObserver):
         self.stream.observeException(message)
         
 class Stream(Item):
-    _properties = ["name", "saved", "active", "paused", "file", "operators",
+    _properties = ["name", "active", "paused", "file", "operators",
                   "connections", "views", "threads"]
     
     def __init__(self, streamFile, model):
@@ -450,17 +450,6 @@ class Stream(Item):
     def name(self, value):
         if self.name != _str(value):
             self.__stream.setName(_str(value))
-        
-    @property
-    def saved(self):
-        return False
-    
-    @saved.setter
-    def saved(self, value):
-        if not value:
-            return
-        
-        self.save()
     
     @property
     def operators(self):

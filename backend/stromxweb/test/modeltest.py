@@ -115,7 +115,6 @@ _noFile = {'id': '1',
 _stream = {
     'id': '0',
     'name': '',
-    'saved': False,
     'active': False,
     'paused': False,
     'file': '0',
@@ -517,41 +516,11 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'paused': False}})
         self.assertFalse(self.streams.data['streams'][0]['paused'])
         
-    def testSetSavedNewName(self):
-        self.setUpStream()
-        self.streamFile.opened = True
-        self.streams.set('0', {'stream': {'name': 'New name'}})
-        self.streams.set('0', {'stream': {'saved': True}})
-        
-        self.streamFile.set({'file': {'opened': False}})
-        self.streamFile.set({'file': {'opened': True}})
-        self.assertEqual('New name', self.streams.data['streams'][0]['name'])
-        
-    def testSetSaved(self):
-        self.setUpStream()
-        self.streamFile.opened = True
-        
-        self.streams.set('0', {'stream': {'saved': True}})
-        
-        self.assertFalse(self.streams.data['streams'][0]['saved'])
-        
-    def testSetSavedNewFile(self):
-        self.setUpStream()
-        data = self.model.files.addData({'file': {'name': u'new.stromx'}})
-        newFile = self.model.files[data['file']['id']]
-        newFile.opened = True 
-        streamIndex = newFile.stream
-        
-        self.streams.set(streamIndex, {'stream': {'saved': True}})
-        
-        self.assertTrue(os.path.exists('temp/new.stromx'))
-        
     def testSetName(self):
         self.setUpStream()
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
         self.assertEqual('New name', self.streams.data['streams'][0]['name'])
-        self.assertEqual(False, self.streams.data['streams'][0]['saved'])
         
     def testDelete(self):
         self.setUpStream()
