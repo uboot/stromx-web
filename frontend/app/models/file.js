@@ -4,5 +4,6 @@ export default DS.Model.extend({
   name: DS.attr('string'),
   content: DS.attr('string'),
   opened: DS.attr('boolean'),
+  saved: DS.attr('boolean'),
   stream: DS.belongsTo('stream', {async: true})
 });

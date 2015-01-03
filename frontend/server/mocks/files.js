@@ -8,6 +8,7 @@ module.exports = function(app) {
         name: 'test.stromx',
         content: '',
         opened: true,
+        saved: false,
         stream: 2
       },
       {
@@ -15,6 +16,7 @@ module.exports = function(app) {
         name: 'hough.stromx',
         content: '',
         opened: false,
+        saved: false,
         stream: 3
       }
     ]});

@@ -5,7 +5,6 @@ export default DS.Model.extend({
   file: DS.belongsTo('file', {async: true}),
   active: DS.attr('boolean'),
   paused: DS.attr('boolean'),
-  saved: DS.attr('boolean'),
   operators: DS.hasMany('operator', {async: true}),
   connections: DS.hasMany('connection', {async: true}),
   views: DS.hasMany('view', {async: true}),

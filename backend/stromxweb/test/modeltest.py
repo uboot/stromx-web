@@ -75,6 +75,7 @@ _parallelFile = {
     'name': '0_parallel.stromx',
     'content': '',
     'opened': False,
+    'saved' : False,
     'stream': None
 }
 
@@ -83,6 +84,7 @@ _renamedFile = {
     'name': 'renamed.stromx',
     'content': '',
     'opened': False,
+    'saved' : False,
     'stream': None
 }
 
@@ -90,6 +92,7 @@ _openedFile = {'id': '0',
     'name': '0_parallel.stromx', 
     'content': '',
     'opened': True, 
+    'saved' : False,
     'stream': '0'
 }
 
@@ -97,6 +100,7 @@ _testFile = {'id': '1',
     'name': 'test.stromx', 
     'content': '', 
     'opened': False,
+    'saved' : False,
     'stream': None
 }
 
@@ -104,6 +108,7 @@ _noFile = {'id': '1',
     'name': 'nothing.stromx', 
     'content': '', 
     'opened': False,
+    'saved' : False,
     'stream': None
 }
 
@@ -278,6 +283,41 @@ class FilesTest(unittest.TestCase):
         self.assertEqual({'files': [_testFile, _parallelFile]},
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
+        
+    def testSetSavedStreamName(self):
+        self.files['0'].opened = True
+        self.streams.set('0', {'stream': {'name': 'New name'}})
+        
+        self.files.set('0', {'file': {'saved': True}})
+        
+        self.files['0'].opened = False
+        self.files['0'].opened = True
+        self.assertEqual('New name', self.streams.data['streams'][0]['name'])    
+    
+    def testSetSaved(self):
+        self.files['0'].opened = True
+        
+        self.files.set('0', {'file': {'saved': True}})
+        
+        self.assertFalse(self.files.data['files'][0]['saved'])   
+    
+    def testSetSavedAndOpened(self):
+        self.files['0'].opened = True
+        
+        self.files.set('0', {'file': {'opened': False, 'saved': True}})
+        
+        self.assertFalse(self.files.data['files'][0]['saved'])
+        self.assertFalse(self.files.data['files'][0]['opened'])
+        
+    def testSetSavedNewFile(self):
+        data = self.model.files.addData({'file': {'name': u'new.stromx'}})
+        newFile = self.model.files[data['file']['id']]
+        newFile.opened = True 
+        fileIndex = newFile.index
+        
+        self.files.set(fileIndex, {'file': {'saved': True}})
+        
+        self.assertTrue(os.path.exists('temp/new.stromx'))
         
     def testAddData(self):
         self.files.addData({'file': {'name': 'test.stromx',

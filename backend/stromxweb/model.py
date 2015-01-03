@@ -218,13 +218,25 @@ class Files(Items):
         return f.data
         
 class File(Item):
-    _properties = ["content", "opened", "stream", "name"]
+    _properties = ["content", "saved", "opened", "stream", "name"]
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
         self.__name = File.secureName(name)
         self.__opened = False
         self.__stream = None
+        
+    @property
+    def saved(self):
+        return False
+    
+    @saved.setter
+    def saved(self, value):
+        if not value:
+            return
+        
+        assert(self.__stream)
+        self.__stream.save()
     
     @property
     def opened(self):
@@ -445,25 +457,10 @@ class Stream(Item):
     
     @saved.setter
     def saved(self, value):
-        # it makes no sense to mark a clean (i.e. non-dirty) file as dirty
         if not value:
             return
         
-        # compile the list of view data
-        viewData = [view.stromxView.serialize() for view in self.__views]
-        
-        # write the file
-        writer = stromx.runtime.XmlWriter()
-        try:
-            zipOutput = stromx.runtime.ZipFileOutput(self.__file.path)
-            writer.writeStream(zipOutput, 'stream', self.__stream)
-            
-            zipOutput.initialize('views')
-            zipOutput.openFile("json", stromx.runtime.OutputProvider.OpenMode.TEXT)
-            json.dump(viewData, zipOutput.file())
-            zipOutput.close()
-        except stromx.runtime.Exception as e:
-            self.model.errors.addError(e)
+        self.save()
     
     @property
     def operators(self):
@@ -533,6 +530,22 @@ class Stream(Item):
         
     def observeException(self, message):
         self.model.errors.addError(message)
+        
+    def save(self):# compile the list of view data
+        viewData = [view.stromxView.serialize() for view in self.__views]
+        
+        # write the file
+        writer = stromx.runtime.XmlWriter()
+        try:
+            zipOutput = stromx.runtime.ZipFileOutput(self.__file.path)
+            writer.writeStream(zipOutput, 'stream', self.__stream)
+            
+            zipOutput.initialize('views')
+            zipOutput.openFile("json", stromx.runtime.OutputProvider.OpenMode.TEXT)
+            json.dump(viewData, zipOutput.file())
+            zipOutput.close()
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
         
 class OperatorTemplate(Item):
     _properties = ["type", "package", "version"]

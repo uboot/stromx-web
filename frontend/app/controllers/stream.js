@@ -21,22 +21,20 @@ export default Ember.ObjectController.extend({
 
   actions: {
     close: function () {
-      var stream = this.get('model');
       var _this = this;
       this.get('file').then(function(file) {
-        stream.set('saved', true);
-        stream.save().then(function() {
-          file.set('opened', false);
-          file.save().then(function() {
-            _this.transitionToRoute('files');
-          });
+        file.set('saved', true);
+        file.set('opened', false);
+        file.save().then(function() {
+          _this.transitionToRoute('files');
         });
       });
     },
     save: function () {
-      var stream = this.get('model');
-      stream.set('saved', true);
-      stream.save();
+      this.get('file').then(function(file) {
+        file.set('saved', true);
+        file.save();
+      });
     },
     start: function () {
         this.set('active', true);
