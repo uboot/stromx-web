@@ -37,11 +37,6 @@ export default Ember.ObjectController.extend({
           controller.transitionToRoute('stream', stream);
         }
       });
-    },
-    close: function () {
-      this.set('opened', false);
-      var file = this.get('model');
-      file.save();
     }
   }
 });
