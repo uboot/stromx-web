@@ -8,7 +8,7 @@ export default Ember.ObjectController.extend({
       file.save();
     },
     dismiss: function () {
-      this.transitionToRoute('operator.index', this.get('model.stream'), this.get('model'));
+      this.transitionToRoute('stream.index', this.get('model.stream'));
     }
   }
 });

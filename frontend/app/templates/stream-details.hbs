@@ -1,13 +1,13 @@
 <div class="stromx-center-buttons">
   <div class="btn-group">
-    {{#link-to 'stream.newOperator' type="button" class="btn btn-default"}}New Operator{{/link-to}}
+    {{#link-to 'operators.new' type="button" class="btn btn-default stromx-new-operator"}}New Operator{{/link-to}}
     {{#link-to 'stream.newThread' type="button" class="btn btn-default"}}New Thread{{/link-to}}
     {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
   </div>
 </div>
 
 <div class="stromx-stream-view panel panel-default">
-  <svg width="1280" height="1024" id="stream-svg" viewBox="0 0 1280 1024">
+  <svg width="1280" height="1024" class="stromx-stream-svg" viewBox="0 0 1280 1024">
     <defs>
       <g id="arrows" transform="scale(5)" class="stromx-svg-arrows">
         <path d="M-1.5,0L-2.0,-1.0L-1.0,-1.0L-0.5,0.0L-1.0,1.0L-2.0,1.0Z"/>
