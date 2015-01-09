@@ -8,7 +8,7 @@ export default Ember.Controller.extend({
   saveIsDisabled: Ember.computed.equal('operator', null),
   name: '',
   actions: {
-    saveOperator: function () {
+    save: function () {
       var stream = this.get('model');
       var op = this.store.createRecord('operator', {
         name: this.get('name'),

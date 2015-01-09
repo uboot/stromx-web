@@ -1,8 +1,8 @@
 import Ember from "ember";
 
-import { Constant } from 'stromx-web/controllers/operator';
-import OutputController from 'stromx-web/controllers/output';
-import InputController from 'stromx-web/controllers/input';
+import { Constant } from 'stromx-web/controllers/operator-svg';
+import OutputController from 'stromx-web/controllers/output-svg';
+import InputController from 'stromx-web/controllers/input-svg';
 
 export default Ember.ObjectController.extend({
   x1: function() {

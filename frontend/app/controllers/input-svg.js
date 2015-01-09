@@ -1,11 +1,11 @@
 import Ember from "ember";
 
-import { Constant } from 'stromx-web/controllers/operator';
+import { Constant } from 'stromx-web/controllers/operator-svg';
 
 export default Ember.ObjectController.extend({
-  x: Constant.OPERATOR_SIZE,
+  x: -Constant.CONNECTOR_SIZE,
   y: function() {
-    var inputs = this.get('operator.outputs');
+    var inputs = this.get('operator.inputs');
     var numConnectors = inputs.get('length');
     var index = inputs.indexOf(this.get('model'));
 
@@ -14,16 +14,16 @@ export default Ember.ObjectController.extend({
     var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
 
     return offset + 2 * Constant.CONNECTOR_SIZE * index;
-  }.property('operator.position', 'operator.outputs'),
+  }.property('operator', 'operator.inputs'),
 
   isDraggingConnection: false,
   strokeWidth: function() {
     var stream = this.get('parentController.parentController');
-    var output = stream.get('activeInput');
+    var output = stream.get('activeOutput');
     return output === null ? 2 : 4;
-  }.property('parentController.parentController.activeInput'),
+  }.property('parentController.parentController.activeOutput'),
 
-  x1: Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE / 2,
+  x1: -Constant.CONNECTOR_SIZE / 2,
   y1: function() {
     return this.get('y') + 5;
   }.property('y'),
@@ -33,11 +33,18 @@ export default Ember.ObjectController.extend({
 
   actions: {
     dragStart: function() {
-      this.setProperties({
-        'x2': this.get('x1'),
-        'y2': this.get('y1')
+      var _this = this;
+      this.get('connection').then(function(connection) {
+        if (connection !== null) {
+          return;
+        }
+
+        _this.setProperties({
+          'x2': _this.get('x1'),
+          'y2': _this.get('y1')
+        });
+        _this.set('isDraggingConnection', true);
       });
-      this.set('isDraggingConnection', true);
     },
     dragMove: function(dx, dy, x, y) {
       if (! this.isDraggingConnection) {
@@ -58,12 +65,12 @@ export default Ember.ObjectController.extend({
       this.set('isDraggingConnection', false);
 
       var streamController = this.get('parentController.parentController');
-      var input = streamController.get('activeInput');
-      if (input === null) {
+      var output = streamController.get('activeOutput');
+      if (output === null) {
         return;
       }
 
-      var output = this.get('model');
+      var input = this.get('model');
       var store = this.get('store');
       var connection = store.createRecord('connection', {
         output: output,
@@ -74,12 +81,19 @@ export default Ember.ObjectController.extend({
       connection.save();
     },
     enter: function() {
-      var stream = this.get('parentController.parentController');
-      stream.set('activeOutput', this.get('model'));
+      var _this = this;
+      this.get('connection').then(function(connection) {
+        if (connection !== null) {
+          return;
+        }
+
+        var stream = _this.get('parentController.parentController');
+        stream.set('activeInput', _this.get('model'));
+      });
     },
     leave: function() {
       var stream = this.get('parentController.parentController');
-      stream.set('activeOutput', null);
+      stream.set('activeInput', null);
     }
   }
 });

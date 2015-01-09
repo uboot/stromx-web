@@ -15,7 +15,6 @@ Router.map(function () {
   });
   this.resource('streams', function() {
     this.resource('stream', { path: '/:stream_id' }, function() {
-      this.route('newOperator');
       this.route('newThread');
       this.route('newView');
       this.resource('operators', function() {
@@ -24,10 +23,13 @@ Router.map(function () {
         });
         this.route('new');
       });
+      this.resource('threads', function() {
+        this.resource('thread', { path: '/:thread_id' }, function() {
+          this.route('delete');
+        });
+        this.route('new');
+      });
     });
-  });
-  this.resource('operators', function() {
-    this.resource('operator', { path: '/:operator_id' });
   });
   this.resource('views', function() {
     this.resource('view', { path: '/:view_id' }, function() {

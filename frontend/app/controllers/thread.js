@@ -21,12 +21,6 @@ export default Ember.ObjectController.extend({
       
       var model = this.get('model');
       model.save();
-    },
-
-    remove: function () {
-        var view = this.get('model');
-        view.deleteRecord();
-        view.save();
     }
   }
 });

@@ -1,0 +1,48 @@
+{{outlet}}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        Name
+      </td>
+      <td>
+        {{#if isEditingName}}
+          {{input value=name}}
+        {{else}}
+          {{name}}
+        {{/if}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Action
+      </td>
+      <td>
+        {{#if isEditingName}}
+          <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+        {{else}}
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a {{action "setColor" "RED"}}>Red</a></li>
+              <li><a {{action "setColor" "GREEN"}}>Green</a></li>
+              <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
+              <li class="divider"></li>
+              <li><a {{action "rename"}}>Rename</a></li>
+              <li>{{#link-to "thread.delete" this}}Remove{{/link-to}}</li>
+            </ul>
+          </div>
+        {{/if}}
+      </td>
+    </tr>
+  </tbody>
+</table>

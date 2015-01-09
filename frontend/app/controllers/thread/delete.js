@@ -5,13 +5,10 @@ export default OperatorController.extend({
     dismiss: function () {
       this.transitionToRoute('stream.index', this.get('model.stream'));
     },
-    remove: function() {
-      var _this = this;
-      this.removeConnections().then(function() {
-        var model = _this.get('model');
-        model.deleteRecord();
-        model.save();
-      });
+    remove: function () {
+      var view = this.get('model');
+      view.deleteRecord();
+      view.save();
     }
   }
 });
