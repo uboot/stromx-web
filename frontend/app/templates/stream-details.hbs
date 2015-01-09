@@ -1,7 +1,7 @@
 <div class="stromx-center-buttons">
   <div class="btn-group">
     {{#link-to 'operators.new' type="button" class="btn btn-default stromx-new-operator"}}New Operator{{/link-to}}
-    {{#link-to 'stream.newThread' type="button" class="btn btn-default"}}New Thread{{/link-to}}
+    {{#link-to 'threads.new' type="button" class="btn btn-default"}}New Thread{{/link-to}}
     {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
   </div>
 </div>
@@ -72,7 +72,7 @@
     {{#each thread in threads itemController="thread"}}
       <tr>
         <td>
-          {{#link-to "thread" this}}{{thread.name}}{{/link-to}}
+          {{#link-to "thread" thread}}{{thread.name}}{{/link-to}}
         </td>
       </tr>
     </tr>
@@ -94,7 +94,7 @@
           {{#if view.isEditingName}}
             {{input value=view.name}}
           {{else}}
-            <a {{action "showView" view}}>{{view.name}}</a>
+            {{#link-to "view" view}}{{view.name}}{{/link-to}}
           {{/if}}
         </td>
         <td>
@@ -106,7 +106,7 @@
                 Action <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li>{{#link-to "view" view}}Show{{/link-to}}</li>
+                <li><a {{action "showView" view}}>Show</a></li>
                 <li><a {{action "rename"}}>Rename</a></li>
                 <li><a {{action "showModal" "removeView" view}}>Remove</a></li>
               </ul>

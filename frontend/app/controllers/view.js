@@ -29,9 +29,6 @@ export default Ember.ObjectController.extend({
     return observer instanceof InputObserver;
   }),
 
-  listSorting: ['zvalue:desc'],
   svgSorting: ['zvalue:incr'],
-
-  listObservers: Ember.computed.sort('observers', 'listSorting'),
   svgObservers: Ember.computed.sort('observers', 'svgSorting'),
 });

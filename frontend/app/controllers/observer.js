@@ -1,7 +1,7 @@
 import Ember from "ember";
 
-import ParameterObserver from 'stromx-web/models/parameter-observer';
-import InputObserver from 'stromx-web/models/input-observer';
+import ParameterObserverModel from 'stromx-web/models/parameter-observer';
+import InputObserverModel from 'stromx-web/models/input-observer';
 import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
@@ -23,14 +23,22 @@ export default Ember.ObjectController.extend({
   }.property('visualization'),
 
   title: function() {
-    if (this.get('model') instanceof ParameterObserver) {
+    if (this.get('isParameterObserver')) {
       return this.get('parameterTitle');
-    } else if (this.get('model') instanceof InputObserver) {
+    } else if (this.get('isInputObserver')) {
       return this.get('inputTitle');
     } else {
       return '';
     }
   }.property('parameterTitle', 'inputTitle'),
+  
+  isParameterObserver: function() {
+    return this.get('model') instanceof ParameterObserverModel;
+  }.property(),
+  
+  isInputObserver: function() {
+    return this.get('model') instanceof InputObserverModel;
+  }.property(),
 
   parameterTitle: function() {
     var parameter = this.get('parameter');

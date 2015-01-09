@@ -3,6 +3,7 @@ import ENV from '../config/environment';
 
 export default Ember.Route.extend({
   socket: null,
+  view: null,
   connectSocket: function() {
     var ws = this.get('socket');
     if (ws) {
@@ -36,25 +37,35 @@ export default Ember.Route.extend({
   deactivate: function() {
     this.disconnectSocket();
   },
-  actions: {
-    didTransition: function() {
-      this.send('showStream');
-    },
-    showStream: function() {
-      this.disconnectSocket();
-      this.render('stream-details', {
-        into: 'stream',
-        outlet: 'display'
-      });
-    },
-    showView: function(view) {
+  updateDetails: function() {
+    var view = this.get('view');
+    if (view) {
       this.connectSocket();
-      this.render('stream-view', {
+      this.render('view-details', {
         into: 'stream',
         outlet: 'display',
         controller: 'view',
         model: view
       });
+    } else {
+      this.disconnectSocket();
+      this.render('stream-details', {
+        into: 'stream',
+        outlet: 'display'
+      });
+    }
+  },
+  actions: {
+    didTransition: function() {
+      this.updateDetails();
+    },
+    showStream: function() {
+      this.set('view', null);
+      this.updateDetails();
+    },
+    showView: function(view) {
+      this.set('view', view);
+      this.updateDetails();
     },
     closeView: function() {
       this.send('showStream');

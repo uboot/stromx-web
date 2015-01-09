@@ -1,0 +1,54 @@
+{{outlet}}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        Title
+      </td>
+      <td>
+        {{title}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Visualization
+      </td>
+      <td>
+        {{#if isEditing}}
+          {{view "select" value=visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label"}}
+          <button type="button" {{action "save"}} class="btn btn-default btn-xs">Save</button>
+        {{else}}
+          {{visualizationLabel}}    
+          <button type="button" {{action "edit"}} class="btn btn-default btn-xs">Edit</button>
+        {{/if}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Action
+      </td>
+      <td>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+            Action <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li>{{#link-to "inputObserver.delete"}}Remove{{/link-to}}</li>
+            <li class="divider"></li>
+            <li><a {{action "setColor" "RED"}}>Red</a></li>
+            <li><a {{action "setColor" "GREEN"}}>Green</a></li>
+            <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+

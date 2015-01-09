@@ -1,0 +1,36 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Observer
+      </th>
+      <th>
+        Order
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each observer in sortedObservers itemController="observer"}}
+    <tr>
+      <td>
+        {{#if observer.isInputObserver}}
+          {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
+        {{else}}
+          {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
+        {{/if}}
+      </td>
+      <td>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+            Action <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a {{action "moveUp" observer}}>Up</a></li>
+            <li><a {{action "moveDown" observer}}>Down</a></li>
+          </ul>
+        </div>
+     </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

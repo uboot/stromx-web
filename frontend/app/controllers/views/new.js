@@ -1,10 +1,11 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  name: '',
   actions: {
-    saveView: function () {
+    save: function () {
       var stream = this.get('model');
-      var name = this.get('viewName');
+      var name = this.get('name');
       var view = this.store.createRecord('view', {
         name: name,
         stream: stream

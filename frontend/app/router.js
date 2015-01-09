@@ -29,11 +29,24 @@ Router.map(function () {
         });
         this.route('new');
       });
-    });
-  });
-  this.resource('views', function() {
-    this.resource('view', { path: '/:view_id' }, function() {
-      this.route('newObserver');
+      this.resource('views', function() {
+        this.resource('view', { path: '/:view_id' }, function() {
+          this.route('delete');
+          this.resource('inputObservers', function() {
+            this.resource('inputObserver', { path: '/:inputObserver_id' }, function() {
+              this.route('delete');
+            });
+            this.route('new');
+          });
+          this.resource('parameterObservers', function() {
+            this.resource('parameterObserver', { path: '/:parameterObserver_id' }, function() {
+              this.route('delete');
+            });
+            this.route('new');
+          });
+        });
+        this.route('new');
+      });
     });
   });
 });

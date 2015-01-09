@@ -1,76 +1,46 @@
-<h1>View</h1>
-
-<div class="stromx-center-buttons">
-  <div class="btn-group">
-    {{#link-to 'view.newObserver' type="button" class="btn btn-default"}}New Observer{{/link-to}}
-  </div>
-</div>
-
-{{outlet}}
-
-<div class="stromx-view-view panel panel-default">
-  <svg width="1280" height="1024" id="view-svg">
-  {{#each observer in svgObservers itemController="observer-svg"}}
-    {{#if observer.svgImage}}
-      <image {{bind-attr width=observer.imageWidth}} {{bind-attr height=observer.imageHeight}} {{bind-attr xlink:href=observer.imageData}}/>
-    {{/if}}
-    {{#if observer.svgText}}
-      <text x="10" y="20" {{bind-attr fill=observer.color}}>{{observer.textData}}</text>
-    {{/if}}
-    {{#if observer.svgLines}}
-      {{#each line in observer.linesData itemController="view.line"}}
-        <line {{bind-attr x1=line.x1}} {{bind-attr y1=line.y1}} {{bind-attr x2=line.x2}} {{bind-attr y2=line.y2}} {{bind-attr stroke=observer.color}}/>
-      {{/each}}
-    {{/if}}
-  {{/each}}
-  </svg>
-</div>
-
 <table class="table">
   <thead>
     <tr>
-      <th>
-        Observer
-      </th>
-      <th>
-        Visualization
-      </th>
-      <th>
-      </th>
+      <th>Property</th>
+      <th>Value</th>
     </tr>
   </thead>
   <tbody>
-    {{#each observer in listObservers itemController="observer"}}
     <tr>
       <td>
-        {{observer.title}}
-      </td>
-      <td>   
-        {{#if observer.isEditing}}
-          {{view "select" value=observer.visualization content=observer.visualizations optionValuePath="content.value" optionLabelPath="content.label"}}
-          <button type="button" {{action "save"}} class="btn btn-default btn-xs">Save</button>
-        {{else}}
-          {{observer.visualizationLabel}}    
-          <button type="button" {{action "edit"}} class="btn btn-default btn-xs">Edit</button>
-        {{/if}}
+        Name
       </td>
       <td>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-            Action <span class="caret"></span>
-          </button>
-            <ul class="dropdown-menu" role="menu">
-              <li><a {{action "moveUp" observer}}>Up</a></li>
-              <li><a {{action "moveDown" observer}}>Down</a></li>
-              <li><a {{action "remove" observer}}>Remove</a></li>
-              <li class="divider"></li>
-              <li><a {{action "setColor" "RED"}}>Red</a></li>
-              <li><a {{action "setColor" "GREEN"}}>Green</a></li>
-              <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
-            </ul>
-          </div>
-     </td>
+        {{#if isEditingName}}
+          {{input value=name}}
+        {{else}}
+          {{name}}
+        {{/if}}
+      </td>
     </tr>
-    {{/each}}
+    <tr>
+      <td>
+        Action
+      </td>
+      <td>
+        {{#if isEditingName}}
+          <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
+        {{else}}
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+            </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a {{action "showView" this}}>Show</a></li>
+                <li><a {{action "rename"}}>Rename</a></li>
+                <li>{{#link-to "view.delete"}}Remove{{/link-to}}</li>
+              </ul>
+          </div>
+        {{/if}}
+      </td>
+    </tr>
   </tbody>
 </table>
+
+{{outlet}}
+

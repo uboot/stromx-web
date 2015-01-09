@@ -3,7 +3,7 @@ import Ember from "ember";
 export default Ember.ObjectController.extend({
   actions: {
     dismiss: function () {
-      this.transitionToRoute('stream.index', this.get('model.stream'));
+      this.transitionToRoute('view.index', this.get('model.view'));
     },
     remove: function () {
       var view = this.get('model');
