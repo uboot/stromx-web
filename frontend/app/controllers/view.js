@@ -3,24 +3,20 @@ import Ember from "ember";
 import InputObserver from 'stromx-web/models/input-observer';
 
 export default Ember.ObjectController.extend({
-  isEditingName: false,
+  isEditing: false,
 
   actions: {
-    saveName: function() {
-      var model = this.get('model');
-      model.save();
-      this.set('isEditingName', false);
+    saveChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').save();
     },
-
-    rename: function() {
-      this.set('isEditingName', true);
+    discardChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').rollback();
     },
-
-    remove: function () {
-        var view = this.get('model');
-        view.deleteRecord();
-        view.save();
-    }
+    edit: function() {
+      this.set('isEditing', true);
+    },
   },
 
   parameterObservers: Ember.computed.alias('observers'),

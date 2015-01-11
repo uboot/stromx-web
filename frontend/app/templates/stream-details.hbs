@@ -66,6 +66,7 @@
   <thead>
     <tr>
       <th>Threads</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -73,6 +74,16 @@
       <tr>
         <td>
           {{#link-to "thread" thread}}{{thread.name}}{{/link-to}}
+        </td>
+        <td>
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li>{{#link-to "thread.delete" thread}}Remove{{/link-to}}</li>
+            </ul>
+          </div>
         </td>
       </tr>
     </tr>
@@ -98,20 +109,15 @@
           {{/if}}
         </td>
         <td>
-          {{#if view.isEditingName}}
-            <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
-          {{else}}
-            <div class="btn-group">
-              <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                Action <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a {{action "showView" view}}>Show</a></li>
-                <li><a {{action "rename"}}>Rename</a></li>
-                <li><a {{action "showModal" "removeView" view}}>Remove</a></li>
-              </ul>
-            </div>
-          {{/if}}
+          <div class="btn-group">
+            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+              Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a {{action "displayView" view}}>Display</a></li>
+              <li>{{#link-to "view.delete" view}}Remove{{/link-to}}</li>
+            </ul>
+          </div>
         </td>
       </tr>
     </tr>

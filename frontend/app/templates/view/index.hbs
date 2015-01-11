@@ -2,10 +2,7 @@
   <thead>
     <tr>
       <th>
-        Observer
-      </th>
-      <th>
-        Order
+        Observers
       </th>
     </tr>
   </thead>
@@ -18,18 +15,24 @@
         {{else}}
           {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
         {{/if}}
-      </td>
-      <td>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-            Action <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu">
-            <li><a {{action "moveUp" observer}}>Up</a></li>
-            <li><a {{action "moveDown" observer}}>Down</a></li>
-          </ul>
+        <div class="stromx-buttons">
+          {{#if observer.isInputObserver}}
+            {{#link-to "inputObserver.delete" observer}}
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            {{/link-to}}
+          {{else}}
+            {{#link-to "parameterObserver.delete" observer}}
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            {{/link-to}}
+          {{/if}}
+          <a {{action "moveUp"}}>
+            <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+          </a>
+          <a {{action "moveDown"}}>
+            <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+          </a>
         </div>
-     </td>
+      </td>
     </tr>
     {{/each}}
   </tbody>

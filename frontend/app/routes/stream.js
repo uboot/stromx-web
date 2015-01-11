@@ -59,16 +59,16 @@ export default Ember.Route.extend({
     didTransition: function() {
       this.updateDetails();
     },
-    showStream: function() {
+    displayStream: function() {
       this.set('view', null);
       this.updateDetails();
     },
-    showView: function(view) {
+    displayView: function(view) {
       this.set('view', view);
       this.updateDetails();
     },
     closeView: function() {
-      this.send('showStream');
+      this.send('displayStream');
     }
   }
 });

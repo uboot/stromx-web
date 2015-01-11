@@ -2,25 +2,23 @@ import Ember from "ember";
 import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
-  isEditingName: false,
+  isEditing: false,
 
   actions: {
-    saveName: function() {
-      var model = this.get('model');
-      model.save();
-      this.set('isEditingName', false);
+    saveChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').save();
     },
-
-    rename: function() {
-      this.set('isEditingName', true);
+    discardChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').rollback();
     },
-
+    edit: function() {
+      this.set('isEditing', true);
+    },
     setColor: function(key) {
       var color = Color[key];
       this.set('color', color);
-      
-      var model = this.get('model');
-      model.save();
     }
   }
 });
