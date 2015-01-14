@@ -53,10 +53,20 @@
   </thead>
   </tr>
   <tbody>
-    {{#each input in inputs}}
+    {{#each input in inputs itemController="input"}}
       <tr>
         <td>
           <header class="stromx-cell-title">{{input.title}}</header>
+          {{#unless input.isEditingObserver}}
+            {{input.variant.title}}
+            <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
+          {{else}}
+            <div class="form-group">
+              {{view "select" value=input.view content=input.views optionLabelPath="content.name"}}
+              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+              <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+            </div>
+          {{/unless}}
         </td>
       </tr>
     {{/each}}
@@ -75,6 +85,7 @@
       <tr>
         <td>
           <header class="stromx-cell-title">{{output.title}}</header>
+          {{output.variant.title}}
         </td>
       </tr>
     {{/each}}
@@ -130,16 +141,17 @@
           {{#if param.timedOut}}
             <em>Access timed out</em>
             <a {{action "reload"}}>
-              <span class="glyphicon glyphicon-repeat pull-right" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
             </a>
           {{/if}}
           {{#if param.accessFailed}}
             <em>Access failed</em>
             <a {{action "reload"}}>
-              <span class="glyphicon glyphicon-repeat pull-right" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
             </a>
           {{/if}}
           {{param.displayValue}}
+          <a><span class="glyphicon glyphicon-eye-open pull-right stromx-space" aria-hidden="true"></span></a>
           {{#if param.editable}}
             {{#unless param.isEditing}}
               <a {{action "editValue"}}>

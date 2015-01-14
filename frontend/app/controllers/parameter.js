@@ -4,15 +4,15 @@ export default Ember.ObjectController.extend({
   isEditing: false,
 
   isEnum: function() {
-    return this.get('variant') === 'enum';
+    return this.get('variant.ident') === 'enum';
   }.property('variant'),
 
   isBool: function() {
-    return this.get('variant') === 'bool';
+    return this.get('variant.ident') === 'bool';
   }.property('variant'),
 
   isTrigger: function() {
-    return this.get('variant') === 'trigger';
+    return this.get('variant.ident') === 'trigger';
   }.property('variant'),
 
   timedOut: function() {
@@ -24,7 +24,7 @@ export default Ember.ObjectController.extend({
   }.property('state'),
 
   editable: function() {
-    var variant = this.get('variant');
+    var variant = this.get('variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger'];
     return this.get('writable') && this.get('current') &&
       knownTypes.contains(variant);
@@ -36,7 +36,7 @@ export default Ember.ObjectController.extend({
 
   editValue:  function(key, value) {
     if (value === undefined) {
-      switch (this.get('variant')) {
+      switch (this.get('variant.ident')) {
         case 'int':
         case 'float':
         case 'string':
@@ -46,7 +46,7 @@ export default Ember.ObjectController.extend({
       }
     } else {
       var v = '';
-      switch (this.get('variant')) {
+      switch (this.get('variant.ident')) {
         case 'int':
           v = parseInt(value, 10);
           break;
@@ -81,7 +81,7 @@ export default Ember.ObjectController.extend({
       return '';
     }
 
-    switch (this.get('variant')) {
+    switch (this.get('variant.ident')) {
       case 'int':
       case 'float':
         return this.get('value');

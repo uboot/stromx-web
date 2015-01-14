@@ -6,7 +6,10 @@ module.exports = function(app) {
       {
         id: 1,
         title: 'Port',
-        variant: 'int',
+        variant: { 
+          ident: 'int',
+          title: 'Int32'
+        },
         value: 50123,
         minimum: 49152,
         maximum: 65535,
@@ -19,7 +22,10 @@ module.exports = function(app) {
       {
         id: 2,
         title: 'Data flow',
-        variant: 'enum',
+        variant: { 
+          ident: 'enum',
+          title: 'Enum'
+        },
         value: 2,
         minimum: 0,
         maximum: 0,
@@ -32,7 +38,10 @@ module.exports = function(app) {
       {
         id: 3,
         title: 'Kernel size',
-        variant: 'float',
+        variant: { 
+          ident: 'float',
+          title: 'Float32'
+        },
         value: 2.5,
         minimum: 0,
         maximum: 0,
@@ -45,7 +54,10 @@ module.exports = function(app) {
       {
         id: 4,
         title: 'Coefficient',
-        variant: 'float',
+        variant: { 
+          ident: 'float',
+          title: 'Float32'
+        },
         value: 2.5,
         minimum: 0,
         maximum: 0,
@@ -58,7 +70,10 @@ module.exports = function(app) {
       {
         id: 6,
         title: 'Offset',
-        variant: 'float',
+        variant: { 
+          ident: 'float',
+          title: 'Float32'
+        },
         value: 4.5,
         minimum: 0,
         maximum: 0,
@@ -71,7 +86,10 @@ module.exports = function(app) {
       {
         id: 5,
         title: 'Host',
-        variant: 'string',
+        variant: { 
+          ident: 'string',
+          title: 'String'
+        },
         value: 'localhost',
         minimum: 0,
         maximum: 0,
@@ -84,7 +102,10 @@ module.exports = function(app) {
       {
         id: 7,
         title: 'Kernel variant',
-        variant: 'int',
+        variant: { 
+          ident: 'enum',
+          title: 'Enum'
+        },
         value: 4,
         minimum: 0,
         maximum: 0,
@@ -97,7 +118,10 @@ module.exports = function(app) {
       {
         id: 8,
         title: 'Matrix parameter',
-        variant: 'matrix',
+        variant: { 
+          ident: 'matrix',
+          title: 'Int Matrix'
+        },
         value: {
           rows: 3,
           cols: 4,
@@ -118,7 +142,10 @@ module.exports = function(app) {
       {
         id: 9,
         title: 'Strange variant',
-        variant: 'none',
+        variant: { 
+          ident: 'none',
+          title: ''
+        },
         value: null,
         minimum: 0,
         maximum: 0,
@@ -131,7 +158,10 @@ module.exports = function(app) {
       {
         id: 10,
         title: 'Trigger',
-        variant: 'trigger',
+        variant: { 
+          ident: 'trigger',
+          title: 'Trigger'
+        },
         value: null,
         minimum: 0,
         maximum: 0,
@@ -144,7 +174,10 @@ module.exports = function(app) {
       {
         id: 11,
         title: 'Bool property',
-        variant: 'bool',
+        variant: { 
+          ident: 'bool',
+          title: 'Bool'
+        },
         value: false,
         minimum: 0,
         maximum: 0,
@@ -157,7 +190,10 @@ module.exports = function(app) {
       {
         id: 12,
         title: 'Kernel variant',
-        variant: 'enum',
+        variant: { 
+          ident: 'enum',
+          title: 'Enum'
+        },
         value: 3,
         minimum: 0,
         maximum: 0,

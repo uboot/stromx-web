@@ -37,9 +37,9 @@ module.exports = function(app) {
         view: 1
       }
     ]});
+  });
   inputObserversRouter.put('/', function(req, res) {
     res.send('null');
-  });
   });
   app.use('/api/inputObservers/*', inputObserversRouter);
 };

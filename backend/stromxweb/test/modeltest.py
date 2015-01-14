@@ -801,7 +801,10 @@ class ParametersTest(unittest.TestCase):
                               'state': 'current',
                               'value': 'localhost',
                               'title': 'URL',
-                              'variant': 'string',
+                              'variant': { 
+                                'ident': 'string',
+                                'title': 'String'
+                              },
                               'operator': '0',
                               'writable': True,
                               'observers': []}}
@@ -831,7 +834,10 @@ class ParametersTest(unittest.TestCase):
                               'value': 49152,
                               'state': 'current',
                               'title': 'TCP port',
-                              'variant': 'int',
+                              'variant': { 
+                                'ident': 'int',
+                                'title': 'UInt16'
+                              },
                               'operator': '0',
                               'writable': True,
                               'observers': []}}
@@ -854,7 +860,10 @@ class ParametersTest(unittest.TestCase):
                               'value': 2,
                               'state': 'current',
                               'title': 'Number of outputs',
-                              'variant': 'int',
+                              'variant': { 
+                                'ident': 'int',
+                                'title': 'UInt32'
+                              },
                               'operator': '0',
                               'writable': False,
                               'observers': []}}
@@ -878,7 +887,10 @@ class ParametersTest(unittest.TestCase):
                               'value': 0,
                               'state': 'current',
                               'title': 'Trigger mode',
-                              'variant': 'enum',
+                              'variant': { 
+                                'ident': 'enum',
+                                'title': 'Enum'
+                              },
                               'operator': '0',
                               'writable': True,
                               'observers': []}}
@@ -922,7 +934,7 @@ class ParametersTest(unittest.TestCase):
         valueParam = self.parameters['6']
         param = self.parameters['7']
         
-        self.assertEqual('trigger', param.data['parameter']['variant'])
+        self.assertEqual('trigger', param.data['parameter']['variant']['ident'])
         self.assertEqual(0, valueParam.data['parameter']['value'])
         
     def testSetTrigger(self):
@@ -1109,7 +1121,8 @@ class InputsTest(unittest.TestCase):
                           'operator': '0',
                           'title': 'Input',
                           'observers': [],
-                          'connection': None}}
+                          'connection': None,
+                           'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
         
     def testDelete(self):
@@ -1140,7 +1153,8 @@ class OutputsTest(unittest.TestCase):
         data = {'output': {'id': '1',
                            'operator': '0',
                            'title': 'Output 1',
-                           'connections': []}}
+                           'connections': [],
+                           'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
         
     def testDelete(self):

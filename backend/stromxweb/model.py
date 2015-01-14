@@ -794,8 +794,12 @@ class Parameter(Item):
     
     @property
     def variant(self):
-        variant = self.__param.variant()
-        return conversion.variantToString(variant)
+        stromxVariant = self.__param.variant()
+        variant = {
+            'ident': conversion.variantToString(stromxVariant),
+            'title': stromxVariant.title()
+        }
+        return variant
         
     @property
     def operator(self):
@@ -1120,7 +1124,7 @@ class Threads(Items):
         return False
 
 class ConnectorBase(Item):
-    _properties = ['operator', 'title']
+    _properties = ['operator', 'title', 'variant']
     
     def __init__(self, op, description, model):
         super(ConnectorBase, self).__init__(model)
@@ -1138,6 +1142,15 @@ class ConnectorBase(Item):
     @property
     def title(self):
         return self.__description.title()
+    
+    @property
+    def variant(self):
+        stromxVariant = self.__description.variant()
+        variant = {
+            'ident': conversion.variantToString(stromxVariant),
+            'title': stromxVariant.title()
+        }
+        return variant
     
     @property
     def stromxOp(self):

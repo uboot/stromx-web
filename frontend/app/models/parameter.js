@@ -2,7 +2,7 @@ import DS from "ember-data";
 
 export default DS.Model.extend({
   title: DS.attr('string'),
-  variant: DS.attr('string'),
+  variant: DS.attr(),
   value: DS.attr(),
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
