@@ -33,37 +33,7 @@ export default Ember.Route.extend({
     ws.close();
   },
 
-  // TODO: remove support for modal dialog?
   actions: {
-    showModal: function(template, model) {
-      var controller = this.controllerFor(template);
-      var _this = this;
-      controller.set('model', model);
-
-      // add the controller to the DOM
-      this.render(template, {
-        into: 'application',
-        outlet: 'modal',
-        controller: controller
-      });
-
-      // after has been added to the DOM...
-      Ember.run.scheduleOnce('afterRender', this, function() {
-        // ...show it
-        $('.modal').modal('show');
-
-        // remove it from the DOM after it has been hidden again
-        $('.modal').one('hidden.bs.modal', function() {
-          Ember.run(function() {
-            _this.disconnectOutlet({
-              outlet: 'modal',
-              parentView: 'application'
-            });
-          });
-        });
-      });
-    },
-
     showContextMenu: function(template, x, y, controller) {
       // add the menu to the DOM
       this.render(template, {

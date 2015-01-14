@@ -5,7 +5,9 @@
       {{view "upload-file" valueBinding="name" content=content id="uploadFile"}}
       <p class="help-block">Choose a stromx file.</p>
     </div>
-    <button {{action 'cancel'}} type="reset" class="btn btn-default">Cancel</button>
-    <button {{action 'addFile'}} type="submit" class="btn btn-primary">Upload</button>
+    <div class="form-group">
+      {{#link-to 'files.index' type="button" class="btn btn-default"}}Cancel{{/link-to}}
+      <button {{action 'addFile'}} type="submit" class="btn btn-primary">Upload</button>
+    </div>
   </div>
 </div>

@@ -10,9 +10,6 @@ export default Ember.Controller.extend({
 
       file.save();
       this.transitionToRoute('files');
-    },
-    cancel: function () {
-      this.transitionToRoute('files');
     }
   }
 });

@@ -1,3 +1,32 @@
+<h3>View</h3>
+
+<table class="table">
+  <tbody>
+    <tr>
+      <td>
+        <header class="stromx-cell-title">Name</header>
+        {{#unless isEditingName}}
+          {{name}}
+          <a {{action "editName"}}>
+            <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+          </a>
+        {{else}}
+          <form class="form-inline">
+            <div class="form-group">
+              <label class="sr-only" for="view-name">Name</label>
+              {{input value=name class="form-control" id="view-name"}}
+            </div>
+            <div class="form-group">
+              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        {{/unless}}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <table class="table">
   <thead>
     <tr>
@@ -8,32 +37,34 @@
   </thead>
   <tbody>
     {{#each observer in sortedObservers itemController="observer"}}
-    <tr>
-      <td>
-        {{#if observer.isInputObserver}}
-          {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
-        {{else}}
-          {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
-        {{/if}}
-        <div class="stromx-buttons">
+      <tr>
+        <td>
+          {{#if observer.isInputObserver}}
+            <header class="stromx-cell-title">Input observer</header>
+            {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
+          {{else}}
+            <header class="stromx-cell-title">Parameter observer</header>
+            {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
+          {{/if}}
           {{#if observer.isInputObserver}}
             {{#link-to "inputObserver.delete" observer}}
-              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-trash pull-right stromx-space" aria-hidden="true"></span>
             {{/link-to}}
           {{else}}
             {{#link-to "parameterObserver.delete" observer}}
-              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-trash pull-right stromx-space" aria-hidden="true"></span>
             {{/link-to}}
           {{/if}}
           <a {{action "moveUp"}}>
-            <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-arrow-up pull-right stromx-space" aria-hidden="true"></span>
           </a>
           <a {{action "moveDown"}}>
-            <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+            <span class="glyphicon glyphicon-arrow-down pull-right stromx-space" aria-hidden="true"></span>
           </a>
-        </div>
-      </td>
-    </tr>
+        </td>
+      </tr>
     {{/each}}
   </tbody>
 </table>
+
+{{outlet}}

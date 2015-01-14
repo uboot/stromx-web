@@ -1,11 +1,3 @@
-<div class="stromx-center-buttons">
-  <div class="btn-group">
-    {{#link-to 'operators.new' type="button" class="btn btn-default stromx-new-operator"}}New Operator{{/link-to}}
-    {{#link-to 'threads.new' type="button" class="btn btn-default"}}New Thread{{/link-to}}
-    {{#link-to 'stream.newView' type="button" class="btn btn-default"}}New View{{/link-to}}
-  </div>
-</div>
-
 <div class="stromx-stream-view panel panel-default">
   <svg width="1280" height="1024" class="stromx-stream-svg" viewBox="0 0 1280 1024">
     <defs>
@@ -124,3 +116,11 @@
     {{/each}}
   </tbody>
 </table>
+
+<div class="stromx-center-buttons">
+  <div class="btn-group">
+    {{#link-to 'operators.new' type="button" class="btn btn-default stromx-new-operator"}}New Operator{{/link-to}}
+    {{#link-to 'threads.new' type="button" class="btn btn-default"}}New Thread{{/link-to}}
+    {{#link-to 'views.new' type="button" class="btn btn-default"}}New View{{/link-to}}
+  </div>
+</div>

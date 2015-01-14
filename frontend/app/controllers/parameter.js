@@ -25,12 +25,10 @@ export default Ember.ObjectController.extend({
 
   editable: function() {
     var variant = this.get('variant');
-    var knownTypes = ['string', 'enum', 'int', 'float'];
+    var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger'];
     return this.get('writable') && this.get('current') &&
       knownTypes.contains(variant);
   }.property('writable', 'current', 'variant'),
-
-  readOnly: Ember.computed.not('writable'),
 
   accessFailed: function() {
     return this.get('state') === 'accessFailed';
@@ -70,18 +68,6 @@ export default Ember.ObjectController.extend({
     }
   }.property('value', 'variant'),
 
-  boolValue:  function(key, value) {
-    if (value === undefined) {
-      return this.get('value');
-    }
-    else {
-      this.set('value', value);
-      var model = this.get('model');
-      model.save();
-      return value;
-    }
-  }.property('value'),
-
   displayValue: function(key, value) {
     if (value !== undefined) {
       return value;
@@ -102,7 +88,11 @@ export default Ember.ObjectController.extend({
       case 'enum':
         return this.updateEnumTitle(this.get('value'));
       case 'bool':
-        return '';
+        return this.get('value') ? 'Active' : 'Inactive';
+      case 'matrix':
+        return this.get('value.rows') + ' x ' + this.get('value.rows') + ' Matrix';
+      case 'trigger':
+        return 'Trigger';
       default:
         return this.get('value');
     }
@@ -132,22 +122,31 @@ export default Ember.ObjectController.extend({
     editValue: function() {
       this.set('isEditing', true);
     },
-
-    saveValue: function() {
+    saveChanges: function() {
       this.set('isEditing', false);
-      var model = this.get('model');
-      model.save();
+      this.get('model').save();
     },
-
+    discardChanges: function() {
+      this.set('isEditing', false);
+      this.get('model').rollback();
+    },
     reload: function() {
-      var model = this.get('model');
-      model.reload();
+      this.get('model').reload();
     },
-
+    setTrue: function() {
+      this.set('isEditing', false);
+      this.set('value', true);
+      this.get('model').save();
+    },
+    setFalse: function() {
+      this.set('isEditing', false);
+      this.set('value', false);
+      this.get('model').save();
+    },
     trigger: function() {
-      this.set('numberValue', 1);
-      var model = this.get('model');
-      model.save();
+      this.set('isEditing', false);
+      this.set('value', 1);
+      this.get('model').save();
     }
   }
 });

@@ -1,54 +1,54 @@
-{{outlet}}
+<h3>Input observer</h3>
 
 <table class="table">
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Value</th>
-    </tr>
-  </thead>
   <tbody>
     <tr>
       <td>
-        Title
-      </td>
-      <td>
+        <header class="stromx-cell-title">Title</header>
         {{title}}
       </td>
     </tr>
     <tr>
       <td>
-        Visualization
-      </td>
-      <td>
-        {{#if isEditing}}
-          {{view "select" value=visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label"}}
-          <button type="button" {{action "save"}} class="btn btn-default btn-xs">Save</button>
-        {{else}}
+        <header class="stromx-cell-title">Visualization</header>
+        {{#unless isEditingVisualization}}
           {{visualizationLabel}}    
-          <button type="button" {{action "edit"}} class="btn btn-default btn-xs">Edit</button>
-        {{/if}}
+          <a {{action "editVisualization"}}>
+            <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+          </a>
+        {{else}}
+          <form class="form-inline">
+            <div class="form-group">
+              <label class="sr-only" for="observer-visualization">Name</label>{{view "select" value=visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="observer-visualization"}}
+            </div>
+            <div class="form-group">
+              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        {{/unless}}
       </td>
     </tr>
     <tr>
       <td>
-        Action
-      </td>
-      <td>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-            Action <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu">
-            <li>{{#link-to "inputObserver.delete"}}Remove{{/link-to}}</li>
-            <li class="divider"></li>
-            <li><a {{action "setColor" "RED"}}>Red</a></li>
-            <li><a {{action "setColor" "GREEN"}}>Green</a></li>
-            <li><a {{action "setColor" "BLUE"}}>Blue</a></li>
-          </ul>
-        </div>
+        <header class="stromx-cell-title">Color</header>
+        {{#color-box color=color}}{{/color-box}}
+        {{#unless isEditingColor}}
+          <a {{action "editColor"}}>
+            <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+          </a>
+        {{else}}
+          <form class="form-inline">
+            {{#color-chooser choose="setColor"}}{{/color-chooser}}
+            <div class="form-group">
+              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        {{/unless}}
       </td>
     </tr>
   </tbody>
 </table>
 
+{{outlet}}

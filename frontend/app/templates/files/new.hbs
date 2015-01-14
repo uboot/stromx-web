@@ -4,7 +4,9 @@
       <label for="newFile">Filename</label>
       {{input valueBinding="name" class="form-control" placeholder="Enter filename" id="newFile"}}
     </div>
-    <button {{action 'cancel'}} type="reset" class="btn btn-default">Cancel</button>
-    <button {{action 'newFile'}} type="submit" class="btn btn-primary">Save</button>
+    <div class="form-group">
+      {{#link-to 'files.index' type="button" class="btn btn-default"}}Cancel{{/link-to}}
+      <button {{action 'newFile'}} type="submit" class="btn btn-primary">Save</button>
+    </div>
   </div>
 </div>

@@ -1,90 +1,121 @@
-{{outlet}}
+<h3>Operator</h3>
 
 <table class="table">
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Value</th>
-    </tr>
-  </thead>
   <tbody>
     <tr>
       <td>
-        Type
-      </td>
-      <td>
+        <header class="stromx-cell-title">Type</header>
         {{fullType}}
       </td>
     </tr>
     <tr>
       <td>
-        Version
-      </td>
-      <td>
+        <header class="stromx-cell-title">Version</header>
         {{version}}
       </td>
     </tr>
     <tr>
       <td>
-        Status
-      </td>
-      <td>
+        <header class="stromx-cell-title">Status</header>
         {{statusLabel}}
       </td>
     </tr>
     <tr>
       <td>
-        Name
-      </td>
-      <td>
-        {{#if isEditingName}}
-          {{input value=name}}
-          <button type="button" {{action "saveName"}} class="btn btn-default btn-xs">Save</button>
-        {{else}}
+        <header class="stromx-cell-title">Name</header>
+        {{#unless isEditingName}}
           {{name}}
-          <button type="button" {{action "editName"}} class="btn btn-default btn-xs">Edit</button>
-        {{/if}}
+          <a {{action "editName"}}>
+            <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+          </a>
+        {{else}}
+          <form class="form-inline">
+            <div class="form-group">
+              <label class="sr-only" for="view-name">Name</label>
+              {{input value=name class="form-control" id="view-name"}}
+            </div>
+            <div class="form-group">
+              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        {{/unless}}
       </td>
     </tr>
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Parameter</th>
+    </tr>
+  </thead>
   </tr>
+  <tbody>
     {{#each param in parameters itemController="parameter"}}
       <tr>
         <td>
-          {{param.title}}
-        </td>
-        <td>
+          <header class="stromx-cell-title">{{param.title}}</header>
           {{#if param.isEditing}}
-            {{#if param.isEnum}}
-              {{view "select" value=param.value content=param.descriptions optionValuePath="content.value"
-                optionLabelPath="content.title" disabled=readOnly}}
-            {{else}}
-              {{input value=param.editValue}}
-            {{/if}}
-            <button type="button" {{action "saveValue" param}} class="btn btn-default btn-xs">Save</button>
+            <form class="form-inline">
+              {{#if param.isBool}}
+                <div class="form-group">
+                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                  {{#if param.value}}
+                    <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
+                  {{else}}
+                    <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
+                  {{/if}}
+                </div>
+              {{else}} 
+                {{#if param.isTrigger}}
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "trigger"}} class="btn btn-primary">Send</button>
+                  </div>
+                {{else}}
+                  <div class="form-group">
+                    {{#if param.isEnum}}
+                      {{view "select" value=param.value content=param.descriptions 
+                        optionValuePath="content.value" optionLabelPath="content.title"}}
+                    {{else}}
+                      {{input value=param.editValue class="form-control"}}
+                    {{/if}}
+                  </div>
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                  </div>
+                {{/if}}
+              {{/if}}
+            </form>
           {{/if}}
           {{#if param.timedOut}}
             <em>Access timed out</em>
-            <button type="button" {{action "reload" param}} class="btn btn-default btn-xs">Retry</button>
+            <a {{action "reload"}}>
+              <span class="glyphicon glyphicon-repeat pull-right" aria-hidden="true"></span>
+            </a>
           {{/if}}
           {{#if param.accessFailed}}
             <em>Access failed</em>
-            <button type="button" {{action "reload" param}} class="btn btn-default btn-xs">Retry</button>
-          {{/if}}
-          {{#if param.isTrigger}}
-            <button type="button" {{action "trigger" param}} class="btn btn-default btn-xs">Trigger</button>
-          {{/if}}
-          {{#if param.isBool}}
-            {{input type="checkbox" checked=param.boolValue disabled=param.readOnly}}
+            <a {{action "reload"}}>
+              <span class="glyphicon glyphicon-repeat pull-right" aria-hidden="true"></span>
+            </a>
           {{/if}}
           {{param.displayValue}}
           {{#if param.editable}}
             {{#unless param.isEditing}}
-              <button type="button" {{action "editValue" param}} class="btn btn-default btn-xs">Edit</button>
+              <a {{action "editValue"}}>
+                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+              </a>
             {{/unless}}
           {{/if}}
         </td>
       </tr>
-    </tr>
     {{/each}}
   </tbody>
 </table>
+
+{{outlet}}
+

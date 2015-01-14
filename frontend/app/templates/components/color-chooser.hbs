@@ -1,0 +1,10 @@
+<div class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    Color<span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu color-menu" role="menu">
+    {{#each color in colors}}
+      <li><a {{action "choose" color.value}}>{{color.name}}</a></li>
+    {{/each}}
+  </ul>
+</div>

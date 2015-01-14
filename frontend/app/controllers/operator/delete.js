@@ -1,6 +1,6 @@
-import OperatorController from 'stromx-web/controllers/operator';
+import OperatorSvgController from 'stromx-web/controllers/operator-svg';
 
-export default OperatorController.extend({
+export default OperatorSvgController.extend({
   actions: {
     dismiss: function () {
       this.transitionToRoute('stream.index', this.get('model.stream'));

@@ -5,7 +5,8 @@ import InputObserverModel from 'stromx-web/models/input-observer';
 import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
-  isEditing: false,
+  isEditingColor: false,
+  isEditingVisualization: false,
   
   visualizations: [
     {label: 'Default', value: 'default'},
@@ -63,16 +64,25 @@ export default Ember.ObjectController.extend({
   }.property('input.title', 'input.operator.name'),
 
   actions: {
-    edit: function() {
-      this.set('isEditing', true);
+    editColor: function() {
+      this.set('isEditingColor', true);
     },
-    
-    save: function() {
-      this.set('isEditing', false);
-      var model = this.get('model');
-      model.save();
+    setColor: function(color) {
+      this.set('color', color);
     },
-    
+    editVisualization: function() {
+      this.set('isEditingVisualization', true);
+    },
+    saveChanges: function() {
+      this.set('isEditingColor', false);
+      this.set('isEditingVisualization', false);
+      this.get('model').save();
+    },
+    discardChanges: function() {
+      this.set('isEditingColor', false);
+      this.set('isEditingVisualization', false);
+      this.get('model').rollback();
+    },
     moveUp: function() {
       var zvalue = this.get('zvalue');
       var model = this.get('model');
@@ -87,7 +97,6 @@ export default Ember.ObjectController.extend({
         }
       });
     },
-
     moveDown: function() {
       var zvalue = this.get('zvalue');
       var model = this.get('model');
@@ -102,17 +111,6 @@ export default Ember.ObjectController.extend({
         }
       });
     },
-
-    setColor: function(key) {
-      var properties = this.get('properties');
-      var color = Color[key];
-      properties['color'] = color;
-      this.set('properties', properties);
-      
-      var model = this.get('model');
-      model.save();
-    },
-
     remove: function () {
       var observer = this.get('model');
       var zvalue = this.get('model.zvalue');
