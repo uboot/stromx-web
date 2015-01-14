@@ -1,5 +1,7 @@
 import Ember from "ember";
 
+import InputObserverModel from 'stromx-web/models/input-observer';
+
 export default Ember.ObjectController.extend({
   isEditingObserver: false,
   
@@ -18,6 +20,19 @@ export default Ember.ObjectController.extend({
       if (! view) {
         return;
       }
+      
+      var model = this.get('model');
+      view.get('observers').then(function(observers) {
+        var observer = observers.find(function(observer) {
+          if (! observer instanceof InputObserverModel) {
+            return false;
+          }
+          
+          return observer.get('input').then(function(input) {
+            return input === model;
+          });
+        });
+      });
     }
   }
 });
