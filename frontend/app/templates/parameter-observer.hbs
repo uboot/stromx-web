@@ -10,6 +10,12 @@
     </tr>
     <tr>
       <td>
+        <header class="stromx-cell-title">View</header>
+        {{#link-to "view" observerView}}{{observerView.name}}{{/link-to}}
+      </td>
+    </tr>
+    <tr>
+      <td>
         <header class="stromx-cell-title">Visualization</header>
         {{#unless isEditingVisualization}}
           {{visualizationLabel}}    

@@ -1,6 +1,4 @@
 import Ember from "ember";
-import { Color } from 'stromx-web/controllers/stream';
-
 export default Ember.ObjectController.extend({
   isEditingName: false,
   isEditingColor: false,

@@ -9,5 +9,6 @@ export default DS.Model.extend({
   state: DS.attr('string'),
   writable: DS.attr('boolean'),
   operator: DS.belongsTo('operator', {async: true}),
-  descriptions: DS.hasMany('enum-description', {async: true})
+  descriptions: DS.hasMany('enum-description', {async: true}),
+  observers: DS.hasMany('parameter-observer', {async: true})
 });

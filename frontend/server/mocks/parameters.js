@@ -13,7 +13,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 1
+        operator: 1,
+        observers: []
       },
       {
         id: 2,
@@ -25,7 +26,8 @@ module.exports = function(app) {
         state: 'current',
         writable: false,
         descriptions: [0, 1, 2],
-        operator: 2
+        operator: 2,
+        observers: []
       },
       {
         id: 3,
@@ -37,7 +39,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 2
+        operator: 2,
+        observers: [0]
       },
       {
         id: 4,
@@ -49,7 +52,8 @@ module.exports = function(app) {
         state: 'timedOut',
         writable: true,
         descriptions: [],
-        operator: 2
+        operator: 2,
+        observers: []
       },
       {
         id: 6,
@@ -61,7 +65,8 @@ module.exports = function(app) {
         state: 'current',
         writable: false,
         descriptions: [],
-        operator: 2
+        operator: 2,
+        observers: []
       },
       {
         id: 5,
@@ -73,7 +78,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 3
+        operator: 3,
+        observers: []
       },
       {
         id: 7,
@@ -85,7 +91,8 @@ module.exports = function(app) {
         state: 'accessFailed',
         writable: true,
         descriptions: [],
-        operator: 2
+        operator: 2,
+        observers: []
       },
       {
         id: 8,
@@ -105,7 +112,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 4
+        operator: 4,
+        observers: []
       },
       {
         id: 9,
@@ -117,7 +125,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 4
+        operator: 4,
+        observers: []
       },
       {
         id: 10,
@@ -129,7 +138,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 4
+        operator: 4,
+        observers: []
       },
       {
         id: 11,
@@ -141,7 +151,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [],
-        operator: 4
+        operator: 4,
+        observers: []
       },
       {
         id: 12,
@@ -153,7 +164,8 @@ module.exports = function(app) {
         state: 'current',
         writable: true,
         descriptions: [3, 4, 5],
-        operator: 2
+        operator: 2,
+        observers: []
       }
     ]});
   });

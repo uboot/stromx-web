@@ -803,7 +803,8 @@ class ParametersTest(unittest.TestCase):
                               'title': 'URL',
                               'variant': 'string',
                               'operator': '0',
-                              'writable': True}}
+                              'writable': True,
+                              'observers': []}}
         self.assertEqual(data, param.data)
         
     def testSetUrl(self):
@@ -832,7 +833,8 @@ class ParametersTest(unittest.TestCase):
                               'title': 'TCP port',
                               'variant': 'int',
                               'operator': '0',
-                              'writable': True}}
+                              'writable': True,
+                              'observers': []}}
         self.assertEqual(data, param.data)
         
     def testSetPort(self):
@@ -854,7 +856,8 @@ class ParametersTest(unittest.TestCase):
                               'title': 'Number of outputs',
                               'variant': 'int',
                               'operator': '0',
-                              'writable': False}}
+                              'writable': False,
+                              'observers': []}}
         self.assertEqual(data, param.data)
         
     def testSetNumberOfOutputs(self):
@@ -877,7 +880,8 @@ class ParametersTest(unittest.TestCase):
                               'title': 'Trigger mode',
                               'variant': 'enum',
                               'operator': '0',
-                              'writable': True}}
+                              'writable': True,
+                              'observers': []}}
         self.assertEqual(data, param.data)
         
     def testSetPixelType(self):
@@ -1374,6 +1378,7 @@ class ParameterObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'parameterObserver'}],
                          viewModel.observers)
+        self.assertEqual(['0'], self.model.parameters['2'].observers);
         
     def testDelete(self):
         self.setupView()
@@ -1384,6 +1389,7 @@ class ParameterObserversTest(unittest.TestCase):
         
         self.assertEqual(1, len(viewModel.observers))
         self.assertEqual(1, len(stromxView.observers))
+        self.assertEqual([], self.model.parameters['2'].observers)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
@@ -1430,6 +1436,7 @@ class InputObserversTest(unittest.TestCase):
                                         }]
                   }
         self.assertEqual(refData, self.model.connectorValues.data)
+        self.assertEqual(['0'], self.model.inputs['2'].observers)
         
     def testDelete(self):
         self.setupView()
@@ -1440,6 +1447,7 @@ class InputObserversTest(unittest.TestCase):
         
         self.assertEqual(1, len(viewModel.observers))
         self.assertEqual(1, len(stromxView.observers))
+        self.assertEqual([], self.model.inputs['2'].observers)
         
     def tearDown(self):
         shutil.rmtree('temp', True)

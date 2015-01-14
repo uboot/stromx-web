@@ -765,7 +765,8 @@ class Parameters(Items):
     
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
-                  'minimum', 'maximum', 'writable', 'descriptions', 'state']
+                  'minimum', 'maximum', 'writable', 'descriptions', 'state',
+                  'observers']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -773,6 +774,7 @@ class Parameter(Item):
         self.__op = op
         self.__state = 'current'
         self.__descriptions = []
+        self.__observers = []
         for desc in self.__param.descriptions():
             if not _parameterIsReadable(op, param):
                 continue
@@ -856,6 +858,16 @@ class Parameter(Item):
     @property
     def stromxId(self):
         return self.__param.id()
+        
+    @property
+    def observers(self):
+        return [observer.index for observer in self.__observers]
+    
+    def addObserver(self, observer):
+        self.__observers.append(observer)
+        
+    def removeObserver(self, observer):
+        self.__observers.remove(observer)
     
     def __getParameter(self, variant):
         try:
@@ -1397,6 +1409,13 @@ class ParameterObserver(Observer):
         parameterModels = filter(selector, self.model.parameters.values())
         assert(len(parameterModels) == 1)
         return parameterModels[0].index
+    
+    def delete(self):
+        parameterId = self.parameter
+        parameter = self.model.parameters[parameterId]
+        parameter.removeObserver(self)
+        
+        super(ParameterObserver, self).delete()
 
 class InputObserver(Observer):
     _properties = Observer._properties + ['input', 'value']
@@ -1451,6 +1470,8 @@ class ParameterObservers(Observers):
     def addStromxObserver(self, view, stromxObserver):
         observer = ParameterObserver(view, stromxObserver, self.model)
         self.addItem(observer)
+        parameterId = observer.parameter
+        self.model.parameters[parameterId].addObserver(observer)
         return observer
         
     def addData(self, data):

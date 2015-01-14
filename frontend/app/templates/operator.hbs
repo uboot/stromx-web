@@ -48,6 +48,42 @@
 <table class="table">
   <thead>
     <tr>
+      <th>Inputs</th>
+    </tr>
+  </thead>
+  </tr>
+  <tbody>
+    {{#each input in inputs}}
+      <tr>
+        <td>
+          <header class="stromx-cell-title">{{input.title}}</header>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Outputs</th>
+    </tr>
+  </thead>
+  </tr>
+  <tbody>
+    {{#each output in outputs}}
+      <tr>
+        <td>
+          <header class="stromx-cell-title">{{output.title}}</header>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<table class="table">
+  <thead>
+    <tr>
       <th>Parameter</th>
     </tr>
   </thead>

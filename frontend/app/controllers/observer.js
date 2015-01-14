@@ -2,7 +2,6 @@ import Ember from "ember";
 
 import ParameterObserverModel from 'stromx-web/models/parameter-observer';
 import InputObserverModel from 'stromx-web/models/input-observer';
-import { Color } from 'stromx-web/controllers/stream';
 
 export default Ember.ObjectController.extend({
   isEditingColor: false,
@@ -14,6 +13,10 @@ export default Ember.ObjectController.extend({
     {label: 'Line segments', value: 'line_segments'},
     {label: 'Slider', value: 'slider'}
   ],
+  
+  // FIXME: For some reason it is not possible to directly bind to the property
+  // 'view' in templates. As a workaround the renamed property below is used.
+  observerView: Ember.computed.alias('view'),
   
   visualizationLabel: function() {
     var visualization = this.get('visualization');
