@@ -7,7 +7,7 @@ export default DS.Model.extend({
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
   state: DS.attr('string'),
-  writable: DS.attr('boolean'),
+  access: DS.attr('string'),
   operator: DS.belongsTo('operator', {async: true}),
   descriptions: DS.hasMany('enum-description', {async: true}),
   observers: DS.hasMany('parameter-observer', {async: true})

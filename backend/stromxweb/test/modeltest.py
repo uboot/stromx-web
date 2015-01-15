@@ -551,7 +551,7 @@ class OperatorsTest(unittest.TestCase):
         self.stream = self.model.streams.addFile(fileModel)
         self.stromxStream = self.stream.stromxStream
         
-        kernel = stromx.runtime.Receive()
+        kernel = stromx.runtime.Block()
         self.stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(self.stromxOp)
         self.stromxOp.setName('Name')
@@ -579,12 +579,12 @@ class OperatorsTest(unittest.TestCase):
         data = {'operator': {'id': '0', 
                              'name': 'Name',
                              'package': 'runtime',
-                             'type': 'Receive',
+                             'type': 'Block',
                              'status': 'initialized',
                              'version': '0.1.0',
-                             'parameters': ['0', '1'],
+                             'parameters': ['0', '1', '2'],
                              'outputs': ['0'],
-                             'inputs': [],
+                             'inputs': ['0'],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
         self.assertEqual(data, self.operator.data)
@@ -609,9 +609,21 @@ class OperatorsTest(unittest.TestCase):
         self.assertEqual('New operator', op.data['operator']['name'])
         self.assertEqual('0', op.data['operator']['stream'])
         self.assertEqual(2, len(self.model.operators))
-        self.assertEqual(0, len(self.model.inputs))
+        self.assertEqual(1, len(self.model.inputs))
         self.assertEqual(1, len(self.model.outputs))
-        self.assertEqual(2, len(self.model.parameters))
+        self.assertEqual(3, len(self.model.parameters))
+        
+    def testAddDataWhileActive(self):
+        self.stromxStream.start()
+        data = {'operator': {'package': u'runtime',
+                             'type': u'Send',
+                             'stream': '0',
+                             'name': 'New operator'}}
+        
+        self.assertRaises(model.AddDataFailed, self.operators.addData, data)
+        
+        self.assertEqual(1, len(self.model.operators))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testAddDataInvalidOperator(self):
         data = {'operator': {'package': 'package',
@@ -634,7 +646,7 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'Fork',
                              'status': 'none',
                              'version': '0.1.0',
-                             'parameters': ['2'],
+                             'parameters': ['3'],
                              'outputs': [],
                              'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0} ,
@@ -665,7 +677,7 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'ParameterOperator',
                              'status': 'none',
                              'version': '1.2.3',
-                             'parameters': ['10'],
+                             'parameters': ['11'],
                              'outputs': [],
                              'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0},
@@ -687,9 +699,9 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'ParameterOperator',
                              'status': 'initialized',
                              'version': '1.2.3',
-                             'parameters': ['3', '4', '5', '6', '7', '8',
-                                            '9', '10'],
-                             'inputs': ['0', '1'],
+                             'parameters': ['4', '5', '6', '7', '8', '9', '10',
+                                            '11'],
+                             'inputs': ['1', '2'],
                              'outputs': ['1', '2'],
                              'position': {'x': 0.0, 'y': 0.0},
                              'stream': '0'}}
@@ -757,9 +769,9 @@ class OperatorsTest(unittest.TestCase):
         self.assertFalse(opModel.stromxOp in self.stromxStream.operators())
         self.assertFalse(opId in self.stream.operators)
         self.assertEqual(1, len(self.model.operators))
-        self.assertEqual(0, len(self.model.inputs))
+        self.assertEqual(1, len(self.model.inputs))
         self.assertEqual(1, len(self.model.outputs))
-        self.assertEqual(2, len(self.model.parameters))
+        self.assertEqual(3, len(self.model.parameters))
         
     def tearDown(self):
         self.__stream = None
@@ -806,7 +818,7 @@ class ParametersTest(unittest.TestCase):
                                 'title': 'String'
                               },
                               'operator': '0',
-                              'writable': True,
+                              'access': 'inactive',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -839,7 +851,7 @@ class ParametersTest(unittest.TestCase):
                                 'title': 'UInt16'
                               },
                               'operator': '0',
-                              'writable': True,
+                              'access': 'inactive',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -865,7 +877,7 @@ class ParametersTest(unittest.TestCase):
                                 'title': 'UInt32'
                               },
                               'operator': '0',
-                              'writable': False,
+                              'access': 'none',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -892,7 +904,7 @@ class ParametersTest(unittest.TestCase):
                                 'title': 'Enum'
                               },
                               'operator': '0',
-                              'writable': True,
+                              'access': 'full',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -968,6 +980,8 @@ class EnumDescriptionsTest(unittest.TestCase):
 class ConnectionsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
+        self.errorSink = ErrorSink()
+        self.model.errors.handlers.append(self.errorSink.handleError)
         self.connections = self.model.connections
         
         fileModel = model.File("", self.model)
@@ -976,7 +990,7 @@ class ConnectionsTest(unittest.TestCase):
         
         kernel = stromx.runtime.Fork()
         stromxFork = self.stromxStream.addOperator(kernel)
-        kernel = stromx.runtime.Receive()
+        kernel = stromx.runtime.Block()
         stromxReceive = self.stromxStream.addOperator(kernel)
         
         self.stromxStream.initializeOperator(stromxFork)
@@ -1057,6 +1071,17 @@ class ConnectionsTest(unittest.TestCase):
         
         self.assertRaises(model.AddDataFailed, self.model.connections.addData,
                           newData)
+        self.assertEqual(1, len(self.errorSink.errors))
+        
+    def testAddDataWhileActive(self):
+        self.stromxStream.start()
+        newData = {'connection': {'thread': '0',
+                                  'output': '2', 
+                                  'input': '0'}}
+                               
+        self.assertRaises(model.AddDataFailed, self.model.connections.addData,
+                          newData)
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetThread(self):
         newData = {'connection': {'output': '2', 
@@ -1101,6 +1126,17 @@ class ConnectionsTest(unittest.TestCase):
         
         thread = self.thread.stromxThread
         self.assertEqual(0, len(thread.inputSequence()))
+        
+    def testDeleteWhileActive(self):
+        newData = {'connection': {'thread': '0',
+                                  'output': '2', 
+                                  'input': '0'}}
+        self.model.connections.addData(newData)
+        self.stromxStream.start()
+        
+        self.assertRaises(model.AddDataFailed, self.model.connections.delete,
+                          '0')
+        self.assertEqual(1, len(self.errorSink.errors))
         
 class InputsTest(unittest.TestCase):
     def setUp(self):
@@ -1170,6 +1206,8 @@ class OutputsTest(unittest.TestCase):
 class ThreadsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
+        self.errorSink = ErrorSink()
+        self.model.errors.handlers.append(self.errorSink.handleError)
         self.threads = self.model.threads
         
         fileModel = model.File("", self.model)
@@ -1188,7 +1226,7 @@ class ThreadsTest(unittest.TestCase):
         self.fork = self.model.operators.addStromxOp(self.stromxFork, 
                                                      self.stream)
                                                      
-        kernel = stromx.runtime.Receive()
+        kernel = stromx.runtime.Block()
         self.stromxReceive = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(self.stromxReceive)
         self.recive = self.model.operators.addStromxOp(self.stromxReceive, 
@@ -1241,6 +1279,14 @@ class ThreadsTest(unittest.TestCase):
         self.assertEqual(2, len(self.model.threads))
         self.assertEqual(2, len(self.stromxStream.threads()))
         self.assertEqual(refData, self.model.threads['1'].data)
+        
+    def testAddDataWhileActive(self):
+        self.stromxStream.start()
+        newData = ({'thread': {'stream': '0'}})
+        
+        self.assertRaises(model.AddDataFailed, self.model.threads.addData,
+                          newData)
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testDelete(self):
         index = self.thread.index

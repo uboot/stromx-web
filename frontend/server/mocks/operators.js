@@ -38,7 +38,7 @@ module.exports = function(app) {
       {
         id: 2,
         name: 'Blur the image',
-        status: 'none',
+        status: 'initialized',
         type: 'Blur',
         package: 'cv::imgproc',
         version: '0.0.1',

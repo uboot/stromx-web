@@ -2,7 +2,7 @@ module.exports = function(app) {
   var express = require('express');
   var inputObserversRouter = express.Router();
   inputObserversRouter.get('/', function(req, res) {
-    res.send({"input-observers":[
+    res.send({"input-observers": [
       {
         id: 0,
         zvalue: 2,
@@ -38,8 +38,14 @@ module.exports = function(app) {
       }
     ]});
   });
+  inputObserversRouter.post('/', function(req, res) {
+    res.send({
+      "input-observer": { id: 4 }
+    });
+  });
   inputObserversRouter.put('/', function(req, res) {
     res.send('null');
   });
+  app.use('/api/inputObservers', inputObserversRouter);
   app.use('/api/inputObservers/*', inputObserversRouter);
 };

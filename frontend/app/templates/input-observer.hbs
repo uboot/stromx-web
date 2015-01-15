@@ -38,13 +38,14 @@
     <tr>
       <td>
         <header class="stromx-cell-title">Color</header>
-        {{#color-box color=properties.color}}{{/color-box}}
         {{#unless isEditingColor}}
+          {{#color-box color=properties.color}}{{/color-box}}
           <a {{action "editColor"}}>
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
         {{else}}
           <form class="form-inline">
+            {{#color-box color=color}}{{/color-box}}
             {{#color-chooser choose="setColor"}}{{/color-chooser}}
             <div class="form-group">
               <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>

@@ -596,7 +596,12 @@ class Operators(Items):
             self.model.errors.addError(e)
             raise AddDataFailed()
         
-        stromxOp = stream.stromxStream.addOperator(opKernel)
+        try:
+            stromxOp = stream.stromxStream.addOperator(opKernel)
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
+            raise AddDataFailed()
+            
         op = self.addStromxOp(stromxOp, stream)
         op.set(data)
         stream.addOperator(op)
@@ -765,7 +770,7 @@ class Parameters(Items):
     
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
-                  'minimum', 'maximum', 'writable', 'descriptions', 'state',
+                  'minimum', 'maximum', 'access', 'descriptions', 'state',
                   'observers']
     
     def __init__(self, op, param, model):
@@ -847,8 +852,8 @@ class Parameter(Item):
         return value
     
     @property
-    def writable(self):
-        return _parameterIsWritable(self.__op, self.__param)
+    def access(self):
+        return _parameterAccess(self.__op, self.__param)
         
     @property
     def descriptions(self):
@@ -976,17 +981,21 @@ class Connection(Item):
     def stromxTargetId(self):
         return self.__input.stromxId
         
-    def delete(self):        
+    def delete(self):     
+        try:
+          if self.__thread != None:
+              self.__thread.stromxThread.removeInput(self.stromxTargetOp,
+                                                     self.stromxTargetId)
+              self.__thread.removeConnection(self)
+          
+          if self.__stream != None:
+              self.__stream.removeConnection(self)
+        except stromx.runtime.Exception as e:
+          self.model.errors.addError(e)
+          raise AddDataFailed()
+          
         self.__output.removeConnection(self)
         self.__input.setConnection(None)
-        
-        if self.__thread != None:
-            self.__thread.stromxThread.removeInput(self.stromxTargetOp,
-                                                   self.stromxTargetId)
-            self.__thread.removeConnection(self)
-        
-        if self.__stream != None:
-            self.__stream.removeConnection(self)
         
 class Connections(Items):
     def addConnection(self, stream, outputConnector, inputConnector, thread):        
@@ -1023,7 +1032,8 @@ class Connections(Items):
                                         outputConnector.stromxId,
                                         targetOp.stromxOp,
                                         inputConnector.stromxId)
-        except stromx.runtime.OperatorError:
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
             raise AddDataFailed()
         
         if thread != None:
@@ -1107,7 +1117,12 @@ class Threads(Items):
     
     def addData(self, data):
         stream = self.model.streams[data['thread']['stream']]
-        stromxThread = stream.stromxStream.addThread()
+        
+        try:
+            stromxThread = stream.stromxStream.addThread()
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
+            raise AddDataFailed()
         
         thread = self.addStromxThread(stromxThread, stream)
         thread.set(data)
@@ -1659,7 +1674,7 @@ def _parameterIsReadable(op, param):
     else:
         return False
 
-def _parameterIsWritable(op, param):
+def _parameterAccess(op, param):
     status = op.status()
     accessMode = param.accessMode()
     
@@ -1667,14 +1682,13 @@ def _parameterIsWritable(op, param):
     Status = stromx.runtime.Operator.Status
     
     if accessMode == AccessMode.NONE_WRITE and status == Status.NONE:
-        return True
-    elif (accessMode == AccessMode.INITIALIZED_WRITE and 
-          status == Status.INITIALIZED):
-        return True
+        return "full"
+    elif accessMode == AccessMode.INITIALIZED_WRITE and status != Status.NONE:
+        return "inactive"
     elif accessMode == AccessMode.ACTIVATED_WRITE and status != Status.NONE:
-        return True
+        return "full"
     else:
-        return False  
+        return "none"  
     
 def _registerExtraPackages(factory):
         try:

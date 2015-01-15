@@ -18,6 +18,11 @@ export default Ember.ObjectController.extend({
   // 'view' in templates. As a workaround the renamed property below is used.
   observerView: Ember.computed.alias('view'),
   
+  // FIXME: Model rollback does not work if the color selector is bound to 
+  // 'properties.color'. Instead we use proxy property below and copy the value
+  // 'properties.color' in saveChanges().
+  color: '#000000',
+  
   visualizationLabel: function() {
     var visualization = this.get('visualization');
     
@@ -68,10 +73,11 @@ export default Ember.ObjectController.extend({
 
   actions: {
     editColor: function() {
+      this.set('color', this.get('properties.color'));
       this.set('isEditingColor', true);
     },
     setColor: function(color) {
-      this.set('properties.color', color);
+      this.set('color', color);
     },
     editVisualization: function() {
       this.set('isEditingVisualization', true);
@@ -79,6 +85,8 @@ export default Ember.ObjectController.extend({
     saveChanges: function() {
       this.set('isEditingColor', false);
       this.set('isEditingVisualization', false);
+      
+      this.set('properties.color', this.get('color'));
       this.get('model').save();
     },
     discardChanges: function() {

@@ -23,12 +23,23 @@ export default Ember.ObjectController.extend({
     return this.get('state') === 'current';
   }.property('state'),
 
-  editable: function() {
+  writable: function() {
     var variant = this.get('variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger'];
-    return this.get('writable') && this.get('current') &&
-      knownTypes.contains(variant);
-  }.property('writable', 'current', 'variant'),
+    var currentAndKnown = this.get('current') && knownTypes.contains(variant);
+    if (! currentAndKnown) {
+      return false;
+    }
+    
+    switch(this.get('access')) {
+    case 'full':
+      return true;
+    case 'inactive':
+      return ! this.get('operator.stream.active');
+    default:
+      return false;
+    }
+  }.property('access', 'current', 'variant', 'operator.stream.active'),
 
   accessFailed: function() {
     return this.get('state') === 'accessFailed';

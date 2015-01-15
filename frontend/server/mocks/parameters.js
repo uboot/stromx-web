@@ -14,7 +14,7 @@ module.exports = function(app) {
         minimum: 49152,
         maximum: 65535,
         state: 'current',
-        writable: true,
+        access: 'inactive',
         descriptions: [],
         operator: 1,
         observers: []
@@ -30,7 +30,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: false,
+        access: 'none',
         descriptions: [0, 1, 2],
         operator: 2,
         observers: []
@@ -46,7 +46,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'full',
         descriptions: [],
         operator: 2,
         observers: [0]
@@ -62,7 +62,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'timedOut',
-        writable: true,
+        access: 'full',
         descriptions: [],
         operator: 2,
         observers: []
@@ -78,7 +78,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: false,
+        access: 'full',
         descriptions: [],
         operator: 2,
         observers: []
@@ -94,7 +94,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'inactive',
         descriptions: [],
         operator: 3,
         observers: []
@@ -110,7 +110,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'accessFailed',
-        writable: true,
+        access: 'full',
         descriptions: [],
         operator: 2,
         observers: []
@@ -134,7 +134,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'full',
         descriptions: [],
         operator: 4,
         observers: []
@@ -150,7 +150,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'inactive',
         descriptions: [],
         operator: 4,
         observers: []
@@ -166,7 +166,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'none',
         descriptions: [],
         operator: 4,
         observers: []
@@ -182,7 +182,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'full',
         descriptions: [],
         operator: 4,
         observers: []
@@ -198,7 +198,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        writable: true,
+        access: 'full',
         descriptions: [3, 4, 5],
         operator: 2,
         observers: []

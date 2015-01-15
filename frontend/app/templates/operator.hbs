@@ -64,7 +64,11 @@
             <div class="form-group">
               {{view "select" value=input.view content=input.views optionLabelPath="content.name"}}
               <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+              {{#if input.observerExists}}
+                <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+              {{else}}
+                <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+              {{/if}}
             </div>
           {{/unless}}
         </td>
@@ -151,8 +155,7 @@
             </a>
           {{/if}}
           {{param.displayValue}}
-          <a><span class="glyphicon glyphicon-eye-open pull-right stromx-space" aria-hidden="true"></span></a>
-          {{#if param.editable}}
+          {{#if param.writable}}
             {{#unless param.isEditing}}
               <a {{action "editValue"}}>
                 <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
