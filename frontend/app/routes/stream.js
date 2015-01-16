@@ -55,17 +55,30 @@ export default Ember.Route.extend({
       });
     }
   },
+  renderTemplate: function(controller, model) {
+    this._super(controller, model);
+    this.render('stream-details', {
+      into: 'stream',
+      outlet: 'display'
+    });
+  },
   actions: {
-    didTransition: function() {
-      this.updateDetails();
-    },
-    displayStream: function() {
-      this.set('view', null);
-      this.updateDetails();
-    },
-    displayView: function(view) {
-      this.set('view', view);
-      this.updateDetails();
+    renderDetails: function(view) {
+      if (view) {
+        this.connectSocket();
+        this.render('view-details', {
+          into: 'stream',
+          outlet: 'display',
+          controller: 'view',
+          model: view
+        });
+      } else {
+        this.disconnectSocket();
+        this.render('stream-details', {
+          into: 'stream',
+          outlet: 'display'
+        });
+      }
     },
     closeView: function() {
       this.send('displayStream');

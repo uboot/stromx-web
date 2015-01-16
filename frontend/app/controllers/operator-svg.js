@@ -39,7 +39,7 @@ export default OperatorController.extend({
       });
       this.get('model').save();
     },
-    show: function(x, y) {
+    show: function() {
       this.transitionToRoute('operator', this.get('model'));
     }
   }

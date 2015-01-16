@@ -2,9 +2,9 @@ import Ember from "ember";
 
 export default Ember.ObjectController.extend({
   isEditingName: false,
-  
+
   isDeinitialized: Ember.computed.equal('status', 'none'),
-  
+
   fullType: function() {
     return this.get('package') + '::' + this.get('type');
   }.property('type', 'package'),
@@ -26,12 +26,12 @@ export default Ember.ObjectController.extend({
 
   removeConnections: function() {
     var removeIncoming = this.get('model.inputs').then(function(inputs) {
-      var connections = inputs.map(function(input) {
+      var connections = inputs.map( function(input) {
         return input.get('connection');
       });
       return Ember.RSVP.all(connections);
     }).then(function(connections) {
-      connections.map(function(connection) {
+      connections.map( function(connection) {
         if (connection) {
           connection.deleteRecord();
           connection.save();
@@ -45,10 +45,14 @@ export default Ember.ObjectController.extend({
       });
       return Ember.RSVP.all(connectionLists);
     }).then(function(connectionLists) {
-      connectionLists.map(function(connections) {
-        connections.map(function(connection){
-          connection.deleteRecord();
-          connection.save();
+      connectionLists.map( function(connections) {
+        // convert to an array below because the 'connections' becomes invalid
+        // if elements are removed from it
+        connections.toArray().map( function(connection) {
+          if (connection) {
+            connection.deleteRecord();
+            connection.save();
+          }
         });
       });
     });

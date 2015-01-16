@@ -61,16 +61,16 @@
     {{/each}}
     {{#link-to "threads.new" class="btn btn-primary"}}New thread{{/link-to}}
   </div>
-  
+
   <div class="btn-group" role="group">
     {{#each view in views itemController="view"}}
       {{#link-to "view" view class="btn btn-default"}}{{view.name}}{{/link-to}}
     {{/each}}
     {{#link-to "views.new" class="btn btn-primary"}}New view{{/link-to}}
   </div>
-  
+
   <div class="btn-group" role="group">
-    {{#link-to "operators.new" class="btn btn-primary"}}New operator{{/link-to}}
+    {{#link-to "operators.new" class="btn btn-primary stromx-new-operator"}}New operator{{/link-to}}
   </div>
 </form>
 

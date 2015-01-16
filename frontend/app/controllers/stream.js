@@ -10,6 +10,8 @@ export default Ember.ObjectController.extend({
   needs: ['application'],
   activeOutput: null,
   activeInput: null,
+  view: null,
+  isVisible: Ember.computed.equal('view', null),
 
   patternUri: function() {
     return 'url(' + this.get('target.url') + '#grid)';
@@ -55,6 +57,10 @@ export default Ember.ObjectController.extend({
         this.set('paused', false);
         var stream = this.get('model');
         stream.save();
+    },
+    display: function() {
+      this.set('view', null);
+      this.send('renderDetails', null);
     }
   }
 });
