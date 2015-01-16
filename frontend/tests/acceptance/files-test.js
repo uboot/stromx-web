@@ -32,25 +32,25 @@ test('remove file', function() {
 
 test('rename file', function() {
   visit('/');
-  click('tr:nth-child(1) button.stromx-rename-file');
+  click('tr:nth-child(1) a.stromx-rename-file');
   fillIn('input', 'new.stromx');
-  keyEvent('input', 'keyup', 13); // press enter
+  click('tr:nth-child(1) button.stromx-save-changes');
 
   andThen(function() {
-    equal(find('tr:nth-child(1) div.stromx-file-name a').text(), 'new.stromx',
-          'Pressing the enter while editing the file name saves the changes');
+    equal(find('tr:nth-child(1) a.stromx-file-name').text(), 'new.stromx',
+          'Pressing save after editing the file name saves the changes');
   });
 });
 
 test('cancel rename file', function() {
   visit('/');
-  click('tr:nth-child(1) button.stromx-rename-file');
+  click('tr:nth-child(1) a.stromx-rename-file');
   fillIn('input', 'new.stromx');
-  keyEvent('input', 'keyup', 27); // press escape
+  click('tr:nth-child(1) button.stromx-discard-changes');
 
   andThen(function() {
-    equal(find('tr:nth-child(1) div.stromx-file-name a').text(), 'test.stromx',
-          'Pressing escape while editing the file name leaves it unchanged');
+    equal(find('tr:nth-child(1) a.stromx-file-name').text(), 'test.stromx',
+          'Pressing cancel after editing the file name leaves it unchanged');
   });
 });
 

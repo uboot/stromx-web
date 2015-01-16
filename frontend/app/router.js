@@ -35,6 +35,11 @@ Router.map(function () {
         });
         this.route('new');
       });
+      this.resource('connections', function() {
+        this.resource('connection', { path: '/:connection_id' }, function() {
+          this.route('delete');
+        });
+      });
       this.resource('inputObservers', function() {
         this.resource('inputObserver', { path: '/:inputObserver_id' }, function() {
           this.route('delete');

@@ -17,7 +17,7 @@ moduleForController('operator', 'OperatorController', {
   needs: ['model:operator', 'model:parameter', 'model:input', 'model:output',
   'model:connection', 'model:stream', 'model:enum-description',
   'model:input-observer', 'model:file', 'model:view', 'model:thread',
-  'model:connector-value', 'model:observer']
+  'model:connector-value', 'model:observer', 'model:parameter-observer']
 });
 
 test('initialize', function() {

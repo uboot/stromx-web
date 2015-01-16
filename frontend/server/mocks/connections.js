@@ -19,5 +19,8 @@ module.exports = function(app) {
       }
     ]});
   });
+  connectionsRouter.put('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/connections/*', connectionsRouter);
 };

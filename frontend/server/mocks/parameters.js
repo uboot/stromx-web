@@ -166,7 +166,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         state: 'current',
-        access: 'none',
+        access: 'full',
         descriptions: [],
         operator: 4,
         observers: []

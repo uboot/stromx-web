@@ -27,7 +27,7 @@
                 {{#if file.closed}}
                   <a {{action "open" file}}>{{file.name}}</a>
                 {{else}}
-                  {{#link-to 'stream' file.stream}}{{file.name}}{{/link-to}}
+                  {{#link-to 'stream' file.stream class="stromx-file-name"}}{{file.name}}{{/link-to}}
                 {{/if}}
                 <a {{action "edit" file}} class="stromx-rename-file">
                   <span class="glyphicon glyphicon-pencil pull-right stromx-space" aria-hidden="true"></span>
@@ -47,8 +47,8 @@
                     {{input value=file.name class="form-control" id="file-name"}}
                   </div>
                   <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                    <button {{action "discardChanges"}} class="btn btn-default stromx-discard-changes">Cancel</button>
+                    <button {{action "saveChanges"}} class="btn btn-primary stromx-save-changes">Save</button>
                   </div>
                 </form>
               {{/unless}}

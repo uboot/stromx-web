@@ -1,4 +1,17 @@
-<h3>Operator</h3>
+<h3>
+  Operator
+  {{#link-to "operator.delete"}}
+    <span class="glyphicon glyphicon-trash pull-right stromx-link-icon" aria-hidden="true"></span>
+  {{/link-to}}
+</h3>
+
+<div class="stromx-center-buttons">
+  {{#if isDeinitialized}}
+    <button {{action "initialize"}} type="button" class="btn btn-default">Initialize</button>
+  {{else}}
+    <button {{action "deinitialize"}} type="button" class="btn btn-default">Deinitialize</button>
+  {{/if}}
+</div>
 
 <table class="table">
   <tbody>

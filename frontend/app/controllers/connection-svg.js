@@ -1,10 +1,9 @@
-import Ember from "ember";
-
 import { Constant } from 'stromx-web/controllers/operator-svg';
+import ConnectionController from 'stromx-web/controllers/connection';
 import OutputController from 'stromx-web/controllers/output-svg';
 import InputController from 'stromx-web/controllers/input-svg';
 
-export default Ember.ObjectController.extend({
+export default ConnectionController.extend({
   x1: function() {
     var pos = this.get('output.operator.position');
 
@@ -77,22 +76,6 @@ export default Ember.ObjectController.extend({
   path: function() {
     return computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));
   }.property('x1', 'x2', 'y1', 'y2'),
-
-  color: function(key, value) {
-    if (value !== undefined) {
-      return value;
-    }
-
-    var _this = this;
-    this.get('thread').then(function(thread) {
-      if (thread === null) {
-        _this.set('color', '#808080');
-      }
-      else {
-        _this.set('color', thread.get('color'));
-      }
-    });
-  }.property('thread.color'),
 
   displayStartArrow: false,
   displayCenterArrow: false,
@@ -239,20 +222,10 @@ export default Ember.ObjectController.extend({
       }
     }
   }.observes('x1', 'x2', 'y1', 'y2'),
-
+  
   actions: {
-    showMenu: function(x, y) {
-      this.send('showContextMenu', 'connectionMenu', x, y, this);
-    },
-    remove: function() {
-      var model = this.get('model');
-      model.deleteRecord();
-      model.save();
-    },
-    setThread: function(thread) {
-      this.set('thread', thread);
-      var model = this.get('model');
-      model.save();
+    show: function() {
+      this.transitionToRoute('connection.index', this.get('model'));
     }
   }
 });
