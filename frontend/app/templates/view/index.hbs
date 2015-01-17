@@ -51,15 +51,6 @@
             <header class="stromx-cell-title">Parameter observer</header>
             {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
           {{/if}}
-          {{#if observer.isInputObserver}}
-            {{#link-to "inputObserver.delete" observer}}
-              <span class="glyphicon glyphicon-trash pull-right stromx-space" aria-hidden="true"></span>
-            {{/link-to}}
-          {{else}}
-            {{#link-to "parameterObserver.delete" observer}}
-              <span class="glyphicon glyphicon-trash pull-right stromx-space" aria-hidden="true"></span>
-            {{/link-to}}
-          {{/if}}
           <a {{action "moveUp"}}>
             <span class="glyphicon glyphicon-arrow-up pull-right stromx-space" aria-hidden="true"></span>
           </a>

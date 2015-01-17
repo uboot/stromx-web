@@ -12,9 +12,9 @@
     <rect width="100%" height="100%" {{bind-attr fill=patternUri}}/>
     {{#each op in operators itemController="operator-svg"}}
       {{#svg-transform transform=op.transform}}
-        {{#svg-click mouseClick="show"}}
+        {{#link-to "operator.index" op}}
           <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
-        {{/svg-click}}
+        {{/link-to}}
         {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
           <text x="25" y="65" class="stromx-svg-operator-name">{{op.name}}</text>
         {{/svg-drag}}
@@ -38,7 +38,7 @@
     {{/each}}
 
     {{#each connection in connections itemController="connection-svg"}}
-      {{#svg-click mouseClick="show"}}
+      {{#link-to "connection.index" connection}}
         <path {{bind-attr d=connection.path}} {{bind-attr stroke=connection.color}} class="stromx-svg-connection-path"/>
         {{#if connection.displayStartArrow}}
           <use id="startArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.startArrowTransform}}/>
@@ -49,7 +49,7 @@
         {{#if connection.displayEndArrow}}
           <use id="endArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.endArrowTransform}}/>
         {{/if}}
-      {{/svg-click}}
+      {{/link-to}}
     {{/each}}
   </svg>
 </div>

@@ -1,4 +1,9 @@
-<h3>Parameter observer</h3>
+<h3>
+  Parameter observer
+  {{#link-to "parameterObserver.delete"}}
+    <span class="glyphicon glyphicon-trash pull-right stromx-link-icon" aria-hidden="true"></span>
+  {{/link-to}}
+</h3>
 
 <table class="table">
   <tbody>
@@ -18,7 +23,7 @@
       <td>
         <header class="stromx-cell-title">Visualization</header>
         {{#unless isEditingVisualization}}
-          {{visualizationLabel}}    
+          {{visualizationLabel}}
           <a {{action "editVisualization"}}>
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>

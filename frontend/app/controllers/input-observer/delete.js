@@ -1,14 +1,21 @@
 import Ember from "ember";
 
 export default Ember.ObjectController.extend({
+  wasRemoved: false,
   actions: {
     dismiss: function () {
-      this.transitionToRoute('view.index', this.get('model.view'));
+      if (this.get('wasRemoved')) {
+        this.transitionToRoute('view.index', this.get('model.view'));
+        this.set('wasRemoved', false);
+      } else {
+        this.transitionToRoute('inputObserver.index', this.get('model'));
+      }
     },
     remove: function () {
-      var view = this.get('model');
-      view.deleteRecord();
-      view.save();
+      var observer = this.get('model');
+      observer.deleteRecord();
+      observer.save();
+      this.set('wasRemoved', true);
     }
   }
 });
