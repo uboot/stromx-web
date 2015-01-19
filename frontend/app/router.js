@@ -15,8 +15,7 @@ Router.map(function () {
   });
   this.resource('streams', function() {
     this.resource('stream', { path: '/:stream_id' }, function() {
-      this.route('newThread');
-      this.route('newView');
+      this.route('close');
       this.resource('operators', function() {
         this.resource('operator', { path: '/:operator_id' }, function() {
           this.route('delete');

@@ -22,16 +22,6 @@ export default Ember.ObjectController.extend({
   }.property('target.url'),
 
   actions: {
-    close: function () {
-      var _this = this;
-      this.get('file').then(function(file) {
-        file.set('saved', true);
-        file.set('opened', false);
-        file.save().then(function() {
-          _this.transitionToRoute('files');
-        });
-      });
-    },
     save: function () {
       this.get('file').then(function(file) {
         file.set('saved', true);

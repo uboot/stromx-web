@@ -17,7 +17,7 @@
     <div class="btn-group">
       <button type="button" {{action "start"}} class="btn btn-default">Start</button>
       <button type="button" {{action "save"}} class="btn btn-default close-button">Save</button>
-      <button type="button" {{action "close"}} class="btn btn-default close-button">Close</button>
+      {{#link-to "stream.close" class="btn btn-default"}}Close{{/link-to}}
     </div>
   {{/if}}
 </div>

@@ -13,11 +13,11 @@
     {{#each op in operators itemController="operator-svg"}}
       {{#svg-transform transform=op.transform}}
         {{#link-to "operator.index" op}}
-          <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
+          {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
+            <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
+            <text x="25" y="65" class="stromx-svg-operator-name">{{op.name}}</text>
+          {{/svg-drag}}
         {{/link-to}}
-        {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
-          <text x="25" y="65" class="stromx-svg-operator-name">{{op.name}}</text>
-        {{/svg-drag}}
         {{#each input in op.inputs itemController="input-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
             <rect {{bind-attr x=input.x}} {{bind-attr y=input.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
