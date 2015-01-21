@@ -1,17 +1,25 @@
-import OperatorSvgController from 'stromx-web/controllers/operator-svg';
+import Ember from "ember";
 
-export default OperatorSvgController.extend({
-  wasRemoved: false,
+export default Ember.ObjectController.extend({
+  wasCancelled: false,
   actions: {
     dismiss: function () {
-      this.transitionToRoute('files');
+      if (this.get('wasCancelled')) {
+        this.transitionToRoute('stream');
+      } else {
+        this.transitionToRoute('files');
+      }
+      this.set('wasCancelled', false);
     },
-    save: function () {
+    saveAndClose: function () {
       this.get('file').then(function(file) {
         file.set('saved', true);
         file.set('opened', false);
         file.save();
       });
+    },
+    cancel: function() {
+      this.set('wasCancelled', true);
     }
   }
 });

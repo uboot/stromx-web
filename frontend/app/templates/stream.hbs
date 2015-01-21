@@ -1,26 +1,41 @@
-<h1>Stream</h1>
-
-<div class="stromx-center-buttons">
-  {{#if active}}
-    {{#if paused}}
-      <div class="btn-group">
-        <button type="button" {{action "resume" }} class="btn btn-default">Resume</button>
-        <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      </div>
-    {{else}}
-      <div class="btn-group">
-        <button type="button" {{action "pause"}} class="btn btn-default">Pause</button>
-        <button type="button" {{action "stop"}} class="btn btn-default">Stop</button>
-      </div>
-    {{/if}}
-  {{else}}
-    <div class="btn-group">
-      <button type="button" {{action "start"}} class="btn btn-default">Start</button>
-      <button type="button" {{action "save"}} class="btn btn-default close-button">Save</button>
-      {{#link-to "stream.close" class="btn btn-default"}}Close{{/link-to}}
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        stromx-web
+      </a>
     </div>
-  {{/if}}
-</div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        {{#if active}}
+          {{#if paused}}
+            <li><a {{action "resume" }}>Resume</a></li>
+            <li><a {{action "stop"}}>Stop</a></li>
+          {{else}}
+            <li><a {{action "pause"}}>Pause</a></li>
+            <li><a {{action "stop"}}>Stop</a></li>
+          {{/if}}
+        {{else}}
+          <li><a {{action "start"}}>Start</a></li>
+          <li><a {{action "save"}}>Save</a></li>
+          <li>{{#link-to "stream.close"}}Close{{/link-to}}</li>
+        {{/if}}
+      </ul>
+      <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<h1>Stream</h1>
 
 <div class="row">
   <div class="col-sm-4">

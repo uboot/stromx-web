@@ -1,11 +1,30 @@
-<h1>Files</h1>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        stromx-web
+      </a>
+    </div>
 
-<div class="stromx-center-buttons">
-  <div class="btn-group">
-    {{#link-to 'files.new' type="button" class="btn btn-default"}}New File{{/link-to}}
-    {{#link-to 'files.upload' type="button" class="btn btn-default"}}Upload File{{/link-to}}
-  </div>
-</div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li>{{#link-to 'files.new'}}New File{{/link-to}}</li>
+        <li>{{#link-to 'files.upload'}}Upload File{{/link-to}}</li>
+      </ul>
+      <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<h1>Files</h1>
 
 <div class="row">
   <div class="col-sm-2"></div>
