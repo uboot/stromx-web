@@ -822,7 +822,8 @@ class Parameter(Item):
     @value.setter
     def value(self, value):
         assert(type(value) == str or type(value) == unicode or
-               type(value) == float or type(value) == int)
+               type(value) == float or type(value) == int or
+               type(value) == bool)
         variant = self.__param.variant()
         data = conversion.toStromxData(variant, value)
         self.__setParameter(data)

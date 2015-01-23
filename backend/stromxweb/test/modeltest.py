@@ -958,6 +958,15 @@ class ParametersTest(unittest.TestCase):
                                  'value': 1}})
         self.assertEqual(1, valueParam.data['parameter']['value'])
         
+    def testSetOutputIndex(self):
+        self.stromxStream.deinitializeOperator(self.dummyCamera)
+        self.model.operators.addStromxOp(self.dummyCamera, self.stream)
+        param = self.parameters['0']
+        
+        param.set({'parameter': {'id': '7',
+                                 'value': True}})
+        self.assertEqual(True, param.data['parameter']['value'])
+        
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()

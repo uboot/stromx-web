@@ -18,6 +18,12 @@ export default Ember.ObjectController.extend({
         file.save();
       });
     },
+    close: function () {
+      this.get('file').then(function(file) {
+        file.set('opened', false);
+        file.save();
+      });
+    },
     cancel: function() {
       this.set('wasCancelled', true);
     }
