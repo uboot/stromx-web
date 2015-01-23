@@ -53,14 +53,14 @@
                   {{#link-to 'stream' file.stream class="stromx-file-name"}}{{file.name}}{{/link-to}}
                 {{/if}}
                 <a {{action "edit" file}} class="stromx-rename-file">
-                  <span class="glyphicon glyphicon-pencil pull-right stromx-space" aria-hidden="true"></span>
+                  <span class="glyphicon glyphicon-pencil pull-right stromx-margin-left" aria-hidden="true"></span>
                 </a>
                 <a {{bind-attr href=file.url}} download>
-                  <span class="glyphicon glyphicon-download-alt pull-right stromx-space" aria-hidden="true"></span>
+                  <span class="glyphicon glyphicon-download-alt pull-right stromx-margin-left" aria-hidden="true"></span>
                 </a>
                 {{#if file.closed}}
                   {{#link-to 'file.delete' file type="button" class="stromx-delete-file"}}
-                    <span class="glyphicon glyphicon-trash pull-right stromx-space" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span>
                   {{/link-to}}
                 {{/if}}
               {{else}}
