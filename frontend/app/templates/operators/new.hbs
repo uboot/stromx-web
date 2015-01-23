@@ -1,11 +1,18 @@
 <div class="form-group">
-  <label for="type">Operator</label>
-  {{view "select" value=operator content=operators optionLabelPath="content.type" prompt="Select an operator" id="type"}}
+  <label for="package">Package</label>
+  {{view "select" value=selectedPackage content=packages optionLabelPath="content.name" prompt="Select a package" id="package"}}
 </div>
+
+<div class="form-group">
+  <label for="type">Operator</label>
+  {{view "select" value=selectedOperator content=selectedPackage.operators optionLabelPath="content.type" prompt="Select an operator" id="type"}}
+</div>
+
 <div class="form-group">
   <label for="name">Name</label>
   {{input valueBinding="name" class="form-control" placeholder="Enter operator name" id="name"}}
 </div>
+
 
 
 <div class="form-group">

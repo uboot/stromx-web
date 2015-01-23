@@ -47,8 +47,7 @@ class LogoutHandler(BaseHandler):
         # interaction (unless they have separately logged out of Google in
         # the meantime).
         self.clear_cookie(config['USER_COOKIE'])
-        self.write('You are now logged out. '
-                   'Click <a href="/">here</a> to log back in.')
+        self.render("logout.html")
 
 class ItemsHandler(BaseHandler):
     # FIXME: disable cross-origin connections by removing the function below

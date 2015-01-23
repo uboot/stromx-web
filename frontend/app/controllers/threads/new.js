@@ -10,9 +10,11 @@ export default Ember.Controller.extend({
         name: name,
         stream: stream
       });
-      thread.save();
-
-      this.transitionToRoute('stream');
+      
+      var _this = this;
+      thread.save().then(function(thread) {
+        _this.transitionToRoute('thread', thread);
+      });
     }
   }
 });

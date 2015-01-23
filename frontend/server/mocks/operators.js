@@ -85,5 +85,11 @@ module.exports = function(app) {
       }
     ]});
   });
+  operatorsRouter.post('/', function(req, res) {
+    res.send({
+      'operator': { id: 5 }
+    });
+  });
+  app.use('/api/operators', operatorsRouter);
   app.use('/api/operators/*', operatorsRouter);
 };

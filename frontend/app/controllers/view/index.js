@@ -4,6 +4,7 @@ export default Ember.ObjectController.extend({
   isEditingName: false,
   sorting: ['zvalue:desc'],
   sortedObservers: Ember.computed.sort('observers', 'sorting'),
+  hasObservers: Ember.computed.gt('observers.length', 0),
 
   actions: {
     saveChanges: function() {

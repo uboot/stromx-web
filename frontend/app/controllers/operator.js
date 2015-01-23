@@ -2,8 +2,10 @@ import Ember from "ember";
 
 export default Ember.ObjectController.extend({
   isEditingName: false,
-
   isDeinitialized: Ember.computed.equal('status', 'none'),
+  hasInputs: Ember.computed.gt('inputs.length', 0),
+  hasOutputs: Ember.computed.gt('outputs.length', 0),
+  hasParameters: Ember.computed.gt('parameters.length', 0),
 
   fullType: function() {
     return this.get('package') + '::' + this.get('type');

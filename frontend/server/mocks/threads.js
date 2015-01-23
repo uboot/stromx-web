@@ -12,5 +12,11 @@ module.exports = function(app) {
       }
     ]});
   });
+  threadsRouter.post('/', function(req, res) {
+    res.send({
+      'thread': { id: 2 }
+    });
+  });
+  app.use('/api/threads', threadsRouter);
   app.use('/api/threads/*', threadsRouter);
 };

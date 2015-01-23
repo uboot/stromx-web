@@ -22,5 +22,11 @@ module.exports = function(app) {
   connectionsRouter.put('/', function(req, res) {
     res.send('null');
   });
+  connectionsRouter.post('/', function(req, res) {
+    res.send({
+      'connection': { id: 3 }
+    });
+  });
+  app.use('/api/connections', connectionsRouter);
   app.use('/api/connections/*', connectionsRouter);
 };

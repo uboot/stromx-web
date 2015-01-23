@@ -32,35 +32,37 @@
   </tbody>
 </table>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>
-        Observers
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each observer in sortedObservers itemController="observer"}}
+{{#if hasObservers}}
+  <table class="table">
+    <thead>
       <tr>
-        <td>
-          {{#if observer.isInputObserver}}
-            <header class="stromx-cell-title">Input observer</header>
-            {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
-          {{else}}
-            <header class="stromx-cell-title">Parameter observer</header>
-            {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
-          {{/if}}
-          <a {{action "moveUp"}}>
-            <span class="glyphicon glyphicon-arrow-up pull-right stromx-space" aria-hidden="true"></span>
-          </a>
-          <a {{action "moveDown"}}>
-            <span class="glyphicon glyphicon-arrow-down pull-right stromx-space" aria-hidden="true"></span>
-          </a>
-        </td>
+        <th>
+          Observers
+        </th>
       </tr>
-    {{/each}}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {{#each observer in sortedObservers itemController="observer"}}
+        <tr>
+          <td>
+            {{#if observer.isInputObserver}}
+              <header class="stromx-cell-title">Input observer</header>
+              {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
+            {{else}}
+              <header class="stromx-cell-title">Parameter observer</header>
+              {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
+            {{/if}}
+            <a {{action "moveUp"}}>
+              <span class="glyphicon glyphicon-arrow-up pull-right stromx-space" aria-hidden="true"></span>
+            </a>
+            <a {{action "moveDown"}}>
+              <span class="glyphicon glyphicon-arrow-down pull-right stromx-space" aria-hidden="true"></span>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
 
 {{outlet}}

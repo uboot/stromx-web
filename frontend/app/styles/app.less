@@ -1,17 +1,17 @@
 @import "../../bower_components/bootstrap/less/bootstrap.less";
 
 /* Put your CSS here */
-h1 {
- text-align: center;
-}
 
 .stromx-subtitle {
  text-align: center;
 }
 
-.stromx-center-buttons {
+.stromx-center {
   text-align: center;
-  height: 50px;
+}
+
+.stromx-margin-top {
+  margin-top: @padding-large-vertical;
 }
 
 .stromx-stream-view {
@@ -90,16 +90,18 @@ h1 {
   background-repeat: repeat-x;
 }
 
-.stromx-space {
-  margin-left: @padding-base-horizontal;
-}
-
-.stromx-color-box{
+.stromx-color-box {
   float: left;
   width: 15px;
   height: 15px;
   margin-top: 2px;
   margin-right: 5px;
   border-radius: 5px;
+}
+
+.stromx-new-buttons {
+  margin-top: @padding-base-horizontal;
+  margin-left: @padding-base-vertical;
+  position: absolute;
 }
 

@@ -8,9 +8,9 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">
-        stromx-web
-      </a>
+      {{#link-to "stream" class="navbar-brand"}}
+        {{file.name}}
+      {{/link-to}}
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -35,8 +35,6 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<h1>Stream</h1>
-
 <div class="row">
   <div class="col-sm-4">
     <div class="panel panel-default">
@@ -47,7 +45,7 @@
   </div>
 
   <div class="col-sm-8">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs stromx-nav-tabs">
       <li {{bind-attr class="isVisible:active"}} role="presentation"><a {{action "display"}}>Stream</a></li>
       {{#each view in views itemController="view"}}
         <li {{bind-attr class="view.isVisible:active"}} role="presentation"><a {{action "display"}}>{{view.name}}</a></li>

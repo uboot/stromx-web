@@ -1,4 +1,31 @@
-<div class="stromx-stream-view panel panel-default">
+<form class="form-inline stromx-margin-top ">
+  <div class="btn-group" role="group">
+    {{#each thread in threads itemController="thread"}}
+      {{#link-to "thread" thread class="btn btn-default"}}
+        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+        {{thread.name}}
+      {{/link-to}}
+    {{/each}}
+  </div>
+
+  <div class="btn-group" role="group">
+    {{#each view in views itemController="view"}}
+      {{#link-to "view" view class="btn btn-default"}}
+        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+        {{view.name}}
+      {{/link-to}}
+    {{/each}}
+  </div>
+</form>
+
+<div class="stromx-stream-view stromx-margin-top panel panel-default">
+  <form class="form-inline stromx-new-buttons">
+    <div class="btn-group" role="group">
+      {{#link-to "operators.new" class="btn btn-default stromx-new-operator"}}New operator{{/link-to}}
+      {{#link-to "threads.new" class="btn btn-default"}}New thread{{/link-to}}
+      {{#link-to "views.new" class="btn btn-default"}}New view{{/link-to}}
+    </div>
+  </form>
   <svg width="1280" height="1024" class="stromx-stream-svg" viewBox="0 0 1280 1024">
     <defs>
       <g id="arrows" transform="scale(5)" class="stromx-svg-arrows">
@@ -20,6 +47,7 @@
         {{/link-to}}
         {{#each input in op.inputs itemController="input-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
+            <title>{{input.title}}</title>
             <rect {{bind-attr x=input.x}} {{bind-attr y=input.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
           {{#if input.isDraggingConnection}}
@@ -28,6 +56,7 @@
         {{/each}}
         {{#each output in op.outputs itemController="output-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
+            <title>{{output.title}}</title>
             <rect {{bind-attr x=output.x}} {{bind-attr y=output.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
           {{#if output.isDraggingConnection}}
@@ -54,25 +83,6 @@
   </svg>
 </div>
 
-<form class="form-inline">
-  <div class="btn-group" role="group">
-    {{#each thread in threads itemController="thread"}}
-      {{#link-to "thread" thread class="btn btn-default"}}{{thread.name}}{{/link-to}}
-    {{/each}}
-  </div>
 
-  <div class="btn-group" role="group">
-    {{#each view in views itemController="view"}}
-      {{#link-to "view" view class="btn btn-default"}}{{view.name}}{{/link-to}}
-    {{/each}}
-  </div>
-</form>
 
-<form class="form-inline">
-  <div class="btn-group" role="group">
-    {{#link-to "operators.new" class="btn btn-default stromx-new-operator"}}New operator{{/link-to}}
-    {{#link-to "threads.new" class="btn btn-default"}}New thread{{/link-to}}
-    {{#link-to "views.new" class="btn btn-default"}}New view{{/link-to}}
-  </div>
-</form>
 

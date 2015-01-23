@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">
-        stromx-web
+        Files
       </a>
     </div>
 
@@ -24,14 +24,19 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<h1>Files</h1>
-
 <div class="row">
   <div class="col-sm-2"></div>
 
   <div class="col-sm-8">
     {{outlet}}
     <table class="table">
+      <thead>
+        <tr>
+          <th>
+            Files
+          </th>
+        </tr>
+      </thead>
       <tbody>
         {{#each file in this itemController="file"}}
           <tr>

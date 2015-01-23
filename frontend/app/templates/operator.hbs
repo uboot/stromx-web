@@ -5,7 +5,7 @@
   {{/link-to}}
 </h3>
 
-<div class="stromx-center-buttons">
+<div class="stromx-center">
   {{#if isDeinitialized}}
     <button {{action "initialize"}} type="button" class="btn btn-default">Initialize</button>
   {{else}}
@@ -13,7 +13,7 @@
   {{/if}}
 </div>
 
-<table class="table">
+<table class="table stromx-margin-top">
   <tbody>
     <tr>
       <td>
@@ -58,128 +58,134 @@
   </tbody>
 </table>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Inputs</th>
-    </tr>
-  </thead>
-  </tr>
-  <tbody>
-    {{#each input in inputs itemController="input"}}
+{{#if hasInputs}}
+  <table class="table">
+    <thead>
       <tr>
-        <td>
-          <header class="stromx-cell-title">{{input.title}}</header>
-          {{#unless input.isEditingObserver}}
-            {{input.variant.title}}
-            <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
-          {{else}}
-            <div class="form-group">
-              {{view "select" value=input.view content=input.views optionLabelPath="content.name"}}
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              {{#if input.observerExists}}
-                <button {{action "showObserver"}} class="btn btn-primary">Show</button>
-              {{else}}
-                <button {{action "addObserver"}} class="btn btn-primary">Add</button>
-              {{/if}}
-            </div>
-          {{/unless}}
-        </td>
+        <th>Inputs</th>
       </tr>
-    {{/each}}
-  </tbody>
-</table>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Outputs</th>
+    </thead>
     </tr>
-  </thead>
-  </tr>
-  <tbody>
-    {{#each output in outputs}}
+    <tbody>
+      {{#each input in inputs itemController="input"}}
+        <tr>
+          <td>
+            <header class="stromx-cell-title">{{input.title}}</header>
+            {{#unless input.isEditingObserver}}
+              {{input.variant.title}}
+              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
+            {{else}}
+              <div class="form-group">
+                {{view "select" value=input.view content=input.views optionLabelPath="content.name"}}
+                <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                {{#if input.observerExists}}
+                  <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+                {{else}}
+                  <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                {{/if}}
+              </div>
+            {{/unless}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+
+{{#if hasOutputs}}
+  <table class="table">
+    <thead>
       <tr>
-        <td>
-          <header class="stromx-cell-title">{{output.title}}</header>
-          {{output.variant.title}}
-        </td>
+        <th>Outputs</th>
       </tr>
-    {{/each}}
-  </tbody>
-</table>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Parameter</th>
+    </thead>
     </tr>
-  </thead>
-  </tr>
-  <tbody>
-    {{#each param in parameters itemController="parameter"}}
+    <tbody>
+      {{#each output in outputs}}
+        <tr>
+          <td>
+            <header class="stromx-cell-title">{{output.title}}</header>
+            {{output.variant.title}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
+
+{{#if hasParameters}}
+  <table class="table">
+    <thead>
       <tr>
-        <td>
-          <header class="stromx-cell-title">{{param.title}}</header>
-          {{#if param.isEditing}}
-            <form class="form-inline">
-              {{#if param.isBool}}
-                <div class="form-group">
-                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                  {{#if param.value}}
-                    <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
-                  {{else}}
-                    <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
-                  {{/if}}
-                </div>
-              {{else}} 
-                {{#if param.isTrigger}}
+        <th>Parameter</th>
+      </tr>
+    </thead>
+    </tr>
+    <tbody>
+      {{#each param in parameters itemController="parameter"}}
+        <tr>
+          <td>
+            <header class="stromx-cell-title">{{param.title}}</header>
+            {{#if param.isEditing}}
+              <form class="form-inline">
+                {{#if param.isBool}}
                   <div class="form-group">
                     <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "trigger"}} class="btn btn-primary">Send</button>
-                  </div>
-                {{else}}
-                  <div class="form-group">
-                    {{#if param.isEnum}}
-                      {{view "select" value=param.value content=param.descriptions 
-                        optionValuePath="content.value" optionLabelPath="content.title"}}
+                    {{#if param.value}}
+                      <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
                     {{else}}
-                      {{input value=param.editValue class="form-control"}}
+                      <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
                     {{/if}}
                   </div>
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-                  </div>
+                {{else}} 
+                  {{#if param.isTrigger}}
+                    <div class="form-group">
+                      <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                      <button {{action "trigger"}} class="btn btn-primary">Send</button>
+                    </div>
+                  {{else}}
+                    <div class="form-group">
+                      {{#if param.isEnum}}
+                        {{view "select" value=param.value content=param.descriptions 
+                          optionValuePath="content.value" optionLabelPath="content.title"}}
+                      {{else}}
+                        {{input value=param.editValue class="form-control"}}
+                      {{/if}}
+                    </div>
+                    <div class="form-group">
+                      <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                      <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                    </div>
+                  {{/if}}
                 {{/if}}
-              {{/if}}
-            </form>
-          {{/if}}
-          {{#if param.timedOut}}
-            <em>Access timed out</em>
-            <a {{action "reload"}}>
-              <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-            </a>
-          {{/if}}
-          {{#if param.accessFailed}}
-            <em>Access failed</em>
-            <a {{action "reload"}}>
-              <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-            </a>
-          {{/if}}
-          {{param.displayValue}}
-          {{#if param.writable}}
-            {{#unless param.isEditing}}
-              <a {{action "editValue"}}>
-                <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+              </form>
+            {{/if}}
+            {{#if param.timedOut}}
+              <em>Access timed out</em>
+              <a {{action "reload"}}>
+                <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
               </a>
-            {{/unless}}
-          {{/if}}
-        </td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
+            {{/if}}
+            {{#if param.accessFailed}}
+              <em>Access failed</em>
+              <a {{action "reload"}}>
+                <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
+              </a>
+            {{/if}}
+            {{param.displayValue}}
+            {{#if param.writable}}
+              {{#unless param.isEditing}}
+                <a {{action "editValue"}}>
+                  <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+                </a>
+              {{/unless}}
+            {{/if}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}
 
 {{outlet}}
 

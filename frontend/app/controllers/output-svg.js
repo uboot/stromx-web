@@ -71,7 +71,11 @@ export default Ember.ObjectController.extend({
         thread: null,
         stream: streamController.get('model')
       });
-      connection.save();
+      
+      var _this = this;
+      connection.save().then(function(connection) {
+        _this.transitionToRoute('connection', connection);
+      });
     },
     enter: function() {
       var stream = this.get('parentController.parentController');
