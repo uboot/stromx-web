@@ -4,6 +4,7 @@ import ParameterObserverModel from 'stromx-web/models/parameter-observer';
 import InputObserverModel from 'stromx-web/models/input-observer';
 
 export default Ember.ObjectController.extend({
+  needs: ['stream'],
   isEditingColor: false,
   isEditingVisualization: false,
   

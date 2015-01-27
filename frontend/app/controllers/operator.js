@@ -61,7 +61,7 @@ export default Ember.ObjectController.extend({
 
     return Ember.RSVP.all([removeIncoming, removeOutgoing]);
   },
-
+  
   actions: {
     editName: function() {
       this.set('isEditingName', true);

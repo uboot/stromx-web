@@ -16,7 +16,7 @@ test('visit /streams/2', function() {
   visit('/streams/2');
 
   andThen(function() {
-    equal(find('h1').text(), 'Stream', 'The stream template is shown');
+    equal(find('h3').text(), 'Stream', 'The stream template is shown');
     equal(find('.stromx-stream-svg').length, 1, 'The stream view is shown');
   });
 });

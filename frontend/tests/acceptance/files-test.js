@@ -54,12 +54,3 @@ test('cancel rename file', function() {
   });
 });
 
-test('close stream', function() {
-  visit('/streams/2');
-
-  click('button.close-button');
-
-  andThen(function() {
-    equal(find('tbody tr').length, 2, 'A list of two files is shown');
-  });
-});

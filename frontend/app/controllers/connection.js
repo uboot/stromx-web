@@ -21,22 +21,6 @@ export default Ember.ObjectController.extend({
       }
     });
   }.property('thread.color'),
-
-  threadName: function(key, value) {
-    if (value !== undefined) {
-      return value;
-    }
-
-    var _this = this;
-    this.get('thread').then(function(thread) {
-      if (thread === null) {
-        _this.set('threadName', 'None');
-      }
-      else {
-        _this.set('threadName', thread.get('name'));
-      }
-    });
-  }.property('thread.name'),
   
   threads: function() {
     var threads = this.get('stream.threads').map( function(thread) {
@@ -54,6 +38,20 @@ export default Ember.ObjectController.extend({
     
     return threads;
   }.property('stream.threads'),
+
+  title: function(key, value) {
+    if (value !== undefined) {
+      return value;
+    }
+    
+    var _this = this;
+    Ember.RSVP.all([
+      this.get('input'),
+      this.get('output')
+    ]).then(function(connectors) {
+      _this.set('title', connectors[0].get('title') + ' -> ' + connectors[1].get('title'));
+    });
+  }.property('input', 'output'),
 
   actions: {
     editThread: function() {

@@ -8,9 +8,9 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      {{#link-to "stream" class="navbar-brand"}}
-        {{file.name}}
-      {{/link-to}}
+      <a class="navbar-brand" href="#">
+        stromx
+      </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -27,7 +27,7 @@
         {{else}}
           <li><a {{action "start"}}>Start</a></li>
           <li><a {{action "save"}}>Save</a></li>
-          <li>{{#link-to "stream.close"}}Close{{/link-to}}</li>
+          <li>{{#link-to "stream.close" class="stromx-close-stream"}}Close{{/link-to}}</li>
         {{/if}}
       </ul>
       <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
@@ -37,6 +37,7 @@
 
 <div class="row">
   <div class="col-sm-4">
+
     <div class="panel panel-default">
       <div class="panel-body">
         {{outlet}}

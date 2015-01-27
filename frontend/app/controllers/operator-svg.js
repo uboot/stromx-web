@@ -33,10 +33,16 @@ export default OperatorController.extend({
     },
     dragEnd: function() {
       var pos = this.get('position');
-      this.set('position', {
+      var newPos = {
         x: 25 * Math.round(pos.x / 25),
         y: 25 * Math.round(pos.y / 25)
-      });
+      };
+      
+      if (pos.x === newPos.x && pos.y === newPos.y) {
+        return;
+      }
+      
+      this.set('position', newPos);
       this.get('model').save();
     },
     show: function() {

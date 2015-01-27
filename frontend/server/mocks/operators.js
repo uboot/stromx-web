@@ -12,8 +12,8 @@ module.exports = function(app) {
         version: '0.3.0',
         parameters: [],
         position: {
-          x: 20,
-          y: 20
+          x: 25,
+          y: 25
         },
         inputs: [],
         outputs: [5],
@@ -28,8 +28,8 @@ module.exports = function(app) {
         version: '0.3.0',
         parameters: [1],
         position: {
-          x: 160,
-          y: 40
+          x: 150,
+          y: 50
         },
         inputs: [2],
         outputs: [],
@@ -44,8 +44,8 @@ module.exports = function(app) {
         version: '0.0.1',
         parameters: [2, 3, 4, 6, 7, 12],
         position: {
-          x: 240,
-          y: 40
+          x: 250,
+          y: 50
         },
         inputs: [1, 3],
         outputs: [4],
@@ -60,7 +60,7 @@ module.exports = function(app) {
         version: '0.0.1',
         parameters: [5],
         position: {
-          x: 40,
+          x: 50,
           y: 100
         },
         inputs: [],
@@ -76,8 +76,8 @@ module.exports = function(app) {
         version: '0.0.1',
         parameters: [8, 9, 10, 11],
         position: {
-          x: 120,
-          y: 160
+          x: 125,
+          y: 150
         },
         inputs: [],
         outputs: [],

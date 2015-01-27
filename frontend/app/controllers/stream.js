@@ -20,7 +20,7 @@ export default Ember.ObjectController.extend({
   arrowsUri: function() {
     return this.get('target.url') + '#arrows';
   }.property('target.url'),
-
+      
   actions: {
     save: function () {
       this.get('file').then(function(file) {
