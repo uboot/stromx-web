@@ -10,7 +10,7 @@ export default Ember.Controller.extend({
         name: name,
         stream: stream
       });
-      
+
       var _this = this;
       view.save().then(function(view) {
         _this.transitionToRoute('view', view);
