@@ -70,7 +70,6 @@
         <th>Inputs</th>
       </tr>
     </thead>
-    </tr>
     <tbody>
       {{#each input in inputs itemController="input"}}
         <tr>
@@ -104,7 +103,6 @@
         <th>Outputs</th>
       </tr>
     </thead>
-    </tr>
     <tbody>
       {{#each output in outputs}}
         <tr>
@@ -125,7 +123,6 @@
         <th>Parameter</th>
       </tr>
     </thead>
-    </tr>
     <tbody>
       {{#each param in parameters itemController="parameter"}}
         <tr>
@@ -142,7 +139,7 @@
                       <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
                     {{/if}}
                   </div>
-                {{else}} 
+                {{else}}
                   {{#if param.isTrigger}}
                     <div class="form-group">
                       <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
@@ -151,7 +148,7 @@
                   {{else}}
                     <div class="form-group">
                       {{#if param.isEnum}}
-                        {{view "select" value=param.value content=param.descriptions 
+                        {{view "select" value=param.value content=param.descriptions
                           optionValuePath="content.value" optionLabelPath="content.title"}}
                       {{else}}
                         {{input value=param.editValue class="form-control"}}
