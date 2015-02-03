@@ -2,9 +2,12 @@
 
 import base64
 import cv2
+import io
 import numpy as np
+import re
 
 import stromx.runtime
+import stromx.cvsupport
 
 def isNumber(variant):
     if variant.isVariant(stromx.runtime.DataVariant.INT):
@@ -137,7 +140,25 @@ def stromxMatrixToData(matrix):
     }
     
     return data
+
+def dataToStromxImage(data):
+    content = re.sub("data:.*;base64,", "", data, re.MULTILINE)
+    buf = np.frombuffer(base64.decodestring(content), dtype = np.uint8)
+    array = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED)
     
+    if len(array.shape) == 3 and array.shape[2] == 3:
+        image = stromx.cvsupport.Image(array.shape[1], array.shape[0],
+                                       stromx.runtime.Image.PixelType.BGR_24)
+        imageData = np.asarray(image.data())
+        imageData[:, :] = array.reshape(array.shape[0], array.shape[1] * 3)
+    elif len(array.shape) == 2:
+        image = stromx.cvsupport.Image(array.shape[1], array.shape[0],
+                                       stromx.runtime.Image.PixelType.MONO_8)
+        imageData = np.asarray(image.data())
+        imageData[:, :] = array.reshape(array.shape[0], array.shape[1])
+    else:
+        assert(False)
+    return image
 
 def stromxColorToString(color):
     return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())
