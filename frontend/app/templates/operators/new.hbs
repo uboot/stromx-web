@@ -1,3 +1,12 @@
+<ol class="breadcrumb">
+  <li>{{#link-to "stream.index"}}{{model.file.name}}{{/link-to}}</li>
+  <li>New operator</li>
+</ol>
+
+<h3>
+  New operator
+</h3>
+
 <div class="form-group">
   <label for="package">Package</label>
   {{view "select" value=selectedPackage content=packages optionLabelPath="content.name" prompt="Select a package" id="package"}}
@@ -16,6 +25,6 @@
 
 
 <div class="form-group">
-  {{#link-to 'stream.index' type="button" class="btn btn-default"}}Cancel{{/link-to}}
-  <button {{action 'save'}} {{bind-attr class=":btn :btn-primary saveIsDisabled:disabled"}} type="submit">Save</button>
+  <button {{action "cancel"}} class="btn btn-default" type="submit">Cancel</button>
+  <button {{action "save"}} {{bind-attr class=":btn :btn-primary saveIsDisabled:disabled"}} type="submit">Save</button>
 </div>

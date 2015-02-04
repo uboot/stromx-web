@@ -7,7 +7,7 @@ export default Ember.Controller.extend({
     if (value !== undefined) {
       return value;
     }
-    
+
     var _this = this;
     this.store.find('operatorTemplate').then(function(templates) {
       var packageNames = new Set(templates.mapBy('package'));
@@ -22,12 +22,16 @@ export default Ember.Controller.extend({
       packages = packages.sortBy('package');
       _this.set('packages', packages);
     });
-    
+
     return [];
   }.property(),
   saveIsDisabled: Ember.computed.equal('selectedOperator', null),
   name: '',
   actions: {
+    cancel: function() {
+      this.set('name', '');
+      this.transitionToRoute('stream.index', this.get('model'));
+    },
     save: function () {
       var stream = this.get('model');
       var op = this.store.createRecord('operator', {
@@ -41,7 +45,8 @@ export default Ember.Controller.extend({
           y: 0
         }
       });
-      
+
+      this.set('name', '');
       var _this = this;
       op.save().then(function(op) {
         _this.transitionToRoute('operator', op);
