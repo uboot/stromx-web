@@ -89,6 +89,8 @@ def toStromxData(variant, value):
         return stromx.runtime.String(str(value))
     elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
         return stromx.runtime.TriggerData()
+    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+        return dataToStromxImage(value)
     else:
         return None
     
