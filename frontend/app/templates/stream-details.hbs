@@ -70,13 +70,13 @@
       {{#link-to "connection.index" connection}}
         <path {{bind-attr d=connection.path}} {{bind-attr stroke=connection.color}} class="stromx-svg-connection-path"/>
         {{#if connection.displayStartArrow}}
-          <use id="startArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.startArrowTransform}}/>
+          <use id="startArrows" xlink:href="#arrows" {{bind-attr transform=connection.startArrowTransform}}/>
         {{/if}}
         {{#if connection.displayCenterArrow}}
-          <use id="centerArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.centerArrowTransform}}/>
+          <use id="centerArrows" xlink:href="#arrows" {{bind-attr transform=connection.centerArrowTransform}}/>
         {{/if}}
         {{#if connection.displayEndArrow}}
-          <use id="endArrows" {{bind-attr xlink:href=this.arrowsUri}} {{bind-attr transform=connection.endArrowTransform}}/>
+          <use id="endArrows" xlink:href="#arrows" {{bind-attr transform=connection.endArrowTransform}}/>
         {{/if}}
       {{/link-to}}
     {{/each}}

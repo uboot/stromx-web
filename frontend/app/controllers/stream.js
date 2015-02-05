@@ -17,10 +17,6 @@ export default Ember.ObjectController.extend({
     return 'url(' + this.get('target.url') + '#grid)';
   }.property('target.url'),
 
-  arrowsUri: function() {
-    return this.get('target.url') + '#arrows';
-  }.property('target.url'),
-      
   actions: {
     save: function () {
       this.get('file').then(function(file) {
