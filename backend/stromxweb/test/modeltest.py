@@ -877,9 +877,10 @@ class ParametersTest(unittest.TestCase):
     def testDataImage(self):
         self.model.operators.addStromxOp(self.dummyCamera, self.stream)
         param = self.parameters['10']
-        data = param.data['parameter']['value']
+        data = param.data['parameter']
         
-        self.assertEqual('0 x 0', data)
+        self.assertEqual('0 x 0', data['value'])
+        self.assertEqual('image', data['variant']['ident'])
         
     def testSetImage(self):
         self.model.operators.addStromxOp(self.dummyCamera, self.stream)

@@ -6,7 +6,7 @@ module.exports = function(app) {
       {
         id: 1,
         title: 'Port',
-        variant: { 
+        variant: {
           ident: 'int',
           title: 'Int32'
         },
@@ -22,7 +22,7 @@ module.exports = function(app) {
       {
         id: 2,
         title: 'Data flow',
-        variant: { 
+        variant: {
           ident: 'enum',
           title: 'Enum'
         },
@@ -38,7 +38,7 @@ module.exports = function(app) {
       {
         id: 3,
         title: 'Kernel size',
-        variant: { 
+        variant: {
           ident: 'float',
           title: 'Float32'
         },
@@ -54,7 +54,7 @@ module.exports = function(app) {
       {
         id: 4,
         title: 'Coefficient',
-        variant: { 
+        variant: {
           ident: 'float',
           title: 'Float32'
         },
@@ -70,7 +70,7 @@ module.exports = function(app) {
       {
         id: 6,
         title: 'Offset',
-        variant: { 
+        variant: {
           ident: 'float',
           title: 'Float32'
         },
@@ -86,7 +86,7 @@ module.exports = function(app) {
       {
         id: 5,
         title: 'Host',
-        variant: { 
+        variant: {
           ident: 'string',
           title: 'String'
         },
@@ -102,7 +102,7 @@ module.exports = function(app) {
       {
         id: 7,
         title: 'Kernel variant',
-        variant: { 
+        variant: {
           ident: 'enum',
           title: 'Enum'
         },
@@ -118,7 +118,7 @@ module.exports = function(app) {
       {
         id: 8,
         title: 'Matrix parameter',
-        variant: { 
+        variant: {
           ident: 'matrix',
           title: 'Int Matrix'
         },
@@ -142,7 +142,7 @@ module.exports = function(app) {
       {
         id: 9,
         title: 'Strange variant',
-        variant: { 
+        variant: {
           ident: 'none',
           title: ''
         },
@@ -158,7 +158,7 @@ module.exports = function(app) {
       {
         id: 10,
         title: 'Trigger',
-        variant: { 
+        variant: {
           ident: 'trigger',
           title: 'Trigger'
         },
@@ -174,7 +174,7 @@ module.exports = function(app) {
       {
         id: 11,
         title: 'Bool property',
-        variant: { 
+        variant: {
           ident: 'bool',
           title: 'Bool'
         },
@@ -190,7 +190,7 @@ module.exports = function(app) {
       {
         id: 12,
         title: 'Kernel variant',
-        variant: { 
+        variant: {
           ident: 'enum',
           title: 'Enum'
         },
@@ -201,6 +201,22 @@ module.exports = function(app) {
         access: 'full',
         descriptions: [3, 4, 5],
         operator: 2,
+        observers: []
+      },
+      {
+        id: 13,
+        title: 'Image',
+        variant: {
+          ident: 'image',
+          title: 'RGB Image'
+        },
+        value: '20 x 30',
+        minimum: 0,
+        maximum: 0,
+        state: 'current',
+        access: 'full',
+        descriptions: [],
+        operator: 4,
         observers: []
       }
     ]});

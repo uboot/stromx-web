@@ -15,6 +15,10 @@ export default Ember.ObjectController.extend({
     return this.get('variant.ident') === 'trigger';
   }.property('variant'),
 
+  isFile: function() {
+    return this.get('variant.ident') === 'image';
+  }.property('variant'),
+
   timedOut: function() {
     return this.get('state') === 'timedOut';
   }.property('state'),
@@ -25,12 +29,12 @@ export default Ember.ObjectController.extend({
 
   writable: function() {
     var variant = this.get('variant.ident');
-    var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger'];
+    var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger', 'image'];
     var currentAndKnown = this.get('current') && knownTypes.contains(variant);
     if (! currentAndKnown) {
       return false;
     }
-    
+
     switch(this.get('access')) {
     case 'full':
       return true;
@@ -60,20 +64,23 @@ export default Ember.ObjectController.extend({
       switch (this.get('variant.ident')) {
         case 'int':
           v = parseInt(value, 10);
+          if (isNaN(v)) {
+            return value;
+          }
           break;
         case 'float':
           v = parseFloat(value);
+          if (isNaN(v)) {
+            return value;
+          }
           break;
         case 'string':
+        case 'image':
           v = value;
           break;
         default:
       }
-      
-      if (isNaN(v)) {
-        return value;
-      }
-        
+
       this.set('value', v);
       return v;
     }

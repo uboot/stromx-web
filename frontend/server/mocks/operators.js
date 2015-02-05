@@ -74,7 +74,7 @@ module.exports = function(app) {
         type: 'Test',
         package: 'mypackage',
         version: '0.0.1',
-        parameters: [8, 9, 10, 11],
+        parameters: [8, 9, 10, 11, 13],
         position: {
           x: 125,
           y: 150
