@@ -11,7 +11,7 @@ module.exports = function(app) {
         paused: false,
         operators: [0, 1, 2, 4],
         connections: [1, 2],
-        views: [1],
+        views: [1, 2],
         threads: [1]
       },
       {

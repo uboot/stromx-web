@@ -55,7 +55,7 @@ export default Ember.ObjectController.extend({
     if (!variant || variant !== 'image') {
       return;
     }
-    
+
     var value = this.get('value.value');
     if (!value) {
       return;
@@ -69,7 +69,7 @@ export default Ember.ObjectController.extend({
     if (!variant || variant !== 'image') {
       return;
     }
-    
+
     var value = this.get('value.value');
     if (!value) {
       return;
@@ -92,7 +92,7 @@ export default Ember.ObjectController.extend({
     if (!variant || variant !== 'matrix') {
       return;
     }
-    
+
     var value = this.get('value.value');
     if (!value || value.cols !== 4) {
       return;
