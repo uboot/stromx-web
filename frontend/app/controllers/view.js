@@ -1,6 +1,6 @@
 import Ember from "ember";
-
 import InputObserver from 'stromx-web/models/input-observer';
+import { defaultObserverColor } from 'stromx-web/colors';
 
 export default Ember.ObjectController.extend({
   isVisible: function() {
@@ -23,7 +23,7 @@ export default Ember.ObjectController.extend({
       input: input,
       zvalue: numObservers + 1,
       properties: {
-        color: '#000000'
+        color: defaultObserverColor
       },
       visualization: 'default'
     });

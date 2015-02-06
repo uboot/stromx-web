@@ -1,4 +1,5 @@
 import Ember from "ember";
+import { defaultThreadColor } from 'stromx-web/colors';
 
 export default Ember.Controller.extend({
   name: '',
@@ -12,7 +13,8 @@ export default Ember.Controller.extend({
       var name = this.get('name');
       var thread = this.store.createRecord('thread', {
         name: name,
-        stream: stream
+        stream: stream,
+        color: defaultThreadColor
       });
 
       this.set('name', '');

@@ -9,3 +9,6 @@ export var colors = [{
     value: '#2075bc',
   }
 ];
+
+export var defaultThreadColor = '#be202e';
+export var defaultObserverColor = '#2075bc';
