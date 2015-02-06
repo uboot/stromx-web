@@ -1588,7 +1588,7 @@ class ConnectorValuesTest(unittest.TestCase):
     def testHandlerObserver(self):
         self.model.connectorValues.handlers.append(self.setValue)
         self.observerStream.active = True
-        time.sleep(0.2)
+        time.sleep(0.3)
         self.observerStream.active = False
         
         self.assertEqual('int', self.data['connectorValue']['variant'])

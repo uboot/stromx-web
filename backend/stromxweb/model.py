@@ -12,6 +12,8 @@ import stromx.runtime
 import conversion
 import view
 
+_EXECUTION_DELAY = 10 # ms
+
 def _str(value):
     return str(value.encode('utf-8'))
 
@@ -348,6 +350,9 @@ class Stream(Item):
             self.__stream = reader.readStream(zipInput, "stream.xml", factory)
         else:
             self.__stream = stromx.runtime.Stream()
+            
+        # set execution delay to a sane value to avoid CPU overload
+        self.__stream.setDelay(_EXECUTION_DELAY)
             
         # install the exception observer
         self.__stream.addObserver(self.__exceptionObserver)
