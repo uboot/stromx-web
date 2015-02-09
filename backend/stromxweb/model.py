@@ -826,9 +826,6 @@ class Parameter(Item):
         
     @value.setter
     def value(self, value):
-        assert(type(value) == str or type(value) == unicode or
-               type(value) == float or type(value) == int or
-               type(value) == bool)
         variant = self.__param.variant()
         data = conversion.toStromxData(variant, value)
         self.__setParameter(data)
@@ -1545,9 +1542,10 @@ class ConnectorValueBase(Item):
     @property
     def variant(self):
         if self.__access == None:
-            return 'none'
+            return {'ident': 'none'}
         
-        return conversion.variantToString(self.__access.get().variant())
+        ident = conversion.variantToString(self.__access.get().variant())
+        return {'ident': ident}
     
     @property
     def value(self):

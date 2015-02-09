@@ -3,7 +3,7 @@ import Ember from "ember";
 export default Ember.ObjectController.extend({
   svgType: function() {
     var visualization = this.get('visualization');
-    var variant = this.get('value.variant');
+    var variant = this.get('value.variant.ident');
 
     if (variant === undefined) {
       return;
@@ -38,7 +38,7 @@ export default Ember.ObjectController.extend({
   svgLines: Ember.computed.equal('svgType', 'lines'),
 
   imageData: function() {
-    var variant = this.get('value.variant');
+    var variant = this.get('value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
@@ -51,7 +51,7 @@ export default Ember.ObjectController.extend({
   }.property('value.variant', 'value.value'),
 
   imageWidth: function() {
-    var variant = this.get('value.variant');
+    var variant = this.get('value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
@@ -65,7 +65,7 @@ export default Ember.ObjectController.extend({
   }.property('value.variant', 'value.value'),
 
   imageHeight: function() {
-    var variant = this.get('value.variant');
+    var variant = this.get('value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
@@ -85,10 +85,10 @@ export default Ember.ObjectController.extend({
     }
 
     return value;
-  }.property('value.variant', 'value.value'),
+  }.property('value.value'),
 
   linesData: function() {
-    var variant = this.get('value.variant');
+    var variant = this.get('value.variant.ident');
     if (!variant || variant !== 'matrix') {
       return;
     }

@@ -75,8 +75,12 @@ export default Ember.ObjectController.extend({
           }
           break;
         case 'string':
-        case 'image':
           v = value;
+          break;
+        case 'image':
+          v = {
+            values: value
+          };
           break;
         default:
       }
@@ -108,7 +112,9 @@ export default Ember.ObjectController.extend({
       case 'bool':
         return this.get('value') ? 'Active' : 'Inactive';
       case 'matrix':
-        return this.get('value.rows') + ' x ' + this.get('value.rows') + ' Matrix';
+        return this.get('value.rows') + ' x ' + this.get('value.rows') + ' matrix';
+      case 'image':
+        return this.get('value.width') + ' x ' + this.get('value.height') + ' image';
       case 'trigger':
         return 'Trigger';
       default:

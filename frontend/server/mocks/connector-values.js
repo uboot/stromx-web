@@ -5,7 +5,9 @@ module.exports = function(app) {
     res.send({"connector-values":[
       {
         id: 0,
-        variant: 'matrix',
+        variant: {
+          ident: 'matrix'
+        },
         value: {
           rows: 3,
           cols: 4,
@@ -18,7 +20,9 @@ module.exports = function(app) {
       },
       {
         id: 1,
-        variant: 'image',
+        variant: {
+          ident: 'image'
+        },
         value: {
           width: 200,
           height: 204,
@@ -107,7 +111,9 @@ module.exports = function(app) {
       },
       {
         id: 2,
-        variant: 'float',
+        variant: {
+          ident: 'float'
+        },
         value: 123.56
       }
     ]});

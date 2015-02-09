@@ -58,9 +58,9 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
         return 0
     elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
-        return "{0} x {1}".format(data.width(), data.height())
+        return {'width': data.width(), 'height': data.height() }
     elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
-        return "{0} x {1}".format(data.rows(), data.cols())
+        return {'rows': data.rows(), 'cols': data.cols() }
     else:
         return 0
        
@@ -144,7 +144,7 @@ def stromxMatrixToData(matrix):
     return data
 
 def dataToStromxImage(data):
-    content = re.sub("data:.*;base64,", "", data, re.MULTILINE)
+    content = re.sub("data:.*;base64,", "", data['values'], re.MULTILINE)
     buf = np.frombuffer(base64.decodestring(content), dtype = np.uint8)
     array = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED)
     

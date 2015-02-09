@@ -879,7 +879,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['10']
         data = param.data['parameter']
         
-        self.assertEqual('0 x 0', data['value'])
+        self.assertEqual({'width': 0, 'height': 0}, data['value'])
         self.assertEqual('image', data['variant']['ident'])
         
     def testSetImage(self):
@@ -887,10 +887,10 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['10']
         
         param.set({'parameter': {'id': '10',
-                                 'value': _colorImage}})
+                                 'value': {'values': _colorImage}}})
         
         data = param.data['parameter']['value']
-        self.assertEqual('12 x 13', data) 
+        self.assertEqual({'width': 12, 'height': 13}, data) 
         
     def testSetPort(self):
         self.model.operators.addStromxOp(self.receive, self.stream)
@@ -1536,7 +1536,7 @@ class InputObserversTest(unittest.TestCase):
         viewModel = self.model.views['0']
         self.assertEqual([{'id': '0', 'type': 'inputObserver'}],
                          viewModel.observers)
-        refData = {'connectorValues': [{'variant': 'none',
+        refData = {'connectorValues': [{'variant': {'ident': 'none'},
                                         'id': '0',
                                         'value': None
                                         }]
@@ -1582,7 +1582,7 @@ class ConnectorValuesTest(unittest.TestCase):
     def testData(self):
         refData = {'connectorValue': {'id': '0', 
                                       'value': None, 
-                                      'variant': 'none'}}
+                                      'variant': {'ident': 'none'}}}
         self.assertEqual(refData, self.model.connectorValues['0'].data)
         
     def testHandlerObserver(self):
@@ -1591,7 +1591,7 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(0.3)
         self.observerStream.active = False
         
-        self.assertEqual('int', self.data['connectorValue']['variant'])
+        self.assertEqual('int', self.data['connectorValue']['variant']['ident'])
         self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
         
     def testHandlerCamera(self):
@@ -1600,7 +1600,8 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(0.2)
         self.cameraStream.active = False
         
-        self.assertEqual('image', self.data['connectorValue']['variant'])
+        self.assertEqual('image',
+                         self.data['connectorValue']['variant']['ident'])
         value = self.data['connectorValue']['value']
         self.assertEqual(125, value['width'])
         self.assertEqual(128, value['height'])
@@ -1614,7 +1615,8 @@ class ConnectorValuesTest(unittest.TestCase):
         time.sleep(0.2)
         self.testData.active = False
         
-        self.assertEqual('matrix', self.data['connectorValue']['variant'])
+        self.assertEqual('matrix',
+                         self.data['connectorValue']['variant']['ident'])
         value = self.data['connectorValue']['value']
         self.assertEqual(20, value['rows'])
         self.assertEqual(4, value['cols'])

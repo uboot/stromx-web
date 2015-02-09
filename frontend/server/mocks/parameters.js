@@ -210,7 +210,11 @@ module.exports = function(app) {
           ident: 'image',
           title: 'RGB Image'
         },
-        value: '20 x 30',
+        value: {
+          width: 200,
+          height: 300,
+          values: null,
+        },
         minimum: 0,
         maximum: 0,
         state: 'current',

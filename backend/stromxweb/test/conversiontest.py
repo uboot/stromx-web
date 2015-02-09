@@ -85,14 +85,14 @@ class ConversionTest(unittest.TestCase):
         self.assertEqual(refData, data)
         
     def testDataToStromxImageColor(self):
-        image = conversion.dataToStromxImage(_colorImage)
+        image = conversion.dataToStromxImage({'values': _colorImage})
         self.assertEqual(12, image.width())
         self.assertEqual(13, image.height())
         self.assertEqual(stromx.runtime.Image.PixelType.BGR_24,
                          image.pixelType())
         
     def testDataToStromxImageGray(self):
-        image = conversion.dataToStromxImage(_grayImage)
+        image = conversion.dataToStromxImage({'values': _grayImage})
         self.assertEqual(12, image.width())
         self.assertEqual(13, image.height())
         self.assertEqual(stromx.runtime.Image.PixelType.MONO_8,
