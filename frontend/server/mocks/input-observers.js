@@ -35,6 +35,17 @@ module.exports = function(app) {
         input: 2,
         value: 2,
         view: 1
+      },
+      {
+        id: 4,
+        zvalue: 5,
+        visualization: 'polygons',
+        properties: {
+          color: '#00ff00'
+        },
+        input: 1,
+        value: 3,
+        view: 1
       }
     ]});
   });

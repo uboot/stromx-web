@@ -13,6 +13,11 @@
         <line {{bind-attr x1=line.x1}} {{bind-attr y1=line.y1}} {{bind-attr x2=line.x2}} {{bind-attr y2=line.y2}} {{bind-attr stroke=observer.color}}/>
       {{/each}}
     {{/if}}
+    {{#if observer.svgPolygons}}
+      {{#each polygon in observer.listData itemController="view.polygon"}}
+        <polygon {{bind-attr points=polygon.points}} {{bind-attr stroke=observer.color }} fill="none">hj</polygon>
+      {{/each}}
+    {{/if}}
   {{/each}}
   </svg>
 </div>

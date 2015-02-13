@@ -214,7 +214,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                          'type': 'Block',
                                          'version': '0.1.0'}}
                                          
-        self.assertEqual(56, len(self.templates)) 
+        self.assertEqual(57, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -1572,7 +1572,7 @@ class ConnectorValuesTest(unittest.TestCase):
         self.cameraStream = self.model.streams.addFile(cameraFile)
         
         testDataFile = self.model.files['3']
-        self.testData = self.model.streams.addFile(testDataFile)
+        self.testDataStream = self.model.streams.addFile(testDataFile)
         
         self.data = None
         
@@ -1611,9 +1611,9 @@ class ConnectorValuesTest(unittest.TestCase):
         
     def testHandlerLines(self):
         self.model.connectorValues.handlers.append(self.setValue)
-        self.testData.active = True
+        self.testDataStream.active = True
         time.sleep(0.2)
-        self.testData.active = False
+        self.testDataStream.active = False
         
         self.assertEqual('matrix',
                          self.data['connectorValue']['variant']['ident'])
@@ -1622,6 +1622,31 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertEqual(4, value['cols'])
         self.assertEqual([[101.0, 0.0, 101.0, 50.0], [151.0, 0.0, 151.0, 50.0]],
                          value['values'][2:4])
+        
+    def testHandlerPolygons(self):
+        self.model.connectorValues.handlers.append(self.setValue)
+        opIndex = self.testDataStream.operators[1]
+        op = self.model.operators[opIndex]
+        
+        DATA_TYPE = 0
+        MATRIX_FLOAT_32 = 5
+        OBJECT_TYPE = 1
+        POLYGONS = 4
+        paramIndex = op.parameters[OBJECT_TYPE]
+        param = self.model.parameters[paramIndex]
+        param.value = POLYGONS;
+        paramIndex = op.parameters[DATA_TYPE]
+        param = self.model.parameters[paramIndex]
+        param.value = MATRIX_FLOAT_32;
+        
+        self.testDataStream.active = True
+        time.sleep(0.2)
+        self.testDataStream.active = False
+        
+        self.assertEqual('list',
+                         self.data['connectorValue']['variant']['ident'])
+        value = self.data['connectorValue']['value']
+        self.assertEqual(6, value['numItems'])
         
     def tearDown(self):
         shutil.rmtree('temp', True)

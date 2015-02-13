@@ -8,7 +8,7 @@ module.exports = function(app) {
         title: 'Input image',
         operator: 2,
         connection: null,
-        observers: [0],
+        observers: [0, 4],
         variant: { 
           ident: 'image',
           title: 'Mono image 8-bit'

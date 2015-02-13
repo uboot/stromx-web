@@ -28,6 +28,8 @@ export default Ember.ObjectController.extend({
         return 'image';
       case 'line_segments':
         return 'lines';
+      case 'polygons':
+        return 'polygons';
       default:
         return '';
     }
@@ -36,6 +38,7 @@ export default Ember.ObjectController.extend({
   svgImage: Ember.computed.equal('svgType', 'image'),
   svgText: Ember.computed.equal('svgType', 'text'),
   svgLines: Ember.computed.equal('svgType', 'lines'),
+  svgPolygons: Ember.computed.equal('svgType', 'polygons'),
 
   imageData: function() {
     var variant = this.get('value.variant.ident');
@@ -99,6 +102,15 @@ export default Ember.ObjectController.extend({
     }
 
     return value.values;
+  }.property('value.variant', 'value.value'),
+
+  listData: function() {
+    var variant = this.get('value.variant.ident');
+    if (!variant || variant !== 'list') {
+      return;
+    }
+
+    return this.get('value.value.values');
   }.property('value.variant', 'value.value'),
 
   color: function() {

@@ -40,6 +40,8 @@ def toPythonObserverValue(variant, data):
         return stromxImageToData(data)
     elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
         return stromxMatrixToData(data)
+    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+        return stromxListToData(data)
     else:
         return toPythonValue(variant, data)
     
@@ -61,6 +63,8 @@ def toPythonValue(variant, data):
         return {'width': data.width(), 'height': data.height() }
     elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
         return {'rows': data.rows(), 'cols': data.cols() }
+    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+        return {'numItems': len(data.content()) }
     else:
         return 0
        
@@ -111,6 +115,8 @@ def variantToString(variant):
         return 'image'
     elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
         return 'matrix'
+    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+        return 'list'
     else:
         return 'none'
     
@@ -142,6 +148,19 @@ def stromxMatrixToData(matrix):
     }
     
     return data
+
+def stromxListToData(list):
+    values = []
+    for item in list.content():
+        value = {
+            'variant': {
+                'ident': variantToString(item.variant())
+            },
+            'value': toPythonObserverValue(item.variant(), item)
+        }
+        values.append(value)
+    
+    return { 'numItems': len(values), 'values': values }
 
 def dataToStromxImage(data):
     content = re.sub("data:.*;base64,", "", data['values'], re.MULTILINE)

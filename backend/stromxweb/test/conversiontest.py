@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import stromx.cvsupport
+import stromx.runtime
+import stromx.test
 import unittest
 
 import conversion
@@ -71,6 +73,35 @@ class ConversionTest(unittest.TestCase):
                               [0, 1, 0, 0], 
                               [0, 0, 1, 0]]}
         self.assertEqual(refData, data)
+        
+    def testStromxListToData(self):
+        stream = stromx.runtime.Stream()
+        op = stream.addOperator(stromx.test.TestDataOperator())
+        stream.initializeOperator(op)
+        
+        DATA_TYPE = 0
+        MATRIX_FLOAT_32 = 5
+        OBJECT_TYPE = 1
+        POLYGONS = 4
+        op.setParameter(DATA_TYPE, stromx.runtime.Enum(MATRIX_FLOAT_32))
+        op.setParameter(OBJECT_TYPE, stromx.runtime.Enum(POLYGONS))
+        stream.start()
+        
+        container = op.getOutputData(0)
+        value = stromx.runtime.ReadAccess(container).get()
+        
+        data = conversion.stromxListToData(value)
+        self.assertEqual(6, data['numItems'])
+        self.assertEqual(6, len(data['values']))   
+
+        for value in data['values']:
+            self.assertEqual('matrix', value['variant']['ident'])
+            self.assertEqual(16, value['value']['rows'])
+            self.assertEqual(2, value['value']['cols'])
+            
+        value = data['values'][0]
+        self.assertAlmostEqual(16.5641727, value['value']['values'][1][0])
+        self.assertAlmostEqual(17.6776695, value['value']['values'][2][1])
         
     def testStromxMatrixToDataFloat32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.FLOAT_32

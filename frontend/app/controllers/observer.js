@@ -12,7 +12,8 @@ export default Ember.ObjectController.extend({
     {label: 'Default', value: 'default'},
     {label: 'Image', value: 'image_2d'}, 
     {label: 'Line segments', value: 'line_segments'},
-    {label: 'Slider', value: 'slider'}
+    {label: 'Slider', value: 'slider'},
+    {label: 'Polygons', value: 'polygons'}
   ],
   
   // FIXME: For some reason it is not possible to directly bind to the property

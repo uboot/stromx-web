@@ -21,6 +21,10 @@ module.exports = function(app) {
           {
             id: 3,
             type: 'inputObserver'
+          },
+          {
+            id: 4,
+            type: 'inputObserver'
           }
         ],
         stream: 2

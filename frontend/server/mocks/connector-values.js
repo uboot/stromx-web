@@ -115,6 +115,45 @@ module.exports = function(app) {
           ident: 'float'
         },
         value: 123.56
+      },
+      {
+        id: 3,
+        variant: {
+          ident: 'list'
+        },
+        value: {
+          numItems: 2,
+          values: [
+            {
+              variant: {
+                ident: 'matrix'
+              },
+              value: {
+                rows: 3,
+                cols: 2,
+                values: [
+                  [10, 10],
+                  [10, 50],
+                  [50, 50]
+                ]
+              }
+            }, {
+              variant: {
+                ident: 'matrix'
+              },
+              value: {
+                rows: 4,
+                cols: 2,
+                values: [
+                  [80, 80],
+                  [80, 120],
+                  [120, 120],
+                  [120, 80]
+                ]
+              }
+            }
+          ]
+        }
       }
     ]});
   });
