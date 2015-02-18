@@ -41,8 +41,8 @@ export default Ember.Controller.extend({
         stream: stream,
         status: 'none',
         position: {
-          x: 0,
-          y: 0
+          x: 100,
+          y: 100
         }
       });
 

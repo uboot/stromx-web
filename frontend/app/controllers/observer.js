@@ -82,6 +82,7 @@ export default Ember.ObjectController.extend({
       this.set('color', color);
     },
     editVisualization: function() {
+      this.set('color', this.get('properties.color'));
       this.set('isEditingVisualization', true);
     },
     saveChanges: function() {

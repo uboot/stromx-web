@@ -7,8 +7,15 @@ export default Ember.ObjectController.extend({
     return this.get('parentController.view') === this.get('model');
   }.property('parentController.view'),
 
+  zoom: 1.0,
+  width: function() {
+    return 1280 * this.get('zoom');
+  }.property('zoom'),
+  height: function() {
+    return 1024 * this.get('zoom');
+  }.property('zoom'),
+  
   parameterObservers: Ember.computed.alias('observers'),
-
   inputObservers: Ember.computed.filter('observers', function(observer) {
     return observer instanceof InputObserver;
   }),
@@ -34,6 +41,17 @@ export default Ember.ObjectController.extend({
     display: function() {
       this.set('parentController.view', this.get('model'));
       this.send('renderDetails', this);
+    },
+    magnify: function() {
+      var newZoom = Math.min(8.0, this.get('zoom') * Math.sqrt(2.0));
+      this.set('zoom', newZoom);
+    },
+    minify: function() {
+      var newZoom = Math.max(0.125, this.get('zoom') / Math.sqrt(2.0));
+      this.set('zoom', newZoom);
+    },
+    reset: function() {
+      this.set('zoom', 1.0);
     }
   }
 });

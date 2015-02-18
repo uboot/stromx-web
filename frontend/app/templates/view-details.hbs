@@ -1,5 +1,12 @@
 <div class="stromx-view-view stromx-margin-top panel panel-default">
-  <svg width="1280" height="1024" id="view-svg">
+  <form class="form-inline stromx-svg-buttons">
+    <div class="btn-group" role="group">
+      <a {{action "minify"}} class="btn btn-default">-</a>
+      <a {{action "reset"}} class="btn btn-default">100%</a>
+      <a {{action "magnify"}} class="btn btn-default">+</a>
+    </div>
+  </form>
+  <svg {{bind-attr width=width}} {{bind-attr height=height}} viewBox="0 0 1280 1024">
   {{#each observer in svgObservers itemController="observer-svg"}}
     {{#if observer.svgImage}}
       <image {{bind-attr width=observer.imageWidth}} {{bind-attr height=observer.imageHeight}}

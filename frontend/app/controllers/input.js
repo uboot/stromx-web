@@ -6,6 +6,7 @@ export default Ember.ObjectController.extend({
   isEditingObserver: false,
 
   view: null,
+  viewsExist: Ember.computed.gt('views.length', 0),
   views: Ember.computed.alias('operator.stream.views'),
   
   observerExists: function(key, value) {
