@@ -214,7 +214,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                          'type': 'Block',
                                          'version': '0.1.0'}}
                                          
-        self.assertEqual(57, len(self.templates)) 
+        self.assertEqual(61, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -302,6 +302,15 @@ class FilesTest(unittest.TestCase):
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
+    def testAddOpenedNoneContent(self):
+        fileData = self.files.addData({'file': {
+            'name': 'test.stromx',
+            'content': None, 
+            'opened': True
+        }})
+        self.assertEqual(True, fileData['file']['opened'])
+        self.assertEqual('0', fileData['file']['stream'])
+        
     def testSetSavedStreamName(self):
         self.files['0'].opened = True
         self.streams.set('0', {'stream': {'name': 'New name'}})
@@ -337,13 +346,20 @@ class FilesTest(unittest.TestCase):
         
         self.assertTrue(os.path.exists('temp/new.stromx'))
         
-    def testAddData(self):
+    def testAddContent(self):
         self.files.addData({'file': {'name': 'test.stromx',
                                      'content': _content}})
         self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
                                     'temp/test.stromx'))
+        
+    def testAddContentOpened(self):
+        fileData = self.files.addData({'file': {'name': 'test.stromx',
+                                                'opened': True,
+                                                'content': _content}})
+        self.assertEqual(True, fileData['file']['opened'])
+        self.assertEqual('0', fileData['file']['stream'])
         
     def testAddDuplicate(self):
         self.files.addData({'file': {'name': '0_parallel.stromx'}})

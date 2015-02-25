@@ -63,12 +63,14 @@ export default Ember.ObjectController.extend({
         return;
       }
 
+      var threads = streamController.get('threads');
+      var thread = threads.get('length') > 0 ? threads.objectAt(0) : null;
       var output = this.get('model');
       var store = this.get('store');
       var connection = store.createRecord('connection', {
         output: output,
         input: input,
-        thread: null,
+        thread: thread,
         stream: streamController.get('model')
       });
       

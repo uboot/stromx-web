@@ -27,6 +27,14 @@ module.exports = function(app) {
   filesRouter.put('/', function(req, res) {
     res.send('null');
   });
+  filesRouter.post('/', function(req, res) {
+    res.send({
+      'file': { 
+        id: 3,
+        stream: 4
+      }
+    });
+  });
   app.use('/api/files', filesRouter);
   app.use('/api/files/*', filesRouter);
 };

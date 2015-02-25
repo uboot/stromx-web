@@ -1,11 +1,5 @@
 import Ember from "ember";
 
-export var Color = {
-  RED: '#be202e',
-  GREEN: '#019547',
-  BLUE: '#2075bc'
-};
-
 export default Ember.ObjectController.extend({
   needs: ['application'],
   activeOutput: null,

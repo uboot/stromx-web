@@ -96,12 +96,12 @@ class ConversionTest(unittest.TestCase):
 
         for value in data['values']:
             self.assertEqual('matrix', value['variant']['ident'])
-            self.assertEqual(16, value['value']['rows'])
+            self.assertEqual(32, value['value']['rows'])
             self.assertEqual(2, value['value']['cols'])
             
         value = data['values'][0]
-        self.assertAlmostEqual(16.5641727, value['value']['values'][1][0])
-        self.assertAlmostEqual(17.6776695, value['value']['values'][2][1])
+        self.assertAlmostEqual(78.27293396, value['value']['values'][1][0])
+        self.assertAlmostEqual(56.86110687, value['value']['values'][2][1])
         
     def testStromxMatrixToDataFloat32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.FLOAT_32

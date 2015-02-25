@@ -24,6 +24,17 @@ module.exports = function(app) {
         connections: [],
         views: [],
         threads: []
+      },
+      {
+        id: 4,
+        name: 'Stream three',
+        file: 3,
+        active: false,
+        paused: false,
+        operators: [],
+        connections: [],
+        views: [],
+        threads: []
       }
     ]});
   });

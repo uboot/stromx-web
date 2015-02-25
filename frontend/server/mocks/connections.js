@@ -19,12 +19,21 @@ module.exports = function(app) {
       }
     ]});
   });
+  connectionsRouter.delete('/', function(req, res) {
+    res.send('null');
+  });
   connectionsRouter.put('/', function(req, res) {
     res.send('null');
   });
   connectionsRouter.post('/', function(req, res) {
     res.send({
-      'connection': { id: 3 }
+      'connection': {
+        id: 3, 
+        output: "5", 
+        input: "1", 
+        thread: "1", 
+        stream: "2" 
+      }
     });
   });
   app.use('/api/connections', connectionsRouter);

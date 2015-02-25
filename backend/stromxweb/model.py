@@ -197,7 +197,7 @@ class Files(Items):
         self.addItems(files)
         
     def addData(self, data):
-        filename = _str(data["file"]["name"])
+        filename = File.secureName(data["file"]["name"])
         duplicates = [f for f in self.values() if f.name == filename]
         assert(len(duplicates) <= 1)
         
@@ -207,7 +207,6 @@ class Files(Items):
             f = File(_str(data["file"]["name"]), self.model)
             self.addItem(f)
         
-        
         content = data["file"].get("content", "")
         if content != "" and  content != None:
             content = re.sub("data:.*;base64,", "", content, re.MULTILINE)
@@ -216,7 +215,8 @@ class Files(Items):
         else:
             if os.path.exists(f.path):
                 os.remove(f.path)
-                
+               
+        f.set(data) 
         return f.data
         
 class File(Item):
@@ -224,7 +224,7 @@ class File(Item):
     
     def __init__(self, name, model):
         super(File, self).__init__(model)
-        self.__name = File.secureName(name)
+        self.__name = name
         self.__opened = False
         self.__stream = None
         
@@ -237,7 +237,9 @@ class File(Item):
         if not value:
             return
         
-        assert(self.__stream)
+        if not self.__stream:
+            return
+            
         self.__stream.save()
     
     @property

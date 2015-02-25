@@ -21,6 +21,7 @@ export default Ember.ObjectController.extend({
     close: function () {
       this.get('file').then(function(file) {
         file.set('opened', false);
+        file.set('saved', false);
         file.save();
       });
     },
