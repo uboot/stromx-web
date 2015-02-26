@@ -1,17 +1,22 @@
 import Ember from 'ember';
+import QUnit from 'qunit';
 import startApp from '../../helpers/start-app';
 import {
+  moduleFor,
   test
 } from 'ember-qunit';
 import { moduleForController, createRecord } from '../../helpers/stromx-web-helpers';
 
 var App;
 
-moduleForController('operator', 'OperatorController', {
-  setup: function() {
+moduleFor('controller:operator', 'OperatorController', {
+  beforeEach: function() {
+    var container = this.container;
     App = startApp();
+    DS._setupContainer(container);
+    container.register('adapter:application', DS.FixtureAdapter);
   },
-  teardown: function() {
+  afterEach: function(container) {
     Ember.run(App, 'destroy');
   },
   needs: ['model:operator', 'model:parameter', 'model:input', 'model:output',
@@ -21,7 +26,8 @@ moduleForController('operator', 'OperatorController', {
 });
 
 test('initialize', function() {
-  var store = this.store();
+  var store = this.container.lookup('store:main');
+
   var operator = createRecord(store, 'operator', {
     status: 'none'
   });
@@ -41,7 +47,7 @@ test('initialize', function() {
 });
 
 test('deinitialize', function() {
-  var store = this.store();
+  var store = this.container.lookup('store:main');
   var operator = createRecord(store, 'operator', {
     status: 'initialized'
   });
@@ -101,7 +107,7 @@ var setupConnection = function(store, noIncoming, noOutgoing) {
 };
 
 test('remove incoming and outgoing connections', function() {
-  var store = this.store();
+  var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store);
   var controller = this.subject();
@@ -126,7 +132,7 @@ test('remove incoming and outgoing connections', function() {
 });
 
 test('remove outgoing connection', function() {
-  var store = this.store();
+  var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store, true); // no incoming connection
   var controller = this.subject();
@@ -149,7 +155,7 @@ test('remove outgoing connection', function() {
 });
 
 test('remove incoming connection', function() {
-  var store = this.store();
+  var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store, false, true); // no outgoing connection
   var controller = this.subject();

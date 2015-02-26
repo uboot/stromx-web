@@ -17,6 +17,9 @@ config = {}
       
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
+        if not config['LOGIN_SERVICE']:
+            return True
+            
         user_json = self.get_secure_cookie(config['USER_COOKIE'])
         if not user_json: return None
         return tornado.escape.json_decode(user_json)
@@ -31,6 +34,7 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleOAuth2Mixin):
             # Save the user with e.g. set_secure_cookie
             self.set_secure_cookie(config['USER_COOKIE'],
                                    tornado.escape.json_encode(user))
+            self.redirect('https://' + config['HOST'])
         else:
             yield self.authorize_redirect(
                 redirect_uri='https://' + config['HOST'] + '/auth/google',
@@ -69,6 +73,7 @@ class ItemsHandler(BaseHandler):
     def initialize(self, items):
         self.items = items
         
+    @tornado.web.authenticated
     def get(self, index = None):
         try:
             if index == None:
@@ -89,6 +94,7 @@ class ItemsHandler(BaseHandler):
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
     
+    @tornado.web.authenticated
     def put(self, index):
         try:
             data = tornado.escape.json_decode(self.request.body)
@@ -98,6 +104,7 @@ class ItemsHandler(BaseHandler):
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
         
+    @tornado.web.authenticated
     def post(self):
         try:
             data = tornado.escape.json_decode(self.request.body)
@@ -107,6 +114,7 @@ class ItemsHandler(BaseHandler):
         except model.AddDataFailed:
             self.set_status(httplib.NOT_FOUND)
     
+    @tornado.web.authenticated
     def delete(self, index):
         try:
             self.items.delete(index)
@@ -128,11 +136,9 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     
     def open(self):
         user_json = self.get_secure_cookie(config['USER_COOKIE'])
-        # FIXME: allow authenticated access only by uncommenting the lines
-        # below: http://stackoverflow.com/a/8412743 
-        #if not user_json: 
-        #    self.close()
-        #    return
+        if not user_json: 
+            self.close()
+            return
             
         self.__items.handlers.append(self.sendValue)
     
@@ -145,6 +151,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         return True
 
 class MainHandler(BaseHandler):
+    @tornado.web.authenticated
     def get(self, _):
         self.render("index.html")
         
@@ -220,11 +227,15 @@ def start(configFile):
         (r"/(.*)", MainHandler)
     ]
     
+    login_url = ''
+    if config['LOGIN_SERVICE']:
+        login_url = "/auth/" + config['LOGIN_SERVICE']
+        
     settings = dict(
         cookie_secret = config['COOKIE_SECRET'],
         google_oauth = {"key": config['GOOGLE_OAUTH_KEY'],
                         "secret":config['GOOGLE_OAUTH_SECRET']},
-        login_url = "/auth/google",
+        login_url = login_url,
         template_path = staticDir
     )
     

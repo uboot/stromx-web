@@ -10,7 +10,7 @@ RUN apt-get install -y software-properties-common \
 
 ENV PATH $PATH:./node_modules/.bin
 
-RUN git clone -b auth https://gitorious.org/stromx-web/stromx-web.git \
+RUN git clone https://gitorious.org/stromx-web/stromx-web.git \
     && cd stromx-web/frontend \
     && npm install \
     && npm install bower \
