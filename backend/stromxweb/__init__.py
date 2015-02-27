@@ -14,13 +14,14 @@ import tornado.websocket
 import model
 
 config = {}
+_USER_COOKIE = 'USER'
       
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         if not config['LOGIN_SERVICE']:
             return True
             
-        user_json = self.get_secure_cookie(config['USER_COOKIE'])
+        user_json = self.get_secure_cookie(_USER_COOKIE)
         if not user_json: return None
         return tornado.escape.json_decode(user_json)
         
@@ -32,7 +33,7 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleOAuth2Mixin):
                 redirect_uri='https://' + config['HOST'] + '/auth/google',
                 code=self.get_argument('code'))
             # Save the user with e.g. set_secure_cookie
-            self.set_secure_cookie(config['USER_COOKIE'],
+            self.set_secure_cookie(_USER_COOKIE,
                                    tornado.escape.json_encode(user))
             self.redirect('https://' + config['HOST'])
         else:
@@ -50,7 +51,7 @@ class LogoutHandler(BaseHandler):
         # returning to this app will log them back in immediately with no
         # interaction (unless they have separately logged out of Google in
         # the meantime).
-        self.clear_cookie(config['USER_COOKIE'])
+        self.clear_cookie(_USER_COOKIE)
         self.render("logout.html")
 
 class ItemsHandler(BaseHandler):
@@ -135,7 +136,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         loop.add_callback(lambda: self.doSend(json))
     
     def open(self):
-        user_json = self.get_secure_cookie(config['USER_COOKIE'])
+        user_json = self.get_secure_cookie(_USER_COOKIE)
         if not user_json: 
             self.close()
             return
