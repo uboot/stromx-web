@@ -27,9 +27,6 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     ENV.APP.LOG_VIEW_LOOKUPS = true;
-    ENV.googleAnalytics = {
-      webPropertyId: '{{trackerId}}'
-    };
   }
 
   if (environment === 'test') {
@@ -45,6 +42,9 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.googleAnalytics = {
+      webPropertyId: '{{trackerId}}'
+    };
   }
 
   return ENV;
