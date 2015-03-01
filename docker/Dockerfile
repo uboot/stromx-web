@@ -15,7 +15,7 @@ RUN git clone https://gitorious.org/stromx-web/stromx-web.git \
     && npm install \
     && npm install bower \
     && bower --allow-root install \
-    && ember build \
+    && ember build --environment development \
     && cd ../backend \
     && python setup.py build \
     && python setup.py install \ 
