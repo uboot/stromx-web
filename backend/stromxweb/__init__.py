@@ -154,7 +154,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
 class MainHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, _):
-        self.render("index.html")
+        self.render("index.html", trackerId=config['GOOGLE_TRACKER_ID'])
         
 class RedirectHandler(tornado.web.RequestHandler):
     def get(self, _):
