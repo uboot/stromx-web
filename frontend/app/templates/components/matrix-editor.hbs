@@ -1,0 +1,30 @@
+<form class="form">
+  {{#if rowsWritable}}
+    <div class="form-group">
+      <label for="num-rows">Rows</label>
+      {{input value=actualRows type="number" class="form-control" id="num-rows"}}
+    </div>
+  {{/if}}
+  {{#if colsWritable}}
+    <div class="form-group">
+      <label for="num-cols">Cols</label>
+      {{input value=actualCols type="number" class="form-control" id="num-cols"}}
+    </div>
+  {{/if}}
+  
+  <label for="values">Values</label>
+  <table class="table table-bordered table-condensed" id="values">
+    <tbody>
+      {{#each value.values as |row i|}}
+        <tr>
+          {{#each row as |value j|}}
+            <td class="stromx-matrix-cell">
+              {{matrix-value value=value storeValue="storeValue" row=i col=j}}
+            </td>
+          {{/each}}
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</form>
+

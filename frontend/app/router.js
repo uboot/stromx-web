@@ -20,6 +20,11 @@ Router.map(function () {
       this.resource('operators', function() {
         this.resource('operator', { path: '/:operator_id' }, function() {
           this.route('delete');
+          this.resource('parameters', function() {
+            this.resource('parameter', { path: '/:parameter_id' }, function() {
+              this.route('edit');
+            });
+          });
         });
         this.route('new');
       });

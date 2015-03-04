@@ -144,54 +144,61 @@
                       <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
                     {{/if}}
                   </div>
+                {{else if param.isTrigger}}
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "trigger"}} class="btn btn-primary">Send</button>
+                  </div>
+                {{else if param.isEnum}}
+                  <div class="form-group">
+                    {{view "select" value=param.value content=param.descriptions
+                    optionValuePath="content.value" optionLabelPath="content.title"}}
+                  </div>
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                  </div>
+                {{else if param.isFile}}
+                  <div class="form-group">
+                    <label for="upload-file">File</label>
+                    {{view "upload-file" content=param.editValue id="upload-file"}}
+                  </div>
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                  </div>
                 {{else}}
-                  {{#if param.isTrigger}}
-                    <div class="form-group">
-                      <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                      <button {{action "trigger"}} class="btn btn-primary">Send</button>
-                    </div>
-                  {{else}}
-                    <div class="form-group">
-                      {{#if param.isEnum}}
-                        {{view "select" value=param.value content=param.descriptions
-                          optionValuePath="content.value" optionLabelPath="content.title"}}
-                      {{else}}
-                        {{#if param.isFile}}
-                          <label for="uploadFile">File</label>
-                          {{view "upload-file" content=param.editValue id="uploadFile"}}
-                        {{else}}
-                          {{input value=param.editValue class="form-control"}}
-                        {{/if}}
-                      {{/if}}
-                    </div>
-                    <div class="form-group">
-                      <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                      <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-                    </div>
-                  {{/if}}
+                  <div class="form-group">
+                    {{input value=param.editValue class="form-control"}}
+                  </div>
+                  <div class="form-group">
+                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+                  </div>
                 {{/if}}
               </form>
-            {{/if}}
-            {{#if param.timedOut}}
+            {{else if param.timedOut}}
               <em>Access timed out</em>
               <a {{action "reload"}}>
                 <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
               </a>
-            {{/if}}
-            {{#if param.accessFailed}}
+            {{else if param.accessFailed}}
               <em>Access failed</em>
               <a {{action "reload"}}>
                 <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
               </a>
-            {{/if}}
-            {{param.displayValue}}
-            {{#if param.writable}}
-              {{#unless param.isEditing}}
+            {{else if param.writable}}
+              {{# if param.isMatrix}}
+                {{#link-to "parameter.edit" param}}
+                  <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+                {{/link-to}}
+              {{else}}
                 <a {{action "editValue"}}>
                   <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
                 </a>
-              {{/unless}}
+              {{/if}}
             {{/if}}
+            {{param.displayValue}}
           </td>
         </tr>
       {{/each}}

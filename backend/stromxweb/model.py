@@ -777,8 +777,8 @@ class Parameters(Items):
     
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
-                  'minimum', 'maximum', 'access', 'descriptions', 'state',
-                  'observers']
+                  'minimum', 'maximum', 'rows', 'cols', 'access',
+                  'descriptions', 'state', 'observers']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -855,6 +855,14 @@ class Parameter(Item):
         if value == None:
             return 0
         return value
+        
+    @property
+    def rows(self):
+        return self.__param.rows()
+        
+    @property
+    def cols(self):
+        return self.__param.cols()
     
     @property
     def access(self):

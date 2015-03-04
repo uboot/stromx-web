@@ -15,6 +15,10 @@ export default Ember.ObjectController.extend({
     return this.get('variant.ident') === 'trigger';
   }.property('variant'),
 
+  isMatrix: function() {
+    return this.get('variant.ident') === 'matrix';
+  }.property('variant'),
+
   isFile: function() {
     return this.get('variant.ident') === 'image';
   }.property('variant'),
@@ -29,7 +33,8 @@ export default Ember.ObjectController.extend({
 
   writable: function() {
     var variant = this.get('variant.ident');
-    var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger', 'image'];
+    var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger',
+                      'matrix', 'image'];
     var currentAndKnown = this.get('current') && knownTypes.contains(variant);
     if (! currentAndKnown) {
       return false;
@@ -112,7 +117,7 @@ export default Ember.ObjectController.extend({
       case 'bool':
         return this.get('value') ? 'Active' : 'Inactive';
       case 'matrix':
-        return this.get('value.rows') + ' x ' + this.get('value.rows') + ' matrix';
+        return this.get('value.rows') + ' x ' + this.get('value.cols') + ' matrix';
       case 'image':
         return this.get('value.width') + ' x ' + this.get('value.height') + ' image';
       case 'trigger':

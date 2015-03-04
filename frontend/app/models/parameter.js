@@ -6,6 +6,8 @@ export default DS.Model.extend({
   value: DS.attr(),
   minimum: DS.attr('number'),
   maximum: DS.attr('number'),
+  cols: DS.attr('number'),
+  rows: DS.attr('number'),
   state: DS.attr('string'),
   access: DS.attr('string'),
   operator: DS.belongsTo('operator', {async: true}),
