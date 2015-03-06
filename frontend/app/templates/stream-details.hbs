@@ -1,18 +1,18 @@
 <form class="form-inline stromx-margin-top ">
   <div class="btn-group" role="group">
-    {{#each thread in threads itemController="thread"}}
+    {{#each thread in model.threads itemController="thread"}}
       {{#link-to "thread" thread class="btn btn-default"}}
         <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-        {{thread.name}}
+        {{thread.model.name}}
       {{/link-to}}
     {{/each}}
   </div>
 
   <div class="btn-group" role="group">
-    {{#each view in views itemController="view"}}
+    {{#each view in model.views itemController="view"}}
       {{#link-to "view" view class="btn btn-default"}}
         <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-        {{view.name}}
+        {{view.model.name}}
       {{/link-to}}
     {{/each}}
   </div>
@@ -37,15 +37,15 @@
       </pattern>
     </defs>
     <rect width="100%" height="100%" {{bind-attr fill=patternUri}}/>
-    {{#each op in operators itemController="operator-svg"}}
+    {{#each op in model.operators itemController="operator-svg"}}
       {{#svg-transform transform=op.transform}}
         {{#link-to "operator.index" op}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
             <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
-            <text x="25" y="65" class="stromx-svg-operator-name">{{op.name}}</text>
+            <text x="25" y="65" class="stromx-svg-operator-name">{{op.model.name}}</text>
           {{/svg-drag}}
         {{/link-to}}
-        {{#each input in op.inputs itemController="input-svg"}}
+        {{#each input in op.model.inputs itemController="input-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
             <title>{{input.title}}</title>
             <rect {{bind-attr x=input.x}} {{bind-attr y=input.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
@@ -54,7 +54,7 @@
             <line {{bind-attr x1=input.x1}} {{bind-attr y1=input.y1}} {{bind-attr x2=input.x2}} {{bind-attr y2=input.y2}} {{bind-attr stroke-width=input.strokeWidth}} class="stromx-svg-drag-line"/>
           {{/if}}
         {{/each}}
-        {{#each output in op.outputs itemController="output-svg"}}
+        {{#each output in op.model.outputs itemController="output-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
             <title>{{output.title}}</title>
             <rect {{bind-attr x=output.x}} {{bind-attr y=output.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
@@ -66,7 +66,7 @@
       {{/svg-transform}}
     {{/each}}
 
-    {{#each connection in connections itemController="connection-svg"}}
+    {{#each connection in model.connections itemController="connection-svg"}}
       {{#link-to "connection.index" connection}}
         <path {{bind-attr d=connection.path}} {{bind-attr stroke=connection.color}} class="stromx-svg-connection-path"/>
         {{#if connection.displayStartArrow}}

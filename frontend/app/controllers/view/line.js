@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   x1: function() {
     return this.get('model')[0];
   }.property(),

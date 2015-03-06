@@ -21,8 +21,8 @@
       {{/each}}
     {{/if}}
     {{#if observer.svgPolygons}}
-      {{#each polygon in observer.listData itemController="view.polygon"}}
-        <polygon {{bind-attr points=polygon.points}} {{bind-attr stroke=observer.color }} fill="none">hj</polygon>
+      {{#each polygon in observer.polygonsData itemController="view.polygon"}}
+        <polygon {{bind-attr points=polygon.points}} {{bind-attr stroke=observer.color }} fill="none"/>
       {{/each}}
     {{/if}}
   {{/each}}

@@ -1,11 +1,11 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   needs: ['application'],
   activeOutput: null,
   activeInput: null,
   view: null,
-  isVisible: Ember.computed.equal('view', null),
+  isVisible: Ember.computed.equal('model.view', null),
 
   patternUri: function() {
     return 'url(' + this.get('target.url') + '#grid)';
@@ -13,29 +13,29 @@ export default Ember.ObjectController.extend({
 
   actions: {
     save: function () {
-      this.get('file').then(function(file) {
+      this.get('model.file').then(function(file) {
         file.set('saved', true);
         file.save();
       });
     },
     start: function () {
-        this.set('active', true);
         var stream = this.get('model');
+        stream.set('active', true);
         stream.save();
     },
     stop: function () {
-        this.set('active', false);
         var stream = this.get('model');
+        stream.set('active', false);
         stream.save();
     },
     pause: function () {
-        this.set('paused', true);
         var stream = this.get('model');
+        stream.set('paused', true);
         stream.save();
     },
     resume: function () {
-        this.set('paused', false);
         var stream = this.get('model');
+        stream.set('paused', false);
         stream.save();
     },
     display: function() {

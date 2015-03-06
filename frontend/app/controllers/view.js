@@ -1,8 +1,9 @@
 import Ember from "ember";
 import InputObserver from 'stromx-web/models/input-observer';
+import ParameterObserver from 'stromx-web/models/parameter-observer';
 import { defaultObserverColor } from 'stromx-web/colors';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isVisible: function() {
     return this.get('parentController.view') === this.get('model');
   }.property('parentController.view'),
@@ -15,16 +16,18 @@ export default Ember.ObjectController.extend({
     return 1024 * this.get('zoom');
   }.property('zoom'),
   
-  parameterObservers: Ember.computed.alias('observers'),
-  inputObservers: Ember.computed.filter('observers', function(observer) {
+  parameterObservers:  Ember.computed.filter('model.observers', function(observer) {
+    return observer instanceof ParameterObserver;
+  }),
+  inputObservers: Ember.computed.filter('model.observers', function(observer) {
     return observer instanceof InputObserver;
   }),
 
   svgSorting: ['zvalue:incr'],
-  svgObservers: Ember.computed.sort('observers', 'svgSorting'),
+  svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
 
   addInputObserver: function(input) {
-    var numObservers = this.get('observers.length');
+    var numObservers = this.get('model.observers.length');
     var observer = this.store.createRecord('input-observer', {
       view: this.get('model'),
       input: input,
@@ -40,7 +43,7 @@ export default Ember.ObjectController.extend({
   actions: {
     display: function() {
       this.set('parentController.view', this.get('model'));
-      this.send('renderDetails', this);
+      this.send('renderDetails', this.get('model'));
     },
     magnify: function() {
       var newZoom = Math.min(8.0, this.get('zoom') * Math.sqrt(2.0));

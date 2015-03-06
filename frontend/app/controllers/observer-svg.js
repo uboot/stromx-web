@@ -1,9 +1,9 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   svgType: function() {
-    var visualization = this.get('visualization');
-    var variant = this.get('value.variant.ident');
+    var visualization = this.get('model.visualization');
+    var variant = this.get('model.value.variant.ident');
 
     if (variant === undefined) {
       return;
@@ -33,7 +33,7 @@ export default Ember.ObjectController.extend({
       default:
         return '';
     }
-  }.property('visualization', 'value.variant'),
+  }.property('model.visualization', 'model.value.variant'),
 
   svgImage: Ember.computed.equal('svgType', 'image'),
   svgText: Ember.computed.equal('svgType', 'text'),
@@ -41,80 +41,80 @@ export default Ember.ObjectController.extend({
   svgPolygons: Ember.computed.equal('svgType', 'polygons'),
 
   imageData: function() {
-    var variant = this.get('value.variant.ident');
+    var variant = this.get('model.value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
-    var value = this.get('value.value');
+    var value = this.get('model.value.value');
     if (value === undefined) {
       return;
     }
 
     return value.values;
-  }.property('value.variant', 'value.value'),
+  }.property('model.value.variant', 'model.value.value'),
 
   imageWidth: function() {
-    var variant = this.get('value.variant.ident');
+    var variant = this.get('model.value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
 
-    var value = this.get('value.value');
+    var value = this.get('model.value.value');
     if (!value) {
       return;
     }
 
     return value.width;
-  }.property('value.variant', 'value.value'),
+  }.property('model.value.variant', 'model.value.value'),
 
   imageHeight: function() {
-    var variant = this.get('value.variant.ident');
+    var variant = this.get('model.value.variant.ident');
     if (!variant || variant !== 'image') {
       return;
     }
 
-    var value = this.get('value.value');
+    var value = this.get('model.value.value');
     if (!value) {
       return;
     }
 
     return value.height;
-  }.property('value.variant', 'value.value'),
+  }.property('model.value.variant', 'model.value.value'),
 
   textData: function() {
-    var value = this.get('value.value');
+    var value = this.get('model.value.value');
     if (!value) {
       return;
     }
 
     return value;
-  }.property('value.value'),
+  }.property('model.value.value'),
 
   linesData: function() {
-    var variant = this.get('value.variant.ident');
+    var variant = this.get('model.value.variant.ident');
     if (!variant || variant !== 'matrix') {
       return;
     }
 
-    var value = this.get('value.value');
+    var value = this.get('model.value.value');
     if (!value || value.cols !== 4) {
       return;
     }
 
     return value.values;
-  }.property('value.variant', 'value.value'),
+  }.property('model.value.variant', 'model.value.value'),
 
-  listData: function() {
-    var variant = this.get('value.variant.ident');
+  polygonsData: function() {
+    var variant = this.get('model.value.variant.ident');
     if (!variant || variant !== 'list') {
       return;
     }
 
-    return this.get('value.value.values');
-  }.property('value.variant', 'value.value'),
+    return this.get('model.value.value.values');
+  }.property('model.value.variant', 'model.value.value'),
 
   color: function() {
-    var props = this.get('properties');
+    var props = this.get('model.properties');
     return props.color || '#000000';
-  }.property('properties'),
+  }.property('model.properties'),
 });

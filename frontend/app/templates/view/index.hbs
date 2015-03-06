@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
-  <li>{{#link-to "stream" stream}}{{stream.file.name}}{{/link-to}}</li>
-  <li>{{name}}</li>
+  <li>{{#link-to "stream" stream}}{{model.stream.file.name}}{{/link-to}}</li>
+  <li>{{model.name}}</li>
 </ol>
 
 <h3>
@@ -16,7 +16,7 @@
       <td>
         <header class="stromx-cell-title">Name</header>
         {{#unless isEditingName}}
-          {{name}}
+          {{model.name}}
           <a {{action "editName"}}>
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
@@ -24,7 +24,7 @@
           <form class="form-inline">
             <div class="form-group">
               <label class="sr-only" for="view-name">Name</label>
-              {{input value=name class="form-control" id="view-name"}}
+              {{input value=model.name class="form-control" id="view-name"}}
             </div>
             <div class="form-group">
               <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>

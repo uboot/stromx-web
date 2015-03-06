@@ -148,7 +148,7 @@ module.exports = function(app) {
         minimum: 0,
         maximum: 0,
         rows: 0,
-        cols: 4,
+        cols: 0,
         state: 'current',
         access: 'full',
         descriptions: [],

@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   wasCancelled: false,
   actions: {
     dismiss: function () {
@@ -12,14 +12,14 @@ export default Ember.ObjectController.extend({
       this.set('wasCancelled', false);
     },
     saveAndClose: function () {
-      this.get('file').then(function(file) {
+      this.get('model.file').then(function(file) {
         file.set('saved', true);
         file.set('opened', false);
         file.save();
       });
     },
     close: function () {
-      this.get('file').then(function(file) {
+      this.get('model.file').then(function(file) {
         file.set('opened', false);
         file.set('saved', false);
         file.save();

@@ -5,14 +5,14 @@ import InputController from 'stromx-web/controllers/input-svg';
 
 export default ConnectionController.extend({
   x1: function() {
-    var pos = this.get('output.operator.position');
+    var pos = this.get('model.output.operator.position');
 
     if (pos === undefined) {
       return;
     }
 
     return pos.x + Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE;
-  }.property('output.operator.position'),
+  }.property('model.output.operator.position'),
 
   y1: function(key, value) {
     if (value !== undefined) {
@@ -20,7 +20,7 @@ export default ConnectionController.extend({
     }
 
     var _this = this;
-    this.get('output').then(function(connector) {
+    this.get('model.output').then(function(connector) {
       if (connector === null) {
         return;
       }
@@ -36,17 +36,17 @@ export default ConnectionController.extend({
       var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
       _this.set('y1', y);
     });
-  }.property('output.operator.position'),
+  }.property('model.output.operator.position'),
 
   x2: function() {
-    var pos = this.get('input.operator.position');
+    var pos = this.get('model.input.operator.position');
 
     if (pos === undefined) {
       return;
     }
 
     return pos.x - Constant.CONNECTOR_SIZE;
-  }.property('input.operator.position'),
+  }.property('model.input.operator.position'),
 
   y2: function(key, value) {
     if (value !== undefined) {
@@ -54,7 +54,7 @@ export default ConnectionController.extend({
     }
 
     var _this = this;
-    this.get('input').then(function(connector) {
+    this.get('model.input').then(function(connector) {
       if (connector === null) {
         return;
       }
@@ -71,7 +71,7 @@ export default ConnectionController.extend({
       var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
       _this.set('y2', y);
     });
-  }.property('input.operator.position'),
+  }.property('model.input.operator.position'),
 
   path: function() {
     return computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));

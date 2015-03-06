@@ -1,10 +1,10 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditingName: false,
   sorting: ['zvalue:desc'],
-  sortedObservers: Ember.computed.sort('observers', 'sorting'),
-  hasObservers: Ember.computed.gt('observers.length', 0),
+  sortedObservers: Ember.computed.sort('model.observers', 'sorting'),
+  hasObservers: Ember.computed.gt('model.observers.length', 0),
 
   actions: {
     saveChanges: function() {

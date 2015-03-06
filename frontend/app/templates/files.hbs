@@ -52,9 +52,9 @@
                   <span class="stromx-status-indicator opened" data-toggle="tooltip" title="Closed"/>
                 {{/if}}
                 {{#if file.closed}}
-                  <a {{action "open" file}}>{{file.name}}</a>
+                  <a {{action "open" file}}>{{file.model.name}}</a>
                 {{else}}
-                  {{#link-to 'stream' file.stream class="stromx-file-name"}}{{file.name}}{{/link-to}}
+                  {{#link-to 'stream' file.model.stream class="stromx-file-name"}}{{file.model.name}}{{/link-to}}
                 {{/if}}
                 <a {{action "edit" file}} class="stromx-rename-file">
                   <span class="glyphicon glyphicon-pencil pull-right stromx-margin-left" aria-hidden="true"></span>
@@ -71,7 +71,7 @@
                 <form class="form-inline">
                   <div class="form-group">
                     <label class="sr-only" for="file-name">Name</label>
-                    {{input value=file.name class="form-control" id="file-name"}}
+                    {{input value=file.model.name class="form-control" id="file-name"}}
                   </div>
                   <div class="form-group">
                     <button {{action "discardChanges"}} class="btn btn-default stromx-discard-changes">Cancel</button>

@@ -1,5 +1,5 @@
 import Ember from "ember";
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditingName: false,
   isEditingColor: false,
 
@@ -21,7 +21,7 @@ export default Ember.ObjectController.extend({
       this.set('isEditingColor', true);
     },
     setColor: function(color) {
-      this.set('color', color);
+      this.set('model.color', color);
     }
   }
 });

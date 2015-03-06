@@ -1,18 +1,18 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditingName: false,
-  isDeinitialized: Ember.computed.equal('status', 'none'),
-  hasInputs: Ember.computed.gt('inputs.length', 0),
-  hasOutputs: Ember.computed.gt('outputs.length', 0),
-  hasParameters: Ember.computed.gt('parameters.length', 0),
+  isDeinitialized: Ember.computed.equal('model.status', 'none'),
+  hasInputs: Ember.computed.gt('model.inputs.length', 0),
+  hasOutputs: Ember.computed.gt('model.outputs.length', 0),
+  hasParameters: Ember.computed.gt('model.parameters.length', 0),
 
   fullType: function() {
-    return this.get('package') + '::' + this.get('type');
-  }.property('type', 'package'),
+    return this.get('model.package') + '::' + this.get('model.type');
+  }.property('model.type', 'model.package'),
 
   statusLabel: function() {
-    var status = this.get('model').get('status');
+    var status = this.get('model.status');
 
     switch (status) {
       case 'none':
@@ -24,7 +24,7 @@ export default Ember.ObjectController.extend({
       default:
         return 'Not defined';
     }
-  }.property('status'),
+  }.property('model.status'),
 
   removeConnections: function() {
     var removeIncoming = this.get('model.inputs').then(function(inputs) {
@@ -75,13 +75,13 @@ export default Ember.ObjectController.extend({
       this.get('model').rollback();
     },
     initialize: function() {
-      this.set('status', 'initialized');
+      this.set('model.status', 'initialized');
       this.get('model').save();
     },
     deinitialize: function() {
       var _this = this;
       this.removeConnections().then(function() {
-        _this.set('status', 'none');
+        _this.set('model.status', 'none');
         _this.get('model').save();
       });
     }

@@ -2,12 +2,12 @@ import Ember from "ember";
 
 import ViewController from 'stromx-web/controllers/view';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditingObserver: false,
 
   view: null,
-  viewsExist: Ember.computed.gt('views.length', 0),
-  views: Ember.computed.alias('operator.stream.views'),
+  viewsExist: Ember.computed.gt('model.views.length', 0),
+  views: Ember.computed.alias('model.operator.stream.views'),
   
   observerExists: function(key, value) {
     if (value !== undefined) {
@@ -15,7 +15,7 @@ export default Ember.ObjectController.extend({
     }
     
     var _this = this;
-    this.findObserver(this.get('view')).then( function(observer) {
+    this.findObserver(this.get('model.view')).then( function(observer) {
       _this.set('observerExists', observer !== null);
     });
   }.property('view'),
@@ -48,7 +48,7 @@ export default Ember.ObjectController.extend({
       this.set('isEditingObserver', false);
     },
     addObserver: function() {
-      var view = this.get('view');
+      var view = this.get('model.view');
       if (! view) {
         return;
       }
@@ -65,7 +65,7 @@ export default Ember.ObjectController.extend({
       });
     },
     showObserver: function() {
-      var view = this.get('view');
+      var view = this.get('model.view');
       if (! view) {
         return;
       }

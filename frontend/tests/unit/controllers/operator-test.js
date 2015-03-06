@@ -1,11 +1,8 @@
 import Ember from 'ember';
 import QUnit from 'qunit';
 import startApp from '../../helpers/start-app';
-import {
-  moduleFor,
-  test
-} from 'ember-qunit';
-import { moduleForController, createRecord } from '../../helpers/stromx-web-helpers';
+import { moduleFor, test } from 'ember-qunit';
+import { createRecord } from '../../helpers/stromx-web-helpers';
 
 var App;
 
@@ -25,7 +22,7 @@ moduleFor('controller:operator', 'OperatorController', {
   'model:connector-value', 'model:observer', 'model:parameter-observer']
 });
 
-test('initialize', function() {
+test('initialize', function(assert) {
   var store = this.container.lookup('store:main');
 
   var operator = createRecord(store, 'operator', {
@@ -38,15 +35,17 @@ test('initialize', function() {
   }).then(function(operator) {
     controller.set('model', operator);
     controller.send('initialize');
-    equal(controller.get('model.status'), 'initialized',
-      "Initializing a controller sets the status of its model to 'initialized'");
-    ok(operator.get('isSaving'), 'Deinitializing an operator saves its model');
+    assert.equal(controller.get('model.status'), 'initialized',
+                 "Initializing a controller sets the status of its model to " + 
+                 "'initialized'");
+    assert.ok(operator.get('isSaving'),
+              'Deinitializing an operator saves its model');
   });
 
   wait();
 });
 
-test('deinitialize', function() {
+test('deinitialize', function(assert) {
   var store = this.container.lookup('store:main');
   var operator = createRecord(store, 'operator', {
     status: 'initialized'
@@ -60,9 +59,10 @@ test('deinitialize', function() {
     controller.send('deinitialize');
 
     Ember.run.schedule('destroy', this, function(){
-      equal(operator.get('status'), 'none',
-        "Deinitializing an operator sets the status of its model to 'none'");
-      ok(operator.get('isSaving'), 'Deinitializing an operator saves its model');
+      assert.equal(operator.get('status'), 'none',
+                   "Deinitializing an operator sets the status of its model " +
+                   "to 'none'");
+      assert.ok(operator.get('isSaving'), 'Deinitializing an operator saves its model');
     });
   });
 
@@ -106,7 +106,7 @@ var setupConnection = function(store, noIncoming, noOutgoing) {
   return Ember.RSVP.hash(promises);
 };
 
-test('remove incoming and outgoing connections', function() {
+test('remove incoming and outgoing connections', function(assert) {
   var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store);
@@ -121,17 +121,20 @@ test('remove incoming and outgoing connections', function() {
     controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
-      equal(stream.get('connections.length'), 0,
-        'The connections of the operator are removed from the stream');
-      ok(inConnection.get('isSaving'), 'The incoming connection is saved');
-      ok(outConnection.get('isSaving'), 'The outgoing connection is saved');
+      assert.equal(stream.get('connections.length'), 0,
+                   'The connections of the operator are removed from the ' + 
+                   'stream');
+      assert.ok(inConnection.get('isSaving'),
+                'The incoming connection is saved');
+      assert.ok(outConnection.get('isSaving'),
+                'The outgoing connection is saved');
     });
   });
 
   wait();
 });
 
-test('remove outgoing connection', function() {
+test('remove outgoing connection', function(assert) {
   var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store, true); // no incoming connection
@@ -146,15 +149,15 @@ test('remove outgoing connection', function() {
     controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
-      equal(stream.get('connections.length'), 1,
-        'The outgoing connection is removed from the stream');
+      assert.equal(stream.get('connections.length'), 1,
+                   'The outgoing connection is removed from the stream');
     });
   });
 
   wait();
 });
 
-test('remove incoming connection', function() {
+test('remove incoming connection', function(assert) {
   var store = this.container.lookup('store:main');
 
   var promises = setupConnection(store, false, true); // no outgoing connection
@@ -169,8 +172,8 @@ test('remove incoming connection', function() {
     controller.removeConnections();
 
     Ember.run.schedule('destroy', this, function(){
-      equal(stream.get('connections.length'), 1,
-        'The outgoing connection is removed from the stream');
+      assert.equal(stream.get('connections.length'), 1,
+                   'The outgoing connection is removed from the stream');
     });
   });
 

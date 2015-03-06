@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({  
+export default Ember.Controller.extend({  
   time: function() {
     var model = this.get('model');
     var time = model.get('time');

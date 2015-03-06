@@ -49,8 +49,8 @@
   <div class="col-sm-8">
     <ul class="nav nav-tabs stromx-nav-tabs">
       <li {{bind-attr class="isVisible:active"}} role="presentation"><a {{action "display"}}>Stream</a></li>
-      {{#each view in views itemController="view"}}
-        <li {{bind-attr class="view.isVisible:active"}} role="presentation"><a {{action "display"}}>{{view.name}}</a></li>
+      {{#each view in model.views itemController="view"}}
+        <li {{bind-attr class="view.isVisible:active"}} role="presentation"><a {{action "display"}}>{{view.model.name}}</a></li>
       {{/each}}
     </ul>
     {{outlet "display"}}

@@ -2,10 +2,10 @@ import Ember from "ember";
 
 import { Constant } from 'stromx-web/controllers/operator-svg';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   x: Constant.OPERATOR_SIZE,
   y: function() {
-    var inputs = this.get('operator.outputs');
+    var inputs = this.get('model.operator.outputs');
     var numConnectors = inputs.get('length');
     var index = inputs.indexOf(this.get('model'));
 
@@ -14,7 +14,7 @@ export default Ember.ObjectController.extend({
     var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
 
     return offset + 2 * Constant.CONNECTOR_SIZE * index;
-  }.property('operator.position', 'operator.outputs'),
+  }.property('model.operator.position', 'model.operator.outputs'),
 
   isDraggingConnection: false,
   strokeWidth: function() {
@@ -44,7 +44,7 @@ export default Ember.ObjectController.extend({
         return;
       }
 
-      var opPos = this.get('parentController.position');
+      var opPos = this.get('parentController.model.position');
       this.setProperties({
         'x2': x - opPos.x,
         'y2': y - opPos.y
@@ -63,7 +63,7 @@ export default Ember.ObjectController.extend({
         return;
       }
 
-      var threads = streamController.get('threads');
+      var threads = streamController.get('model.threads');
       var thread = threads.get('length') > 0 ? threads.objectAt(0) : null;
       var output = this.get('model');
       var store = this.get('store');

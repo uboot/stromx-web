@@ -90,6 +90,9 @@ module.exports = function(app) {
       'operator': { id: 5 }
     });
   });
+  operatorsRouter.put('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/operators', operatorsRouter);
   app.use('/api/operators/*', operatorsRouter);
 };

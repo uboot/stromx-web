@@ -1,38 +1,38 @@
 import Ember from "ember";
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditing: false,
 
   isEnum: function() {
-    return this.get('variant.ident') === 'enum';
-  }.property('variant'),
+    return this.get('model.variant.ident') === 'enum';
+  }.property('model.variant'),
 
   isBool: function() {
-    return this.get('variant.ident') === 'bool';
-  }.property('variant'),
+    return this.get('model.variant.ident') === 'bool';
+  }.property('model.variant'),
 
   isTrigger: function() {
-    return this.get('variant.ident') === 'trigger';
-  }.property('variant'),
+    return this.get('model.variant.ident') === 'trigger';
+  }.property('model.variant'),
 
   isMatrix: function() {
-    return this.get('variant.ident') === 'matrix';
-  }.property('variant'),
+    return this.get('model.variant.ident') === 'matrix';
+  }.property('model.variant'),
 
   isFile: function() {
-    return this.get('variant.ident') === 'image';
-  }.property('variant'),
+    return this.get('model.variant.ident') === 'image';
+  }.property('model.variant'),
 
   timedOut: function() {
-    return this.get('state') === 'timedOut';
-  }.property('state'),
+    return this.get('model.state') === 'timedOut';
+  }.property('model.state'),
 
   current: function() {
-    return this.get('state') === 'current';
-  }.property('state'),
+    return this.get('model.state') === 'current';
+  }.property('model.state'),
 
   writable: function() {
-    var variant = this.get('variant.ident');
+    var variant = this.get('model.variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger',
                       'matrix', 'image'];
     var currentAndKnown = this.get('current') && knownTypes.contains(variant);
@@ -40,19 +40,19 @@ export default Ember.ObjectController.extend({
       return false;
     }
 
-    switch(this.get('access')) {
+    switch(this.get('model.access')) {
     case 'full':
       return true;
     case 'inactive':
-      return ! this.get('operator.stream.active');
+      return ! this.get('model.operator.stream.active');
     default:
       return false;
     }
-  }.property('access', 'current', 'variant', 'operator.stream.active'),
+  }.property('model.access', 'model.current', 'model.variant', 'model.operator.stream.active'),
 
   accessFailed: function() {
-    return this.get('state') === 'accessFailed';
-  }.property('state'),
+    return this.get('model.state') === 'accessFailed';
+  }.property('model.state'),
 
   editValue:  function(key, value) {
     if (value === undefined) {
@@ -93,10 +93,10 @@ export default Ember.ObjectController.extend({
       this.set('value', v);
       return v;
     }
-  }.property('value', 'variant'),
+  }.property('model.value', 'model.variant'),
 
-  displayValue: function(key, value) {
-    if (value !== undefined) {
+  displayValue: function(key, newValue) {
+    if (newValue !== undefined) {
       return value;
     }
 
@@ -108,29 +108,30 @@ export default Ember.ObjectController.extend({
       return '';
     }
 
-    switch (this.get('variant.ident')) {
+    var value = this.get('model.value');
+    switch (this.get('model.variant.ident')) {
       case 'int':
       case 'float':
-        return this.get('value');
+        return value;
       case 'enum':
-        return this.updateEnumTitle(this.get('value'));
+        return this.updateEnumTitle(value);
       case 'bool':
-        return this.get('value') ? 'Active' : 'Inactive';
+        return value ? 'Active' : 'Inactive';
       case 'matrix':
-        return this.get('value.rows') + ' x ' + this.get('value.cols') + ' matrix';
+        return value.rows + ' x ' + value.cols + ' matrix';
       case 'image':
-        return this.get('value.width') + ' x ' + this.get('value.height') + ' image';
+        return value.width + ' x ' + value.height + ' image';
       case 'trigger':
         return 'Trigger';
       default:
-        return this.get('value');
+        return value;
     }
-  }.property('value', 'variant', 'isEditing'),
+  }.property('model.value', 'model.variant', 'isEditing'),
 
   // cf. http://stackoverflow.com/q/20623027
   updateEnumTitle: function(enumValue) {
     var value = enumValue;
-    var title = this.get('descriptions').then( function(value){
+    var title = this.get('model.descriptions').then( function(value){
       return value.find( function(item) {
          return item.get('value') === enumValue;
       });
@@ -164,17 +165,17 @@ export default Ember.ObjectController.extend({
     },
     setTrue: function() {
       this.set('isEditing', false);
-      this.set('value', true);
+      this.set('model.value', true);
       this.get('model').save();
     },
     setFalse: function() {
       this.set('isEditing', false);
-      this.set('value', false);
+      this.set('model.value', false);
       this.get('model').save();
     },
     trigger: function() {
       this.set('isEditing', false);
-      this.set('value', 1);
+      this.set('model.value', 1);
       this.get('model').save();
     }
   }

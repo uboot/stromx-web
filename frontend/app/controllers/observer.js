@@ -3,7 +3,7 @@ import Ember from "ember";
 import ParameterObserverModel from 'stromx-web/models/parameter-observer';
 import InputObserverModel from 'stromx-web/models/input-observer';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   needs: ['stream'],
   isEditingColor: false,
   isEditingVisualization: false,
@@ -18,7 +18,7 @@ export default Ember.ObjectController.extend({
   
   // FIXME: For some reason it is not possible to directly bind to the property
   // 'view' in templates. As a workaround the renamed property below is used.
-  observerView: Ember.computed.alias('view'),
+  observerView: Ember.computed.alias('model.view'),
   
   // FIXME: Model rollback does not work if the color selector is bound to 
   // 'properties.color'. Instead we use proxy property below and copy the value
@@ -26,12 +26,12 @@ export default Ember.ObjectController.extend({
   color: '#000000',
   
   visualizationLabel: function() {
-    var visualization = this.get('visualization');
+    var visualization = this.get('model.visualization');
     
     var array = Ember.ArrayProxy.create({content: this.visualizations});
     var record = array.findBy('value', visualization);
     return record ? record['label'] : '';
-  }.property('visualization'),
+  }.property('model.visualization'),
 
   title: function() {
     if (this.get('isParameterObserver')) {
@@ -52,7 +52,7 @@ export default Ember.ObjectController.extend({
   }.property(),
 
   parameterTitle: function() {
-    var parameter = this.get('parameter');
+    var parameter = this.get('model.parameter');
     var name = parameter.get('operator.name');
     var title = parameter.get('title');
     if (name) {
@@ -60,10 +60,10 @@ export default Ember.ObjectController.extend({
     }
 
     return title;
-  }.property('parameter.title', 'parameter.operator.name'),
+  }.property('model.parameter.title', 'model.parameter.operator.name'),
 
   inputTitle: function() {
-    var input = this.get('input');
+    var input = this.get('model.input');
     var name = input.get('operator.name');
     var title = input.get('title');
     if (name) {
@@ -71,25 +71,25 @@ export default Ember.ObjectController.extend({
     }
 
     return title;
-  }.property('input.title', 'input.operator.name'),
+  }.property('model.input.title', 'model.input.operator.name'),
 
   actions: {
     editColor: function() {
-      this.set('color', this.get('properties.color'));
+      this.set('color', this.get('model.properties.color'));
       this.set('isEditingColor', true);
     },
     setColor: function(color) {
       this.set('color', color);
     },
     editVisualization: function() {
-      this.set('color', this.get('properties.color'));
+      this.set('color', this.get('model.properties.color'));
       this.set('isEditingVisualization', true);
     },
     saveChanges: function() {
       this.set('isEditingColor', false);
       this.set('isEditingVisualization', false);
       
-      this.set('properties.color', this.get('color'));
+      this.set('model.properties.color', this.get('color'));
       this.get('model').save();
     },
     discardChanges: function() {
@@ -98,9 +98,9 @@ export default Ember.ObjectController.extend({
       this.get('model').rollback();
     },
     moveUp: function() {
-      var zvalue = this.get('zvalue');
       var model = this.get('model');
-      this.get('view').then(function(view) {
+      var zvalue = model.get('zvalue');
+      model.get('view').then(function(view) {
         var observers = view.get('observers');
         var modelAbove = observers.findBy('zvalue', zvalue + 1);
         if (modelAbove) {
@@ -112,9 +112,9 @@ export default Ember.ObjectController.extend({
       });
     },
     moveDown: function() {
-      var zvalue = this.get('zvalue');
       var model = this.get('model');
-      this.get('view').then(function(view) {
+      var zvalue = model.get('zvalue');
+      model.get('view').then(function(view) {
         var observers = view.get('observers');
         var modelBelow = observers.findBy('zvalue', zvalue - 1);
         if (modelBelow) {
@@ -126,15 +126,15 @@ export default Ember.ObjectController.extend({
       });
     },
     remove: function () {
-      var observer = this.get('model');
-      var zvalue = this.get('model.zvalue');
-      var view = this.get('model.view');
-      observer.deleteRecord();
-      observer.save();
+      var model = this.get('model');
+      var zvalue = model.get('zvalue');
+      var view = model.get('view');
+      model.deleteRecord();
+      model.save();
 
       view.then(function(view) {
         var observers = view.get('observers');
-        observers.removeObject(observer);
+        observers.removeObject(model);
 
         observers.then(function(observers) {
           observers.forEach(function(observer) {

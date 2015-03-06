@@ -1,14 +1,14 @@
 import Ember from "ember";
 import ENV from '../config/environment';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   isEditing: false,
-  closed: Ember.computed.not('opened'),
+  closed: Ember.computed.not('model.opened'),
   url: function() {
     if (ENV.APP.API_HOST) {
-      return ENV.APP.API_HOST + '/download/' + this.get('name');
+      return ENV.APP.API_HOST + '/download/' + this.get('model.name');
     } else {
-      return 'download/' + this.get('name');
+      return 'download/' + this.get('model.name');
     }
   }.property(name),
   actions: {
@@ -24,9 +24,9 @@ export default Ember.ObjectController.extend({
       this.get('model').rollback();
     },
     open: function () {
-      this.set('opened', true);
-      var controller = this;
       var file = this.get('model');
+      file.set('opened', true);
+      var controller = this;
       file.save().then( function(file) {
         if (! file.get('opened')) {
           return;

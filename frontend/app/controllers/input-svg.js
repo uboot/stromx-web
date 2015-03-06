@@ -2,10 +2,10 @@ import Ember from "ember";
 
 import { Constant } from 'stromx-web/controllers/operator-svg';
 
-export default Ember.ObjectController.extend({
+export default Ember.Controller.extend({
   x: -Constant.CONNECTOR_SIZE,
   y: function() {
-    var inputs = this.get('operator.inputs');
+    var inputs = this.get('model.operator.inputs');
     var numConnectors = inputs.get('length');
     var index = inputs.indexOf(this.get('model'));
 
@@ -14,7 +14,7 @@ export default Ember.ObjectController.extend({
     var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
 
     return offset + 2 * Constant.CONNECTOR_SIZE * index;
-  }.property('operator', 'operator.inputs'),
+  }.property('model.operator', 'model.operator.inputs'),
 
   isDraggingConnection: false,
   strokeWidth: function() {
@@ -34,7 +34,7 @@ export default Ember.ObjectController.extend({
   actions: {
     dragStart: function() {
       var _this = this;
-      this.get('connection').then(function(connection) {
+      this.get('model.connection').then(function(connection) {
         if (connection !== null) {
           return;
         }
@@ -51,7 +51,7 @@ export default Ember.ObjectController.extend({
         return;
       }
 
-      var opPos = this.get('parentController.position');
+      var opPos = this.get('parentController.model.position');
       this.setProperties({
         'x2': x - opPos.x,
         'y2': y - opPos.y
@@ -70,7 +70,7 @@ export default Ember.ObjectController.extend({
         return;
       }
       
-      var threads = streamController.get('threads');
+      var threads = streamController.get('model.threads');
       var thread = threads.get('length') > 0 ? threads.objectAt(0) : null;
       var input = this.get('model');
       var store = this.get('store');
@@ -88,7 +88,7 @@ export default Ember.ObjectController.extend({
     },
     enter: function() {
       var _this = this;
-      this.get('connection').then(function(connection) {
+      this.get('model.connection').then(function(connection) {
         if (connection !== null) {
           return;
         }
