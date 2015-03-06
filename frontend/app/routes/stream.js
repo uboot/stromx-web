@@ -50,7 +50,7 @@ export default Ember.Route.extend({
         this.render('view-details', {
           into: 'stream',
           outlet: 'display',
-          controller: 'view',
+          controller: 'view-details',
           model: view
         });
       } else {
