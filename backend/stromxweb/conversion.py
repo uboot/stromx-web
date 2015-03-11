@@ -10,112 +10,112 @@ import stromx.runtime
 import stromx.cvsupport
 
 def isNumber(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.INT):
+    if variant.isVariant(stromx.runtime.Variant.INT):
         return True
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+    elif variant.isVariant(stromx.runtime.Variant.BOOL):
         return True
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+    elif variant.isVariant(stromx.runtime.Variant.TRIGGER):
         return True
     else:
         return False
     
 def isString(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.STRING):
+    if variant.isVariant(stromx.runtime.Variant.STRING):
         return True
     else:
         return False
     
 def hasStringRepresentation(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.STRING):
+    if variant.isVariant(stromx.runtime.Variant.STRING):
         return True
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
         return True
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+    elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return True
     else:
         return False
     
 def toPythonObserverValue(variant, data):
-    if variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+    if variant.isVariant(stromx.runtime.Variant.IMAGE):
         return stromxImageToData(data)
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
         return stromxMatrixToData(data)
-    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+    elif variant.isVariant(stromx.runtime.Variant.LIST):
         return stromxListToData(data)
     else:
         return toPythonValue(variant, data)
     
 def toPythonValue(variant, data):
-    if data.variant().isVariant(stromx.runtime.DataVariant.NONE):
+    if data.variant().isVariant(stromx.runtime.Variant.NONE):
         return None
     
-    if variant.isVariant(stromx.runtime.DataVariant.INT):
+    if variant.isVariant(stromx.runtime.Variant.INT):
         return int(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+    elif variant.isVariant(stromx.runtime.Variant.FLOAT):
         return float(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+    elif variant.isVariant(stromx.runtime.Variant.BOOL):
         return bool(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+    elif variant.isVariant(stromx.runtime.Variant.STRING):
         return str(data.get())
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+    elif variant.isVariant(stromx.runtime.Variant.TRIGGER):
         return 0
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+    elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return {'width': data.width(), 'height': data.height() }
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
         return {'rows': data.rows(), 'cols': data.cols() }
-    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+    elif variant.isVariant(stromx.runtime.Variant.LIST):
         return {'numItems': len(data.content()) }
     else:
         return 0
        
 def toStromxData(variant, value):
-    if variant.isVariant(stromx.runtime.DataVariant.BOOL):
+    if variant.isVariant(stromx.runtime.Variant.BOOL):
         return stromx.runtime.Bool(bool(value))
-    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
+    elif variant.isVariant(stromx.runtime.Variant.ENUM):
         return stromx.runtime.Enum(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_8):
+    elif variant.isVariant(stromx.runtime.Variant.UINT_8):
         return stromx.runtime.UInt8(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_16):
+    elif variant.isVariant(stromx.runtime.Variant.UINT_16):
         return stromx.runtime.UInt16(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.UINT_32):
+    elif variant.isVariant(stromx.runtime.Variant.UINT_32):
         return stromx.runtime.UInt32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_8):
+    elif variant.isVariant(stromx.runtime.Variant.INT_8):
         return stromx.runtime.Int8(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_16):
+    elif variant.isVariant(stromx.runtime.Variant.INT_16):
         return stromx.runtime.Int16(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.INT_32):
+    elif variant.isVariant(stromx.runtime.Variant.INT_32):
         return stromx.runtime.Int32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_32):
+    elif variant.isVariant(stromx.runtime.Variant.FLOAT_32):
         return stromx.runtime.Float32(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.FLOAT_64):
+    elif variant.isVariant(stromx.runtime.Variant.FLOAT_64):
         return stromx.runtime.Float64(value)
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+    elif variant.isVariant(stromx.runtime.Variant.STRING):
         return stromx.runtime.String(str(value))
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+    elif variant.isVariant(stromx.runtime.Variant.TRIGGER):
         return stromx.runtime.TriggerData()
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+    elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return dataToStromxImage(value)
     else:
         return None
     
 def variantToString(variant):
-    if variant.isVariant(stromx.runtime.DataVariant.FLOAT):
+    if variant.isVariant(stromx.runtime.Variant.FLOAT):
         return 'float'
-    elif variant.isVariant(stromx.runtime.DataVariant.TRIGGER):
+    elif variant.isVariant(stromx.runtime.Variant.TRIGGER):
         return 'trigger'
-    elif variant.isVariant(stromx.runtime.DataVariant.ENUM):
+    elif variant.isVariant(stromx.runtime.Variant.ENUM):
         return 'enum'
-    elif variant.isVariant(stromx.runtime.DataVariant.INT):
+    elif variant.isVariant(stromx.runtime.Variant.INT):
         return 'int'
-    elif variant.isVariant(stromx.runtime.DataVariant.BOOL):
+    elif variant.isVariant(stromx.runtime.Variant.BOOL):
         return 'bool'
-    elif variant.isVariant(stromx.runtime.DataVariant.STRING):
+    elif variant.isVariant(stromx.runtime.Variant.STRING):
         return 'string'
-    elif variant.isVariant(stromx.runtime.DataVariant.IMAGE):
+    elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return 'image'
-    elif variant.isVariant(stromx.runtime.DataVariant.MATRIX):
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
         return 'matrix'
-    elif variant.isVariant(stromx.runtime.DataVariant.LIST):
+    elif variant.isVariant(stromx.runtime.Variant.LIST):
         return 'list'
     else:
         return 'none'
@@ -125,7 +125,7 @@ def stromxImageToData(image):
     rows = image.rows()
     cols = image.cols()
     
-    if not image.variant().isVariant(stromx.runtime.DataVariant.MONO_IMAGE):
+    if not image.variant().isVariant(stromx.runtime.Variant.MONO_IMAGE):
         array = array.reshape((rows, cols / 3, 3))
     _, jpg = cv2.imencode('.jpg', array)
     values = 'data:image/jpg;base64,{0}'.format(

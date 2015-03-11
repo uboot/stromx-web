@@ -211,10 +211,10 @@ class OperatorTemplatesTest(unittest.TestCase):
         
         refData = {'operatorTemplate': {'id': '0',
                                         'package': 'runtime',
-                                         'type': 'Block',
-                                         'version': '0.1.0'}}
+                                        'type': 'Block',
+                                        'version': '0.1.0'}}
                                          
-        self.assertEqual(61, len(self.templates)) 
+        self.assertEqual(71, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
