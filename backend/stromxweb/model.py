@@ -1724,6 +1724,12 @@ def _registerExtraPackages(factory):
             pass
         
         try:
+            import stromx.cvcalib3d as cvcalib3d
+            cvcalib3d.register(factory)
+        except ImportError:
+            pass
+        
+        try:
             import stromx.test as test
             test.register(factory)
         except ImportError:
