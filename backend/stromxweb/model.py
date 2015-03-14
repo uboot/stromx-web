@@ -17,7 +17,7 @@ _EXECUTION_DELAY = 10 # ms
 def _str(value):
     return str(value.encode('utf-8'))
 
-class AddDataFailed(Exception): pass
+class Failed(Exception): pass
 
 class Model(object):
     def __init__(self, directory = ""):
@@ -257,6 +257,7 @@ class File(Item):
                 self.__opened = True
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
+                raise Failed()
         else:
             self.model.streams.delete(self.__stream.index)
             self.__stream = None
@@ -601,13 +602,13 @@ class Operators(Items):
                                            _str(data['operator']['type']))
         except stromx.runtime.OperatorAllocationFailed as e:
             self.model.errors.addError(e)
-            raise AddDataFailed()
+            raise Failed()
         
         try:
             stromxOp = stream.stromxStream.addOperator(opKernel)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise AddDataFailed()
+            raise Failed()
             
         op = self.addStromxOp(stromxOp, stream)
         op.set(data)
@@ -1005,7 +1006,7 @@ class Connection(Item):
               self.__stream.removeConnection(self)
         except stromx.runtime.Exception as e:
           self.model.errors.addError(e)
-          raise AddDataFailed()
+          raise Failed()
           
         self.__output.removeConnection(self)
         self.__input.setConnection(None)
@@ -1047,7 +1048,7 @@ class Connections(Items):
                                         inputConnector.stromxId)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise AddDataFailed()
+            raise Failed()
         
         if thread != None:
             thread.stromxThread.addInput(targetOp.stromxOp,
@@ -1135,7 +1136,7 @@ class Threads(Items):
             stromxThread = stream.stromxStream.addThread()
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise AddDataFailed()
+            raise Failed()
         
         thread = self.addStromxThread(stromxThread, stream)
         thread.set(data)
@@ -1638,7 +1639,7 @@ class Errors(Items):
             # remove it right after to make sure the error list does not grow
             # indefinitely
             self.delete(error.index)
-            
+        
         for handler in self.__handlers:
             handler(error)
         return error

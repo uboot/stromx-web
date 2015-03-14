@@ -44,6 +44,13 @@ class AuthHandler(BaseHandler, tornado.auth.GoogleOAuth2Mixin):
                 response_type='code',
                 extra_params={'approval_prompt': 'auto'})
 
+class LoginHandler(BaseHandler):
+    def get(self):
+        loginUrl = ''
+        if config['LOGIN_SERVICE']:
+            loginUrl = "/auth/" + config['LOGIN_SERVICE']
+        self.render("login.html", loginUrl = loginUrl)
+
 class LogoutHandler(BaseHandler):
     def get(self):
         # This logs the user out of this demo app, but does not log them
@@ -94,6 +101,8 @@ class ItemsHandler(BaseHandler):
             self.write(json) 
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
+        except model.Failed:
+            self.set_status(httplib.BAD_REQUEST)
     
     @tornado.web.authenticated
     def put(self, index):
@@ -104,6 +113,8 @@ class ItemsHandler(BaseHandler):
             self.write(json)  
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
+        except model.Failed:
+            self.set_status(httplib.BAD_REQUEST)
         
     @tornado.web.authenticated
     def post(self):
@@ -112,8 +123,8 @@ class ItemsHandler(BaseHandler):
             item = self.items.addData(data)
             json = tornado.escape.json_encode(item)
             self.write(json) 
-        except model.AddDataFailed:
-            self.set_status(httplib.NOT_FOUND)
+        except model.Failed:
+            self.set_status(httplib.BAD_REQUEST)
     
     @tornado.web.authenticated
     def delete(self, index):
@@ -122,8 +133,10 @@ class ItemsHandler(BaseHandler):
             self.write("null")
         except KeyError:
             self.set_status(httplib.NOT_FOUND)
+        except model.Failed:
+            self.set_status(httplib.BAD_REQUEST)
            
-class SocketHandler(tornado.websocket.WebSocketHandler):
+class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
     def initialize(self, items):
         self.__items = items
         
@@ -136,7 +149,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         loop.add_callback(lambda: self.doSend(json))
     
     def open(self):
-        user_json = self.get_secure_cookie(_USER_COOKIE)
+        user_json = self.get_current_user()
         if not user_json: 
             self.close()
             return
@@ -171,6 +184,7 @@ def start(configFile):
     
     handlers = [
         (r"/auth/google", AuthHandler),
+        (r"/auth/login", LoginHandler),
         (r"/auth/logout", LogoutHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetsDir}),
         (r"/fonts/(.*)", tornado.web.StaticFileHandler, {"path": fontsDir}),
@@ -227,16 +241,12 @@ def start(configFile):
          {"path": config['DATA_DIR']}),
         (r"/(.*)", MainHandler)
     ]
-    
-    login_url = ''
-    if config['LOGIN_SERVICE']:
-        login_url = "/auth/" + config['LOGIN_SERVICE']
         
     settings = dict(
         cookie_secret = config['COOKIE_SECRET'],
         google_oauth = {"key": config['GOOGLE_OAUTH_KEY'],
                         "secret":config['GOOGLE_OAUTH_SECRET']},
-        login_url = login_url,
+        login_url = "/auth/login",
         template_path = staticDir
     )
     

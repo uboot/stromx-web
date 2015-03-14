@@ -32,7 +32,7 @@ module.exports = function(app) {
         output: "5", 
         input: "1", 
         thread: "1", 
-        stream: "2" 
+        stream: "2" // FIXME: sending the stream causes deleted connections to reappear...
       }
     });
   });

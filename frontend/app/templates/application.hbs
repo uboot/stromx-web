@@ -3,8 +3,8 @@
 
   {{#if length}}
   <div class="well">
-    {{#each itemController="error"}}
-      <p>{{time}}: {{description}}</p>
+    {{#each error in this itemController="error"}}
+      <p>{{error.time}}: {{error.model.description}}</p>
     {{/each}}
   </div>
   <button {{action "clearErrors"}} class="btn btn-default pull-left">Clear Errors</button>

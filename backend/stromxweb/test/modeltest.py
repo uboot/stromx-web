@@ -214,7 +214,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                         'type': 'Block',
                                         'version': '0.1.0'}}
                                          
-        self.assertEqual(71, len(self.templates)) 
+        self.assertEqual(72, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -655,7 +655,7 @@ class OperatorsTest(unittest.TestCase):
                              'stream': '0',
                              'name': 'New operator'}}
         
-        self.assertRaises(model.AddDataFailed, self.operators.addData, data)
+        self.assertRaises(model.Failed, self.operators.addData, data)
         
         self.assertEqual(1, len(self.model.operators))
         self.assertEqual(1, len(self.errorSink.errors))
@@ -665,7 +665,7 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'Invalid',
                              'stream': '0'}}
         
-        self.assertRaises(model.AddDataFailed, self.operators.addData, data)
+        self.assertRaises(model.Failed, self.operators.addData, data)
         
         self.assertEqual(1, len(self.model.operators))
         self.assertEqual(1, len(self.errorSink.errors))
@@ -1139,7 +1139,7 @@ class ConnectionsTest(unittest.TestCase):
                                   'input': '0'}}
         self.model.connections.addData(newData)
         
-        self.assertRaises(model.AddDataFailed, self.model.connections.addData,
+        self.assertRaises(model.Failed, self.model.connections.addData,
                           newData)
         self.assertEqual(1, len(self.errorSink.errors))
         
@@ -1149,7 +1149,7 @@ class ConnectionsTest(unittest.TestCase):
                                   'output': '2', 
                                   'input': '0'}}
                                
-        self.assertRaises(model.AddDataFailed, self.model.connections.addData,
+        self.assertRaises(model.Failed, self.model.connections.addData,
                           newData)
         self.assertEqual(1, len(self.errorSink.errors))
         
@@ -1204,7 +1204,7 @@ class ConnectionsTest(unittest.TestCase):
         self.model.connections.addData(newData)
         self.stromxStream.start()
         
-        self.assertRaises(model.AddDataFailed, self.model.connections.delete,
+        self.assertRaises(model.Failed, self.model.connections.delete,
                           '0')
         self.assertEqual(1, len(self.errorSink.errors))
         
@@ -1354,7 +1354,7 @@ class ThreadsTest(unittest.TestCase):
         self.stromxStream.start()
         newData = ({'thread': {'stream': '0'}})
         
-        self.assertRaises(model.AddDataFailed, self.model.threads.addData,
+        self.assertRaises(model.Failed, self.model.threads.addData,
                           newData)
         self.assertEqual(1, len(self.errorSink.errors))
         

@@ -36,6 +36,8 @@ export default Ember.Controller.extend({
         if (stream !== null) {
           controller.transitionToRoute('stream', stream);
         }
+      }, function() {
+        file.rollback();
       });
     }
   }
