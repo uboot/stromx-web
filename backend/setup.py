@@ -8,9 +8,6 @@ if os.path.exists('stromxweb/static'):
     shutil.rmtree('stromxweb/static')
 shutil.copytree('../frontend/dist', 'stromxweb/static')
 
-for item in os.listdir('stromxweb/templates'):
-    shutil.copy2(os.path.join('stromxweb/templates', item), 'stromxweb/static')
-
 static_files = []
 
 for root, dirs, files in os.walk('stromxweb/static', ):
