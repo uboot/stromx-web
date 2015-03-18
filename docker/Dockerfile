@@ -26,5 +26,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
 ADD stromx.conf /etc/stromx/
 VOLUME /var/stromx
 
+ADD chess*.png /usr/share/stromx-web/data/chessboard/
+
 EXPOSE 8080
 CMD stromx_server_start.py --config /etc/stromx/stromx.conf
