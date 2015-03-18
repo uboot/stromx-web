@@ -17,8 +17,8 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="#">Files</a></li>
-        {{#if active}}
-          {{#if paused}}
+        {{#if model.active}}
+          {{#if model.paused}}
             <li><a {{action "resume" }}>Resume</a></li>
             <li><a {{action "stop"}}>Stop</a></li>
           {{else}}
