@@ -16,7 +16,7 @@
       <td>
         <header class="stromx-cell-title">Name</header>
         {{#unless isEditingName}}
-          {{name}}
+          {{model.name}}
           <a {{action "editName"}}>
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
@@ -37,7 +37,7 @@
     <tr>
       <td>
         <header class="stromx-cell-title">Color</header>
-        {{#color-box color=color}}{{/color-box}}
+        {{#color-box color=model.color}}{{/color-box}}
         {{#unless isEditingColor}}
           <a {{action "editColor"}}>
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>

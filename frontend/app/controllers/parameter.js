@@ -97,7 +97,7 @@ export default Ember.Controller.extend({
 
   displayValue: function(key, newValue) {
     if (newValue !== undefined) {
-      return value;
+      return newValue;
     }
 
     if (! this.get('current')) {
