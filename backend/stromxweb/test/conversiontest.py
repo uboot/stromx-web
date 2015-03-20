@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import cv2
+import numpy as np
 import stromx.cvsupport
 import stromx.runtime
 import stromx.test
@@ -40,8 +42,15 @@ sybGeV1lnHdY5o06IteZfB3TRqH7XV14b1K4d7HR0lTyYXaI3EP2WxTy3ZTnjJKt1XPFeh+Lf22Pjb+y
 """)
 
 class ConversionTest(unittest.TestCase):
-    def testStromxImageToDataColor(self):
-        stromxImage = stromx.cvsupport.Image('data/image/lenna.jpg')
+    def testStromxRgbImageToData(self):
+        bgrImage = cv2.imread('data/image/lenna.jpg')
+        rgbImage = cv2.cvtColor(bgrImage, cv2.COLOR_BGR2RGB)
+        shape = rgbImage.shape
+        pixelType = stromx.runtime.Image.PixelType.RGB_24
+        stromxImage = stromx.cvsupport.Image(shape[1], shape[0], pixelType)
+        data = np.asarray(stromxImage.data())
+        data[:, :] = rgbImage.reshape(shape[0], shape[1] * 3)
+        
         data = conversion.stromxImageToData(stromxImage)
         
         self.assertEqual(125, data['width'])
@@ -49,9 +58,21 @@ class ConversionTest(unittest.TestCase):
         
         values = data['values']
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
-        self.assertEqual('oKCgoKCgoKCgoKCgoKCgoKCgoKCgoK', values[200:230])
+        self.assertEqual('FfZ4TB06fuwVkvwFjcdPESs2f/2Q==', values[-30:])
         
-    def testStromxImageToDataGrayscale(self):
+    def testStromxBgrImageToData(self):
+        stromxImage = stromx.cvsupport.Image('data/image/lenna.jpg')
+        
+        data = conversion.stromxImageToData(stromxImage)
+        
+        self.assertEqual(125, data['width'])
+        self.assertEqual(128, data['height'])
+        
+        values = data['values']
+        self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
+        self.assertEqual('FfZ4TB06fuwVkvwFjcdPESs2f/2Q==', values[-30:])
+        
+    def testStromxGrayscaleImageToData(self):
         grayscale = stromx.cvsupport.Image.Conversion.GRAYSCALE
         stromxImage = stromx.cvsupport.Image('data/image/lenna.jpg', grayscale)
         data = conversion.stromxImageToData(stromxImage)
@@ -61,7 +82,7 @@ class ConversionTest(unittest.TestCase):
         
         values = data['values']
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
-        self.assertEqual('oL/8QAtRAAAgEDAwIEAwUFBAQAAAF9', values[200:230])
+        self.assertEqual('+NLy58LWMl1aWj+Uhhzhfy/L8K/9k=', values[-30:])
         
     def testStromxMatrixToDataInt32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.INT_32
@@ -128,3 +149,32 @@ class ConversionTest(unittest.TestCase):
         self.assertEqual(13, image.height())
         self.assertEqual(stromx.runtime.Image.PixelType.MONO_8,
                          image.pixelType())
+                         
+    def testDataToStromxMatrixInt32(self):
+        data = { 'rows': 3,
+                 'cols': 4, 
+                 'values': [[10, 10, 200, 200],
+                            [10, 20, 200, 300],
+                            [10, 30, 200, 400]]}
+        matrix = conversion.dataToStromxMatrix(data, np.int32)
+        self.assertEqual(stromx.runtime.Matrix.ValueType.INT_32,
+                         matrix.valueType())
+        self.assertEqual(3, matrix.rows());
+        self.assertEqual(4, matrix.cols());
+        
+        firstRow = np.asarray(matrix.data())[0]
+        self.assertListEqual([10, 10, 200, 200], list(firstRow))
+                         
+    def testDataToStromxMatrixFloat32(self):
+        data = { 'rows': 2,
+                 'cols': 1, 
+                 'values': [[10.5],
+                            [10]]}
+        matrix = conversion.dataToStromxMatrix(data, np.float32)
+        self.assertEqual(stromx.runtime.Matrix.ValueType.FLOAT_32,
+                         matrix.valueType())
+        self.assertEqual(2, matrix.rows());
+        self.assertEqual(1, matrix.cols());
+        
+        firstRow = np.asarray(matrix.data())[0]
+        self.assertListEqual([10.5], list(firstRow))

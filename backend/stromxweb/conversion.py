@@ -9,6 +9,8 @@ import re
 import stromx.runtime
 import stromx.cvsupport
 
+class Failed(Exception): pass
+
 def isNumber(variant):
     if variant.isVariant(stromx.runtime.Variant.INT):
         return True
@@ -95,6 +97,12 @@ def toStromxData(variant, value):
         return stromx.runtime.TriggerData()
     elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return dataToStromxImage(value)
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX_INT32):
+        return dataToStromxMatrix(value, np.int32)
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX_FLOAT32):
+        return dataToStromxMatrix(value, np.float32)
+    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
+        return dataToStromxMatrix(value, np.float32)
     else:
         return None
     
@@ -125,8 +133,14 @@ def stromxImageToData(image):
     rows = image.rows()
     cols = image.cols()
     
+    # expand the color channel into the row
     if not image.variant().isVariant(stromx.runtime.Variant.MONO_IMAGE):
         array = array.reshape((rows, cols / 3, 3))
+    
+    # convert to BGR if necessary
+    if image.pixelType() == stromx.runtime.Image.PixelType.RGB_24:
+        cv2.cvtColor(array, cv2.COLOR_RGB2BGR, array)
+    
     _, jpg = cv2.imencode('.jpg', array)
     values = 'data:image/jpg;base64,{0}'.format(
                                 base64.encodestring(jpg.data).replace("\n", ""))
@@ -180,6 +194,20 @@ def dataToStromxImage(data):
     else:
         assert(False)
     return image
+    
+def dataToStromxMatrix(data, dtype):
+    if dtype == np.int32:
+        valueType = stromx.runtime.Matrix.ValueType.INT_32
+    elif dtype == np.float32:
+        valueType = stromx.runtime.Matrix.ValueType.FLOAT_32
+    else:
+        raise Failed('Unsupported dtype')
+        
+    matrix = stromx.cvsupport.Matrix(data['rows'], data['cols'], valueType)
+    matrixData = np.asarray(matrix.data());
+    matrixData[:, :] = data['values']
+    
+    return matrix
 
 def stromxColorToString(color):
     return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())

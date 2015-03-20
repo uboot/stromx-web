@@ -269,8 +269,10 @@ class FilesTest(unittest.TestCase):
         self.files = self.model.files
         self.model.errors.handlers.append(self.errorSink.handleError)
              
-        f = self.files.set('0', {'file': {'opened': True}})
+        self.assertRaises(model.Failed, self.files.set, 
+                          '0', {'file': {'opened': True}})
         
+        f = self.files['0'].data
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual(1, len(self.errorSink.errors))
         
