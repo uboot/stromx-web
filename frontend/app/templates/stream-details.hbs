@@ -47,7 +47,7 @@
         {{/link-to}}
         {{#each input in op.model.inputs itemController="input-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
-            <title>{{input.title}}</title>
+            <title>{{input.model.title}}</title>
             <rect {{bind-attr x=input.x}} {{bind-attr y=input.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
           {{#if input.isDraggingConnection}}
@@ -56,7 +56,7 @@
         {{/each}}
         {{#each output in op.model.outputs itemController="output-svg"}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
-            <title>{{output.title}}</title>
+            <title>{{output.model.title}}</title>
             <rect {{bind-attr x=output.x}} {{bind-attr y=output.y}} width=10 height=10 class="stromx-svg-connector-rect"/>
           {{/svg-drag}}
           {{#if output.isDraggingConnection}}

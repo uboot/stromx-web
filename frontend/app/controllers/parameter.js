@@ -56,17 +56,18 @@ export default Ember.Controller.extend({
 
   editValue:  function(key, value) {
     if (value === undefined) {
-      switch (this.get('variant.ident')) {
-        case 'int':
+      switch (this.get('model.variant.ident')) {
         case 'float':
+          return this.get('model.value').toPrecision(3);
+        case 'int':
         case 'string':
-          return this.get('value');
+          return this.get('model.value');
         default:
           return '';
       }
     } else {
       var v = '';
-      switch (this.get('variant.ident')) {
+      switch (this.get('model.variant.ident')) {
         case 'int':
           v = parseInt(value, 10);
           if (isNaN(v)) {
@@ -90,7 +91,7 @@ export default Ember.Controller.extend({
         default:
       }
 
-      this.set('value', v);
+      this.set('model.value', v);
       return v;
     }
   }.property('model.value', 'model.variant'),
@@ -110,9 +111,8 @@ export default Ember.Controller.extend({
 
     var value = this.get('model.value');
     switch (this.get('model.variant.ident')) {
-      case 'int':
       case 'float':
-        return value;
+        return value.toPrecision(3);
       case 'enum':
         return this.updateEnumTitle(value);
       case 'bool':
