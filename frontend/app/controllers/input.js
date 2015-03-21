@@ -1,34 +1,34 @@
 import Ember from "ember";
 
-import ViewController from 'stromx-web/controllers/view';
+import ViewController from 'stromx-web/controllers/view-details';
 
 export default Ember.Controller.extend({
   isEditingObserver: false,
 
   view: null,
-  viewsExist: Ember.computed.gt('model.views.length', 0),
+  viewsExist: Ember.computed.gt('views.length', 0),
   views: Ember.computed.alias('model.operator.stream.views'),
-  
+
   observerExists: function(key, value) {
     if (value !== undefined) {
       return value;
     }
-    
+
     var _this = this;
-    this.findObserver(this.get('model.view')).then( function(observer) {
+    this.findObserver(this.get('view')).then( function(observer) {
       _this.set('observerExists', observer !== null);
     });
   }.property('view'),
-  
+
   findObserver: function(view) {
     if (! view) {
       return Ember.RSVP.resolve(null);
     }
-    
+
     var viewController = ViewController.create({
       model: view
     });
-    
+
     var input = this.get('model');
     var inputObservers = viewController.get('inputObservers');
     return Ember.RSVP.all(inputObservers.map( function(observer) {
@@ -48,16 +48,16 @@ export default Ember.Controller.extend({
       this.set('isEditingObserver', false);
     },
     addObserver: function() {
-      var view = this.get('model.view');
+      var view = this.get('view');
       if (! view) {
         return;
       }
-      
+
       var viewController = ViewController.create({
         model: view,
         store: this.get('store')
       });
-      
+
       var _this = this;
       var model = this.get('model');
       viewController.addInputObserver(model).then( function(observer) {
@@ -65,11 +65,11 @@ export default Ember.Controller.extend({
       });
     },
     showObserver: function() {
-      var view = this.get('model.view');
+      var view = this.get('view');
       if (! view) {
         return;
       }
-      
+
       var _this = this;
       this.findObserver(view).then( function(observer) {
         _this.transitionToRoute('inputObserver.index', observer);

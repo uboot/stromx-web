@@ -15,7 +15,7 @@ export default Ember.Controller.extend({
   height: function() {
     return 1024 * this.get('zoom');
   }.property('zoom'),
-  
+
   parameterObservers:  Ember.computed.filter('model.observers', function(observer) {
     return observer instanceof ParameterObserver;
   }),

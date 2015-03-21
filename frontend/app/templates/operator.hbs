@@ -83,10 +83,12 @@
                 {{#if input.viewsExist}}
                   {{view "select" value=input.view content=input.views optionLabelPath="content.name" prompt="Choose view"}}
                   <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                  {{#if input.observerExists}}
+                  {{#if input.view}}
+                    {{#if input.observerExists}}
                     <button {{action "showObserver"}} class="btn btn-primary">Show</button>
-                  {{else}}
+                    {{else}}
                     <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                    {{/if}}
                   {{/if}}
                 {{else}}
                   <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
