@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
   activeOutput: null,
   activeInput: null,
   view: null,
-  isVisible: Ember.computed.equal('model.view', null),
+  isVisible: Ember.computed.equal('view', null),
 
   patternUri: function() {
     return 'url(' + this.get('target.url') + '#grid)';

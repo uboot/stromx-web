@@ -36,7 +36,7 @@
         {{else}}
           <form class="form-inline">
             <div class="form-group">
-              <label class="sr-only" for="observer-visualization">Name</label>{{view "select" value=visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="observer-visualization"}}
+              <label class="sr-only" for="observer-visualization">Name</label>{{view "select" value=model.visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="observer-visualization"}}
             </div>
             <div class="form-group">
               <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
