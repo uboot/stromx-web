@@ -18,7 +18,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && ember build --environment production \
     && cd ../backend \
     && python setup.py build \
-    && python setup.py install \ 
+    && python setup.py install \
     && mkdir /var/stromx \
     && cd ../.. \
     && rm -rf stromx-web
@@ -26,7 +26,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
 ADD stromx.conf /etc/stromx/
 VOLUME /var/stromx
 
-ADD chess*.png /usr/share/stromx-web/data/chessboard/
+ADD chess*.png /usr/share/stromx-web/data/Chessboard/
 
 EXPOSE 8080
 CMD stromx_server_start.py --config /etc/stromx/stromx.conf
