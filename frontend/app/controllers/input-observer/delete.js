@@ -19,8 +19,8 @@ export default Ember.Controller.extend({
       this.set('view', observer.get('view'));
 
       // remove the observer from the view
-      // FIXME: is this really necessary or should ember-data take of
-      // the removal?
+      // FIXME: is this really necessary or should ember-data take core
+      // of the removal?
       var observers = this.get('model.view.observers');
       observers.removeObject(observer);
 

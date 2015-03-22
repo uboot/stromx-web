@@ -37,6 +37,14 @@ export default Ember.Controller.extend({
       },
       visualization: 'default'
     });
+
+    // add the observer to the view
+    // FIXME: is this really necessary or should ember-data automatically
+    // add the data?
+    var observers = this.get('model.observers');
+    observers.addObject(observer);
+
+    // save the observer
     return observer.save();
   },
 
