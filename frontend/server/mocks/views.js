@@ -36,6 +36,9 @@ module.exports = function(app) {
       }
     ]});
   });
+  viewsRouter.put('/', function(req, res) {
+    res.send('null');
+  });
   viewsRouter.post('/', function(req, res) {
     res.send({
       'view': { id: 3 }

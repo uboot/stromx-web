@@ -57,6 +57,9 @@ module.exports = function(app) {
   inputObserversRouter.put('/', function(req, res) {
     res.send('null');
   });
+  inputObserversRouter.delete('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/inputObservers', inputObserversRouter);
   app.use('/api/inputObservers/*', inputObserversRouter);
 };
