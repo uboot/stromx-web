@@ -17,7 +17,7 @@ module.exports = function(app) {
       {
         id: 2,
         zvalue: 1,
-        visualization: 'image_2d',
+        visualization: 'image',
         properties: {
           color: '#00ff00'
         },
@@ -39,7 +39,7 @@ module.exports = function(app) {
       {
         id: 4,
         zvalue: 5,
-        visualization: 'polygons',
+        visualization: 'polygon',
         properties: {
           color: '#00ff00'
         },

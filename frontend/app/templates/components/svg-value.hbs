@@ -1,0 +1,29 @@
+{{#if isList}}
+  {{#each item in listData}}
+    {{svg-value value=item observer=observer}}
+  {{/each}}
+{{else}}
+  {{#if svgImage}}
+    <image {{bind-attr width=imageWidth}} {{bind-attr height=imageHeight}}
+    {{bind-attr xlink:href=imageData}}/>
+  {{/if}}
+  {{#if svgText}}
+    <text x="10" y="20" {{bind-attr fill=color}}>{{textData}}</text>
+  {{/if}}
+  {{#if svgLines}}
+    {{#each line in matrixData4xN itemController="view.line"}}
+      <line {{bind-attr x1=line.x1}} {{bind-attr y1=line.y1}} {{bind-attr x2=line.x2}} {{bind-attr y2=line.y2}} {{bind-attr stroke=color}}/>
+    {{/each}}
+  {{/if}}
+  {{#if svgPoints}}
+    {{#each point in matrixData2xN itemController="view.circle"}}
+      <circle {{bind-attr cx=point.cx}} {{bind-attr cy=point.cy}}  r="3" {{bind-attr fill=color}}/>
+    {{/each}}
+  {{/if}}
+  {{#if svgPolygon}}
+    <polygon {{bind-attr points=pointsData}} {{bind-attr stroke=color}} fill="none"/>
+  {{/if}}
+  {{#if svgPolyline}}
+    <polyline {{bind-attr points=pointsData}} {{bind-attr stroke=color}} fill="none"/>
+  {{/if}}
+{{/if}}

@@ -10,9 +10,16 @@
     <link rel="stylesheet" href="assets/stromx-web.css">
   </head>
   <body>
-  <div class="container">
-    <h1>Goodbye</h1>
-    You are now logged out. Click <a href="/">here</a> to log back in.
-  </div>
+    <div class="container">
+      <h1>Goodbye</h1>
+      You are now logged out. Click <a href="/">here</a> to log back in.
+    </div>
   </body>
+  
+  <script>
+    var _gaq=[['_setAccount','{{trackerId}}'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
 </html>

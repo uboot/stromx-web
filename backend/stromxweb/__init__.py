@@ -49,7 +49,8 @@ class LoginHandler(BaseHandler):
         loginUrl = ''
         if config['LOGIN_SERVICE']:
             loginUrl = "/auth/" + config['LOGIN_SERVICE']
-        self.render("login.html", loginUrl = loginUrl)
+        self.render("login.html", loginUrl = loginUrl,
+                                  trackerId=config['GOOGLE_TRACKER_ID'])
 
 class LogoutHandler(BaseHandler):
     def get(self):
@@ -59,14 +60,13 @@ class LogoutHandler(BaseHandler):
         # interaction (unless they have separately logged out of Google in
         # the meantime).
         self.clear_cookie(_USER_COOKIE)
-        self.render("logout.html")
+        self.render("logout.html", trackerId=config['GOOGLE_TRACKER_ID'])
 
 class ItemsHandler(BaseHandler):
     # FIXME: disable cross-origin connections by removing the function below
     def set_default_headers(self):
         # ember server runs on port 4200
-        self.set_header('Access-Control-Allow-Origin',
-                        'http://0.0.0.0:4200')
+        self.set_header('Access-Control-Allow-Origin', 'http://0.0.0.0:4200')
     
     def options(self, *args, **kwargs):
         self.set_header('Access-Control-Allow-Headers', 
