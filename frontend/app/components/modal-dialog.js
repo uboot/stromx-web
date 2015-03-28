@@ -14,6 +14,9 @@ export default Ember.Component.extend({
       });
     });
   },
+  willDestroyElement: function() {
+    this.$('.modal').modal('hide');
+  },
   showDoNotAccept: Ember.computed.notEmpty('doNotAcceptText'),
   actions: {
     accept: function() {
