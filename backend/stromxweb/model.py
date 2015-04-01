@@ -4,6 +4,7 @@ import base64
 import datetime
 import json
 import os
+import pkgutil
 import re
 import threading
 
@@ -431,6 +432,7 @@ class Stream(Item):
                 self.__stream.start()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
+                raise Failed()
         
         if not value:
             self.__stream.stop()
@@ -570,8 +572,8 @@ class OperatorTemplates(Items):
         super(OperatorTemplates, self).__init__(model)
         self.__factory = stromx.runtime.Factory()
         
-        stromx.runtime.register(self.__factory)
-        _registerExtraPackages(self.__factory)
+        # register the remaining packages
+        _registerPackages(self.__factory)
         
         for op in self.__factory.availableOperators():
             template = OperatorTemplate(op, self.model)
@@ -668,15 +670,17 @@ class Operator(Item):
                 
             self.__allocateParameters()
         elif value == 'initialized':
-            self.__removeParameters()
-            
             try:
+                # attempt to initialize operator
                 self.__stream.stromxStream.initializeOperator(self.__op)
+                
+                # update the parameters
+                self.__removeParameters()
+                self.__allocateParameters()
+                self.__allocateConnectors()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
-                
-            self.__allocateParameters()
-            self.__allocateConnectors()
+                raise Failed()
         else:
             assert(False)          
         
@@ -707,7 +711,7 @@ class Operator(Item):
         
     @property
     def parameters(self):
-        return [op.index for op in self.__parameters]
+        return [param.index for param in self.__parameters]
         
     @property
     def inputs(self):
@@ -729,22 +733,25 @@ class Operator(Item):
         self.__removeParameters()
         self.__removeConnectors() 
         self.__stream.removeOperator(self)
-    
-    def findOutputPosition(self, index):
-        outputs = [i for i, output in enumerate(self.__op.info().outputs())
-                   if output.id() == index]
-        assert(len(outputs) == 1)
-        return outputs[0]
+        
+    def removeInput(self, input):
+        self.__inputs.remove(input)
+        
+    def removeOutput(self, output):
+        self.__outputs.remove(output)
+        
+    def removeParameter(self, param):
+        self.__parameters.remove(param)
     
     def __allocateConnectors(self):
         inputs = self.model.inputs
         outputs = self.model.outputs
         for description in self.__op.info().inputs():
-            connector = inputs.addStromxInput(self.__op, description)
+            connector = inputs.addStromxInput(self, description)
             self.__inputs.append(connector)
             
         for description in self.__op.info().outputs():
-            connector = outputs.addStromxOutput(self.__op, description)
+            connector = outputs.addStromxOutput(self, description)
             self.__outputs.append(connector)
             
     def __allocateParameters(self):
@@ -753,7 +760,7 @@ class Operator(Item):
             if not _parameterIsReadable(self.__op, param):
                 continue
             
-            parameter = parameters.addStromxParameter(self.__op, param)
+            parameter = parameters.addStromxParameter(self, param)
             self.__parameters.append(parameter)
             
     def __removeConnectors(self):
@@ -789,7 +796,7 @@ class Parameter(Item):
         self.__descriptions = []
         self.__observers = []
         for desc in self.__param.descriptions():
-            if not _parameterIsReadable(op, param):
+            if not _parameterIsReadable(op.stromxOp, param):
                 continue
             
             description = (
@@ -816,11 +823,7 @@ class Parameter(Item):
         
     @property
     def operator(self):
-        op = self.model.operators.findOperatorModel(self.__op)
-        if op:
-            return op.index
-        else:
-            assert(False)
+        return self.__op.index
         
     @property
     def value(self):
@@ -867,7 +870,7 @@ class Parameter(Item):
     
     @property
     def access(self):
-        return _parameterAccess(self.__op, self.__param)
+        return _parameterAccess(self.stromxOp, self.__param)
         
     @property
     def descriptions(self):
@@ -876,7 +879,7 @@ class Parameter(Item):
     
     @property
     def stromxOp(self):
-        return self.__op
+        return self.__op.stromxOp
     
     @property
     def stromxId(self):
@@ -891,10 +894,16 @@ class Parameter(Item):
         
     def removeObserver(self, observer):
         self.__observers.remove(observer)
+        
+    def delete(self):
+        for observer in self.observers:
+            self.model.parameterObservers.delete(observer)
+            
+        self.__op.removeParameter(self)
     
     def __getParameter(self, variant):
         try:
-            data = self.__op.getParameter(self.__param.id())
+            data = self.stromxOp.getParameter(self.__param.id())
             self.__state = 'current'
             value = conversion.toPythonValue(variant, data)
         except stromx.runtime.Exception as e:
@@ -908,9 +917,10 @@ class Parameter(Item):
             return
             
         try:
-            self.__op.setParameter(self.__param.id(), data)
+            self.stromxOp.setParameter(self.__param.id(), data)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
+            raise Failed()
     
 class EnumDescriptions(Items):
     def addStromxEnumDescription(self, desc):
@@ -1162,11 +1172,7 @@ class ConnectorBase(Item):
         
     @property
     def operator(self):
-        op = self.model.operators.findOperatorModel(self.__op)
-        if op:
-            return op.index
-        else:
-            assert(False)
+        return self.__op.index
     
     @property
     def title(self):
@@ -1183,6 +1189,10 @@ class ConnectorBase(Item):
     
     @property
     def stromxOp(self):
+        return self.__op.stromxOp
+    
+    @property
+    def operatorModel(self):
         return self.__op
     
     @property
@@ -1208,6 +1218,11 @@ class Input(ConnectorBase):
     def delete(self):
         if self.__connection != None:
             self.model.connections.delete(self.connection)
+        
+        for observer in self.observers:
+            self.model.inputObservers.delete(observer)
+            
+        self.operatorModel.removeInput(self)
     
     def setConnection(self, connection):
         self.__connection = connection
@@ -1247,6 +1262,8 @@ class Output(ConnectorBase):
     def delete(self):
         for connectionIndex in self.connections:
             self.model.connections.delete(connectionIndex)
+            
+        self.operatorModel.removeOutput(self)
     
     def addConnection(self, connection):
         self.__connections.append(connection)
@@ -1440,9 +1457,17 @@ class ParameterObserver(Observer):
     def __init__(self, view, stromxObserver, model):
         super(ParameterObserver, self).__init__(view, stromxObserver, 
                                                 model)
+        self.__parameter = self.__findParameterModel()
         
     @property
     def parameter(self):
+        return self.__parameter.index
+    
+    def delete(self):
+        self.__parameter.removeObserver(self)
+        super(ParameterObserver, self).delete()
+    
+    def __findParameterModel(self):
         index = self.stromxObserver.parameterIndex
         op = self.stromxObserver.op
         
@@ -1450,14 +1475,7 @@ class ParameterObserver(Observer):
                                   param.stromxId == index)
         parameterModels = filter(selector, self.model.parameters.values())
         assert(len(parameterModels) == 1)
-        return parameterModels[0].index
-    
-    def delete(self):
-        parameterId = self.parameter
-        parameter = self.model.parameters[parameterId]
-        parameter.removeObserver(self)
-        
-        super(ParameterObserver, self).delete()
+        return parameterModels[0]
 
 class InputObserver(Observer):
     _properties = Observer._properties + ['input', 'value']
@@ -1468,9 +1486,27 @@ class InputObserver(Observer):
         if stromxObserver.connectorValue:
             self.__value = self.model.connectorValues.addStromxConnectorValue(
                                                 stromxObserver.connectorValue)
+        self.__input = self.__findInputModel()
 
     @property
     def input(self):
+        return self.__input.index
+        
+    @property
+    def value(self):
+        if self.__value:
+            return self.__value.index
+        else:
+            return None
+    
+    def delete(self):
+        if self.__value != None:
+            self.model.connectorValues.delete(self.__value.index)
+        self.__input.removeObserver(self)
+        
+        super(InputObserver, self).delete()
+    
+    def __findInputModel(self):
         index = self.stromxObserver.connectorIndex
         op = self.stromxObserver.op
         
@@ -1487,23 +1523,7 @@ class InputObserver(Observer):
             assert(False)
             
         assert(len(connectorModel) == 1)
-        return connectorModel[0].index
-    
-    @property
-    def value(self):
-        if self.__value:
-            return self.__value.index
-        else:
-            return None
-    
-    def delete(self):
-        if self.__value != None:
-            self.model.connectorValues.delete(self.__value.index)
-        inputId = self.input
-        inputConnector = self.model.inputs[inputId]
-        inputConnector.removeObserver(self)
-        
-        super(InputObserver, self).delete()
+        return connectorModel[0]
         
 class Observers(Items):
     pass
@@ -1705,46 +1725,21 @@ def _parameterAccess(op, param):
     else:
         return "none"  
     
-def _registerExtraPackages(factory):
+def _registerPackages(factory):
+    # register 'runtime' first to make sure the unit tests pass
+    stromx.runtime.register(factory)
+    
+    for importer, modname, ispkg in pkgutil.iter_modules(stromx.__path__):
+        if modname == 'runtime':
+            continue
+            
+        # this produces a lot of output on the console so ignore it for now
+        if modname == 'cvhighgui':
+            continue
+            
         try:
-            import stromx.cvsupport as cvsupport
-            cvsupport.register(factory)
+            package = importer.find_module(modname).load_module(modname)
+            package.register(factory)
         except ImportError:
             pass
-        
-        try:
-            import stromx.cvimgproc as cvimgproc
-            cvimgproc.register(factory)
-        except ImportError:
-            pass
-        
-        try:
-            import stromx.cvcore as cvcore
-            cvcore.register(factory)
-        except ImportError:
-            pass
-        
-        try:
-            import stromx.cvcalib3d as cvcalib3d
-            cvcalib3d.register(factory)
-        except ImportError:
-            pass
-        
-        try:
-            import stromx.test as test
-            test.register(factory)
-        except ImportError:
-            pass
-        
-#         try:
-#             import stromx.cvhighgui as cvhighgui
-#             cvhighgui.register(factory)
-#         except ImportError:
-#             pass
-        
-#         try:
-#             import stromx.raspi as raspi
-#             raspi.register(factory)
-#         except ImportError:
-#             pass
         

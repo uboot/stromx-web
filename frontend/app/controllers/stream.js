@@ -21,7 +21,9 @@ export default Ember.Controller.extend({
     start: function () {
         var stream = this.get('model');
         stream.set('active', true);
-        stream.save();
+        stream.save().catch(function() {
+          stream.rollback();
+        });
     },
     stop: function () {
         var stream = this.get('model');

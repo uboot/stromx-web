@@ -147,6 +147,13 @@ export default Ember.Controller.extend({
 
     return value;
   },
+  
+  save: function() {
+    var model = this.get('model');
+    model.save().catch(function() {
+      model.rollback();
+    });
+  },
 
   actions: {
     editValue: function() {
@@ -154,7 +161,7 @@ export default Ember.Controller.extend({
     },
     saveChanges: function() {
       this.set('isEditing', false);
-      this.get('model').save();
+      this.save();
     },
     discardChanges: function() {
       this.set('isEditing', false);
@@ -166,17 +173,17 @@ export default Ember.Controller.extend({
     setTrue: function() {
       this.set('isEditing', false);
       this.set('model.value', true);
-      this.get('model').save();
+      this.save();
     },
     setFalse: function() {
       this.set('isEditing', false);
       this.set('model.value', false);
-      this.get('model').save();
+      this.save();
     },
     trigger: function() {
       this.set('isEditing', false);
       this.set('model.value', 1);
-      this.get('model').save();
+      this.save();
     }
   }
 });

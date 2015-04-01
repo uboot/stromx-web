@@ -140,7 +140,7 @@
                 {{#if param.isBool}}
                   <div class="form-group">
                     <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    {{#if param.value}}
+                    {{#if param.model.value}}
                       <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
                     {{else}}
                       <button {{action "setTrue"}} class="btn btn-primary">Activate</button>

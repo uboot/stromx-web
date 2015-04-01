@@ -27,7 +27,7 @@ export default Ember.Controller.extend({
   }.property('model.status'),
 
   removeConnections: function() {
-    var removeIncoming = this.get('model.inputs').then(function(inputs) {
+    /*var removeIncoming = this.get('model.inputs').then(function(inputs) {
       var connections = inputs.map( function(input) {
         return input.get('connection');
       });
@@ -39,9 +39,25 @@ export default Ember.Controller.extend({
           connection.save();
         }
       });
+    });*/
+    
+    var removeInputs = this.get('model.inputs').map(function(input) {
+      var deletedObservers = input.get('observers').map(function(observer) {
+        
+        observer.deleteRecord();
+        return observer.save();
+      });
+      
+      input.deleteRecord();
+      return input.save();
+    });
+    
+    var removeOutputs = this.get('model.outputs').map(function(output) {
+      output.deleteRecord();
+      return output.save();
     });
 
-    var removeOutgoing = this.get('model.outputs').then(function(outputs) {
+    /*var removeOutgoing = this.get('model.outputs').then(function(outputs) {
       var connectionLists = outputs.map(function(output) {
         return output.get('connections');
       });
@@ -59,7 +75,8 @@ export default Ember.Controller.extend({
       });
     });
 
-    return Ember.RSVP.all([removeIncoming, removeOutgoing]);
+    return Ember.RSVP.all([removeIncoming, removeOutgoing]);*/
+    return Ember.RSVP.all([removeInputs, removeOutputs]);
   },
   
   actions: {
@@ -75,8 +92,11 @@ export default Ember.Controller.extend({
       this.get('model').rollback();
     },
     initialize: function() {
-      this.set('model.status', 'initialized');
-      this.get('model').save();
+      var model = this.get('model');
+      model.set('status', 'initialized');
+      this.get('model').save().catch(function() {
+        model.rollback();
+      });
     },
     deinitialize: function() {
       var _this = this;

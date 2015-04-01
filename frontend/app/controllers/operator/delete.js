@@ -1,6 +1,6 @@
-import OperatorSvgController from 'stromx-web/controllers/operator-svg';
+import OperatorController from 'stromx-web/controllers/operator';
 
-export default OperatorSvgController.extend({
+export default OperatorController.extend({
   wasRemoved: false,
   actions: {
     dismiss: function () {

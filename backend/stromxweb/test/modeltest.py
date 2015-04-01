@@ -214,7 +214,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                         'type': 'Block',
                                         'version': '0.1.0'}}
                                          
-        self.assertEqual(72, len(self.templates)) 
+        self.assertEqual(76, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -487,7 +487,8 @@ class StreamsTest(unittest.TestCase):
         self.setUpException()
         self.activateFile.opened = True
         
-        self.streams.set('0', {'stream': {'active': True}})
+        self.assertRaises(model.Failed, self.streams.set, '0',
+                          {'stream': {'active': True}})
         self.assertFalse(self.streams.data['streams'][0]['active'])
         self.assertEqual(1, len(self.errorSink.errors))
         
@@ -513,7 +514,11 @@ class StreamsTest(unittest.TestCase):
     def testSetDeactivateAfterFail(self):
         self.setUpException()
         self.activateFile.opened = True
-        self.streams.set('0', {'stream': {'active': True}})
+        try:
+            self.streams.set('0', {'stream': {'active': True}})
+        except model.Failed:
+            pass
+            
         self.streams.set('0', {'stream': {'active': False}})
         
         self.assertFalse(self.streams.data['streams'][0]['active'])
@@ -694,10 +699,6 @@ class OperatorsTest(unittest.TestCase):
         op = self.operators.findOperatorModel(self.stromxOp)
         self.assertEqual(self.operator, op)
         
-    def testFindOutputPosition(self):
-        pos = self.operator.findOutputPosition(0)
-        self.assertEqual(0, pos)
-        
     def testSetNone(self):
         kernel = stromx.test.ParameterOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
@@ -762,9 +763,12 @@ class OperatorsTest(unittest.TestCase):
         op = self.operators.addStromxOp(stromxOp, self.stream)
         stromxOp.setParameter(0, stromx.runtime.Bool(True))
         
-        self.operators.set('1', {'operator': {'status': 'initialized'}})
+        self.assertRaises(model.Failed, self.operators.set,
+                          '1', {'operator': {'status': 'initialized'}})
                                 
         self.assertEqual('none', op.data['operator']['status'])
+        self.assertEqual([], op.data['operator']['inputs'])
+        self.assertEqual([], op.data['operator']['outputs'])
         self.assertEqual(1, len(self.errorSink.errors))
         self.assertEqual('Failed to initialize operator.',
                          self.errorSink.errors[0].description)
@@ -988,21 +992,13 @@ class ParametersTest(unittest.TestCase):
         
     def testSetParameterException(self):
         self.__activateExceptionOnParameter()
-        stromxParam = self.exceptionOperator.info().parameters()[6]
-        param = self.parameters.addStromxParameter(self.exceptionOperator,
-                                                   stromxParam)
+        param = self.parameters['6']
         
-        data = param.set({'parameter': {'id': '0',
-                                        'value': 1}})
-        state = data['parameter']['state']
+        self.assertRaises(model.Failed, param.set, 
+                          {'parameter': {'id': '0', 'value': 1}})
+        state = param.data['parameter']['state']
         self.assertEqual('accessFailed', state)
         self.assertEqual(2, len(self.errorSink.errors))
-        
-    def __activateExceptionOnParameter(self):
-        self.model.operators.addStromxOp(self.exceptionOperator, self.stream)
-        param = self.parameters['5']
-        param.set({'parameter': {'id': '0',
-                                 'value': 1}})
         
     def testDataTrigger(self):
         self.model.operators.addStromxOp(self.parameterOperator, self.stream)
@@ -1029,6 +1025,29 @@ class ParametersTest(unittest.TestCase):
         param.set({'parameter': {'id': '7',
                                  'value': True}})
         self.assertEqual(True, param.data['parameter']['value'])
+        
+    def testDelete(self):
+        # create some parameters
+        self.model.operators.addStromxOp(self.receive, self.stream)
+        
+        # create a view and add an observer
+        self.model.views.addData({'view': {'stream': '0'}})
+        self.model.parameterObservers.addData(
+            {'parameterObserver': {'parameter': '0', 'view': '0'}}
+        )
+        
+        self.model.parameters.delete('0')
+        
+        self.assertFalse(self.model.parameters.has_key('0'))
+        self.assertFalse(self.model.parameterObservers.has_key('0'))
+        self.assertFalse('0' in self.model.views['0'].observers)
+        self.assertFalse('0' in self.model.operators['0'].parameters)
+        
+    def __activateExceptionOnParameter(self):
+        self.model.operators.addStromxOp(self.exceptionOperator, self.stream)
+        param = self.parameters['5']
+        param.set({'parameter': {'id': '0',
+                                 'value': 1}})
         
 class EnumDescriptionsTest(unittest.TestCase):
     def setUp(self):
@@ -1234,13 +1253,23 @@ class InputsTest(unittest.TestCase):
         self.assertEqual(data, connector.data)
         
     def testDelete(self):
+        # create a connection
         source = self.model.outputs['0']
         target = self.model.inputs['0']
         self.model.connections.addConnection(self.stream, source, target, None)
         
+        # create a view and add an observer
+        self.model.views.addData({'view': {'stream': '0'}})
+        self.model.inputObservers.addData(
+            {'inputObserver': {'input': '0', 'view': '0'}}
+        )
+        
         self.model.inputs.delete('0')
         
         self.assertFalse(self.model.inputs.has_key('0'))
+        self.assertFalse('0' in self.model.operators['0'].inputs)
+        self.assertFalse(self.model.inputObservers.has_key('0'))
+        self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
         
 class OutputsTest(unittest.TestCase):
@@ -1273,6 +1302,7 @@ class OutputsTest(unittest.TestCase):
         self.model.outputs.delete('0')
         
         self.assertFalse(self.model.outputs.has_key('0'))
+        self.assertFalse('0' in self.model.operators['0'].outputs)
         self.assertEqual(dict(), self.model.connections)
         
 class ThreadsTest(unittest.TestCase):

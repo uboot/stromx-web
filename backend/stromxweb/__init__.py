@@ -10,6 +10,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
+import traceback
 
 import model
 
@@ -100,8 +101,10 @@ class ItemsHandler(BaseHandler):
                 json = tornado.escape.json_encode(self.items[index].data)
             self.write(json) 
         except KeyError:
+            traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
         except model.Failed:
+            traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
     
     @tornado.web.authenticated
@@ -112,8 +115,10 @@ class ItemsHandler(BaseHandler):
             json = tornado.escape.json_encode(item)
             self.write(json)  
         except KeyError:
+            traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
         except model.Failed:
+            traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
         
     @tornado.web.authenticated
@@ -124,6 +129,7 @@ class ItemsHandler(BaseHandler):
             json = tornado.escape.json_encode(item)
             self.write(json) 
         except model.Failed:
+            traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
     
     @tornado.web.authenticated
@@ -132,8 +138,10 @@ class ItemsHandler(BaseHandler):
             self.items.delete(index)
             self.write("null")
         except KeyError:
+            traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
         except model.Failed:
+            traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
            
 class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
