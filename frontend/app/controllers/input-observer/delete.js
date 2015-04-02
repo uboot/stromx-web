@@ -1,5 +1,7 @@
 import Ember from "ember";
 
+import ViewController from 'stromx-web/controllers/view-details';
+
 export default Ember.Controller.extend({
   wasRemoved: false,
   view: null,
@@ -14,19 +16,17 @@ export default Ember.Controller.extend({
     },
     remove: function () {
       var observer = this.get('model');
-
+      var store = this.get('store');
+      var view = observer.get('view');
+      
+      var viewController = ViewController.create({
+        model: view,
+        store: store
+      });
+      viewController.removeObserver(observer);
+      
       // remember the view
-      this.set('view', observer.get('view'));
-
-      // remove the observer from the view
-      // FIXME: is this really necessary or should ember-data take core
-      // of the removal?
-      var observers = this.get('model.view.observers');
-      observers.removeObject(observer);
-
-      // delete and save the observer
-      observer.deleteRecord();
-      observer.save();
+      this.set('view', view);
       this.set('wasRemoved', true);
     }
   }

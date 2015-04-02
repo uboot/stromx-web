@@ -17,9 +17,11 @@ moduleFor('controller:operator', 'OperatorController', {
     Ember.run(App, 'destroy');
   },
   needs: ['model:operator', 'model:parameter', 'model:input', 'model:output',
-  'model:connection', 'model:stream', 'model:enum-description',
-  'model:input-observer', 'model:file', 'model:view', 'model:thread',
-  'model:connector-value', 'model:observer', 'model:parameter-observer']
+    'model:connection', 'model:stream', 'model:enum-description',
+    'model:input-observer', 'model:file', 'model:view', 'model:thread',
+    'model:connector-value', 'model:observer', 'model:parameter-observer',
+    'model:input-observer', 'model:view'
+  ]
 });
 
 test('initialize', function(assert) {
@@ -157,23 +159,46 @@ test('remove outgoing connection', function(assert) {
   wait();
 });
 
-test('remove incoming connection', function(assert) {
+var setupInputObserver = function(store) {
+  var stream = createRecord(store, 'stream');
+  var operator = createRecord(store, 'operator');
+  var input = createRecord(store, 'input', { operator: operator });
+  var view = createRecord(store, 'view', { stream: stream });
+  var inputObserver = createRecord(store, 'inputObserver', {
+    input: input,
+    view: view
+  });
+  view.get('observers').addObject(inputObserver);
+
+  var promises = Ember.run(function() {
+    return {
+      stream: stream.save(),
+      operator: operator.save(),
+      input: input.save(),
+      view: view.save(),
+      inputObserver: inputObserver.save()
+    };
+  });
+
+  return Ember.RSVP.hash(promises);
+};
+
+test('remove input observer', function(assert) {
   var store = this.container.lookup('store:main');
 
-  var promises = setupConnection(store, false, true); // no outgoing connection
+  var promises = setupInputObserver(store);
   var controller = this.subject();
   promises.then(function(values) {
     var operator = values.operator;
-    var stream = values.stream;
-    var inConnection = values.inConnection;
-    var outConnection = values.outConnection;
+    var view = values.view;
+    var observer = values.inputObserver;
 
     controller.set('model', operator);
-    controller.removeConnections();
+    controller.removeObservers();
 
     Ember.run.schedule('destroy', this, function(){
-      assert.equal(stream.get('connections.length'), 1,
-                   'The outgoing connection is removed from the stream');
+      assert.equal(view.get('observers.length'), 0,
+                   'The input observer is removed from the view');
     });
   });
 

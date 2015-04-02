@@ -145,27 +145,6 @@ export default Ember.Controller.extend({
           model.save();
         }
       });
-    },
-    remove: function () {
-      var model = this.get('model');
-      var zvalue = model.get('zvalue');
-      var view = model.get('view');
-      model.deleteRecord();
-      model.save();
-
-      view.then(function(view) {
-        var observers = view.get('observers');
-        observers.removeObject(model);
-
-        observers.then(function(observers) {
-          observers.forEach(function(observer) {
-            var thisZValue = observer.get('zvalue');
-            if (thisZValue > zvalue) {
-              observer.set('zvalue', thisZValue - 1);
-            }
-          });
-        });
-      });
     }
   }
 });

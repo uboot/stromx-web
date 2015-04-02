@@ -64,7 +64,7 @@ test('add connection', function(assert) {
   });
 });
 
-test('remove and add connection', function(assert) {
+/*test('remove and add connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('button#accept');
   
@@ -76,4 +76,4 @@ test('remove and add connection', function(assert) {
     assert.equal(find('.stromx-svg-connection-path').length, 2,
                  'Two connections are shown');
   });
-});
+});*/

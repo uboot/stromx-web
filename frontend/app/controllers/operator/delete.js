@@ -13,7 +13,7 @@ export default OperatorController.extend({
     },
     remove: function () {
       var _this = this;
-      this.removeConnections().then(function() {
+      this.removeDependencies().then(function() {
         var model = _this.get('model');
         model.deleteRecord();
         model.save();

@@ -47,6 +47,26 @@ export default Ember.Controller.extend({
     // save the observer
     return observer.save();
   },
+  
+  removeObserver: function(observer) {
+    var zvalue = observer.get('zvalue');
+    var view = this.get('model');
+
+    var observers = view.get('observers');
+    observers.removeObject(observer);
+
+    return observers.then(function(observers) {
+      observers.forEach(function(iter) {
+        var thisZValue = iter.get('zvalue');
+        if (thisZValue > zvalue) {
+          iter.set('zvalue', thisZValue - 1);
+          iter.save();
+        }
+      });
+      observer.deleteRecord();
+      return observer.save();
+    });
+  },
 
   actions: {
     display: function() {

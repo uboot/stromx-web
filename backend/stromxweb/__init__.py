@@ -8,6 +8,7 @@ import tornado.auth
 import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
+import tornado.log
 import tornado.web
 import tornado.websocket
 import traceback
@@ -182,6 +183,7 @@ class RedirectHandler(tornado.web.RequestHandler):
         self.redirect('https://' + config['HOST'])
         
 def start(configFile):
+    #tornado.log.enable_pretty_logging()
     execfile(configFile, config) 
     
     appModel = model.Model(config['DATA_DIR'])

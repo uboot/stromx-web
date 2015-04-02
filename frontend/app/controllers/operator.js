@@ -1,5 +1,7 @@
 import Ember from "ember";
 
+import ViewController from 'stromx-web/controllers/view-details';
+
 export default Ember.Controller.extend({
   isEditingName: false,
   isDeinitialized: Ember.computed.equal('model.status', 'none'),
@@ -26,57 +28,76 @@ export default Ember.Controller.extend({
     }
   }.property('model.status'),
 
+   removeObservers: function() {
+    var store = this.get('store');
+    return this.get('model.inputs').then(function(inputs) {
+      var observerLists = inputs.map( function(input) {
+        return input.get('observers');
+      });
+      
+      return Ember.RSVP.all(observerLists);
+    }).then(function(observerLists) {
+      var promises = [];
+      observerLists.forEach( function(observers) {
+        observers.forEach( function(observer) {
+          var view = observer.get('view');
+          var viewController = ViewController.create({
+            model: view,
+            store: store
+          });
+          promises.pushObject(viewController.removeObserver(observer));
+        });
+      });
+      
+      return Ember.RSVP.all(promises);
+    });
+  },
+  
   removeConnections: function() {
-    /*var removeIncoming = this.get('model.inputs').then(function(inputs) {
+    var removeIncoming = this.get('model.inputs').then(function(inputs) {
       var connections = inputs.map( function(input) {
         return input.get('connection');
       });
       return Ember.RSVP.all(connections);
     }).then(function(connections) {
-      connections.map( function(connection) {
+      var removed = connections.map( function(connection) {
         if (connection) {
           connection.deleteRecord();
-          connection.save();
+          return connection.save();
         }
       });
-    });*/
-    
-    var removeInputs = this.get('model.inputs').map(function(input) {
-      var deletedObservers = input.get('observers').map(function(observer) {
-        
-        observer.deleteRecord();
-        return observer.save();
-      });
       
-      input.deleteRecord();
-      return input.save();
-    });
-    
-    var removeOutputs = this.get('model.outputs').map(function(output) {
-      output.deleteRecord();
-      return output.save();
+      return Ember.RSVP.all(removed);
     });
 
-    /*var removeOutgoing = this.get('model.outputs').then(function(outputs) {
+    var removeOutgoing = this.get('model.outputs').then(function(outputs) {
       var connectionLists = outputs.map(function(output) {
         return output.get('connections');
       });
       return Ember.RSVP.all(connectionLists);
     }).then(function(connectionLists) {
-      connectionLists.map( function(connections) {
+      var promises = [];
+      connectionLists.forEach(function(connections) {
         // convert to an array below because the 'connections' becomes invalid
         // if elements are removed from it
-        connections.toArray().map( function(connection) {
+        connections.toArray().forEach(function(connection) {
           if (connection) {
             connection.deleteRecord();
-            connection.save();
+            promises.pushObject(connection.save());
           }
         });
       });
+      return Ember.RSVP.all(promises);
     });
 
-    return Ember.RSVP.all([removeIncoming, removeOutgoing]);*/
-    return Ember.RSVP.all([removeInputs, removeOutputs]);
+    return Ember.RSVP.all([removeIncoming, removeOutgoing]);
+  },
+  
+  removeDependencies: function() {
+    return Ember.RSVP.all([
+      this.removeConnections(),
+      this.removeObservers()
+    ]);
   },
   
   actions: {
@@ -100,7 +121,7 @@ export default Ember.Controller.extend({
     },
     deinitialize: function() {
       var _this = this;
-      this.removeConnections().then(function() {
+      this.removeDependencies().then(function() {
         _this.set('model.status', 'none');
         _this.get('model').save();
       });
