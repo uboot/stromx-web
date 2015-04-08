@@ -52,10 +52,10 @@
           <td>
             {{#if observer.isInputObserver}}
               <header class="stromx-cell-title">Input observer</header>
-              {{#link-to "inputObserver" observer}}{{observer.title}}{{/link-to}}
+              {{#link-to "inputObserver" observer}}{{observer.model.title}}{{/link-to}}
             {{else}}
               <header class="stromx-cell-title">Parameter observer</header>
-              {{#link-to "parameterObserver" observer}}{{observer.title}}{{/link-to}}
+              {{#link-to "parameterObserver" observer}}{{observer.model.title}}{{/link-to}}
             {{/if}}
             <a {{action "moveUp"}}>
               <span class="glyphicon glyphicon-arrow-up pull-right stromx-margin-left" aria-hidden="true"></span>

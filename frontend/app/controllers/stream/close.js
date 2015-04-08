@@ -1,15 +1,15 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
-  wasCancelled: false,
+  wasAccepted: false,
   actions: {
     dismiss: function () {
-      if (this.get('wasCancelled')) {
-        this.transitionToRoute('stream');
-      } else {
+      if (this.get('wasAccepted')) {
         this.transitionToRoute('files');
+      } else {
+        this.transitionToRoute('stream');
       }
-      this.set('wasCancelled', false);
+      this.set('wasAccepted', false);
     },
     saveAndClose: function () {
       this.get('model.file').then(function(file) {
@@ -17,6 +17,7 @@ export default Ember.Controller.extend({
         file.set('opened', false);
         file.save();
       });
+      this.set('wasAccepted', true);
     },
     close: function () {
       this.get('model.file').then(function(file) {
@@ -24,9 +25,7 @@ export default Ember.Controller.extend({
         file.set('saved', false);
         file.save();
       });
-    },
-    cancel: function() {
-      this.set('wasCancelled', true);
+      this.set('wasAccepted', true);
     }
   }
 });

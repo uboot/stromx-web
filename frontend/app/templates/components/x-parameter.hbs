@@ -1,0 +1,67 @@
+<header class="stromx-cell-title">{{model.title}}</header>
+{{#if isEditing}}
+  <form class="form-inline">
+    {{#if isBool}}
+      <div class="form-group">
+        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        {{#if model.value}}
+          <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
+        {{else}}
+          <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
+        {{/if}}
+      </div>
+    {{else if isTrigger}}
+      <div class="form-group">
+        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        <button {{action "trigger"}} class="btn btn-primary">Send</button>
+      </div>
+    {{else if isEnum}}
+      <div class="form-group">
+        {{view "select" value=model.value content=model.descriptions
+        optionValuePath="content.value" optionLabelPath="content.title"}}
+      </div>
+      <div class="form-group">
+        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+      </div>
+    {{else if isFile}}
+      <div class="form-group">
+        <label for="upload-file">File</label>
+        {{view "upload-file" content=editValue id="upload-file"}}
+      </div>
+      <div class="form-group">
+        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+      </div>
+    {{else}}
+      <div class="form-group">
+        {{input value=editValue class="form-control"}}
+      </div>
+      <div class="form-group">
+        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+      </div>
+    {{/if}}
+  </form>
+{{else if timedOut}}
+  <em>Access timed out</em>
+  <a {{action "reload"}}>
+    <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
+  </a>
+{{else if accessFailed}}
+  <em>Access failed</em>
+  <a {{action "reload"}}>
+    <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
+  </a>
+{{else if writable}}
+  {{# if isMatrix}}
+    {{#link-to "parameter.edit" param}}
+      <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+    {{/link-to}}
+  {{else}}
+    <a {{action "editValue"}}>
+      <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+    </a>
+  {{/if}}
+{{/if}}
+{{displayValue}}

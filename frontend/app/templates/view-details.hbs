@@ -1,4 +1,4 @@
-<div class="stromx-view-view stromx-margin-top panel panel-default">
+<div class="stromx-view-view panel panel-default stromx-margin-top">
   <form class="form-inline stromx-svg-buttons">
     <div class="btn-group" role="group">
       <a {{action "minify"}} class="btn btn-default">-</a>
@@ -14,3 +14,20 @@
   {{/each}}
   </svg>
 </div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Observer values
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each observer in htmlObservers itemController="observer"}}
+      {{#if observer.value}}
+        {{html-value value=observer.value observer=observer.model}}
+      {{/if}}
+    {{/each}}
+  </tbody>
+</table>

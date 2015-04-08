@@ -1,6 +1,10 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  isVisible: function() {
+    return this.get('parentController.view') === this.get('model.id');
+  }.property('parentController.view'),
+  
   isEditingName: false,
   sorting: ['zvalue:desc'],
   sortedObservers: Ember.computed.sort('model.observers', 'sorting'),

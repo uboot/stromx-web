@@ -26,9 +26,6 @@ export default Ember.Component.extend({
 
     if (visualization === 'default') {
       switch (variant) {
-        case 'int':
-        case 'float':
-          return 'text';
         case 'image':
           return 'image';
         default:
@@ -37,8 +34,6 @@ export default Ember.Component.extend({
     }
 
     switch (visualization) {
-      case 'text':
-        return 'text';
       case 'image':
         return 'image';
       case 'line_segments':

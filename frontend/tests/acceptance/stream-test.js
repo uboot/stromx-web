@@ -67,6 +67,7 @@ test('add connection', function(assert) {
 /*test('remove and add connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('button#accept');
+  visit('/streams/2/connections/2');
   
   triggerEvent('a[href="/streams/2/operators/0"] + g', 'mousedown');
   triggerEvent('a[href="/streams/2/operators/2"] + g', 'mouseenter');

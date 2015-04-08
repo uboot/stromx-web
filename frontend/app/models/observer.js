@@ -5,5 +5,9 @@ export default DS.Model.extend({
   visualization: DS.attr('string'),
   properties: DS.attr(),
   active: DS.attr('boolean'),
-  view: DS.belongsTo('view', {async: true})
+  view: DS.belongsTo('view', {async: true}),
+
+  title: function() {
+    return '';
+  }.property()
 });

@@ -38,7 +38,6 @@
 
 <div class="row">
   <div class="col-sm-4">
-
     <div class="panel panel-default">
       <div class="panel-body">
         {{outlet}}
@@ -48,11 +47,17 @@
 
   <div class="col-sm-8">
     <ul class="nav nav-tabs stromx-nav-tabs">
-      <li {{bind-attr class="isVisible:active"}} role="presentation"><a {{action "display"}}>Stream</a></li>
-      {{#each view in model.views itemController="view-details"}}
-        <li {{bind-attr class="view.isVisible:active"}} role="presentation"><a {{action "display"}}>{{view.model.name}}</a></li>
+      <li {{bind-attr class="isVisible:active"}} role="presentation">{{#link-to (query-params view='null')}}Stream{{/link-to}}</li>
+      {{#each view in model.views itemController="view"}}
+        <li {{bind-attr class="view.isVisible:active"}} role="presentation"><!-- <a {{action "display"}}>{{view.model.name}}</a> --> {{#link-to (query-params view=view.model.id)}}{{view.model.name}}{{/link-to}}</li>
       {{/each}}
     </ul>
+    
+    {{#if isVisible}}
+      {{render "stream-details" this.model}}
+    {{else}}
+      {{render "view-details" this.viewModel}}
+    {{/if}}
     {{outlet "display"}}
   </div>
 </div>

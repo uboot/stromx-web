@@ -4,10 +4,6 @@ import ParameterObserver from 'stromx-web/models/parameter-observer';
 import { defaultObserverColor } from 'stromx-web/colors';
 
 export default Ember.Controller.extend({
-  isVisible: function() {
-    return this.get('parentController.view') === this.get('model');
-  }.property('parentController.view'),
-
   zoom: 1.0,
   width: function() {
     return 1280 * this.get('zoom');
@@ -24,7 +20,9 @@ export default Ember.Controller.extend({
   }),
 
   svgSorting: ['zvalue:incr'],
+  htmlSorting: ['zvalue:decr'],
   svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
+  htmlObservers: Ember.computed.sort('model.observers', 'htmlSorting'),
 
   addInputObserver: function(input) {
     var numObservers = this.get('model.observers.length');
@@ -69,10 +67,6 @@ export default Ember.Controller.extend({
   },
 
   actions: {
-    display: function() {
-      this.set('parentController.view', this.get('model'));
-      this.send('renderDetails', this.get('model'));
-    },
     magnify: function() {
       var newZoom = Math.min(8.0, this.get('zoom') * Math.sqrt(2.0));
       this.set('zoom', newZoom);

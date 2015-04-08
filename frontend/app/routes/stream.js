@@ -36,30 +36,20 @@ export default Ember.Route.extend({
   deactivate: function() {
     this.disconnectSocket();
   },
-  renderTemplate: function(controller, model) {
+
+  setupController: function (controller, model) {
     this._super(controller, model);
-    this.render('stream-details', {
-      into: 'stream',
-      outlet: 'display'
-    });
+    
+    if (controller.get('view') !== null) {
+      this.connectSocket();
+    }
   },
   actions: {
-    renderDetails: function(view) {
-      if (view) {
-        this.connectSocket();
-        this.render('view-details', {
-          into: 'stream',
-          outlet: 'display',
-          controller: 'view-details',
-          model: view
-        });
-      } else {
-        this.disconnectSocket();
-        this.render('stream-details', {
-          into: 'stream',
-          outlet: 'display'
-        });
-      }
+    connectToValueSocket: function() {
+      this.connectSocket();
+    },
+    disconnectFromValueSocket: function() {
+      this.disconnectSocket();
     }
   }
 });

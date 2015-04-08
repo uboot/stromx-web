@@ -21,8 +21,6 @@ export default Ember.Controller.extend({
         return 'Not initialized';
       case 'initialized':
         return 'Initialized';
-      case 'active':
-        return 'Active';
       default:
         return 'Not defined';
     }

@@ -131,77 +131,9 @@
       </tr>
     </thead>
     <tbody>
-      {{#each param in model.parameters itemController="parameter"}}
+      {{#each param in model.parameters}}
         <tr>
-          <td>
-            <header class="stromx-cell-title">{{param.model.title}}</header>
-            {{#if param.isEditing}}
-              <form class="form-inline">
-                {{#if param.isBool}}
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    {{#if param.model.value}}
-                      <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
-                    {{else}}
-                      <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
-                    {{/if}}
-                  </div>
-                {{else if param.isTrigger}}
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "trigger"}} class="btn btn-primary">Send</button>
-                  </div>
-                {{else if param.isEnum}}
-                  <div class="form-group">
-                    {{view "select" value=param.model.value content=param.model.descriptions
-                    optionValuePath="content.value" optionLabelPath="content.title"}}
-                  </div>
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-                  </div>
-                {{else if param.isFile}}
-                  <div class="form-group">
-                    <label for="upload-file">File</label>
-                    {{view "upload-file" content=param.editValue id="upload-file"}}
-                  </div>
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-                  </div>
-                {{else}}
-                  <div class="form-group">
-                    {{input value=param.editValue class="form-control"}}
-                  </div>
-                  <div class="form-group">
-                    <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                    <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-                  </div>
-                {{/if}}
-              </form>
-            {{else if param.timedOut}}
-              <em>Access timed out</em>
-              <a {{action "reload"}}>
-                <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-              </a>
-            {{else if param.accessFailed}}
-              <em>Access failed</em>
-              <a {{action "reload"}}>
-                <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-              </a>
-            {{else if param.writable}}
-              {{# if param.isMatrix}}
-                {{#link-to "parameter.edit" param}}
-                  <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
-                {{/link-to}}
-              {{else}}
-                <a {{action "editValue"}}>
-                  <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
-                </a>
-              {{/if}}
-            {{/if}}
-            {{param.displayValue}}
-          </td>
+          {{x-parameter model=param}}
         </tr>
       {{/each}}
     </tbody>

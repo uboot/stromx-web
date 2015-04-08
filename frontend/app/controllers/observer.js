@@ -1,5 +1,4 @@
 import Ember from "ember";
-
 import ParameterObserverModel from 'stromx-web/models/parameter-observer';
 import InputObserverModel from 'stromx-web/models/input-observer';
 
@@ -35,17 +34,6 @@ export default Ember.Controller.extend({
     return record ? record['label'] : '';
   }.property('model.visualization'),
 
-  title: function() {
-    if (this.get('isParameterObserver')) {
-      return this.get('parameterTitle');
-    } else if (this.get('isInputObserver')) {
-      return this.get('inputTitle');
-    } else {
-      return '';
-    }
-  }.property('parameterTitle', 'inputTitle'),
-
-
   value: function(key, value) {
     if (value === undefined) {
       var _this = this;
@@ -71,28 +59,6 @@ export default Ember.Controller.extend({
   isInputObserver: function() {
     return this.get('model') instanceof InputObserverModel;
   }.property(),
-
-  parameterTitle: function() {
-    var parameter = this.get('model.parameter');
-    var name = parameter.get('operator.name');
-    var title = parameter.get('title');
-    if (name) {
-      title += " at " + name;
-    }
-
-    return title;
-  }.property('model.parameter.title', 'model.parameter.operator.name'),
-
-  inputTitle: function() {
-    var input = this.get('model.input');
-    var name = input.get('operator.name');
-    var title = input.get('title');
-    if (name) {
-      title += " at " + name;
-    }
-
-    return title;
-  }.property('model.input.title', 'model.input.operator.name'),
 
   actions: {
     editColor: function() {

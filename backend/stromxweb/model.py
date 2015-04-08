@@ -13,7 +13,7 @@ import stromx.runtime
 import conversion
 import view
 
-_EXECUTION_DELAY = 10 # ms
+_EXECUTION_DELAY = 1000 # ms
 
 def _str(value):
     return str(value.encode('utf-8'))
@@ -647,10 +647,9 @@ class Operator(Item):
     def status(self):
         if self.__op.status() == stromx.runtime.Operator.Status.NONE:
             return 'none'
-        elif self.__op.status() == stromx.runtime.Operator.Status.INITIALIZED:
+        elif (self.__op.status() == stromx.runtime.Operator.Status.INITIALIZED
+              or self.__op.status() == stromx.runtime.Operator.Status.ACTIVE):
             return 'initialized'
-        elif self.__op.status() == stromx.runtime.Operator.Status.ACTIVE:
-            return 'active'
         else:
             return 'undefined'
         

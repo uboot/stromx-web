@@ -62,22 +62,8 @@ export default Ember.Controller.extend({
       if (input === null) {
         return;
       }
-
-      var threads = streamController.get('model.threads');
-      var thread = threads.get('length') > 0 ? threads.objectAt(0) : null;
-      var output = this.get('model');
-      var store = this.get('store');
-      var connection = store.createRecord('connection', {
-        output: output,
-        input: input,
-        thread: thread,
-        stream: streamController.get('model')
-      });
       
-      var _this = this;
-      connection.save().then(function(connection) {
-        _this.transitionToRoute('connection', connection);
-      });
+      streamController.addConnection(input, this.get('model'));
     },
     enter: function() {
       var stream = this.get('parentController.parentController');
