@@ -24,34 +24,12 @@ module.exports = function(app) {
         input: 2,
         value: 1,
         view: 1
-      },
-      {
-        id: 3,
-        zvalue: 4,
-        visualization: 'default',
-        properties: {
-          color: '#ff0000'
-        },
-        input: 2,
-        value: 2,
-        view: 1
-      },
-      {
-        id: 4,
-        zvalue: 5,
-        visualization: 'polygon',
-        properties: {
-          color: '#00ff00'
-        },
-        input: 1,
-        value: 3,
-        view: 1
       }
     ]});
   });
   inputObserversRouter.post('/', function(req, res) {
     res.send({
-      "input-observer": { id: 4 }
+      "input-observer": { id: 2 }
     });
   });
   inputObserversRouter.put('/', function(req, res) {

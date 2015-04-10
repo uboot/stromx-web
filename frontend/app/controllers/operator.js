@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
 
    removeObservers: function() {
     var store = this.get('store');
-    return this.get('model.inputs').then(function(inputs) {
+    var removeInputObservers = this.get('model.inputs').then(function(inputs) {
       var observerLists = inputs.map( function(input) {
         return input.get('observers');
       });
@@ -49,6 +49,30 @@ export default Ember.Controller.extend({
       
       return Ember.RSVP.all(promises);
     });
+    
+    var removeOutputObservers = this.get('model.outputs').then(function(outputs) {
+      var observerLists = outputs.map( function(input) {
+        return input.get('observers');
+      });
+      
+      return Ember.RSVP.all(observerLists);
+    }).then(function(observerLists) {
+      var promises = [];
+      observerLists.forEach( function(observers) {
+        observers.forEach( function(observer) {
+          var view = observer.get('view');
+          var viewController = ViewController.create({
+            model: view,
+            store: store
+          });
+          promises.pushObject(viewController.removeObserver(observer));
+        });
+      });
+      
+      return Ember.RSVP.all(promises);
+    });
+    
+    return Ember.RSVP.all([removeInputObservers, removeOutputObservers]);
   },
   
   removeConnections: function() {

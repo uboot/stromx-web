@@ -20,7 +20,7 @@ moduleFor('controller:operator', 'OperatorController', {
     'model:connection', 'model:stream', 'model:enum-description',
     'model:input-observer', 'model:file', 'model:view', 'model:thread',
     'model:connector-value', 'model:observer', 'model:parameter-observer',
-    'model:input-observer', 'model:view'
+    'model:input-observer', 'model:view', 'model:output-observer'
   ]
 });
 
@@ -159,24 +159,40 @@ test('remove outgoing connection', function(assert) {
   wait();
 });
 
-var setupInputObserver = function(store) {
+var setupObserver = function(store, noInput, noOutput) {
   var stream = createRecord(store, 'stream');
   var operator = createRecord(store, 'operator');
-  var input = createRecord(store, 'input', { operator: operator });
   var view = createRecord(store, 'view', { stream: stream });
-  var inputObserver = createRecord(store, 'inputObserver', {
-    input: input,
-    view: view
-  });
-  view.get('observers').addObject(inputObserver);
+  var input = createRecord(store, 'input', { operator: operator });
+  var output = createRecord(store, 'output', { operator: operator });
+  
+  var inputObserver = null;
+  if (! noInput) {
+    inputObserver = createRecord(store, 'inputObserver', {
+      input: input,
+      view: view
+    });
+    view.get('observers').addObject(inputObserver);
+  }
+  
+  var outputObserver = null;
+  if (! noOutput) {
+    outputObserver = createRecord(store, 'outputObserver', {
+      output: output,
+      view: view
+    });
+    view.get('observers').addObject(outputObserver);
+  }
 
   var promises = Ember.run(function() {
     return {
       stream: stream.save(),
       operator: operator.save(),
       input: input.save(),
+      output: output.save(),
       view: view.save(),
-      inputObserver: inputObserver.save()
+      inputObserver: noInput ? null : inputObserver.save(),
+      outputObserver: noOutput ? null : outputObserver.save()
     };
   });
 
@@ -186,7 +202,7 @@ var setupInputObserver = function(store) {
 test('remove input observer', function(assert) {
   var store = this.container.lookup('store:main');
 
-  var promises = setupInputObserver(store);
+  var promises = setupObserver(store, false, true);
   var controller = this.subject();
   promises.then(function(values) {
     var operator = values.operator;
@@ -199,6 +215,50 @@ test('remove input observer', function(assert) {
     Ember.run.schedule('destroy', this, function(){
       assert.equal(view.get('observers.length'), 0,
                    'The input observer is removed from the view');
+    });
+  });
+
+  wait();
+});
+
+test('remove output observer', function(assert) {
+  var store = this.container.lookup('store:main');
+
+  var promises = setupObserver(store, true, false);
+  var controller = this.subject();
+  promises.then(function(values) {
+    var operator = values.operator;
+    var view = values.view;
+    var observer = values.outputObserver;
+
+    controller.set('model', operator);
+    controller.removeObservers();
+
+    Ember.run.schedule('destroy', this, function(){
+      assert.equal(view.get('observers.length'), 0,
+                   'The output observer is removed from the view');
+    });
+  });
+
+  wait();
+});
+
+test('remove input and output observer', function(assert) {
+  var store = this.container.lookup('store:main');
+
+  var promises = setupObserver(store, false, false);
+  var controller = this.subject();
+  promises.then(function(values) {
+    var operator = values.operator;
+    var view = values.view;
+    var observer = values.inputObserver;
+
+    controller.set('model', operator);
+    controller.removeObservers();
+
+    Ember.run.schedule('destroy', this, function(){
+      assert.equal(view.get('observers.length'), 0,
+                   'The input and output observers are removed from the view');
     });
   });
 

@@ -497,7 +497,7 @@ class StreamsTest(unittest.TestCase):
         self.executeFile.opened = True
         
         self.streams.set('0', {'stream': {'active': True}})
-        time.sleep(0.3)
+        time.sleep(1.3)
         
         self.assertEqual(1, len(self.errorSink.errors))
         self.assertEqual('Failed to execute operator.',
@@ -1290,19 +1290,29 @@ class OutputsTest(unittest.TestCase):
         data = {'output': {'id': '1',
                            'operator': '0',
                            'title': 'Output 1',
+                           'observers': [],
                            'connections': [],
                            'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
         
     def testDelete(self):
+        # create a connection
         source = self.model.outputs['0']
         target = self.model.inputs['0']
         self.model.connections.addConnection(self.stream, source, target, None)
+        
+        # create a view and add an observer
+        self.model.views.addData({'view': {'stream': '0'}})
+        self.model.outputObservers.addData(
+            {'outputObserver': {'output': '0', 'view': '0'}}
+        )
         
         self.model.outputs.delete('0')
         
         self.assertFalse(self.model.outputs.has_key('0'))
         self.assertFalse('0' in self.model.operators['0'].outputs)
+        self.assertFalse(self.model.outputObservers.has_key('0'))
+        self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
         
 class ThreadsTest(unittest.TestCase):
@@ -1439,7 +1449,8 @@ class ViewsTest(unittest.TestCase):
         data = {'view': {'id': '1',
                          'name': 'View name',
                          'observers': [{'id': '0', 'type': 'parameterObserver'},
-                                       {'id': '0', 'type': 'inputObserver'}],
+                                       {'id': '0', 'type': 'inputObserver'},
+                                       {'id': '0', 'type': 'outputObserver'}],
                          'stream': '1'}}
         self.assertEqual(data, self.model.views['1'].data)
         
@@ -1549,14 +1560,14 @@ class ParameterObserversTest(unittest.TestCase):
         
         self.model.parameterObservers.delete('0')
         
-        self.assertEqual(1, len(viewModel.observers))
-        self.assertEqual(1, len(stromxView.observers))
+        self.assertEqual(2, len(viewModel.observers))
+        self.assertEqual(2, len(stromxView.observers))
         self.assertEqual([], self.model.parameters['2'].observers)
         
     def tearDown(self):
         shutil.rmtree('temp', True)
         
-class InputObserversTest(unittest.TestCase):
+class ConnectorObserversTestBase(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
@@ -1570,6 +1581,10 @@ class InputObserversTest(unittest.TestCase):
         streamFile = self.model.files['1']
         self.model.streams.addFile(streamFile)
         
+    def tearDown(self):
+        shutil.rmtree('temp', True)
+        
+class InputObserversTest(ConnectorObserversTestBase):        
     def testAddData(self):
         self.setupEmptyView()
         data = {'inputObserver': {'id': '0',
@@ -1607,12 +1622,51 @@ class InputObserversTest(unittest.TestCase):
         
         self.model.inputObservers.delete('0')
         
-        self.assertEqual(1, len(viewModel.observers))
-        self.assertEqual(1, len(stromxView.observers))
+        self.assertEqual(2, len(viewModel.observers))
+        self.assertEqual(2, len(stromxView.observers))
         self.assertEqual([], self.model.inputs['2'].observers)
         
-    def tearDown(self):
-        shutil.rmtree('temp', True)
+class OutputObserversTest(ConnectorObserversTestBase):        
+    def testAddData(self):
+        self.setupEmptyView()
+        data = {'outputObserver': {'id': '0',
+                                   'output': '0',
+                                   'properties': {'color': '#00ff00'},
+                                   'view': '0'}}
+        
+        returned = self.model.outputObservers.addData(data)
+        
+        refData = {'outputObserver': {'id': '0',
+                                      'output': '0',
+                                      'view': '0',
+                                      'active': True,
+                                      'value': '0',
+                                      'properties': {'color': '#00ff00'},
+                                      'visualization': 'default',
+                                      'zvalue': 0}}
+        self.assertEqual(refData, returned)
+        self.assertEqual(refData, self.model.outputObservers['0'].data)
+        viewModel = self.model.views['0']
+        self.assertEqual([{'id': '0', 'type': 'outputObserver'}],
+                         viewModel.observers)
+        refData = {'connectorValues': [{'variant': {'ident': 'none'},
+                                        'id': '0',
+                                        'value': None
+                                        }]
+                  }
+        self.assertEqual(refData, self.model.connectorValues.data)
+        self.assertEqual(['0'], self.model.outputs['0'].observers)
+        
+    def testDelete(self):
+        self.setupView()
+        viewModel = self.model.views['0']
+        stromxView = viewModel.stromxView
+        
+        self.model.outputObservers.delete('0')
+        
+        self.assertEqual(2, len(viewModel.observers))
+        self.assertEqual(2, len(stromxView.observers))
+        self.assertEqual([], self.model.outputs['2'].observers)
         
 class ConnectorValuesTest(unittest.TestCase):
     def setUp(self):
@@ -1630,6 +1684,14 @@ class ConnectorValuesTest(unittest.TestCase):
         testDataFile = self.model.files['3']
         self.testDataStream = self.model.streams.addFile(testDataFile)
         
+        # observer output connector
+        outputFile = self.model.files['4']
+        self.outputStream = self.model.streams.addFile(outputFile)
+        
+        # observer input connector
+        inputFile = self.model.files['5']
+        self.inputStream = self.model.streams.addFile(inputFile)
+        
         self.data = None
         
     def setValue(self, value):
@@ -1641,11 +1703,20 @@ class ConnectorValuesTest(unittest.TestCase):
                                       'variant': {'ident': 'none'}}}
         self.assertEqual(refData, self.model.connectorValues['0'].data)
         
-    def testHandlerObserver(self):
+    def testHandlerInput(self):
         self.model.connectorValues.handlers.append(self.setValue)
-        self.observerStream.active = True
+        self.inputStream.active = True
         time.sleep(0.3)
-        self.observerStream.active = False
+        self.inputStream.active = False
+        
+        self.assertEqual('int', self.data['connectorValue']['variant']['ident'])
+        self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
+        
+    def testHandlerOutput(self):
+        self.model.connectorValues.handlers.append(self.setValue)
+        self.outputStream.active = True
+        time.sleep(0.3)
+        self.outputStream.active = False
         
         self.assertEqual('int', self.data['connectorValue']['variant']['ident'])
         self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
@@ -1668,7 +1739,7 @@ class ConnectorValuesTest(unittest.TestCase):
     def testHandlerLines(self):
         self.model.connectorValues.handlers.append(self.setValue)
         self.testDataStream.active = True
-        time.sleep(0.2)
+        time.sleep(0.1)
         self.testDataStream.active = False
         
         self.assertEqual('matrix',
@@ -1676,7 +1747,7 @@ class ConnectorValuesTest(unittest.TestCase):
         value = self.data['connectorValue']['value']
         self.assertEqual(20, value['rows'])
         self.assertEqual(4, value['cols'])
-        self.assertEqual([[101.0, 0.0, 101.0, 50.0], [151.0, 0.0, 151.0, 50.0]],
+        self.assertEqual([[100.0, 0.0, 100.0, 50.0], [150.0, 0.0, 150.0, 50.0]],
                          value['values'][2:4])
         
     def testHandlerPolygons(self):

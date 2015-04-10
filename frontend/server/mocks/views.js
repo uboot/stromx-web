@@ -20,11 +20,11 @@ module.exports = function(app) {
           },
           {
             id: 3,
-            type: 'inputObserver'
+            type: 'outputObserver'
           },
           {
             id: 4,
-            type: 'inputObserver'
+            type: 'outputObserver'
           }
         ],
         stream: 2

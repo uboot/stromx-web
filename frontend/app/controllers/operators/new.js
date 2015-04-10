@@ -19,7 +19,7 @@ export default Ember.Controller.extend({
           operators: operators.sortBy('type')
         });
       }
-      packages = packages.sortBy('package');
+      packages = packages.sortBy('name');
       _this.set('packages', packages);
     });
 

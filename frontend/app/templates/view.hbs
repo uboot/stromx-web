@@ -1,5 +1,5 @@
 <ol class="breadcrumb">
-  <li>{{#link-to "stream" stream}}{{model.stream.file.name}}{{/link-to}}</li>
+  <li>{{#link-to "stream" model.stream}}{{model.stream.file.name}}{{/link-to}}</li>
   <li>{{model.name}}</li>
 </ol>
 
@@ -53,7 +53,10 @@
             {{#if observer.isInputObserver}}
               <header class="stromx-cell-title">Input observer</header>
               {{#link-to "inputObserver" observer}}{{observer.model.title}}{{/link-to}}
-            {{else}}
+            {{else if observer.isOutputObserver}}
+              <header class="stromx-cell-title">Output observer</header>
+              {{#link-to "outputObserver" observer}}{{observer.model.title}}{{/link-to}}
+            {{else if observer.isParameterObserver}}
               <header class="stromx-cell-title">Parameter observer</header>
               {{#link-to "parameterObserver" observer}}{{observer.model.title}}{{/link-to}}
             {{/if}}

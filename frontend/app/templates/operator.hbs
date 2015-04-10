@@ -85,9 +85,9 @@
                   <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
                   {{#if input.view}}
                     {{#if input.observerExists}}
-                    <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+                      <button {{action "showObserver"}} class="btn btn-primary">Show</button>
                     {{else}}
-                    <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                      <button {{action "addObserver"}} class="btn btn-primary">Add</button>
                     {{/if}}
                   {{/if}}
                 {{else}}
@@ -111,11 +111,31 @@
       </tr>
     </thead>
     <tbody>
-      {{#each output in model.outputs}}
+      {{#each output in model.outputs itemController="output"}}
         <tr>
           <td>
-            <header class="stromx-cell-title">{{output.title}}</header>
-            {{output.variant.title}}
+            <header class="stromx-cell-title">{{output.model.title}}</header>
+            {{#unless output.isEditingObserver}}
+              {{output.model.variant.title}}
+              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
+            {{else}}
+              <div class="form-group">
+                {{#if output.viewsExist}}
+                  {{view "select" value=output.view content=output.views optionLabelPath="content.name" prompt="Choose view"}}
+                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                  {{#if output.view}}
+                    {{#if output.observerExists}}
+                      <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+                    {{else}}
+                      <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                    {{/if}}
+                  {{/if}}
+                {{else}}
+                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                  {{#link-to "views.new" class="btn btn-primary"}}New view{{/link-to}}
+                {{/if}}
+              </div>
+            {{/unless}}
           </td>
         </tr>
       {{/each}}

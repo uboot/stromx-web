@@ -1,6 +1,7 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  needs: ['stream'],
   wasAccepted: false,
   actions: {
     dismiss: function () {
@@ -17,6 +18,7 @@ export default Ember.Controller.extend({
         file.set('opened', false);
         file.save();
       });
+      this.get('controllers.stream').set('view', null);
       this.set('wasAccepted', true);
     },
     close: function () {
@@ -25,6 +27,7 @@ export default Ember.Controller.extend({
         file.set('saved', false);
         file.save();
       });
+      this.get('controllers.stream').set('view', null);
       this.set('wasAccepted', true);
     }
   }

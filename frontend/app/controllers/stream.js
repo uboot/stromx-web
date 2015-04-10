@@ -43,12 +43,12 @@ export default Ember.Controller.extend({
   },
   
   updateValueSocket: function() {
-    if (this.get('viewModel') === null) {
+    if (this.get('view') === null) {
       this.send('disconnectFromValueSocket');
     } else {
       this.send('connectToValueSocket');
     }
-  }.observes('viewModel'),
+  }.observes('view'),
 
   actions: {
     save: function () {

@@ -49,13 +49,16 @@ Router.map(function () {
         this.resource('inputObserver', { path: '/:inputObserver_id' }, function() {
           this.route('delete');
         });
-        this.route('new');
+      });
+      this.resource('outputObservers', function() {
+        this.resource('outputObserver', { path: '/:outputObserver_id' }, function() {
+          this.route('delete');
+        });
       });
       this.resource('parameterObservers', function() {
         this.resource('parameterObserver', { path: '/:parameterObserver_id' }, function() {
           this.route('delete');
         });
-        this.route('new');
       });
     });
   });

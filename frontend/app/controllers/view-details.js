@@ -1,5 +1,6 @@
 import Ember from "ember";
 import InputObserver from 'stromx-web/models/input-observer';
+import OutputObserver from 'stromx-web/models/output-observer';
 import ParameterObserver from 'stromx-web/models/parameter-observer';
 import { defaultObserverColor } from 'stromx-web/colors';
 
@@ -18,6 +19,9 @@ export default Ember.Controller.extend({
   inputObservers: Ember.computed.filter('model.observers', function(observer) {
     return observer instanceof InputObserver;
   }),
+  outputObservers: Ember.computed.filter('model.observers', function(observer) {
+    return observer instanceof OutputObserver;
+  }),
 
   svgSorting: ['zvalue:incr'],
   htmlSorting: ['zvalue:decr'],
@@ -29,6 +33,28 @@ export default Ember.Controller.extend({
     var observer = this.store.createRecord('input-observer', {
       view: this.get('model'),
       input: input,
+      zvalue: numObservers + 1,
+      properties: {
+        color: defaultObserverColor
+      },
+      visualization: 'default'
+    });
+
+    // add the observer to the view
+    // FIXME: is this really necessary or should ember-data automatically
+    // add the data?
+    var observers = this.get('model.observers');
+    observers.addObject(observer);
+
+    // save the observer
+    return observer.save();
+  },
+
+  addOutputObserver: function(output) {
+    var numObservers = this.get('model.observers.length');
+    var observer = this.store.createRecord('output-observer', {
+      view: this.get('model'),
+      output: output,
       zvalue: numObservers + 1,
       properties: {
         color: defaultObserverColor

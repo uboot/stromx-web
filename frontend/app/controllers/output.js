@@ -13,14 +13,14 @@ export default ConnectorController.extend({
       model: view
     });
 
-    var input = this.get('model');
-    var inputObservers = viewController.get('inputObservers');
-    return Ember.RSVP.all(inputObservers.map( function(observer) {
-        return observer.get('input');
+    var output = this.get('model');
+    var outputObservers = viewController.get('outputObservers');
+    return Ember.RSVP.all(outputObservers.map( function(observer) {
+        return observer.get('output');
       })
-    ).then( function(inputs) {
-      var index = inputs.indexOf(input);
-      return index !== -1 ? inputObservers[index] : null;
+    ).then( function(outputs) {
+      var index = outputs.indexOf(output);
+      return index !== -1 ? outputObservers[index] : null;
     });
   },
 
@@ -38,8 +38,8 @@ export default ConnectorController.extend({
 
       var _this = this;
       var model = this.get('model');
-      viewController.addInputObserver(model).then( function(observer) {
-        _this.transitionToRoute('inputObserver.index', observer);
+      viewController.addOutputObserver(model).then( function(observer) {
+        _this.transitionToRoute('outputObserver.index', observer);
       });
     },
     showObserver: function() {
@@ -50,7 +50,7 @@ export default ConnectorController.extend({
 
       var _this = this;
       this.findObserver(view).then( function(observer) {
-        _this.transitionToRoute('inputObserver.index', observer);
+        _this.transitionToRoute('outputObserver.index', observer);
       });
     }
   }

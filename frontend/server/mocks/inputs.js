@@ -8,7 +8,7 @@ module.exports = function(app) {
         title: 'Input image',
         operator: 2,
         connection: null,
-        observers: [0, 4],
+        observers: [0],
         variant: { 
           ident: 'image',
           title: 'Mono image 8-bit'
@@ -19,7 +19,7 @@ module.exports = function(app) {
         title: 'Number',
         operator: 1,
         connection: 1,
-        observers: [2, 3],
+        observers: [2],
         variant: { 
           ident: 'int',
           title: 'Int32'

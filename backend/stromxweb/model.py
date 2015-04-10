@@ -35,6 +35,7 @@ class Model(object):
         self.__views = Views(self)
         self.__parameterObservers = ParameterObservers(self)
         self.__inputObservers = InputObservers(self)
+        self.__outputObservers = OutputObservers(self)
         self.__connectorValues = ConnectorValues(self)
         self.__operatorTemplates = OperatorTemplates(self)
     
@@ -93,6 +94,10 @@ class Model(object):
     @property
     def inputObservers(self):
         return self.__inputObservers
+    
+    @property
+    def outputObservers(self):
+        return self.__outputObservers
     
     @property
     def connectorValues(self):
@@ -1162,16 +1167,21 @@ class Threads(Items):
         return False
 
 class ConnectorBase(Item):
-    _properties = ['operator', 'title', 'variant']
+    _properties = ['operator', 'title', 'variant', 'observers']
     
     def __init__(self, op, description, model):
         super(ConnectorBase, self).__init__(model)
         self.__description = description
         self.__op = op
+        self.__observers = []
         
     @property
     def operator(self):
         return self.__op.index
+    
+    @property
+    def observers(self):
+        return [observer.index for observer in self.__observers]
     
     @property
     def title(self):
@@ -1197,22 +1207,23 @@ class ConnectorBase(Item):
     @property
     def stromxId(self):
         return self.__description.id()
+    
+    def addObserver(self, observer):
+        self.__observers.append(observer)
+        
+    def removeObserver(self, observer):
+        self.__observers.remove(observer)
         
 class Input(ConnectorBase):
-    _properties = ConnectorBase._properties + ['connection', 'observers']
+    _properties = ConnectorBase._properties + ['connection']
     
     def __init__(self, op, description, model):
         super(Input, self).__init__(op, description, model)
         self.__connection = None
-        self.__observers = []
     
     @property
     def connection(self):
         return self.__connection.index if self.__connection != None else None
-    
-    @property
-    def observers(self):
-        return [observer.index for observer in self.__observers]
     
     def delete(self):
         if self.__connection != None:
@@ -1225,12 +1236,6 @@ class Input(ConnectorBase):
     
     def setConnection(self, connection):
         self.__connection = connection
-    
-    def addObserver(self, observer):
-        self.__observers.append(observer)
-        
-    def removeObserver(self, observer):
-        self.__observers.remove(observer)
         
 class Inputs(Items):
     def addStromxInput(self, op, description):
@@ -1261,6 +1266,9 @@ class Output(ConnectorBase):
     def delete(self):
         for connectionIndex in self.connections:
             self.model.connections.delete(connectionIndex)
+        
+        for observer in self.observers:
+            self.model.outputObservers.delete(observer)
             
         self.operatorModel.removeOutput(self)
     
@@ -1295,6 +1303,7 @@ class View(Item):
         super(View, self).__init__(model)
         self.__view = stromxView
         self.__inputObservers = []
+        self.__outputObservers = []
         self.__parameterObservers = []
         for observer in self.__view.observers:
             if isinstance(observer, view.ParameterObserver):
@@ -1302,15 +1311,24 @@ class View(Item):
                 observerModel = observers.addStromxObserver(self, observer)
                 self.__parameterObservers.append(observerModel)
             elif isinstance(observer, view.ConnectorObserver):
-                observers = self.model.inputObservers
-                observerModel = observers.addStromxObserver(self, observer)
-                self.__inputObservers.append(observerModel)
+                INPUT = stromx.runtime.Connector.Type.INPUT
+                OUTPUT = stromx.runtime.Connector.Type.OUTPUT
+                if observer.connectorType == INPUT:
+                    observers = self.model.inputObservers
+                    observerModel = observers.addStromxObserver(self, observer)
+                    self.__inputObservers.append(observerModel)
+                elif observer.connectorType == OUTPUT:
+                    observers = self.model.outputObservers
+                    observerModel = observers.addStromxObserver(self, observer)
+                    self.__outputObservers.append(observerModel)
+                else:
+                    assert(False)
             else:
                 assert(False)
         
     @property
     def name(self):
-        return self.__view.name
+        return _str(self.__view.name)
     
     @name.setter
     def name(self, value):
@@ -1323,6 +1341,8 @@ class View(Item):
                      model in self.__parameterObservers])
         data.extend([{ 'id': model.index, 'type': 'inputObserver'} for
                      model in self.__inputObservers])
+        data.extend([{ 'id': model.index, 'type': 'outputObserver'} for
+                     model in self.__outputObservers])
         return data
     
     @property
@@ -1358,7 +1378,7 @@ class View(Item):
     
     def addInputObserver(self, connectorIndex):
         connector = self.model.inputs[connectorIndex]
-        connectorType = view.stromx.runtime.Connector.Type.INPUT
+        connectorType = stromx.runtime.Connector.Type.INPUT
         observer = self.__view.addConnectorObserver(connector.stromxOp,
                                                     connectorType, 
                                                     connector.stromxId)
@@ -1367,10 +1387,23 @@ class View(Item):
         self.__inputObservers.append(observerModel)
         return observerModel
     
+    def addOutputObserver(self, connectorIndex):
+        connector = self.model.outputs[connectorIndex]
+        connectorType = stromx.runtime.Connector.Type.OUTPUT
+        observer = self.__view.addConnectorObserver(connector.stromxOp,
+                                                    connectorType, 
+                                                    connector.stromxId)
+        outputObservers = self.model.outputObservers
+        observerModel = outputObservers.addStromxObserver(self, observer)
+        self.__outputObservers.append(observerModel)
+        return observerModel
+    
     def removeObserver(self, observerModel):
         self.__view.removeObserver(observerModel.stromxObserver)
         if observerModel in self.__inputObservers:
             self.__inputObservers.remove(observerModel)
+        elif observerModel in self.__outputObservers:
+            self.__outputObservers.remove(observerModel)
         elif observerModel in self.__parameterObservers:
             self.__parameterObservers.remove(observerModel)
         else:
@@ -1523,6 +1556,54 @@ class InputObserver(Observer):
             
         assert(len(connectorModel) == 1)
         return connectorModel[0]
+
+class OutputObserver(Observer):
+    _properties = Observer._properties + ['output', 'value']
+    
+    def __init__(self, view, stromxObserver, model):
+        super(OutputObserver, self).__init__(view, stromxObserver, model)
+        self.__value = None
+        if stromxObserver.connectorValue:
+            self.__value = self.model.connectorValues.addStromxConnectorValue(
+                                                stromxObserver.connectorValue)
+        self.__output = self.__findOutputModel()
+
+    @property
+    def output(self):
+        return self.__output.index
+        
+    @property
+    def value(self):
+        if self.__value:
+            return self.__value.index
+        else:
+            return None
+    
+    def delete(self):
+        if self.__value != None:
+            self.model.connectorValues.delete(self.__value.index)
+        self.__output.removeObserver(self)
+        
+        super(OutputObserver, self).delete()
+    
+    def __findOutputModel(self):
+        index = self.stromxObserver.connectorIndex
+        op = self.stromxObserver.op
+        
+        selector = lambda connector: (connector.stromxOp == op and
+                                      connector.stromxId == index)
+                                      
+        if (self.stromxObserver.connectorType 
+            == stromx.runtime.Connector.Type.INPUT):
+            connectorModel = filter(selector, self.model.inputs.values())
+        elif (self.stromxObserver.connectorType
+              == stromx.runtime.Connector.Type.OUTPUT):
+            connectorModel = filter(selector, self.model.outputs.values())
+        else:
+            assert(False)
+            
+        assert(len(connectorModel) == 1)
+        return connectorModel[0]
         
 class Observers(Items):
     pass
@@ -1547,8 +1628,8 @@ class InputObservers(Observers):
     def addStromxObserver(self, view, stromxObserver):
         observer = InputObserver(view, stromxObserver, self.model)
         self.addItem(observer)
-        inputId = observer.input
-        self.model.inputs[inputId].addObserver(observer)
+        inputIndex = observer.input
+        self.model.inputs[inputIndex].addObserver(observer)
         return observer
         
     def addData(self, data):
@@ -1556,6 +1637,22 @@ class InputObservers(Observers):
         view = self.model.views[viewIndex]
         inputIndex = data['inputObserver']['input']
         observerModel = view.addInputObserver(inputIndex)
+        observerModel.set(data)
+        return observerModel.data
+
+class OutputObservers(Observers):
+    def addStromxObserver(self, view, stromxObserver):
+        observer = OutputObserver(view, stromxObserver, self.model)
+        self.addItem(observer)
+        outputIndex = observer.output
+        self.model.outputs[outputIndex].addObserver(observer)
+        return observer
+        
+    def addData(self, data):
+        viewIndex = data['outputObserver']['view']
+        view = self.model.views[viewIndex]
+        outputIndex = data['outputObserver']['output']
+        observerModel = view.addOutputObserver(outputIndex)
         observerModel.set(data)
         return observerModel.data
     
