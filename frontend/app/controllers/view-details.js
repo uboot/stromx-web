@@ -2,7 +2,8 @@ import Ember from "ember";
 import InputObserver from 'stromx-web/models/input-observer';
 import OutputObserver from 'stromx-web/models/output-observer';
 import ParameterObserver from 'stromx-web/models/parameter-observer';
-import { defaultObserverColor } from 'stromx-web/colors';
+import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
+import ENV from '../config/environment';
 
 export default Ember.Controller.extend({
   zoom: 1.0,
@@ -28,6 +29,41 @@ export default Ember.Controller.extend({
   svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
   htmlObservers: Ember.computed.sort('model.observers', 'htmlSorting'),
 
+
+  socket: null,
+
+  init: function() {
+    var ws = this.get('socket');
+    if (ws) {
+      return;
+    }
+
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var host = protocol + '//' + window.location.host;
+    if (ENV.APP.SOCKET_HOST) {
+      host = ENV.APP.SOCKET_HOST;
+    }
+    var url = host + '/socket/connectorValue';
+
+    ws = new WebSocket(url);
+    var _this = this;
+    ws.onmessage = function(event) {
+      var payload = JSON.parse(event.data);
+      _this.store.pushPayload('connector-value', payload);
+    };
+    this.set('socket', ws);
+  },
+
+  willDestroy: function() {
+    var ws = this.get('socket');
+    if (! ws) {
+      return;
+    }
+
+    ws.close();
+    this.set('socket', null);
+  },
+
   addInputObserver: function(input) {
     var numObservers = this.get('model.observers.length');
     var observer = this.store.createRecord('input-observer', {
@@ -35,7 +71,7 @@ export default Ember.Controller.extend({
       input: input,
       zvalue: numObservers + 1,
       properties: {
-        color: defaultObserverColor
+        color: DEFAULT_OBSERVER_COLOR
       },
       visualization: 'default'
     });
@@ -57,7 +93,7 @@ export default Ember.Controller.extend({
       output: output,
       zvalue: numObservers + 1,
       properties: {
-        color: defaultObserverColor
+        color: DEFAULT_OBSERVER_COLOR
       },
       visualization: 'default'
     });
@@ -71,7 +107,7 @@ export default Ember.Controller.extend({
     // save the observer
     return observer.save();
   },
-  
+
   removeObserver: function(observer) {
     var zvalue = observer.get('zvalue');
     var view = this.get('model');

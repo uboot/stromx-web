@@ -29,10 +29,10 @@ module.exports = function(app) {
     res.send({
       'connection': {
         id: 3, 
-        output: "5", 
-        input: "1", 
-        thread: "1", 
-        stream: "2" // FIXME: sending the stream causes deleted connections to reappear...
+        output: 5, 
+        input: 1, 
+        thread: 0, 
+        stream: 2 // FIXME: sending the stream causes deleted connections to reappear...
       }
     });
   });

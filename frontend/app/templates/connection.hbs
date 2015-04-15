@@ -15,31 +15,8 @@
     <tr>
       <td>
         <header class="stromx-cell-title">Thread</header>
-        {{#unless isEditingThread}}
-          {{#color-box color=color}}{{/color-box}}
-          {{threadName}}
-          <a {{action "editThread"}}>
-            <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
-          </a>
-        {{else}}
-          <form class="form-inline">
-            {{#color-box color=selectedThread.color}}{{/color-box}}
-            <div class="btn-group">
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                Choose thread<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu color-menu" role="menu">
-                {{#each thread in threads}}
-                  <li><a {{action "setThread" thread}}>{{thread.name}}</a></li>
-                {{/each}}
-              </ul>
-            </div>
-            <div class="form-group">
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
-            </div>
-          </form>
-        {{/unless}}
+        {{color-box color=color}}
+        {{thread}}
       </td>
     </tr>
   </tbody>

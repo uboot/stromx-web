@@ -28,12 +28,6 @@ Router.map(function () {
         });
         this.route('new');
       });
-      this.resource('threads', function() {
-        this.resource('thread', { path: '/:thread_id' }, function() {
-          this.route('delete');
-        });
-        this.route('new');
-      });
       this.resource('views', function() {
         this.resource('view', { path: '/:view_id' }, function() {
           this.route('delete');

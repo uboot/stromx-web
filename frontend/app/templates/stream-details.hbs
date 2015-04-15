@@ -1,16 +1,7 @@
 <form class="form-inline stromx-margin-top ">
   <div class="btn-group" role="group">
-    {{#each thread in model.threads itemController="thread"}}
-      {{#link-to "thread" thread class="btn btn-default"}}
-        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-        {{thread.model.name}}
-      {{/link-to}}
-    {{/each}}
-  </div>
-
-  <div class="btn-group" role="group">
     {{#each view in model.views itemController="view"}}
-      {{#link-to "view" view class="btn btn-default"}}
+      {{#link-to "view" view.model class="btn btn-default"}}
         <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
         {{view.model.name}}
       {{/link-to}}
@@ -22,7 +13,6 @@
   <form class="form-inline stromx-svg-buttons">
     <div class="btn-group" role="group">
       {{#link-to "operators.new" class="btn btn-default" id="new-operator"}}New operator{{/link-to}}
-      {{#link-to "threads.new" class="btn btn-default"}}New thread{{/link-to}}
       {{#link-to "views.new" class="btn btn-default"}}New view{{/link-to}}
     </div>
   </form>
@@ -39,7 +29,7 @@
     <rect width="100%" height="100%" {{bind-attr fill=patternUri}}/>
     {{#each op in model.operators itemController="operator-svg"}}
       {{#svg-transform transform=op.transform}}
-        {{#link-to "operator.index" op}}
+        {{#link-to "operator.index" op.model}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
             <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
             <text x="25" y="65" class="stromx-svg-operator-name">{{op.model.name}}</text>
@@ -67,7 +57,7 @@
     {{/each}}
 
     {{#each connection in model.connections itemController="connection-svg"}}
-      {{#link-to "connection.index" connection}}
+      {{#link-to "connection.index" connection.model}}
         <path {{bind-attr d=connection.path}} {{bind-attr stroke=connection.color}} class="stromx-svg-connection-path"/>
         {{#if connection.displayStartArrow}}
           <use id="startArrows" xlink:href="#arrows" {{bind-attr transform=connection.startArrowTransform}}/>

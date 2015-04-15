@@ -59,7 +59,7 @@
                   <span class="glyphicon glyphicon-download-alt pull-right stromx-margin-left" aria-hidden="true"></span>
                 </a>
                 {{#if file.closed}}
-                  {{#link-to 'file.delete' file type="button" class="stromx-delete-file"}}
+                  {{#link-to 'file.delete' file.model type="button" class="stromx-delete-file"}}
                     <span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span>
                   {{/link-to}}
                 {{/if}}

@@ -15,12 +15,6 @@ import view
 
 _EXECUTION_DELAY = 1000 # ms
 
-_COLORS = [
-    stromx.runtime.Color(0xbe, 0x20, 0x2e),
-    stromx.runtime.Color(0x01, 0x95, 0x47),
-    stromx.runtime.Color(0x20, 0x75, 0xbc)
-]
-
 def _str(value):
     return str(value.encode('utf-8'))
 
@@ -37,7 +31,6 @@ class Model(object):
         self.__inputs = Inputs(self)
         self.__outputs = Outputs(self)
         self.__connections = Connections(self)
-        self.__threads = Threads(self)
         self.__views = Views(self)
         self.__parameterObservers = ParameterObservers(self)
         self.__inputObservers = InputObservers(self)
@@ -84,10 +77,6 @@ class Model(object):
     @property
     def outputs(self):
         return self.__outputs
-    
-    @property
-    def threads(self):
-        return self.__threads
     
     @property
     def views(self):
@@ -346,7 +335,7 @@ class ExceptionObserver(stromx.runtime.ExceptionObserver):
         
 class Stream(Item):
     _properties = ["name", "active", "paused", "file", "operators",
-                  "connections", "views", "threads"]
+                  "connections", "views"]
     
     def __init__(self, streamFile, model):
         super(Stream, self).__init__(model)
@@ -354,7 +343,6 @@ class Stream(Item):
         self.__operators = []
         self.__connections = []
         self.__views = []
-        self.__threads = []
         self.__exceptionObserver = ExceptionObserver()
         self.__exceptionObserver.stream = self
         
@@ -375,10 +363,6 @@ class Stream(Item):
         for stromxOp in self.__stream.operators():
             op = self.model.operators.addStromxOp(stromxOp, self)
             self.__operators.append(op)
-            
-        for stromxThread in self.__stream.threads():
-            threadModel = self.model.threads.addStromxThread(stromxThread, self)
-            self.__threads.append(threadModel)
             
         inputs = self.model.inputs
         outputs = self.model.outputs
@@ -401,13 +385,10 @@ class Stream(Item):
                                                        stromxInput.id())
                 assert(inputConnector)
                 
-                thread = self.model.threads.findThreadModel(op.stromxOp,
-                                                            stromxInput.id())
-                
                 # the connection added below assigns itself to the stream, so 
                 # there is no need to store it in self.__connections
                 self.model.connections.addConnection(self, outputConnector, 
-                                                     inputConnector, thread)
+                                                     inputConnector)
         
         if os.path.exists(streamFile.path):
             zipInput.initialize("", "views.json")
@@ -483,10 +464,6 @@ class Stream(Item):
     def views(self):
         return [view.index for view in self.__views]
     
-    @property
-    def threads(self):
-        return [thread.index for thread in self.__threads]
-    
     def delete(self):
         self.active = False
         
@@ -495,9 +472,6 @@ class Stream(Item):
             
         for connectionIndex in self.connections:
             self.model.connections.delete(connectionIndex)
-            
-        for threadIndex in self.threads:
-            self.model.threads.delete(threadIndex)
             
         for opIndex in self.operators:
             self.model.operators.delete(opIndex)
@@ -557,23 +531,21 @@ class Stream(Item):
             self.model.errors.addError(e)
             
     def __prepareStream(self):
-        for thread in self.threads:
-            self.model.threads.delete(thread)
-            
         assignThreads = stromx.runtime.AssignThreadsAlgorithm()
         assignThreads.apply(self.__stream)
         sort = stromx.runtime.SortInputsAlgorithm()
         sort.apply(self.__stream)
         
-        for i, stromxThread in enumerate(self.__stream.threads()):
-            stromxThread.setColor(_COLORS[i % len(_COLORS)])
-            threadModel = self.model.threads.addStromxThread(stromxThread, self)
-            self.__threads.append(threadModel)
-           
-        for connection in self.__connections:
-            thread = self.model.threads.findThreadModel(
-                        connection.stromxTargetOp, connection.stromxTargetId)
-            connection.setThreadModel(thread)
+        for i, thread in enumerate(self.__stream.threads()):
+            for input in thread.inputSequence():
+                connections = [
+                    connection for connection in self.__connections if
+                    connection.stromxTargetOp == input.op() and
+                    connection.stromxTargetId == input.id()
+                ]
+                assert(len(connections) == 1)
+                connection = connections[0]
+                connection.setStromxThreadId(i)
         
 class OperatorTemplate(Item):
     _properties = ["type", "package", "version"]
@@ -974,15 +946,15 @@ class EnumDescription(Item):
 class Connection(Item):
     _properties = ['output', 'input', 'thread', 'stream']
     
-    def __init__(self, stream, outputConnector, inputConnector, thread, model):
+    def __init__(self, stream, outputConnector, inputConnector, model):
         assert(outputConnector != None)
         assert(inputConnector != None)
         
         super(Connection, self).__init__(model)
         self.__output = outputConnector
         self.__input = inputConnector
-        self.__thread = thread
         self.__stream = stream
+        self.__thread = None
         
         self.__stream.addConnection(self)
     
@@ -1000,30 +972,7 @@ class Connection(Item):
     
     @property
     def thread(self):
-        if self.__thread != None:
-            return self.__thread.index
-        else:
-            return None
-            
-    @thread.setter
-    def thread(self, value):
-        if self.__thread == value:
-            return
-        
-        newThread = None
-        if value != None:
-            newThread = self.model.threads[value]
-        
-        if self.__thread != None:
-            self.__thread.stromxThread.removeInput(self.stromxTargetOp,
-                                                   self.stromxTargetId)
-            self.__thread.removeConnection(self)
-            
-        self.__thread = newThread
-        if self.__thread != None:
-            self.__thread.stromxThread.addInput(self.stromxTargetOp,
-                                                self.stromxTargetId)
-            self.__thread.addConnection(self)
+        return self.__thread
             
     @property
     def stromxTargetOp(self):
@@ -1033,16 +982,11 @@ class Connection(Item):
     def stromxTargetId(self):
         return self.__input.stromxId
         
-    def setThreadModel(self, threadModel):
-        self.__thread = threadModel
+    def setStromxThreadId(self, value):
+        self.__thread = value
         
     def delete(self):     
-        try:
-          if self.__thread != None:
-              self.__thread.stromxThread.removeInput(self.stromxTargetOp,
-                                                     self.stromxTargetId)
-              self.__thread.removeConnection(self)
-          
+        try:          
           if self.__stream != None:
               self.__stream.removeConnection(self)
         except stromx.runtime.Exception as e:
@@ -1053,16 +997,13 @@ class Connection(Item):
         self.__input.setConnection(None)
         
 class Connections(Items):
-    def addConnection(self, stream, outputConnector, inputConnector, thread):        
+    def addConnection(self, stream, outputConnector, inputConnector):        
         connection = Connection(stream, outputConnector, inputConnector,
-                                thread, self.model)
+                                self.model)
         self.addItem(connection)
         
         outputConnector.addConnection(connection)
         inputConnector.setConnection(connection)
-        
-        if thread != None:
-            thread.addConnection(connection)
         
         return connection
         
@@ -1075,12 +1016,6 @@ class Connections(Items):
         targetOp = self.model.operators[inputConnector.operator]
         assert(sourceOp.stream == targetOp.stream)
         
-        try:
-            thread = self.model.threads[props['thread']]
-            assert(thread.stream == sourceOp.stream)
-        except KeyError:
-            thread = None
-        
         stream = self.model.streams[sourceOp.stream]
         try:
             stream.stromxStream.connect(sourceOp.stromxOp,
@@ -1090,109 +1025,10 @@ class Connections(Items):
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
             raise Failed()
-        
-        if thread != None:
-            thread.stromxThread.addInput(targetOp.stromxOp,
-                                         inputConnector.stromxId)
             
-        connection = self.addConnection(stream, outputConnector,
-                                        inputConnector, thread)
-
+        connection = self.addConnection(stream, outputConnector, inputConnector)
         return connection.data
-    
-class Thread(Item):
-    _properties = ['name', 'color', 'stream', 'connections']
-    
-    def __init__(self, stromxThread, stream, model):
-        super(Thread, self).__init__(model)
-        self.__thread = stromxThread
-        self.__stream = stream
-        self.__connections = []
-    
-    @property
-    def name(self):
-        return self.__thread.name()
-    
-    @name.setter
-    def name(self, value):
-        if self.name != _str(value):
-            self.__thread.setName(_str(value))
-    
-    @property
-    def color(self):
-        return conversion.stromxColorToString(self.__thread.color())
-    
-    @color.setter
-    def color(self, value):
-        if value == None:
-            self.__thread.setColor(stromx.runtime.Color(0, 0, 0))
-            return
-            
-        self.__thread.setColor(conversion.stringToStromxColor(value))
-    
-    @property
-    def stream(self):
-        return self.__stream.index if self.__stream != None else None
-    
-    @property
-    def connections(self):
-        return [connection.index for connection in self.__connections]
-    
-    @property
-    def stromxThread(self):
-        return self.__thread
         
-    def delete(self):
-        for connection in self.__connections:
-            connection.thread = None
-        self.__connections = []
-            
-        self.__stream.removeThread(self)
-        
-    def addConnection(self, connection):
-        self.__connections.append(connection)
-    
-    def removeConnection(self, connection):
-        self.__connections.remove(connection)
-        
-class Threads(Items):
-    def addStromxThread(self, thread, stream):
-        threadModel = Thread(thread, stream, self.model)
-        self.addItem(threadModel)
-        return threadModel
-    
-    def findThreadModel(self, stromxOp, stromxInputId):
-        threads = [
-            thread for thread in self.values() if 
-            self.__inputIsInInputSequence(stromxOp, stromxInputId, 
-                                          thread.stromxThread.inputSequence())
-        ]
-        assert(len(threads) <= 1)
-        return threads[0] if len(threads) else None
-    
-    def addData(self, data):
-        stream = self.model.streams[data['thread']['stream']]
-        
-        try:
-            stromxThread = stream.stromxStream.addThread()
-        except stromx.runtime.Exception as e:
-            self.model.errors.addError(e)
-            raise Failed()
-        
-        thread = self.addStromxThread(stromxThread, stream)
-        thread.set(data)
-        stream.addThread(thread)
-        return thread.data
-        
-    def __inputIsInInputSequence(self, stromxOp, stromxInputId, sequence):
-        for connector in sequence:
-            if (connector.type() == stromx.runtime.Connector.Type.INPUT and
-                connector.op() == stromxOp and
-                connector.id() == stromxInputId):
-                return True
-            
-        return False
-
 class ConnectorBase(Item):
     _properties = ['operator', 'title', 'variant', 'observers']
     

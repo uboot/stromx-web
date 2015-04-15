@@ -139,8 +139,7 @@ _stream = {
     'file': '0',
     'connections': ['0', '1', '2', '3', '4'],
     'operators': ['0', '1', '2', '3', '4'],
-    'views': [],
-    'threads': ['0', '1', '2']
+    'views': []
 }
 
 _fork = {
@@ -257,6 +256,16 @@ class FilesTest(unittest.TestCase):
     def testSetOpenFalse(self):
         self.files.set('0', {'file': {'opened': True}})
         f = self.files.set('0', {'file': {'opened': False}})
+        self.assertEqual(False, f['file']['opened'])
+        self.assertEqual({'streams': []}, self.streams.data)
+        
+    def testStopStreamAndSetOpenFalse(self):
+        self.files.set('0', {'file': {'opened': True}})
+        self.streams.set('0', {'stream': {'active': True}})
+        self.streams.set('0', {'stream': {'active': False}})
+        
+        f = self.files.set('0', {'file': {'opened': False}})
+        
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual({'streams': []}, self.streams.data)
         
@@ -455,10 +464,6 @@ class StreamsTest(unittest.TestCase):
         for op in self.model.operators.values():
             self.assertEqual('0', op.stream)
             
-        self.assertEqual(3, len(self.model.threads))
-        for thread in self.model.threads.values():
-            self.assertEqual('0', thread.stream)
-            
         self.assertEqual(5, len(self.model.inputs))
         self.assertEqual(5, len(self.model.outputs))
         self.assertEqual(5, len(self.model.connections))
@@ -480,10 +485,13 @@ class StreamsTest(unittest.TestCase):
         self.setUpStream()
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
+        
         self.assertTrue(self.streams.data['streams'][0]['active'])
-        self.assertEqual(4, len(self.model.threads))
-        self.assertEqual('#be202e', self.model.threads['3'].color)
-        self.assertEqual('#2075bc', self.model.threads['5'].color)
+        self.assertNotEqual(None, self.model.connections['0'].thread)
+        self.assertNotEqual(None, self.model.connections['1'].thread)
+        self.assertNotEqual(None, self.model.connections['2'].thread)
+        self.assertNotEqual(None, self.model.connections['3'].thread)
+        self.assertNotEqual(None, self.model.connections['4'].thread)
         
     def testSetActivateFails(self):
         self.setUpException()
@@ -572,8 +580,7 @@ class StreamsTest(unittest.TestCase):
         stream = self.streams['0']
         self.streams.delete(stream.index)
         self.assertEqual(dict(), self.model.operators)  
-        self.assertEqual(dict(), self.model.connections)  
-        self.assertEqual(dict(), self.model.threads)    
+        self.assertEqual(dict(), self.model.connections) 
         
     def testReadViews(self):
         self.setUpViews()
@@ -1093,18 +1100,13 @@ class ConnectionsTest(unittest.TestCase):
         self.receive = self.model.operators.addStromxOp(stromxReceive, 
                                                         self.stream)
         
-        stromxThread = self.stromxStream.addThread()
-        self.thread = self.model.threads.addStromxThread(stromxThread,
-                                                         self.stream)
-        
     def testData(self):
         source = self.model.outputs['2']
         target = self.model.inputs['0']
-        connection = self.connections.addConnection(self.stream, source, target,
-                                                    self.thread)
+        connection = self.connections.addConnection(self.stream, source, target)
         
         data = {'connection': {'id': '0',
-                               'thread': '0',
+                               'thread': None,
                                'output': '2', 
                                'input': '0', 
                                'stream': '0'}}
@@ -1114,8 +1116,7 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual('0', target.data['input']['connection'])
         
     def testAddData(self):
-        newData = {'connection': {'thread': '0',
-                                  'output': '2', 
+        newData = {'connection': {'output': '2', 
                                   'input': '0'}}
                                
         returned = self.model.connections.addData(newData)
@@ -1126,39 +1127,22 @@ class ConnectionsTest(unittest.TestCase):
         
         self.assertEqual(['0'], self.model.streams['0'].connections)
         
-        thread = self.thread.stromxThread
-        self.assertEqual(self.fork.stromxOp, thread.inputSequence()[0].op())
-        self.assertEqual(0, thread.inputSequence()[0].id())
-        
         data = self.model.connections['0'].data
         self.assertEqual(returned, data)
         self.assertEqual('0', data['connection']['id'])
-        self.assertEqual('0', data['connection']['thread'])
         self.assertEqual('2', data['connection']['output'])
         self.assertEqual('0', data['connection']['input'])
         
-    def testAddDataNoThread(self):
+    def testAddData(self):
         newData = {'connection': {'output': '1', 
                                   'input': '0'}}
                                
         data = self.model.connections.addData(newData)
         
         self.assertEqual(None, data['connection']['thread'])
-        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
-        
-    def testAddDataNoneThread(self):
-        newData = {'connection': {'thread': None,
-                                  'output': '2', 
-                                  'input': '0'}}
-                               
-        data = self.model.connections.addData(newData)
-        
-        self.assertEqual(None, data['connection']['thread'])
-        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
         
     def testAddDataInputConnected(self):
-        newData = {'connection': {'thread': None,
-                                  'output': '2', 
+        newData = {'connection': {'output': '2', 
                                   'input': '0'}}
         self.model.connections.addData(newData)
         
@@ -1168,46 +1152,30 @@ class ConnectionsTest(unittest.TestCase):
         
     def testAddDataWhileActive(self):
         self.stromxStream.start()
-        newData = {'connection': {'thread': '0',
-                                  'output': '2', 
+        newData = {'connection': {'output': '2', 
                                   'input': '0'}}
                                
         self.assertRaises(model.Failed, self.model.connections.addData,
                           newData)
         self.assertEqual(1, len(self.errorSink.errors))
         
-    def testSetThread(self):
+    def testSetStromxThreadId(self):
         newData = {'connection': {'output': '2', 
                                   'input': '0'}}
         self.model.connections.addData(newData)
         
-        self.model.connections.set('0', {'connection': {'thread': '0'}})
+        self.model.connections['0'].setStromxThreadId(10)
         
-        stromxThread = self.thread.stromxThread
-        self.assertEqual(['0'], self.thread.connections)
-        self.assertEqual(self.fork.stromxOp, stromxThread.inputSequence()[0].op())
-        self.assertEqual(0, stromxThread.inputSequence()[0].id())
-        
-    def testSetNoneThread(self):
-        newData = {'connection': {'thread': '0',
-                                  'output': '2', 
-                                  'input': '0'}}
-        self.model.connections.addData(newData)
-        
-        self.model.connections.set('0', {'connection': {'thread': None}})
-        
-        self.thread.stromxThread
-        self.assertEqual(0, len(self.thread.stromxThread.inputSequence()))
+        data = self.model.connections['0'].data
+        self.assertEqual(10, data['connection']['thread'])
         
     def testDelete(self):
-        newData = {'connection': {'thread': '0',
-                                  'output': '2', 
+        newData = {'connection': {'output': '2', 
                                   'input': '0'}}
         self.model.connections.addData(newData)
         
         source = self.model.outputs['2']
         target = self.model.inputs['0']
-        
         self.model.connections.delete('0')
         
         self.assertEqual([], source.data['output']['connections'])
@@ -1216,9 +1184,6 @@ class ConnectionsTest(unittest.TestCase):
         
         output = self.stromxStream.connectionSource(self.fork.stromxOp, 0)
         self.assertFalse(output.valid())
-        
-        thread = self.thread.stromxThread
-        self.assertEqual(0, len(thread.inputSequence()))
         
     def testDeleteWhileActive(self):
         newData = {'connection': {'thread': '0',
@@ -1258,7 +1223,7 @@ class InputsTest(unittest.TestCase):
         # create a connection
         source = self.model.outputs['0']
         target = self.model.inputs['0']
-        self.model.connections.addConnection(self.stream, source, target, None)
+        self.model.connections.addConnection(self.stream, source, target)
         
         # create a view and add an observer
         self.model.views.addData({'view': {'stream': '0'}})
@@ -1301,7 +1266,7 @@ class OutputsTest(unittest.TestCase):
         # create a connection
         source = self.model.outputs['0']
         target = self.model.inputs['0']
-        self.model.connections.addConnection(self.stream, source, target, None)
+        self.model.connections.addConnection(self.stream, source, target)
         
         # create a view and add an observer
         self.model.views.addData({'view': {'stream': '0'}})
@@ -1316,103 +1281,6 @@ class OutputsTest(unittest.TestCase):
         self.assertFalse(self.model.outputObservers.has_key('0'))
         self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
-        
-class ThreadsTest(unittest.TestCase):
-    def setUp(self):
-        self.model = model.Model()
-        self.errorSink = ErrorSink()
-        self.model.errors.handlers.append(self.errorSink.handleError)
-        self.threads = self.model.threads
-        
-        fileModel = model.File("", self.model)
-        self.stream = self.model.streams.addFile(fileModel)
-        self.stromxStream = self.stream.stromxStream
-        
-        self.stromxThread = self.stromxStream.addThread()
-        color = stromx.runtime.Color(255, 0, 0)
-        self.stromxThread.setColor(color)
-        self.stromxThread.setName('Thread')
-        self.thread = self.threads.addStromxThread(self.stromxThread, self.stream)
-        
-        kernel = stromx.runtime.Fork()
-        self.stromxFork = self.stromxStream.addOperator(kernel)
-        self.stromxStream.initializeOperator(self.stromxFork)
-        self.fork = self.model.operators.addStromxOp(self.stromxFork, 
-                                                     self.stream)
-                                                     
-        kernel = stromx.runtime.Block()
-        self.stromxReceive = self.stromxStream.addOperator(kernel)
-        self.stromxStream.initializeOperator(self.stromxReceive)
-        self.recive = self.model.operators.addStromxOp(self.stromxReceive, 
-                                                     self.stream)
-                                                     
-        data = {'connection': {'thread': '0',
-                               'output': '2', 
-                               'input': '0'}}
-        self.model.connections.addData(data)
-        self.connection = self.model.connections['0']
-        
-    def testData(self):
-        data = {'thread': {'color': '#ff0000',
-                           'id': '0',
-                           'name': 'Thread',
-                           'stream': '0',
-                           'connections': ['0']}}
-        self.assertEqual(data, self.thread.data)
-        
-    def testFindThreadModel(self):
-        self.stromxThread.addInput(self.stromxFork, 0)   
-        stromxInput = self.stromxFork.info().inputs()[0]
-        
-        foundThread = self.threads.findThreadModel(self.stromxFork,
-                                                   stromxInput.id())
-        
-        self.assertEqual(self.thread, foundThread)
-        
-    def testSetColor(self):
-        self.threads.set('0', {'thread': {'color': '#0000ff'}})
-        
-        self.assertEqual(stromx.runtime.Color(0, 0, 255),
-                         self.thread.stromxThread.color())
-        
-    def testSetName(self):
-        self.threads.set('0', {'thread': {'name': 'New name'}})
-        
-        self.assertEqual("New name", self.thread.stromxThread.name())
-        
-    def testAddData(self):
-        self.threads.addData({'thread': {'stream': '0',
-                                         'name': 'New thread',
-                                         'color': None}})
-        
-        refData = {'thread': {'color': '#000000',
-                              'id': '1', 'name': '',
-                              'connections': [],
-                              'name': 'New thread',
-                              'stream': '0'}}
-        self.assertTrue('1' in self.stream.threads)
-        self.assertEqual(2, len(self.model.threads))
-        self.assertEqual(2, len(self.stromxStream.threads()))
-        self.assertEqual(refData, self.model.threads['1'].data)
-        
-    def testAddDataWhileActive(self):
-        self.stromxStream.start()
-        newData = ({'thread': {'stream': '0'}})
-        
-        self.assertRaises(model.Failed, self.model.threads.addData,
-                          newData)
-        self.assertEqual(1, len(self.errorSink.errors))
-        
-    def testDelete(self):
-        index = self.thread.index
-        self.stream.addThread(self.thread)
-        
-        self.model.threads.delete(index)
-        
-        self.assertFalse(index in self.stream.threads)
-        self.assertEqual(0, len(self.model.threads))
-        self.assertEqual(0, len(self.stromxStream.threads()))
-        self.assertEqual(None, self.connection.thread)
     
 class ViewsTest(unittest.TestCase):
     def setUp(self):

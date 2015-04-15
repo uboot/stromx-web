@@ -11,8 +11,7 @@ module.exports = function(app) {
         paused: false,
         operators: [0, 1, 2, 4],
         connections: [1, 2],
-        views: [1, 2],
-        threads: [1]
+        views: [1, 2]
       },
       {
         id: 3,
@@ -22,8 +21,7 @@ module.exports = function(app) {
         paused: false,
         operators: [],
         connections: [],
-        views: [],
-        threads: []
+        views: []
       },
       {
         id: 4,
@@ -33,8 +31,7 @@ module.exports = function(app) {
         paused: false,
         operators: [],
         connections: [],
-        views: [],
-        threads: []
+        views: []
       }
     ]});
   });

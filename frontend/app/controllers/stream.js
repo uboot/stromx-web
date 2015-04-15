@@ -6,7 +6,7 @@ export default Ember.Controller.extend({
   activeOutput: null,
   activeInput: null,
   view: null,
-  
+
   viewModel: function() {
     var view = this.get('view');
     if (view === null) {
@@ -16,39 +16,28 @@ export default Ember.Controller.extend({
       return model;
     }
   }.property('view'),
-  
+
   isVisible: Ember.computed.equal('view', null),
-  
+
   addConnection: function(input, output) {
-    var threads = this.get('model.threads');
-    var thread = threads.get('length') > 0 ? threads.objectAt(0) : null;
     var store = this.get('store');
     var model = this.get('model');
     var connection = store.createRecord('connection', {
       output: output,
       input: input,
-      thread: thread,
       stream: model
     });
-    
+
     var _this = this;
     connection.save().then(function(connection) {
       _this.transitionToRoute('connection', connection);
     });
   },
-  
+
   removeConnection: function(connection) {
     connection.deleteRecord();
     connection.save();
   },
-  
-  updateValueSocket: function() {
-    if (this.get('view') === null) {
-      this.send('disconnectFromValueSocket');
-    } else {
-      this.send('connectToValueSocket');
-    }
-  }.observes('view'),
 
   actions: {
     save: function () {
@@ -62,6 +51,10 @@ export default Ember.Controller.extend({
         stream.set('active', true);
         stream.save().catch(function() {
           stream.rollback();
+        }).then(function(stream) {
+          stream.get('connections').forEach(function (connection) {
+            connection.reload();
+          });
         });
     },
     stop: function () {

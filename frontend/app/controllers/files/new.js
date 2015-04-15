@@ -1,5 +1,4 @@
 import Ember from "ember";
-import { defaultThreadColor } from 'stromx-web/colors';
 
 export default Ember.Controller.extend({
   actions: {
@@ -20,18 +19,12 @@ export default Ember.Controller.extend({
           return;
         }
         
-        var thread = store.createRecord('thread', {
-          name: 'Thread',
-          stream: stream,
-          color: defaultThreadColor
-        });
-        
         var view = store.createRecord('view', {
           name: 'View',
           stream: stream
         });
         
-        Ember.RSVP.all([thread.save(), view.save()]).then(function() {
+        view.save().then(function() {
           file.set('opened', false);
           file.set('saved', true);
           file.save();

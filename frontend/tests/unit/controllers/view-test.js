@@ -18,7 +18,7 @@ moduleFor('controller:view-details', 'ViewController', {
   },
   needs: ['model:operator', 'model:parameter', 'model:input', 'model:output',
     'model:connection', 'model:stream', 'model:enum-description',
-    'model:input-observer', 'model:file', 'model:view', 'model:thread',
+    'model:input-observer', 'model:file', 'model:view',
     'model:connector-value', 'model:observer', 'model:parameter-observer',
     'model:input-observer', 'model:view'
   ]

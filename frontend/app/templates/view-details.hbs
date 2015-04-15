@@ -8,8 +8,8 @@
   </form>
   <svg {{bind-attr width=width}} {{bind-attr height=height}} viewBox="0 0 1280 1024">
   {{#each observer in svgObservers itemController="observer"}}
-    {{#if observer.value}}
-      {{svg-value value=observer.value observer=observer.model}}
+    {{#if observer.model.value}}
+      {{svg-value value=observer.model.value observer=observer.model}}
     {{/if}}
   {{/each}}
   </svg>
@@ -25,8 +25,8 @@
   </thead>
   <tbody>
     {{#each observer in htmlObservers itemController="observer"}}
-      {{#if observer.value}}
-        {{html-value value=observer.value observer=observer.model}}
+      {{#if observer.model.value}}
+        {{html-value value=observer.model.value observer=observer.model}}
       {{/if}}
     {{/each}}
   </tbody>
