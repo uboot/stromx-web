@@ -15,6 +15,12 @@ import view
 
 _EXECUTION_DELAY = 1000 # ms
 
+_COLORS = [
+    stromx.runtime.Color(0xbe, 0x20, 0x2e),
+    stromx.runtime.Color(0x01, 0x95, 0x47),
+    stromx.runtime.Color(0x20, 0x75, 0xbc)
+]
+
 def _str(value):
     return str(value.encode('utf-8'))
 
@@ -392,11 +398,11 @@ class Stream(Item):
                 assert(outputConnector)
                 
                 inputConnector = inputs.findInputModel(op.stromxOp,
-                                                        stromxInput.id())
+                                                       stromxInput.id())
                 assert(inputConnector)
                 
                 thread = self.model.threads.findThreadModel(op.stromxOp,
-                                                            stromxInput)
+                                                            stromxInput.id())
                 
                 # the connection added below assigns itself to the stream, so 
                 # there is no need to store it in self.__connections
@@ -432,8 +438,7 @@ class Stream(Item):
         status = self.__stream.status()
         if value and status == stromx.runtime.Stream.Status.INACTIVE:
             try:
-                sort = stromx.runtime.SortInputsAlgorithm()
-                sort.apply(self.__stream)
+                self.__prepareStream()
                 self.__stream.start()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
@@ -550,6 +555,25 @@ class Stream(Item):
             zipOutput.close()
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
+            
+    def __prepareStream(self):
+        for thread in self.threads:
+            self.model.threads.delete(thread)
+            
+        assignThreads = stromx.runtime.AssignThreadsAlgorithm()
+        assignThreads.apply(self.__stream)
+        sort = stromx.runtime.SortInputsAlgorithm()
+        sort.apply(self.__stream)
+        
+        for i, stromxThread in enumerate(self.__stream.threads()):
+            stromxThread.setColor(_COLORS[i % len(_COLORS)])
+            threadModel = self.model.threads.addStromxThread(stromxThread, self)
+            self.__threads.append(threadModel)
+           
+        for connection in self.__connections:
+            thread = self.model.threads.findThreadModel(
+                        connection.stromxTargetOp, connection.stromxTargetId)
+            connection.setThreadModel(thread)
         
 class OperatorTemplate(Item):
     _properties = ["type", "package", "version"]
@@ -1009,6 +1033,9 @@ class Connection(Item):
     def stromxTargetId(self):
         return self.__input.stromxId
         
+    def setThreadModel(self, threadModel):
+        self.__thread = threadModel
+        
     def delete(self):     
         try:
           if self.__thread != None:
@@ -1134,10 +1161,10 @@ class Threads(Items):
         self.addItem(threadModel)
         return threadModel
     
-    def findThreadModel(self, stromxOp, stromxInput):
+    def findThreadModel(self, stromxOp, stromxInputId):
         threads = [
             thread for thread in self.values() if 
-            self.__inputIsInInputSequence(stromxOp, stromxInput, 
+            self.__inputIsInInputSequence(stromxOp, stromxInputId, 
                                           thread.stromxThread.inputSequence())
         ]
         assert(len(threads) <= 1)
@@ -1157,11 +1184,11 @@ class Threads(Items):
         stream.addThread(thread)
         return thread.data
         
-    def __inputIsInInputSequence(self, stromxOp, stromxInput, sequence):
+    def __inputIsInInputSequence(self, stromxOp, stromxInputId, sequence):
         for connector in sequence:
             if (connector.type() == stromx.runtime.Connector.Type.INPUT and
                 connector.op() == stromxOp and
-                connector.id() == stromxInput.id()):
+                connector.id() == stromxInputId):
                 return True
             
         return False

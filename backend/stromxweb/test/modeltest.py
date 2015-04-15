@@ -404,8 +404,7 @@ class FilesTest(unittest.TestCase):
                          model.File.secureName('\\test.stromx'))
         
     def testSecureNameEmpty(self):
-        self.assertEqual('',
-                         model.File.secureName(''))
+        self.assertEqual('', model.File.secureName(''))
         
     def tearDown(self):
         shutil.rmtree('temp', True)
@@ -482,6 +481,9 @@ class StreamsTest(unittest.TestCase):
         self.streamFile.opened = True
         self.streams.set('0', {'stream': {'active': True}})
         self.assertTrue(self.streams.data['streams'][0]['active'])
+        self.assertEqual(4, len(self.model.threads))
+        self.assertEqual('#be202e', self.model.threads['3'].color)
+        self.assertEqual('#2075bc', self.model.threads['5'].color)
         
     def testSetActivateFails(self):
         self.setUpException()
@@ -1362,7 +1364,8 @@ class ThreadsTest(unittest.TestCase):
         self.stromxThread.addInput(self.stromxFork, 0)   
         stromxInput = self.stromxFork.info().inputs()[0]
         
-        foundThread = self.threads.findThreadModel(self.stromxFork, stromxInput)
+        foundThread = self.threads.findThreadModel(self.stromxFork,
+                                                   stromxInput.id())
         
         self.assertEqual(self.thread, foundThread)
         
