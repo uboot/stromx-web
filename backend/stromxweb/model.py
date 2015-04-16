@@ -524,7 +524,7 @@ class Stream(Item):
             writer.writeStream(zipOutput, 'stream', self.__stream)
             
             zipOutput.initialize('views')
-            zipOutput.openFile("json", stromx.runtime.OutputProvider.OpenMode.TEXT)
+            zipOutput.openFile(".json", stromx.runtime.OutputProvider.OpenMode.TEXT)
             json.dump(viewData, zipOutput.file())
             zipOutput.close()
         except stromx.runtime.Exception as e:
