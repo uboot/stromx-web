@@ -7,6 +7,12 @@ export var COLORS = [{
   }, {
     name: 'Blue',
     value: '#2075bc',
+  }, {
+    name: 'Orange',
+    value: '#e68a1e',
+  }, {
+    name: 'Purple',
+    value: '#7929a3',
   }
 ];
 
