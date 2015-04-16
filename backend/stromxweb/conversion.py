@@ -163,9 +163,9 @@ def stromxMatrixToData(matrix):
     
     return data
 
-def stromxListToData(list):
+def stromxListToData(stromxList):
     values = []
-    for item in list.content():
+    for item in stromxList.content():
         value = {
             'variant': {
                 'ident': variantToString(item.variant())

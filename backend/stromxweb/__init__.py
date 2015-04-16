@@ -154,8 +154,11 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
         
     def sendValue(self, value):
         loop = tornado.ioloop.IOLoop.instance()
-        json = tornado.escape.json_encode(value.data)
-        loop.add_callback(lambda: self.doSend(json))
+        try:
+            json = tornado.escape.json_encode(value.data)
+            loop.add_callback(lambda: self.doSend(json))
+        except model.Failed:
+            traceback.print_exc()
     
     def open(self):
         user_json = self.get_current_user()
