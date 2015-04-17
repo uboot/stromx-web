@@ -60,7 +60,7 @@ class ConversionTest(unittest.TestCase):
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
         self.assertEqual('FfZ4TB06fuwVkvwFjcdPESs2f/2Q==', values[-30:])
         
-    def testStromxBgrImageToData(self):
+    def testStromxImageToDataBgr(self):
         stromxImage = stromx.cvsupport.Image('data/image/lenna.jpg')
         
         data = conversion.stromxImageToData(stromxImage)
@@ -72,7 +72,7 @@ class ConversionTest(unittest.TestCase):
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
         self.assertEqual('FfZ4TB06fuwVkvwFjcdPESs2f/2Q==', values[-30:])
         
-    def testStromxGrayscaleImageToData(self):
+    def testStromxImageToDataGrayscale(self):
         grayscale = stromx.cvsupport.Image.Conversion.GRAYSCALE
         stromxImage = stromx.cvsupport.Image('data/image/lenna.jpg', grayscale)
         data = conversion.stromxImageToData(stromxImage)
@@ -84,6 +84,13 @@ class ConversionTest(unittest.TestCase):
         self.assertEqual('data:image/jpg;base64,/9j/4AAQ', values[:30])
         self.assertEqual('+NLy58LWMl1aWj+Uhhzhfy/L8K/9k=', values[-30:])
         
+    def testStromxImageToDataPrimitive(self):
+        primitive = stromx.runtime.Int32(4)
+        self.assertRaises(conversion.Failed, conversion.stromxImageToData, primitive)
+        
+    def testStromxImageToDataNone(self):
+        self.assertRaises(conversion.Failed, conversion.stromxImageToData, None)
+        
     def testStromxMatrixToDataInt32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.INT_32
         matrix = stromx.cvsupport.Matrix.eye(3, 4, valueType)
@@ -94,6 +101,13 @@ class ConversionTest(unittest.TestCase):
                               [0, 1, 0, 0], 
                               [0, 0, 1, 0]]}
         self.assertEqual(refData, data)
+        
+    def testStromxMatrixToDataPrimitive(self):
+        primitive = stromx.runtime.Int32(4)
+        self.assertRaises(conversion.Failed, conversion.stromxMatrixToData, primitive)
+        
+    def testStromxMatrixToDataNone(self):
+        self.assertRaises(conversion.Failed, conversion.stromxMatrixToData, None)
         
     def testStromxListToData(self):
         stream = stromx.runtime.Stream()

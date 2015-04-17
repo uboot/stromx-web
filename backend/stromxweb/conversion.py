@@ -9,7 +9,7 @@ import re
 import stromx.runtime
 import stromx.cvsupport
 
-class Failed(Exception): pass
+from error import Failed
 
 def isNumber(variant):
     if variant.isVariant(stromx.runtime.Variant.INT):
@@ -128,7 +128,12 @@ def variantToString(variant):
     else:
         return 'none'
     
-def stromxImageToData(image):
+def stromxImageToData(stromxData):
+    # make sure this is an image
+    image = stromx.runtime.Image.data_cast(stromxData)
+    if not image:
+        raise Failed()
+        
     array = np.asarray(image.data())
     rows = image.rows()
     cols = image.cols()
@@ -152,7 +157,12 @@ def stromxImageToData(image):
     
     return data
 
-def stromxMatrixToData(matrix):
+def stromxMatrixToData(stromxData):
+    # make sure this is a matrix
+    matrix = stromx.runtime.Matrix.data_cast(stromxData)
+    if not matrix:
+        raise Failed()
+        
     array = np.asarray(matrix.data())
     
     data = {

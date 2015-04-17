@@ -14,6 +14,7 @@ import tornado.websocket
 import traceback
 
 import model
+from error import Failed
 
 config = {}
 _USER_COOKIE = 'USER'
@@ -104,7 +105,7 @@ class ItemsHandler(BaseHandler):
         except KeyError:
             traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
-        except model.Failed:
+        except Failed:
             traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
     
@@ -118,7 +119,7 @@ class ItemsHandler(BaseHandler):
         except KeyError:
             traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
-        except model.Failed:
+        except Failed:
             traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
         
@@ -129,7 +130,7 @@ class ItemsHandler(BaseHandler):
             item = self.items.addData(data)
             json = tornado.escape.json_encode(item)
             self.write(json) 
-        except model.Failed:
+        except Failed:
             traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
     
@@ -141,7 +142,7 @@ class ItemsHandler(BaseHandler):
         except KeyError:
             traceback.print_exc()
             self.set_status(httplib.NOT_FOUND)
-        except model.Failed:
+        except Failed:
             traceback.print_exc()
             self.set_status(httplib.BAD_REQUEST)
            
@@ -157,7 +158,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
         try:
             json = tornado.escape.json_encode(value.data)
             loop.add_callback(lambda: self.doSend(json))
-        except model.Failed:
+        except Failed:
             traceback.print_exc()
     
     def open(self):

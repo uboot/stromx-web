@@ -18,7 +18,7 @@ _EXECUTION_DELAY = 1000 # ms
 def _str(value):
     return str(value.encode('utf-8'))
 
-class Failed(Exception): pass
+from error import Failed
 
 class Model(object):
     def __init__(self, directory = ""):
