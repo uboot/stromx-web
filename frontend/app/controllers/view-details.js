@@ -4,6 +4,7 @@ import OutputObserver from 'stromx-web/models/output-observer';
 import ParameterObserver from 'stromx-web/models/parameter-observer';
 import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
 import ENV from '../config/environment';
+import ACK from 'stromx-web/socket';
 
 export default Ember.Controller.extend({
   zoom: 1.0,
@@ -48,6 +49,7 @@ export default Ember.Controller.extend({
     ws = new WebSocket(url);
     var _this = this;
     ws.onmessage = function(event) {
+      ws.send(ACK);
       var payload = JSON.parse(event.data);
       _this.store.pushPayload('connector-value', payload);
     };

@@ -18,6 +18,7 @@ from error import Failed
 
 config = {}
 _USER_COOKIE = 'USER'
+_MAX_SOCKET_QUEUE_LENGTH = 5
       
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
@@ -149,9 +150,17 @@ class ItemsHandler(BaseHandler):
 class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
     def initialize(self, items):
         self.__items = items
+        self.__queueLength = 0
         
     def doSend(self, json):
-        self.write_message(json)
+        if self.__queueLength > _MAX_SOCKET_QUEUE_LENGTH:
+            return
+            
+        try:
+            self.write_message(json)
+            self.__queueLength += 1
+        except tornado.websocket.WebSocketClosedError:
+            pass
         
     def sendValue(self, value):
         loop = tornado.ioloop.IOLoop.instance()
@@ -171,6 +180,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
     
     def on_close(self):
         self.__items.handlers.remove(self.sendValue)
+    
+    def on_message(self, message):
+        self.__queueLength -= 1
+        assert (self.__queueLength >= 0)
         
     # FIXME: disable cross-origin websocket connections by removing the function
     # below
