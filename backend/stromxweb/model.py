@@ -325,12 +325,15 @@ class Streams(Items):
             lambda stream: stream.stromxStream == stromxStream, self.values())
         assert(len(streamModels) <= 1)
         return streamModels[0] if len(streamModels) else None
-        
     
 class ExceptionObserver(stromx.runtime.ExceptionObserver):
     stream = None
     
-    def observe(self, phase, message, thread):
+    def observe(self, phase, info, thread):
+        message = '{0} ({1}::{2}) during {4}: {3}'.format(
+          info.name(), info.package(), info.type(), info.message(), phase
+        )
+        
         self.stream.observeException(message)
         
 class Stream(Item):
@@ -1567,10 +1570,13 @@ class ConnectorValue(ConnectorValueBase):
         return self.__value
     
     def handleData(self, data):
-        with stromx.runtime.ReadAccess(data) as access:
-            value = ConnectorValueBase(access, self.model)
-            value.index = self.index
-            self.model.connectorValues.sendValue(value)
+        try:
+            with stromx.runtime.ReadAccess(data) as access:
+                value = ConnectorValueBase(access, self.model)
+                value.index = self.index
+                self.model.connectorValues.sendValue(value)
+        except stromx.runtime.Exception as e:
+            print 'Exception while observing data: {0}'.format(e)
         
     def delete(self):
         self.__value.deactivate()

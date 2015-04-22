@@ -510,8 +510,11 @@ class StreamsTest(unittest.TestCase):
         time.sleep(1.3)
         
         self.assertEqual(1, len(self.errorSink.errors))
-        self.assertEqual('Failed to execute operator.',
-                         self.errorSink.errors[0].description)
+        self.assertEqual(
+            'ExceptionOperator (test::ExceptionOperator) during EXECUTION: '
+            'Failed to execute operator.',
+            self.errorSink.errors[0].description
+        )
         
     def testSetDeactivate(self):
         self.setUpStream()
@@ -550,8 +553,11 @@ class StreamsTest(unittest.TestCase):
         self.streams.set('0', {'stream': {'active': False}})
         
         self.assertEqual(1, len(self.errorSink.errors))
-        self.assertEqual('Failed to deactivate operator.',
-                         self.errorSink.errors[0].description)
+        self.assertEqual(
+            'ExceptionOperator (test::ExceptionOperator) during DEACTIVATION: '
+            'Failed to deactivate operator.',
+            self.errorSink.errors[0].description
+        )
         
     def testSetPause(self):
         self.setUpStream()
@@ -954,6 +960,53 @@ class ParametersTest(unittest.TestCase):
                               'access': 'none',
                               'observers': []}}
         self.assertEqual(data, param.data)
+        
+    def testDataMatrixParameter(self):
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
+        param = self.parameters['4']
+        data = {'parameter': {'descriptions': [],
+                              'id': '4',
+                              'maximum': 0,
+                              'minimum': 0,
+                              'rows': 0,
+                              'cols': 0,
+                              'value': {
+                                  'rows': 3,
+                                  'cols': 4,
+                                  'values': [
+                                      [0.0, 1.0, 2.0, 3.0],
+                                      [1.0, 2.0, 3.0, 4.0],
+                                      [2.0, 3.0, 4.0, 5.0]
+                                  ]
+                              },
+                              'state': 'current',
+                              'title': 'Matrix parameter',
+                              'variant': { 
+                                'ident': 'matrix',
+                                'title': 'Float32 matrix'
+                              },
+                              'operator': '0',
+                              'access': 'inactive',
+                              'observers': []}}
+        self.assertEqual(data, param.data)
+        
+    def testSetMatrix(self):
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
+        param = self.parameters['4']
+        
+        param.set({'parameter': {'id': '10',
+                                 'value': {
+                                    'rows': 1,
+                                    'cols': 2,
+                                    'values': [[1.2, '3.4']]
+                                  }
+                                }})
+        
+        data = param.data['parameter']['value']
+        self.assertEqual(1, data['rows']) 
+        self.assertEqual(2, data['cols']) 
+        self.assertAlmostEqual(1.2, data['values'][0][0], places = 3) 
+        self.assertAlmostEqual(3.4, data['values'][0][1], places = 3) 
         
     def testSetNumberOfOutputs(self):
         self.model.operators.addStromxOp(self.fork, self.stream)

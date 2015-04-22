@@ -30,42 +30,6 @@ export default Ember.Controller.extend({
   svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
   htmlObservers: Ember.computed.sort('model.observers', 'htmlSorting'),
 
-
-  socket: null,
-
-  init: function() {
-    var ws = this.get('socket');
-    if (ws) {
-      return;
-    }
-
-    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    var host = protocol + '//' + window.location.host;
-    if (ENV.APP.SOCKET_HOST) {
-      host = ENV.APP.SOCKET_HOST;
-    }
-    var url = host + '/socket/connectorValue';
-
-    ws = new WebSocket(url);
-    var _this = this;
-    ws.onmessage = function(event) {
-      ws.send(ACK);
-      var payload = JSON.parse(event.data);
-      _this.store.pushPayload('connector-value', payload);
-    };
-    this.set('socket', ws);
-  },
-
-  willDestroy: function() {
-    var ws = this.get('socket');
-    if (! ws) {
-      return;
-    }
-
-    ws.close();
-    this.set('socket', null);
-  },
-
   addInputObserver: function(input) {
     var numObservers = this.get('model.observers.length');
     var observer = this.store.createRecord('input-observer', {
@@ -141,6 +105,38 @@ export default Ember.Controller.extend({
     },
     reset: function() {
       this.set('zoom', 1.0);
+    },
+    connect: function() {
+      var ws = this.get('socket');
+      if (ws) {
+        return;
+      }
+
+      var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      var host = protocol + '//' + window.location.host;
+      if (ENV.APP.SOCKET_HOST) {
+        host = ENV.APP.SOCKET_HOST;
+      }
+      var url = host + '/socket/connectorValue';
+
+      ws = new WebSocket(url);
+      var _this = this;
+      ws.onmessage = function(event) {
+        ws.send(ACK);
+        var payload = JSON.parse(event.data);
+        _this.store.pushPayload('connector-value', payload);
+      };
+      this.set('socket', ws);
+    },
+    
+    disconnect: function() {
+      var ws = this.get('socket');
+      if (! ws) {
+        return;
+      }
+
+      ws.close();
+      this.set('socket', null);
     }
   }
 });

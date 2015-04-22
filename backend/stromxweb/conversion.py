@@ -40,8 +40,6 @@ def hasStringRepresentation(variant):
 def toPythonObserverValue(variant, data):
     if variant.isVariant(stromx.runtime.Variant.IMAGE):
         return stromxImageToData(data)
-    elif variant.isVariant(stromx.runtime.Variant.MATRIX):
-        return stromxMatrixToData(data)
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return stromxListToData(data)
     else:
@@ -64,7 +62,7 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return {'width': data.width(), 'height': data.height() }
     elif variant.isVariant(stromx.runtime.Variant.MATRIX):
-        return {'rows': data.rows(), 'cols': data.cols() }
+        return stromxMatrixToData(data)
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return {'numItems': len(data.content()) }
     else:
@@ -97,12 +95,12 @@ def toStromxData(variant, value):
         return stromx.runtime.TriggerData()
     elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return dataToStromxImage(value)
-    elif variant.isVariant(stromx.runtime.Variant.MATRIX_INT32):
-        return dataToStromxMatrix(value, np.int32)
-    elif variant.isVariant(stromx.runtime.Variant.MATRIX_FLOAT32):
-        return dataToStromxMatrix(value, np.float32)
+    elif variant.isVariant(stromx.runtime.Variant.INT_32_MATRIX):
+        return dataToStromxMatrix(value, stromx.runtime.Matrix.ValueType.INT_32)
+    elif variant.isVariant(stromx.runtime.Variant.FLOAT_32_MATRIX):
+        return dataToStromxMatrix(value, stromx.runtime.Matrix.ValueType.FLOAT_32)
     elif variant.isVariant(stromx.runtime.Variant.MATRIX):
-        return dataToStromxMatrix(value, np.float32)
+        return dataToStromxMatrix(value, stromx.runtime.Matrix.ValueType.FLOAT_32)
     else:
         return None
     
@@ -205,14 +203,7 @@ def dataToStromxImage(data):
         assert(False)
     return image
     
-def dataToStromxMatrix(data, dtype):
-    if dtype == np.int32:
-        valueType = stromx.runtime.Matrix.ValueType.INT_32
-    elif dtype == np.float32:
-        valueType = stromx.runtime.Matrix.ValueType.FLOAT_32
-    else:
-        raise Failed('Unsupported dtype')
-        
+def dataToStromxMatrix(data, valueType):
     matrix = stromx.cvsupport.Matrix(data['rows'], data['cols'], valueType)
     matrixData = np.asarray(matrix.data());
     matrixData[:, :] = data['values']

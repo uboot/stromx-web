@@ -54,8 +54,8 @@
     <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
   </a>
 {{else if writable}}
-  {{# if isMatrix}}
-    {{#link-to "parameter.edit" param}}
+  {{#if isMatrix}}
+    {{#link-to "parameter.edit" model}}
       <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
     {{/link-to}}
   {{else}}

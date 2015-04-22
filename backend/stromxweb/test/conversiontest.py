@@ -170,7 +170,8 @@ class ConversionTest(unittest.TestCase):
                  'values': [[10, 10, 200, 200],
                             [10, 20, 200, 300],
                             [10, 30, 200, 400]]}
-        matrix = conversion.dataToStromxMatrix(data, np.int32)
+        matrix = conversion.dataToStromxMatrix(data,
+                                        stromx.runtime.Matrix.ValueType.INT_32)
         self.assertEqual(stromx.runtime.Matrix.ValueType.INT_32,
                          matrix.valueType())
         self.assertEqual(3, matrix.rows());
@@ -184,7 +185,8 @@ class ConversionTest(unittest.TestCase):
                  'cols': 1, 
                  'values': [[10.5],
                             [10]]}
-        matrix = conversion.dataToStromxMatrix(data, np.float32)
+        matrix = conversion.dataToStromxMatrix(data,
+                                      stromx.runtime.Matrix.ValueType.FLOAT_32)
         self.assertEqual(stromx.runtime.Matrix.ValueType.FLOAT_32,
                          matrix.valueType())
         self.assertEqual(2, matrix.rows());
