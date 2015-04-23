@@ -181,9 +181,8 @@ class ConnectorObserver(Observer):
 class ObserverCallback(stromx.runtime.ConnectorObserver):
     connectorValue = None
     
-    def observe(self, connector, data, thread):
-        if not data.empty():
-            self.connectorValue.observe(connector, data)
+    def observe(self, connector, oldData, newData, thread):
+        self.connectorValue.observe(connector, oldData, newData)
         
 class ConnectorValue(object):
     def __init__(self, op, connectorType, connectorIndex):
@@ -208,10 +207,22 @@ class ConnectorValue(object):
     def deactivate(self):
         self.__op.removeObserver(self.__callback)
       
-    def observe(self, connector, data):
+    def observe(self, connector, oldData, newData):
         if (connector.id() != self.__connectorIndex or 
             connector.type() != self.__connectorType):
             return
+        
+        data = None
+        if connector.type() == stromx.runtime.Connector.OUTPUT:
+            data = oldData
+        elif connector.type() == stromx.runtime.Connector.INPUT:
+            data = newData
+        else:
+            assert(False)
+            
+        if data.empty():
+            return
+            
         if self.__handler:
             self.__handler(data)
         
