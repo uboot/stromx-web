@@ -40,13 +40,13 @@ export default Ember.Controller.extend({
   },
 
   actions: {
-    save: function () {
+    save: function() {
       this.get('model.file').then(function(file) {
         file.set('saved', true);
         file.save();
       });
     },
-    start: function () {
+    start: function() {
         var stream = this.get('model');
         stream.set('active', true);
         stream.save().catch(function() {
@@ -57,17 +57,17 @@ export default Ember.Controller.extend({
           });
         });
     },
-    stop: function () {
+    stop: function() {
         var stream = this.get('model');
         stream.set('active', false);
         stream.save();
     },
-    pause: function () {
+    pause: function() {
         var stream = this.get('model');
         stream.set('paused', true);
         stream.save();
     },
-    resume: function () {
+    resume: function() {
         var stream = this.get('model');
         stream.set('paused', false);
         stream.save();

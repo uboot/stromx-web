@@ -1,12 +1,11 @@
 import Ember from "ember";
-import InputObserver from 'stromx-web/models/input-observer';
-import OutputObserver from 'stromx-web/models/output-observer';
-import ParameterObserver from 'stromx-web/models/parameter-observer';
+import View from 'stromx-web/controllers/view';
 import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
 import ENV from '../config/environment';
 import ACK from 'stromx-web/socket';
 
-export default Ember.Controller.extend({
+export default View.extend({
+  socket: null,
   zoom: 1.0,
   width: function() {
     return 1280 * this.get('zoom');
@@ -15,20 +14,8 @@ export default Ember.Controller.extend({
     return 1024 * this.get('zoom');
   }.property('zoom'),
 
-  parameterObservers:  Ember.computed.filter('model.observers', function(observer) {
-    return observer instanceof ParameterObserver;
-  }),
-  inputObservers: Ember.computed.filter('model.observers', function(observer) {
-    return observer instanceof InputObserver;
-  }),
-  outputObservers: Ember.computed.filter('model.observers', function(observer) {
-    return observer instanceof OutputObserver;
-  }),
-
   svgSorting: ['zvalue:incr'],
-  htmlSorting: ['zvalue:decr'],
-  svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
-  htmlObservers: Ember.computed.sort('model.observers', 'htmlSorting'),
+  svgSortedObservers: Ember.computed.sort('model.observers', 'svgSorting'),
 
   addInputObserver: function(input) {
     var numObservers = this.get('model.observers.length');
