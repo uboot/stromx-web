@@ -58,9 +58,9 @@
     </ul>
     
     {{#if isVisible}}
-      {{render "stream-details" this.model}}
+      {{view "stream-details"}}
     {{else}}
-      {{render "view-details" this.viewModel}}
+      {{view "view-details"}}
     {{/if}}
     {{outlet "display"}}
   </div>
