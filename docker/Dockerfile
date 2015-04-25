@@ -15,7 +15,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && npm install \
     && npm install bower \
     && bower --allow-root install \
-    && ember build --environment development \
+    && ember build --environment production \
     && cd ../backend \
     && python setup.py build \
     && python setup.py install \
