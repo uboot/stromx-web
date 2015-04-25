@@ -1,6 +1,7 @@
 import Ember from "ember";
 
 import ConnectorController from 'stromx-web/controllers/connector';
+import OutputObserver from 'stromx-web/models/output-observer';
 import ViewController from 'stromx-web/controllers/view-details';
 
 export default ConnectorController.extend({
@@ -9,12 +10,11 @@ export default ConnectorController.extend({
       return Ember.RSVP.resolve(null);
     }
 
-    var viewController = ViewController.create({
-      model: view
+    var outputObservers = view.get('observers').filter(function(observer) {
+      return observer instanceof OutputObserver;
     });
 
     var output = this.get('model');
-    var outputObservers = viewController.get('outputObservers');
     return Ember.RSVP.all(outputObservers.map( function(observer) {
         return observer.get('output');
       })
