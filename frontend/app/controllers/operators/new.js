@@ -3,6 +3,7 @@ import Ember from "ember";
 export default Ember.Controller.extend({
   selectedOperator: null,
   selectedPackage: null,
+  name: '',
   packages: function(key, value) {
     if (value !== undefined) {
       return value;
@@ -26,7 +27,18 @@ export default Ember.Controller.extend({
     return [];
   }.property(),
   saveIsDisabled: Ember.computed.equal('selectedOperator', null),
-  name: '',
+  updateName: function() {
+    var op = this.get('selectedOperator');
+    if (op === null) {
+      return; 
+    }
+    
+    if (this.get('name') !== '') {
+      return; 
+    }
+      
+    this.set('name', op.get('type'));
+  }.observes('selectedOperator'),
   actions: {
     cancel: function() {
       this.set('name', '');

@@ -1,7 +1,7 @@
 import Ember from "ember";
 import ConnectorController from 'stromx-web/controllers/connector';
 import InputObserver from 'stromx-web/models/input-observer';
-import ViewController from 'stromx-web/controllers/view-details';
+import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
 
 export default ConnectorController.extend({
   findObserver: function(view) {
@@ -29,15 +29,21 @@ export default ConnectorController.extend({
       if (! view) {
         return;
       }
-
-      var viewController = ViewController.create({
-        model: view,
-        store: this.get('store')
+      
+      var numObservers = this.get('model.observers.length');
+      var observer = this.store.createRecord('input-observer', {
+        view: view,
+        input: this.get('model'),
+        zvalue: numObservers + 1,
+        properties: {
+          color: DEFAULT_OBSERVER_COLOR
+        },
+        visualization: 'default'
       });
 
       var _this = this;
-      var model = this.get('model');
-      viewController.addInputObserver(model).then( function(observer) {
+      observer.save().then(function(observer) {
+        _this.reloadView();
         _this.transitionToRoute('inputObserver.index', observer);
       });
     },

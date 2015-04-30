@@ -17,20 +17,41 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="#">Files</a></li>
+      </ul>
+      
+      <form class="navbar-form navbar-left">
+        <button {{action "save"}} class="btn btn-default">
+          <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+          Save
+        </button>
         {{#if model.active}}
           {{#if model.paused}}
-            <li><a {{action "resume" }}>Resume</a></li>
-            <li><a {{action "stop"}}>Stop</a></li>
+            <button {{action "resume"}} class="btn btn-default">
+              <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+              Resume
+            </button>
           {{else}}
-            <li><a {{action "pause"}}>Pause</a></li>
-            <li><a {{action "stop"}}>Stop</a></li>
+            <button {{action "pause"}} class="btn btn-default">
+              <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+              Pause
+            </button>
           {{/if}}
+          <button {{action "stop"}} class="btn btn-default">
+            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+            Stop
+          </button>
         {{else}}
-          <li><a {{action "start"}}>Start</a></li>
-          <li><a {{action "save"}}>Save</a></li>
-          <li>{{#link-to "stream.close" class="stromx-close-stream"}}Close{{/link-to}}</li>
+          <button {{action "start"}} class="btn btn-default">
+            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+            Start
+          </button>
+          {{#link-to "stream.close" class="btn btn-default stromx-close-stream"}}
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            Close
+          {{/link-to}}
         {{/if}}
-      </ul>
+      </form>
+      
       <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -55,12 +76,15 @@
           {{/link-to}}
         </li>
       {{/each}}
+      <div class="pull-right stromx-nav-div">
+      {{#link-to "views.new" id="new-view"}}New view{{/link-to}}
+      </div>
     </ul>
     
     {{#if isVisible}}
-      {{view "stream-details"}}
+      {{render "stream-details" model}}
     {{else}}
-      {{view "view-details"}}
+      {{render "view-details" viewModel}}
     {{/if}}
     {{outlet "display"}}
   </div>

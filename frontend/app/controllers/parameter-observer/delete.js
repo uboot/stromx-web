@@ -12,9 +12,6 @@ export default Ember.Controller.extend({
       }
     },
     remove: function () {
-      var observer = this.get('model');
-      observer.deleteRecord();
-      observer.save();
       this.set('wasRemoved', true);
     }
   }

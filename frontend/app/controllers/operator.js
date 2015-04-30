@@ -122,6 +122,25 @@ export default Ember.Controller.extend({
     ]);
   },
   
+  reloadConnectionsAndObservers: function() {
+    var model = this.get('model');
+    model.get('stream').then(function(stream) {
+      stream.reload();
+    });
+    var views = model.get('stream.views').map(function(view) {
+      return view.reload();
+    });
+    Ember.RSVP.all(views).then(function(views) {
+      views.forEach(function(view) {
+        view.get('observers').then(function(observers) {
+          observers.forEach(function(observer) {
+            observer.reload();
+          });
+        });
+      });
+    });
+  },
+  
   actions: {
     editName: function() {
       this.set('isEditingName', true);
@@ -142,10 +161,10 @@ export default Ember.Controller.extend({
       });
     },
     deinitialize: function() {
+      this.set('model.status', 'none');
       var _this = this;
-      this.removeDependencies().then(function() {
-        _this.set('model.status', 'none');
-        _this.get('model').save();
+      this.get('model').save().then(function() {
+        _this.reloadConnectionsAndObservers();
       });
     }
   }

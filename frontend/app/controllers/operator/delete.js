@@ -2,21 +2,27 @@ import OperatorController from 'stromx-web/controllers/operator';
 
 export default OperatorController.extend({
   wasRemoved: false,
+  stream: null,
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.transitionToRoute('stream.index', this.get('model.stream'));
+        this.transitionToRoute('stream.index', this.get('stream'));
         this.set('wasRemoved', false);
       } else {
         this.transitionToRoute('operator.index', this.get('model'));
       }
     },
     remove: function () {
+      // backup the stream
+      this.set('stream', this.get('model.stream'));
+      
+      // delete the operator
+      this.get('model').deleteRecord();
+      
+      // reload the stream to update the connections
       var _this = this;
-      this.removeDependencies().then(function() {
-        var model = _this.get('model');
-        model.deleteRecord();
-        model.save();
+      this.get('model').save().then(function() {
+        _this.reloadConnectionsAndObservers();
       });
       this.set('wasRemoved', true);
     }

@@ -17,35 +17,38 @@ export default Ember.Controller.extend({
   isOutputObserver: function() {
     return this.get('model') instanceof OutputObserverModel;
   }.property('model'),
+  
+  updateZvalue: function(update) {
+    var model = this.get('model');
+    var zvalue = model.get('zvalue');
+    var view = model.get('view');
+    
+    // FIXME: the code below throws an error if at least one view-details
+    // observer was destructed before
+    try {
+      model.set('zvalue', zvalue + update);
+    }
+    catch(err) {
+    }
+    
+    model.save().then(function() {
+      view.then(function(view) {
+        view.reload().then(function(view) {
+          view.get('observers').forEach(function(observer) {
+            observer.reload();
+          });
+        });
+      });
+    });
+  },
 
   actions: {
     moveUp: function() {
-      var model = this.get('model');
-      var zvalue = model.get('zvalue');
-      model.get('view').then(function(view) {
-        var observers = view.get('observers');
-        var modelAbove = observers.findBy('zvalue', zvalue + 1);
-        if (modelAbove) {
-          model.set('zvalue', zvalue + 1);
-          modelAbove.set('zvalue', zvalue);
-          model.save();
-          modelAbove.save();
-        }
-      });
+      this.updateZvalue(+1);
     },
     moveDown: function() {
-      var model = this.get('model');
-      var zvalue = model.get('zvalue');
-      model.get('view').then(function(view) {
-        var observers = view.get('observers');
-        var modelBelow = observers.findBy('zvalue', zvalue - 1);
-        if (modelBelow) {
-          modelBelow.set('zvalue', zvalue);
-          model.set('zvalue', zvalue - 1);
-          modelBelow.save();
-          model.save();
-        }
-      });
+      this.updateZvalue(-1);
     }
   }
 });
+

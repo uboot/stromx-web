@@ -17,6 +17,15 @@ export default Ember.Controller.extend({
       _this.set('observerExists', observer !== null);
     });
   }.property('view'),
+  
+  reloadView: function() {
+    var view = this.get('view');
+    view.reload().then(function(view) {
+      view.get('observers').forEach(function(observer) {
+        observer.reload();
+      });
+    });
+  },
 
   actions: {
     editObserver: function() {

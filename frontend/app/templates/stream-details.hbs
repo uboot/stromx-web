@@ -1,22 +1,16 @@
-<form class="form-inline stromx-margin-top ">
-  <div class="btn-group" role="group">
-    {{#each view in model.views itemController="view"}}
-      {{#link-to "view" view.model class="btn btn-default"}}
-        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-        {{view.model.name}}
-      {{/link-to}}
-    {{/each}}
-  </div>
-</form>
-
+<div class="btn-group stromx-margin-top" role="group">
+  {{#link-to "operators.new" class="btn btn-default" id="new-operator"}}New operator{{/link-to}}
+</div>
+    
 <div class="stromx-stream-view stromx-margin-top panel panel-default">
   <form class="form-inline stromx-svg-buttons">
     <div class="btn-group" role="group">
-      {{#link-to "operators.new" class="btn btn-default" id="new-operator"}}New operator{{/link-to}}
-      {{#link-to "views.new" class="btn btn-default"}}New view{{/link-to}}
+      <a {{action "minify"}} class="btn btn-default">-</a>
+      <a {{action "reset"}} class="btn btn-default">100%</a>
+      <a {{action "magnify"}} class="btn btn-default">+</a>
     </div>
   </form>
-  <svg width="1280" height="1024" class="stromx-stream-svg" viewBox="0 0 1280 1024">
+  <svg width={{width}} height={{height}} viewBox="0 0 1280 1024" class="stromx-stream-svg">
     <defs>
       <g id="arrows" transform="scale(5)" class="stromx-svg-arrows">
         <path d="M-1.5,0L-2.0,-1.0L-1.0,-1.0L-0.5,0.0L-1.0,1.0L-2.0,1.0Z"/>

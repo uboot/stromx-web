@@ -85,6 +85,9 @@ module.exports = function(app) {
       }
     ]});
   });
+  operatorsRouter.delete('/', function(req, res) {
+    res.send('null');
+  });
   operatorsRouter.post('/', function(req, res) {
     res.send({
       'operator': { id: 5 }

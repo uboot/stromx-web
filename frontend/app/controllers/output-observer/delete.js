@@ -1,8 +1,6 @@
-import Ember from "ember";
+import DeleteController from 'stromx-web/controllers/delete-observer';
 
-import ViewController from 'stromx-web/controllers/view-details';
-
-export default Ember.Controller.extend({
+export default DeleteController.extend({
   wasRemoved: false,
   view: null,
   actions: {
@@ -13,21 +11,6 @@ export default Ember.Controller.extend({
       } else {
         this.transitionToRoute('outputObserver.index', this.get('model'));
       }
-    },
-    remove: function () {
-      var observer = this.get('model');
-      var store = this.get('store');
-      var view = observer.get('view');
-      
-      var viewController = ViewController.create({
-        model: view,
-        store: store
-      });
-      viewController.removeObserver(observer);
-      
-      // remember the view
-      this.set('view', view);
-      this.set('wasRemoved', true);
     }
   }
 });

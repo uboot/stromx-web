@@ -36,6 +36,9 @@ module.exports = function(app) {
       }
     ]});
   });
+  viewsRouter.delete('/', function(req, res) {
+    res.send('null');
+  });
   viewsRouter.put('/', function(req, res) {
     res.send('null');
   });

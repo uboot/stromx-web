@@ -1,3 +1,7 @@
+<div class="btn-group stromx-margin-top" role="group">
+  {{#link-to "view" model class="btn btn-default"}}Edit view{{/link-to}}
+</div>
+
 <div class="stromx-view-view panel panel-default stromx-margin-top">
   <form class="form-inline stromx-svg-buttons">
     <div class="btn-group" role="group">
@@ -6,8 +10,8 @@
       <a {{action "magnify"}} class="btn btn-default">+</a>
     </div>
   </form>
-  <svg {{bind-attr width=width}} {{bind-attr height=height}} viewBox="0 0 1280 1024">
-  {{#each observer in viewController.svgSortedObservers itemController="observer"}}
+  <svg width={{width}} height={{height}} viewBox="0 0 1280 1024">
+  {{#each observer in svgSortedObservers itemController="observer"}}
     {{#if observer.model.value}}
       {{svg-value value=observer.model.value observer=observer.model}}
     {{/if}}
@@ -24,7 +28,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each observer in viewController.sortedObservers itemController="observer"}}
+    {{#each observer in sortedObservers itemController="observer"}}
       {{#if observer.model.value}}
         {{html-value value=observer.model.value observer=observer.model}}
       {{/if}}
