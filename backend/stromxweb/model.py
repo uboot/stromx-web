@@ -901,8 +901,6 @@ class Parameter(Item):
     def delete(self):
         for observer in self.observers:
             self.model.parameterObservers.delete(observer)
-            
-        self.__op.removeParameter(self)
     
     def __getParameter(self, variant):
         try:
@@ -1097,8 +1095,6 @@ class Input(ConnectorBase):
         
         for observer in self.observers:
             self.model.inputObservers.delete(observer)
-            
-        self.operatorModel.removeInput(self)
     
     def setConnection(self, connection):
         self.__connection = connection
@@ -1135,8 +1131,6 @@ class Output(ConnectorBase):
         
         for observer in self.observers:
             self.model.outputObservers.delete(observer)
-            
-        self.operatorModel.removeOutput(self)
     
     def addConnection(self, connection):
         self.__connections.append(connection)

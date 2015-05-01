@@ -5,7 +5,7 @@ module.exports = function(app) {
     res.send({"input-observers": [
       {
         id: 0,
-        zvalue: 2,
+        zvalue: 1,
         visualization: 'line_segments',
         properties: {
           color: '#0000ff'
@@ -16,7 +16,7 @@ module.exports = function(app) {
       },
       {
         id: 2,
-        zvalue: 1,
+        zvalue: 0,
         visualization: 'image',
         properties: {
           color: '#00ff00'

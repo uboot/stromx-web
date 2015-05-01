@@ -15,17 +15,17 @@ class View(object):
         return self.__stream
         
     def addConnectorObserver(self, op, connectorType, index):
-        observer = ConnectorObserver(self.__stream, op, connectorType, index)
-        self.__observers.append(observer)
-        return observer
+        observer = ConnectorObserver(self.__stream, self, op, connectorType,
+                                     index)
+        return self.__addObserver(observer)
         
     def addParameterObserver(self, op, index):
-        observer = ParameterObserver(self.__stream, op, index)
-        self.__observers.append(observer)
-        return observer
+        observer = ParameterObserver(self.__stream, self, op, index)
+        return self.__addObserver(observer)
     
     def removeObserver(self, observer):
         self.__observers.remove(observer)
+        self.__updateZValues()
         
     def deserialize(self, data):
         properties = data['View']
@@ -33,15 +33,16 @@ class View(object):
         for data in properties['observers']:
             for key in data:
                 if key == 'ParameterObserver':
-                    observer = ParameterObserver(self.__stream)
+                    observer = ParameterObserver(self.__stream, self)
                 elif key == 'ConnectorObserver':
-                    observer = ConnectorObserver(self.__stream)
+                    observer = ConnectorObserver(self.__stream, self)
                 else:
                     assert(False)
                     
                 observer.deserialize(data[key])
                 self.__observers.append(observer)
-    
+        self.__updateZValues()
+        
     def serialize(self):
         observers = [observer.serialize() for observer in self.observers]
         data = {
@@ -50,16 +51,44 @@ class View(object):
                 'observers': observers
             }
         }
+        
         return data
+        
+    def setObserverZvalue(self, observer, value):
+        if value < 0:
+            value = 0
+        
+        if value >= len(self.__observers):
+            value = len(self.__observers) - 1
+            
+        conflicting = [o for o in self.__observers 
+                       if o != observer and o.zvalue == value]
+        
+        for o in conflicting:
+            o.updateZvalue(observer.zvalue)
     
+        observer.updateZvalue(value)
+    
+    def __addObserver(self, observer):
+        observer.updateZvalue(len(self.__observers))
+        self.__observers.append(observer)
+        self.__updateZValues()
+        return observer
+    
+    def __updateZValues(self):
+        self.__observers.sort(key = lambda o: o.zvalue, reverse = True)
+        for i, observer in enumerate(reversed(self.__observers)):
+            observer.updateZvalue(i)
+            
 class Observer(object):
-    def __init__(self, stream, op):
-        self.zvalue = 0
+    def __init__(self, stream, op, parent):
+        self.__zvalue = 0
         self.active = True
         self.visualization = 'default'
         self.__properties = dict()
         self.__stream = stream
         self.__op = op
+        self.__parent = parent
         
     @property
     def op(self):
@@ -72,13 +101,27 @@ class Observer(object):
     @properties.setter
     def properties(self, value):
         self.__properties = value
+        
+    @property
+    def zvalue(self):
+        return self.__zvalue
+        
+    @zvalue.setter
+    def zvalue(self, value):
+        if self.__zvalue == value:
+            return;
+        
+        self.__parent.setObserverZvalue(self, value)
+            
+    def updateZvalue(self, value):
+        self.__zvalue = value
     
     def serialize(self):
         data = {
            'Observer': {
                 'properties': self.__serializeProperties(),
                 'op': self.__opId,
-                'zvalue': self.zvalue,
+                'zvalue': self.__zvalue,
                 'active': self.active,
                 'visualization': self.visualization
             }
@@ -87,7 +130,7 @@ class Observer(object):
         return data
             
     def deserialize(self, values):
-        self.zvalue = values['zvalue']
+        self.__zvalue = values['zvalue']
         self.active = values['active']
         self.visualization = values['visualization']
         self.__op = self.__stream.operators()[values['op']]   
@@ -117,8 +160,8 @@ class Observer(object):
         return -1
         
 class ParameterObserver(Observer):
-    def __init__(self, stream, op = None, index = None):
-        super(ParameterObserver, self).__init__(stream, op)
+    def __init__(self, stream, parent, op = None, index = None):
+        super(ParameterObserver, self).__init__(stream, op, parent)
         self.__index = index
     
     @property
@@ -141,8 +184,9 @@ class ParameterObserver(Observer):
         self.__index = properties['parameter']      
         
 class ConnectorObserver(Observer):
-    def __init__(self, stream, op = None, connectorType = None, index = None):
-        super(ConnectorObserver, self).__init__(stream, op)
+    def __init__(self, stream, parent, op = None, connectorType = None,
+                 index = None):
+        super(ConnectorObserver, self).__init__(stream, op, parent)
         self.__connectorType = connectorType
         self.__index = index
         self.__value = ConnectorValue(self.op, self.__connectorType,

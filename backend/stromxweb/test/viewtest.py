@@ -13,7 +13,7 @@ _refData = {
         'observers': [{
             'ParameterObserver': {
                 'properties': {
-                  'color': '#ff0000',
+                    'color': '#ff0000',
                 },
                 'zvalue': 1,
                 'parameter': 0,
@@ -24,7 +24,7 @@ _refData = {
             'ConnectorObserver': {
                 'connector': 0,
                 'properties': {
-                  'color': '#0000ff',
+                    'color': '#0000ff',
                 },
                 'zvalue': 0, 
                 'type': 2, 
@@ -32,6 +32,35 @@ _refData = {
                 'visualization': 'default',
                 'op': 3}
             }
+        ],
+        'name': 'Test view'
+    }
+}
+
+_testData = {
+    'View': {
+        'observers': [{
+            'ConnectorObserver': {
+                'connector': 0,
+                'properties': {
+                    'color': '#0000ff',
+                },
+                'zvalue': 0, 
+                'type': 2, 
+                'active': True,
+                'visualization': 'default',
+                'op': 3}
+            },{
+            'ParameterObserver': {
+                'properties': {
+                    'color': '#ff0000',
+                },
+                'zvalue': 2,
+                'parameter': 0,
+                'active': False,
+                'visualization': 'slider',
+                'op': 4}
+             }
         ],
         'name': 'Test view'
     }
@@ -48,18 +77,17 @@ class ViewTest(unittest.TestCase):
         self.view = view.View(self.stream)
         self.view.name = 'Test view'
         
-        delay = self.stream.operators()[4]
-        parameterObserver = self.view.addParameterObserver(delay, 0)
-        parameterObserver.properties['color'] = '#ff0000'
-        parameterObserver.visualization = 'slider'
-        
-        counter = self.stream.operators()[3]
+        self.counter = self.stream.operators()[3]
         connectorType = stromx.runtime.Connector.Type.OUTPUT
-        connectorObserver = self.view.addConnectorObserver(counter, 
-                                                           connectorType, 0)
-        connectorObserver.properties['color'] = '#0000ff'
-        parameterObserver.zvalue = 1
-        parameterObserver.active = False
+        self.connectorObserver = self.view.addConnectorObserver(self.counter, 
+                                                                connectorType, 0)
+        self.connectorObserver.properties['color'] = '#0000ff'
+        
+        self.delay = self.stream.operators()[4]
+        self.parameterObserver = self.view.addParameterObserver(self.delay, 0)
+        self.parameterObserver.properties['color'] = '#ff0000'
+        self.parameterObserver.visualization = 'slider'
+        self.parameterObserver.active = False
         
     def testSetProperties(self):
         observer = self.view.observers[0]
@@ -68,12 +96,54 @@ class ViewTest(unittest.TestCase):
         
     def testDeserialize(self):
         self.view = view.View(self.stream)
-        self.view.deserialize(_refData)
+        self.view.deserialize(_testData)
         self.assertEqual(_refData, self.view.serialize())
         
     def testSerialize(self):
         data = self.view.serialize()
         self.assertEqual(_refData, data)
+        
+    def testIncreaseZvalue(self):
+        self.connectorObserver.zvalue = 1
+        
+        observers = self.view.serialize()['View']['observers']
+        self.assertEqual(1, observers[1]['ConnectorObserver']['zvalue'])
+        self.assertEqual(0, observers[0]['ParameterObserver']['zvalue'])
+        
+    def testDecreaseZvalue(self):
+        self.parameterObserver.zvalue = 0
+        
+        observers = self.view.serialize()['View']['observers']
+        self.assertEqual(1, observers[1]['ConnectorObserver']['zvalue'])
+        self.assertEqual(0, observers[0]['ParameterObserver']['zvalue'])
+        
+    def testDecreaseZvalueMinimalElement(self):
+        self.connectorObserver.zvalue = -1
+        
+        observers = self.view.serialize()['View']['observers']
+        self.assertEqual(0, observers[1]['ConnectorObserver']['zvalue'])
+        self.assertEqual(1, observers[0]['ParameterObserver']['zvalue'])
+        
+    def testIncreaseZvalueMaximalElement(self):
+        self.parameterObserver.zvalue = 2
+        
+        observers = self.view.serialize()['View']['observers']
+        self.assertEqual(0, observers[1]['ConnectorObserver']['zvalue'])
+        self.assertEqual(1, observers[0]['ParameterObserver']['zvalue'])
+        
+    def testAddConnectorObserver(self):
+        OUTPUT = stromx.runtime.Connector.Type.OUTPUT
+        observer = self.view.addConnectorObserver(self.counter, OUTPUT, 0)
+        self.assertEqual(2, observer.zvalue)
+        
+    def testAddObserver(self):
+        observer = self.view.addParameterObserver(self.delay, 0)
+        self.assertEqual(2, observer.zvalue)
+        
+    def testRemoveObserver(self):
+        self.view.removeObserver(self.connectorObserver)
+        self.assertFalse(self.connectorObserver in self.view.observers)
+        self.assertEqual(0, self.parameterObserver.zvalue)
         
 class ConnectorValueTest(unittest.TestCase):
     def setUp(self):

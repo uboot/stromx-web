@@ -5,7 +5,7 @@ import OutputObserverModel from 'stromx-web/models/output-observer';
 
 export default Ember.Controller.extend({
   needs: ['stream'],
-  
+
   isParameterObserver: function() {
     return this.get('model') instanceof ParameterObserverModel;
   }.property('model'),
@@ -17,20 +17,19 @@ export default Ember.Controller.extend({
   isOutputObserver: function() {
     return this.get('model') instanceof OutputObserverModel;
   }.property('model'),
-  
+
   updateZvalue: function(update) {
     var model = this.get('model');
     var zvalue = model.get('zvalue');
     var view = model.get('view');
-    
-    // FIXME: the code below throws an error if at least one view-details
-    // observer was destructed before
-    try {
-      model.set('zvalue', zvalue + update);
+    var newZvalue = zvalue + update;
+    var numObservers = view.get('observers.length');
+
+    if (newZvalue < 0 || newZvalue >= numObservers) {
+      return;
     }
-    catch(err) {
-    }
-    
+
+    model.set('zvalue', newZvalue);
     model.save().then(function() {
       view.then(function(view) {
         view.reload().then(function(view) {

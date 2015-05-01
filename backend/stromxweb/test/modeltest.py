@@ -1103,7 +1103,6 @@ class ParametersTest(unittest.TestCase):
         self.assertFalse(self.model.parameters.has_key('0'))
         self.assertFalse(self.model.parameterObservers.has_key('0'))
         self.assertFalse('0' in self.model.views['0'].observers)
-        self.assertFalse('0' in self.model.operators['0'].parameters)
         
     def __activateExceptionOnParameter(self):
         self.model.operators.addStromxOp(self.exceptionOperator, self.stream)
@@ -1287,7 +1286,6 @@ class InputsTest(unittest.TestCase):
         self.model.inputs.delete('0')
         
         self.assertFalse(self.model.inputs.has_key('0'))
-        self.assertFalse('0' in self.model.operators['0'].inputs)
         self.assertFalse(self.model.inputObservers.has_key('0'))
         self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
@@ -1330,7 +1328,6 @@ class OutputsTest(unittest.TestCase):
         self.model.outputs.delete('0')
         
         self.assertFalse(self.model.outputs.has_key('0'))
-        self.assertFalse('0' in self.model.operators['0'].outputs)
         self.assertFalse(self.model.outputObservers.has_key('0'))
         self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
@@ -1447,16 +1444,13 @@ class ParameterObserversTest(unittest.TestCase):
         shutil.copytree('data/views', 'temp')
         self.model = model.Model('temp')
         
-    def setupEmptyView(self):
-        streamFile = self.model.files['0']
-        self.model.streams.addFile(streamFile)
-        
     def setupView(self):
         streamFile = self.model.files['1']
         self.model.streams.addFile(streamFile)
         
     def testAddData(self):
-        self.setupEmptyView()
+        streamFile = self.model.files['0']
+        self.model.streams.addFile(streamFile)
         data = {'parameterObserver': {'id': '0',
                                       'parameter': '2',
                                       'view': '0'}}

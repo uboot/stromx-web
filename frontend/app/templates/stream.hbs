@@ -18,7 +18,7 @@
       <ul class="nav navbar-nav">
         <li><a href="#">Files</a></li>
       </ul>
-      
+
       <form class="navbar-form navbar-left">
         <button {{action "save"}} class="btn btn-default">
           <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
@@ -51,7 +51,7 @@
           {{/link-to}}
         {{/if}}
       </form>
-      
+
       <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
@@ -80,11 +80,15 @@
       {{#link-to "views.new" id="new-view"}}New view{{/link-to}}
       </div>
     </ul>
-    
+
     {{#if isVisible}}
       {{render "stream-details" model}}
     {{else}}
-      {{render "view-details" viewModel}}
+      {{#each view in model.views itemController="view"}}
+        {{#if view.isVisible}}
+          {{render "view-details" view.model}}
+        {{/if}}
+      {{/each}}
     {{/if}}
     {{outlet "display"}}
   </div>

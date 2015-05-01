@@ -5,7 +5,7 @@ module.exports = function(app) {
     res.send({"parameter-observers":[
       {
         id: 0,
-        zvalue: 3,
+        zvalue: 2,
         visualization: 'slider',
         properties: {
           color: '#000000',

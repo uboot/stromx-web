@@ -5,7 +5,7 @@ module.exports = function(app) {
     res.send({"output-observers": [
       {
         id: 3,
-        zvalue: 4,
+        zvalue: 3,
         visualization: 'default',
         properties: {
           color: '#ff0000'
@@ -16,7 +16,7 @@ module.exports = function(app) {
       },
       {
         id: 4,
-        zvalue: 5,
+        zvalue: 4,
         visualization: 'polygon',
         properties: {
           color: '#00ff00'
