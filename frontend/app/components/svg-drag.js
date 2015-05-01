@@ -7,6 +7,7 @@ export default Ember.Component.extend({
   start: undefined,
 
   mouseDown: function(event) {
+
     this.start = this.transform(event);
     this.sendAction('dragStart', this.start.x, this.start.y);
 
@@ -42,6 +43,9 @@ export default Ember.Component.extend({
     var node = $('.stromx-stream-svg')[0];
     var transform = node.getScreenCTM().inverse();
     var point = node.createSVGPoint();
+    if (event.clientX === undefined || event.clientY === undefined) {
+      return point;
+    }
     point.x = event.clientX;
     point.y = event.clientY;
     return point.matrixTransform(transform);
