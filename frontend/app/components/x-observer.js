@@ -12,12 +12,10 @@ export default Ember.Component.extend({
     {label: 'Slider', value: 'slider'},
     {label: 'Points', value: 'points'},
     {label: 'Polygon', value: 'polygon'},
-    {label: 'Polyline', value: 'polyline'}
+    {label: 'Polyline', value: 'polyline'},
+    {label: 'Rectangle', value: 'rectangle'},
+    {label: 'Rotated rectangle', value: 'rotated_rectangle'}
   ],
-
-  // FIXME: For some reason it is not possible to directly bind to the property
-  // 'view' in templates. As a workaround the renamed property below is used.
-  observerView: Ember.computed.alias('model.view'),
 
   // FIXME: Model rollback does not work if the color selector is bound to
   // 'properties.color'. Instead we use proxy property below and copy the value

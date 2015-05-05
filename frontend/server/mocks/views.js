@@ -28,10 +28,20 @@ module.exports = function(app) {
           }
         ],
         stream: 2
-      }, {
+      },
+      {
         id: 2,
         name: 'Second view',
-        observers: [],
+        observers: [
+          {
+            id: 3,
+            type: 'inputObserver'
+          },
+          {
+            id: 5,
+            type: 'outputObserver'
+          }
+        ],
         stream: 2
       }
     ]});

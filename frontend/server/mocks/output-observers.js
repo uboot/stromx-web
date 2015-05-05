@@ -24,6 +24,17 @@ module.exports = function(app) {
         output: 5,
         value: 3,
         view: 1
+      },
+      {
+        id: 5,
+        zvalue: 4,
+        visualization: 'rectangle',
+        properties: {
+          color: '#00ffff'
+        },
+        output: 5,
+        value: 5,
+        view: 2
       }
     ]});
   });

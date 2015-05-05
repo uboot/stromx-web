@@ -24,6 +24,17 @@ module.exports = function(app) {
         input: 2,
         value: 1,
         view: 1
+      },
+      {
+        id: 3,
+        zvalue: 0,
+        visualization: 'rotated_rectangle',
+        properties: {
+          color: '#ff00ff'
+        },
+        input: 2,
+        value: 4,
+        view: 2
       }
     ]});
   });

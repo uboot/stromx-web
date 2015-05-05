@@ -154,6 +154,34 @@ module.exports = function(app) {
             }
           ]
         }
+      },
+      {
+        id: 4,
+        variant: {
+          ident: 'matrix'
+        },
+        value: {
+          rows: 2,
+          cols: 5,
+          values: [
+            [100, 50, 100, 50, 20],
+            [100, 100, 100, 50, -20]
+          ]
+        }
+      },
+      {
+        id: 5,
+        variant: {
+          ident: 'matrix'
+        },
+        value: {
+          rows: 2,
+          cols: 4,
+          values: [
+            [100, 50, 100, 50],
+            [100, 120, 100, 50]
+          ]
+        }
       }
     ]});
   });

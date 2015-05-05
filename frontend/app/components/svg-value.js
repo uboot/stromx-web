@@ -35,15 +35,13 @@ export default Ember.Component.extend({
 
     switch (visualization) {
       case 'image':
-        return 'image';
       case 'line_segments':
-        return 'lines';
       case 'polygon':
-        return 'polygon';
       case 'polyline':
-        return 'polyline';
       case 'points':
-        return 'points';
+      case 'rectangle':
+      case 'rotated_rectangle':
+        return visualization;
       default:
         return '';
     }
@@ -55,6 +53,8 @@ export default Ember.Component.extend({
   svgPolygon: Ember.computed.equal('svgType', 'polygon'),
   svgPolyline: Ember.computed.equal('svgType', 'polyline'),
   svgPoints: Ember.computed.equal('svgType', 'points'),
+  svgRectangle: Ember.computed.equal('svgType', 'rectangle'),
+  svgRotatedRectangle: Ember.computed.equal('svgType', 'rotated_rectangle'),
 
   imageData: function() {
     var variant = this.get('variant');
@@ -106,32 +106,16 @@ export default Ember.Component.extend({
     return data;
   }.property('data'),
 
-  matrixData4xN: function() {
-    var variant = this.get('variant');
-    if (! variant || variant !== 'matrix') {
-      return;
-    }
-
-    var data = this.get('data');
-    if (!data || data.cols !== 4) {
-      return;
-    }
-
-    return data.values;
+  matrixDataNx4: function() {
+    return this.getMatrixData(4);
   }.property('variant', 'data'),
 
-  matrixData2xN: function() {
-    var variant = this.get('variant');
-    if (! variant || variant !== 'matrix') {
-      return;
-    }
+  matrixDataNx2: function() {
+    return this.getMatrixData(2);
+  }.property('variant', 'data'),
 
-    var data = this.get('data');
-    if (!data || data.cols !== 2) {
-      return;
-    }
-
-    return data.values;
+  matrixDataNx5: function() {
+    return this.getMatrixData(5);
   }.property('variant', 'data'),
 
   listData: function() {
@@ -163,4 +147,18 @@ export default Ember.Component.extend({
 
     return pts;
   }.property('variant', 'data'),
+
+  getMatrixData: function(numCols) {
+    var variant = this.get('variant');
+    if (! variant || variant !== 'matrix') {
+      return;
+    }
+
+    var data = this.get('data');
+    if (!data || data.cols !== numCols) {
+      return;
+    }
+
+    return data.values;
+  }
 });

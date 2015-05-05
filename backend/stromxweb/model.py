@@ -1538,7 +1538,6 @@ class ConnectorValueBase(Item):
     def value(self):
         if self.__access == None:
             return None
-        
         return conversion.toPythonObserverValue(self.__access.get().variant(),
                                       self.__access.get())
         

@@ -9,7 +9,7 @@ module.exports = function(app) {
         operator: 2,
         connection: null,
         observers: [0],
-        variant: { 
+        variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
         }
@@ -19,8 +19,8 @@ module.exports = function(app) {
         title: 'Number',
         operator: 1,
         connection: 1,
-        observers: [2],
-        variant: { 
+        observers: [2, 3],
+        variant: {
           ident: 'int',
           title: 'Int32'
         }
@@ -31,7 +31,7 @@ module.exports = function(app) {
         operator: 2,
         connection: 2,
         observers: [],
-        variant: { 
+        variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
         }
