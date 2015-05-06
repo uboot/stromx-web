@@ -207,13 +207,12 @@ class OperatorTemplatesTest(unittest.TestCase):
         self.templates = self.model.operatorTemplates
         
     def testData(self):
-        
         refData = {'operatorTemplate': {'id': '0',
                                         'package': 'runtime',
                                         'type': 'Block',
                                         'version': '0.1.0'}}
                                          
-        self.assertEqual(76, len(self.templates)) 
+        self.assertEqual(80, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -276,7 +275,7 @@ class FilesTest(unittest.TestCase):
             f.write("nonsense")
         self.model = model.Model('temp')
         self.files = self.model.files
-        self.model.errors.handlers.append(self.errorSink.handleError)
+        self.model.errors.addHandler(self.errorSink.handleError)
              
         self.assertRaises(model.Failed, self.files.set, 
                           '0', {'file': {'opened': True}})
@@ -441,7 +440,7 @@ class StreamsTest(unittest.TestCase):
         shutil.copytree('data/exception', 'temp')
         
         self.model = model.Model('temp')
-        self.model.errors.handlers.append(self.errorSink.handleError)
+        self.model.errors.addHandler(self.errorSink.handleError)
         self.streams = self.model.streams
         self.activateFile = self.model.files['0']
         self.deactivateFile = self.model.files['1']
@@ -601,7 +600,7 @@ class OperatorsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.errorSink = ErrorSink()
-        self.model.errors.handlers.append(self.errorSink.handleError)
+        self.model.errors.addHandler(self.errorSink.handleError)
         self.operators = self.model.operators
         
         fileModel = model.File("", self.model)
@@ -836,7 +835,7 @@ class ParametersTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.errorSink = ErrorSink()
-        self.model.errors.handlers.append(self.errorSink.handleError)
+        self.model.errors.addHandler(self.errorSink.handleError)
         self.parameters = self.model.parameters
         
         fileModel = model.File("", self.model)
@@ -1133,7 +1132,7 @@ class ConnectionsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
         self.errorSink = ErrorSink()
-        self.model.errors.handlers.append(self.errorSink.handleError)
+        self.model.errors.addHandler(self.errorSink.handleError)
         self.connections = self.model.connections
         
         fileModel = model.File("", self.model)
@@ -1622,7 +1621,7 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertEqual(refData, self.model.connectorValues['0'].data)
         
     def testHandlerInput(self):
-        self.model.connectorValues.handlers.append(self.setValue)
+        self.model.connectorValues.addHandler(self.setValue)
         self.inputStream.active = True
         time.sleep(0.3)
         self.inputStream.active = False
@@ -1631,7 +1630,7 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
         
     def testHandlerOutput(self):
-        self.model.connectorValues.handlers.append(self.setValue)
+        self.model.connectorValues.addHandler(self.setValue)
         self.outputStream.active = True
         time.sleep(0.3)
         self.outputStream.active = False
@@ -1640,7 +1639,7 @@ class ConnectorValuesTest(unittest.TestCase):
         self.assertTrue(isinstance(self.data['connectorValue']['value'], int))
         
     def testHandlerCamera(self):
-        self.model.connectorValues.handlers.append(self.setValue)
+        self.model.connectorValues.addHandler(self.setValue)
         self.cameraStream.active = True
         time.sleep(0.2)
         self.cameraStream.active = False
@@ -1655,7 +1654,7 @@ class ConnectorValuesTest(unittest.TestCase):
                          value['values'][200:230])
         
     def testHandlerLines(self):
-        self.model.connectorValues.handlers.append(self.setValue)
+        self.model.connectorValues.addHandler(self.setValue)
         self.testDataStream.active = True
         time.sleep(0.1)
         self.testDataStream.active = False
@@ -1669,7 +1668,7 @@ class ConnectorValuesTest(unittest.TestCase):
                          value['values'][2:4])
         
     def testHandlerPolygons(self):
-        self.model.connectorValues.handlers.append(self.setValue)
+        self.model.connectorValues.addHandler(self.setValue)
         opIndex = self.testDataStream.operators[1]
         op = self.model.operators[opIndex]
         
@@ -1705,7 +1704,7 @@ class ErrorsTest(unittest.TestCase):
         self.lastError = error
         
     def testAddData(self):
-        self.errors.handlers.append(self.storeError)
+        self.errors.addHandler(self.storeError)
         self.errors.addError('An error happened')
         self.assertEqual('An error happened',
                          self.lastError.data['error']['description'])

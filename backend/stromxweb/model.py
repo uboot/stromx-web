@@ -1579,30 +1579,41 @@ class ConnectorValues(Items):
     def __init__(self, model = None):
         super(ConnectorValues, self).__init__(model)
         self.__handlers = []
+        self.__handlerLock = threading.Lock()
         
     def addStromxConnectorValue(self, stromxConnectorValue):
         connectorValue = ConnectorValue(stromxConnectorValue, self.model)
         self.addItem(connectorValue)
         
         return connectorValue
-    
-    @property
-    def handlers(self):
-        return self.__handlers
+        
+    def addHandler(self, handler):
+        with self.__handlerLock:
+            self.__handlers.append(handler)
+        
+    def removeHandler(self, handler):
+        with self.__handlerLock:
+            self.__handlers.remove(handler)
     
     def sendValue(self, connectorValue):
-        for handler in self.__handlers:
-            handler(connectorValue)
+        with self.__handlerLock:
+            for handler in self.__handlers:
+                handler(connectorValue)
         
 class Errors(Items):
     def __init__(self):
         super(Errors, self).__init__()
         self.__handlers = []
-        self.__lock = threading.Lock()
-    
-    @property
-    def handlers(self):
-        return self.__handlers
+        self.__dataLock = threading.Lock()
+        self.__handlerLock = threading.Lock()
+        
+    def addHandler(self, handler):
+        with self.__handlerLock:
+            self.__handlers.append(handler)
+        
+    def removeHandler(self, handler):
+        with self.__handlerLock:
+            self.__handlers.remove(handler)
         
     def addError(self, description):
         error = Error(description)
@@ -1610,16 +1621,18 @@ class Errors(Items):
         # in a thread-safe way.
         # TODO: Do not allow access to the error list from outside because this
         # access would not be thread-safe.
-        with self.__lock:
+        with self.__dataLock:
             # set the in index of this item by adding it to the error list
             self.addItem(error)
             
             # remove it right after to make sure the error list does not grow
             # indefinitely
             self.delete(error.index)
-        
-        for handler in self.__handlers:
-            handler(error)
+            
+        with self.__handlerLock:
+            for handler in self.__handlers:
+                handler(error)
+                
         return error
    
     def clear(self):

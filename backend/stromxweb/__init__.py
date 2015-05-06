@@ -176,10 +176,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
             self.close()
             return
             
-        self.__items.handlers.append(self.sendValue)
+        self.__items.addHandler(self.sendValue)
     
     def on_close(self):
-        self.__items.handlers.remove(self.sendValue)
+        self.__items.removeHandler(self.sendValue)
     
     def on_message(self, message):
         self.__queueLength -= 1
