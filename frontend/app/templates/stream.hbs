@@ -20,28 +20,28 @@
       </ul>
 
       <form class="navbar-form navbar-left">
-        <button {{action "save"}} class="btn btn-default">
+        <button {{action "save"}} class="btn btn-default stromx-save-stream">
           <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
           Save
         </button>
         {{#if model.active}}
           {{#if model.paused}}
-            <button {{action "resume"}} class="btn btn-default">
+            <button {{action "resume"}} class="btn btn-default stromx-resume-stream">
               <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
               Resume
             </button>
           {{else}}
-            <button {{action "pause"}} class="btn btn-default">
+            <button {{action "pause"}} class="btn btn-default stromx-pause-stream">
               <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
               Pause
             </button>
           {{/if}}
-          <button {{action "stop"}} class="btn btn-default">
+          <button {{action "stop"}} class="btn btn-default stromx-stop-stream">
             <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
             Stop
           </button>
         {{else}}
-          <button {{action "start"}} class="btn btn-default">
+          <button {{action "start"}} class="btn btn-default stromx-start-stream">
             <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
             Start
           </button>
@@ -67,17 +67,17 @@
   </div>
 
   <div class="col-sm-8">
-    <ul class="nav nav-tabs stromx-nav-tabs">
-      <li {{bind-attr class="isVisible:active"}} role="presentation">{{#link-to (query-params view='null')}}Stream{{/link-to}}</li>
+    <ul class="nav nav-tabs">
+      <li {{bind-attr class="isVisible:active"}} role="presentation">{{#link-to (query-params view='null') class="stromx-display-stream"}}Stream{{/link-to}}</li>
       {{#each view in model.views itemController="view"}}
         <li {{bind-attr class="view.isVisible:active"}} role="presentation">
-          {{#link-to (query-params view=view.model.id)}}
+          {{#link-to (query-params view=view.model.id) class="stromx-display-view"}}
             {{view.model.name}}
           {{/link-to}}
         </li>
       {{/each}}
       <div class="pull-right stromx-nav-div">
-      {{#link-to "views.new" id="new-view"}}New view{{/link-to}}
+      {{#link-to "views.new" id="new-view" class="stromx-new-view"}}New view{{/link-to}}
       </div>
     </ul>
 

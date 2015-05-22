@@ -15,8 +15,10 @@ export default Ember.Controller.extend({
         observer: model.save()
       }).then(function(hash) {
         hash.view.reload().then(function(view) {
-          view.get('observers').forEach(function(observer) {
-            observer.reload();
+          view.get('observers').then(function(observers) {
+            observers.forEach(function(observer) {
+              observer.reload();
+            });
           });
         });
       });

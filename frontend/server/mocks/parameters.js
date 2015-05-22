@@ -193,7 +193,7 @@ module.exports = function(app) {
       },
       {
         id: 11,
-        title: 'Bool property',
+        title: 'Inactive bool property',
         variant: {
           ident: 'bool',
           title: 'Bool'
@@ -248,8 +248,29 @@ module.exports = function(app) {
         descriptions: [],
         operator: 4,
         observers: []
+      },
+      {
+        id: 14,
+        title: 'Active property',
+        variant: {
+          ident: 'bool',
+          title: 'Bool'
+        },
+        value: true,
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'current',
+        access: 'full',
+        descriptions: [],
+        operator: 4,
+        observers: []
       }
     ]});
+  });
+  parametersRouter.put('/', function(req, res) {
+    res.send('null');
   });
   app.use('/api/parameters/*', parametersRouter);
 };

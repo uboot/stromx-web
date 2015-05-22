@@ -16,18 +16,18 @@
       <td>
         <header class="stromx-cell-title">Visualization</header>
         {{#unless isEditingVisualization}}
-          {{visualizationLabel}}
-          <a {{action "editVisualization"}}>
+          <span class="stromx-visualization-label">{{visualizationLabel}}</span>
+          <a {{action "editVisualization"}} class="stromx-edit-visualization">
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
         {{else}}
           <form class="form-inline">
             <div class="form-group">
-              <label class="sr-only" for="observer-visualization">Name</label>{{view "select" value=model.visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="observer-visualization"}}
+              <label class="sr-only" for="stromx-observer-visualization">Name</label>{{view "select" value=model.visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="stromx-visualization-select"}}
             </div>
             <div class="form-group">
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+              <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
             </div>
           </form>
         {{/unless}}
@@ -38,7 +38,7 @@
         <header class="stromx-cell-title">Color</header>
         {{#unless isEditingColor}}
           {{color-box color=model.properties.color}}
-          <a {{action "editColor"}}>
+          <a {{action "editColor"}} class="stromx-edit-color">
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
         {{else}}
@@ -46,8 +46,8 @@
           <form class="form-inline">
             {{#color-chooser choose="setColor"}}{{/color-chooser}}
             <div class="form-group">
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+              <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
             </div>
           </form>
         {{/unless}}

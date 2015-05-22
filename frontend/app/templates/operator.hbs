@@ -12,9 +12,9 @@
 
 <div class="stromx-center">
   {{#if isDeinitialized}}
-    <button {{action "initialize"}} type="button" class="btn btn-default">Initialize</button>
+    <button {{action "initialize"}} type="button" class="btn btn-default stromx-initialize-operator">Initialize</button>
   {{else}}
-    <button {{action "deinitialize"}} type="button" class="btn btn-default">Deinitialize</button>
+    <button {{action "deinitialize"}} type="button" class="btn btn-default stromx-deinitialize-operator">Deinitialize</button>
   {{/if}}
 </div>
 
@@ -42,19 +42,19 @@
       <td>
         <header class="stromx-cell-title">Name</header>
         {{#unless isEditingName}}
-          {{model.name}}
-          <a {{action "editName"}}>
+          <span class="stromx-operator-name">{{model.name}}</span>
+          <a {{action "editName"}} class="stromx-rename-operator">
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
         {{else}}
           <form class="form-inline">
             <div class="form-group">
-              <label class="sr-only" for="op-name">Name</label>
-              {{input value=model.name class="form-control" id="op-name"}}
+              <label class="sr-only" for="stromx-operator-name-input">Name</label>
+              {{input value=model.name class="form-control" id="stromx-operator-name-input"}}
             </div>
             <div class="form-group">
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+              <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
             </div>
           </form>
         {{/unless}}
@@ -72,27 +72,27 @@
     </thead>
     <tbody>
       {{#each input in model.inputs itemController="input"}}
-        <tr>
+        <tr class="stromx-input-row">
           <td>
             <header class="stromx-cell-title">{{input.model.title}}</header>
             {{#unless input.isEditingObserver}}
               {{input.model.variant.title}}
-              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
+              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right stromx-edit-input-observer" aria-hidden="true"></span></a>
             {{else}}
               <div class="form-group">
                 {{#if input.viewsExist}}
-                  {{view "select" value=input.view content=input.views optionLabelPath="content.name" prompt="Choose view"}}
-                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                  {{view "select" value=input.viewId content=input.views optionValuePath="content.id" optionLabelPath="content.name" prompt="Choose view" class="stromx-views-select"}}
+                  <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
                   {{#if input.view}}
                     {{#if input.observerExists}}
-                      <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+                      <button {{action "showObserver"}} class="btn btn-primary stromx-show-input-observer">Show</button>
                     {{else}}
-                      <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                      <button {{action "addObserver"}} class="btn btn-primary stromx-add-input-observer">Add</button>
                     {{/if}}
                   {{/if}}
                 {{else}}
-                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                  {{#link-to "views.new" class="btn btn-primary"}}New view{{/link-to}}
+                  <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+                  {{#link-to "views.new" class="btn btn-primary stromx-new-view"}}New view{{/link-to}}
                 {{/if}}
               </div>
             {{/unless}}
@@ -112,27 +112,27 @@
     </thead>
     <tbody>
       {{#each output in model.outputs itemController="output"}}
-        <tr>
+        <tr class="stromx-output-row">
           <td>
             <header class="stromx-cell-title">{{output.model.title}}</header>
             {{#unless output.isEditingObserver}}
               {{output.model.variant.title}}
-              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right" aria-hidden="true"></span></a>
+              <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right stromx-edit-output-observer" aria-hidden="true"></span></a>
             {{else}}
               <div class="form-group">
                 {{#if output.viewsExist}}
-                  {{view "select" value=output.view content=output.views optionLabelPath="content.name" prompt="Choose view"}}
-                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+                  {{view "select" value=output.viewId content=output.views optionValuePath="content.id" optionLabelPath="content.name" prompt="Choose view" class="stromx-views-select"}}
+                  <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
                   {{#if output.view}}
                     {{#if output.observerExists}}
-                      <button {{action "showObserver"}} class="btn btn-primary">Show</button>
+                      <button {{action "showObserver"}} class="btn btn-primary stromx-show-output-observer">Show</button>
                     {{else}}
-                      <button {{action "addObserver"}} class="btn btn-primary">Add</button>
+                      <button {{action "addObserver"}} class="btn btn-primary stromx-add-output-observer">Add</button>
                     {{/if}}
                   {{/if}}
                 {{else}}
-                  <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-                  {{#link-to "views.new" class="btn btn-primary"}}New view{{/link-to}}
+                  <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+                  {{#link-to "views.new" class="btn btn-primary stromx-new-view"}}New view{{/link-to}}
                 {{/if}}
               </div>
             {{/unless}}
@@ -152,7 +152,7 @@
     </thead>
     <tbody>
       {{#each param in model.parameters}}
-        <tr>
+        <tr class="stromx-parameter-row">
           {{x-parameter model=param}}
         </tr>
       {{/each}}

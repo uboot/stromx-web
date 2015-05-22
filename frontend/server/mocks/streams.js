@@ -19,7 +19,7 @@ module.exports = function(app) {
         file: 2,
         active: false,
         paused: false,
-        operators: [],
+        operators: [3],
         connections: [],
         views: []
       },

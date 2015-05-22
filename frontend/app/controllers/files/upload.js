@@ -1,6 +1,8 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  name: '',
+  content: '',
   actions: {
     cancel: function() {
       this.set('name', '');

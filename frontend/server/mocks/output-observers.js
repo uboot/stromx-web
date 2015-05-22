@@ -35,6 +35,17 @@ module.exports = function(app) {
         output: 5,
         value: 5,
         view: 2
+      },
+      {
+        id: 6,
+        zvalue: 5,
+        visualization: 'polyline',
+        properties: {
+          color: '#ff0000'
+        },
+        output: 5,
+        value: 6,
+        view: 2
       }
     ]});
   });

@@ -53,9 +53,9 @@ module.exports = function(app) {
       },
       {
         id: 3,
-        name: 'Receive remote images',
+        name: 'Some operator',
         status: 'none',
-        type: 'Receive',
+        type: 'Operator type',
         package: 'runtime',
         version: '0.0.1',
         parameters: [5],
@@ -63,9 +63,9 @@ module.exports = function(app) {
           x: 50,
           y: 100
         },
-        inputs: [],
+        inputs: [4],
         outputs: [6],
-        stream: null
+        stream: 3
       },
       {
         id: 4,
@@ -74,7 +74,7 @@ module.exports = function(app) {
         type: 'Test',
         package: 'mypackage',
         version: '0.0.1',
-        parameters: [8, 9, 10, 11, 13],
+        parameters: [8, 9, 10, 11, 14, 13],
         position: {
           x: 125,
           y: 200

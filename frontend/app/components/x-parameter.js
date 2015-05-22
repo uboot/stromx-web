@@ -68,7 +68,7 @@ export default Ember.Component.extend({
           return '';
       }
     } else {
-      var v = '';
+      var v = null;
       switch (this.get('model.variant.ident')) {
         case 'int':
           v = parseInt(value, 10);

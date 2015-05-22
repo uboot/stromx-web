@@ -3,26 +3,26 @@
   <form class="form-inline">
     {{#if isBool}}
       <div class="form-group">
-        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
+        <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
         {{#if model.value}}
-          <button {{action "setFalse"}} class="btn btn-primary">Deactivate</button>
+          <button {{action "setFalse"}} class="btn btn-primary stromx-deactivate">Deactivate</button>
         {{else}}
-          <button {{action "setTrue"}} class="btn btn-primary">Activate</button>
+          <button {{action "setTrue"}} class="btn btn-primary stromx-activate">Activate</button>
         {{/if}}
       </div>
     {{else if isTrigger}}
       <div class="form-group">
-        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-        <button {{action "trigger"}} class="btn btn-primary">Send</button>
+        <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+        <button {{action "trigger"}} class="btn btn-primary stromx-send-trigger">Send</button>
       </div>
     {{else if isEnum}}
       <div class="form-group">
         {{view "select" value=model.value content=model.descriptions
-        optionValuePath="content.value" optionLabelPath="content.title"}}
+        optionValuePath="content.value" optionLabelPath="content.title" class="stromx-parameter-select"}}
       </div>
       <div class="form-group">
-        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+        <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
       </div>
     {{else if isFile}}
       <div class="form-group">
@@ -30,38 +30,38 @@
         {{view "upload-file" content=editValue id="upload-file"}}
       </div>
       <div class="form-group">
-        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+        <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
       </div>
     {{else}}
       <div class="form-group">
-        {{input value=editValue class="form-control"}}
+        {{input value=editValue class="form-control stromx-parameter-input"}}
       </div>
       <div class="form-group">
-        <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-        <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+        <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+        <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
       </div>
     {{/if}}
   </form>
 {{else if timedOut}}
   <em>Access timed out</em>
-  <a {{action "reload"}}>
+  <a {{action "reload"}} class="stromx-reload-parameter">
     <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
   </a>
 {{else if accessFailed}}
   <em>Access failed</em>
-  <a {{action "reload"}}>
+  <a {{action "reload"}} class="stromx-reload-parameter">
     <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
   </a>
 {{else if writable}}
   {{#if isMatrix}}
     {{#link-to "parameter.edit" model}}
-      <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
     {{/link-to}}
   {{else}}
     <a {{action "editValue"}}>
-      <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
     </a>
   {{/if}}
 {{/if}}
-{{displayValue}}
+<span class="stromx-parameter-value">{{displayValue}}</span>

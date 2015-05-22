@@ -7,7 +7,6 @@ export default Ember.Component.extend({
   start: undefined,
 
   mouseDown: function(event) {
-
     this.start = this.transform(event);
     this.sendAction('dragStart', this.start.x, this.start.y);
 

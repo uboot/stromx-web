@@ -5,9 +5,9 @@
 <div class="stromx-stream-view stromx-margin-top panel panel-default">
   <form class="form-inline stromx-svg-buttons">
     <div class="btn-group" role="group">
-      <a {{action "minify"}} class="btn btn-default">-</a>
-      <a {{action "reset"}} class="btn btn-default">100%</a>
-      <a {{action "magnify"}} class="btn btn-default">+</a>
+      <a {{action "minify"}} class="btn btn-default stromx-zoom-out">-</a>
+      <a {{action "reset"}} class="btn btn-default stromx-reset-zoom">100%</a>
+      <a {{action "magnify"}} class="btn btn-default stromx-zoom-in">+</a>
     </div>
   </form>
   <svg width={{width}} height={{height}} viewBox="0 0 1280 1024" class="stromx-stream-svg">
@@ -22,7 +22,7 @@
     </defs>
     <rect width="100%" height="100%" {{bind-attr fill=patternUri}}/>
     {{#each op in model.operators itemController="operator-svg"}}
-      {{#svg-transform transform=op.transform}}
+      {{#svg-transform transform=op.transform class="stromx-operator-transform"}}
         {{#link-to "operator.index" op.model}}
           {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
             <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>

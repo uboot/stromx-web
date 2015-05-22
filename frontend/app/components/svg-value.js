@@ -35,13 +35,14 @@ export default Ember.Component.extend({
 
     switch (visualization) {
       case 'image':
-      case 'line_segments':
       case 'polygon':
       case 'polyline':
       case 'points':
       case 'rectangle':
       case 'rotated_rectangle':
         return visualization;
+      case 'line_segments':
+        return 'lines';
       default:
         return '';
     }

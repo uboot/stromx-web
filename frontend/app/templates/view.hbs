@@ -16,19 +16,19 @@
       <td>
         <header class="stromx-cell-title">Name</header>
         {{#unless isEditingName}}
-          {{model.name}}
-          <a {{action "editName"}}>
+          <span class="stromx-view-name">{{model.name}}</span>
+          <a {{action "editName"}} class="stromx-rename-view">
             <span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span>
           </a>
         {{else}}
           <form class="form-inline">
             <div class="form-group">
-              <label class="sr-only" for="view-name">Name</label>
-              {{input value=model.name class="form-control" id="view-name"}}
+              <label class="sr-only" for="stromx-view-name-input">Name</label>
+              {{input value=model.name class="form-control" id="stromx-view-name-input"}}
             </div>
             <div class="form-group">
-              <button {{action "discardChanges"}} class="btn btn-default">Cancel</button>
-              <button {{action "saveChanges"}} class="btn btn-primary">Save</button>
+              <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+              <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
             </div>
           </form>
         {{/unless}}
@@ -48,7 +48,7 @@
     </thead>
     <tbody>
       {{#each observer in sortedObservers itemController="observer"}}
-        <tr>
+        <tr class="stromx-observer-row">
           <td>
             {{#if observer.isInputObserver}}
               <header class="stromx-cell-title">Input observer</header>
@@ -61,10 +61,10 @@
               {{#link-to "parameterObserver" observer.model}}{{observer.model.title}}{{/link-to}}
             {{/if}}
             <a {{action "moveUp"}}>
-              <span class="glyphicon glyphicon-arrow-up pull-right stromx-margin-left" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-arrow-up pull-right stromx-margin-left stromx-move-up" aria-hidden="true"></span>
             </a>
             <a {{action "moveDown"}}>
-              <span class="glyphicon glyphicon-arrow-down pull-right" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-arrow-down pull-right stromx-move-down" aria-hidden="true"></span>
             </a>
           </td>
         </tr>

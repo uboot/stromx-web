@@ -25,6 +25,10 @@ module.exports = function(app) {
           {
             id: 4,
             type: 'outputObserver'
+          },
+          {
+            id: 4,
+            type: 'inputObserver'
           }
         ],
         stream: 2
@@ -39,6 +43,10 @@ module.exports = function(app) {
           },
           {
             id: 5,
+            type: 'outputObserver'
+          },
+          {
+            id: 6,
             type: 'outputObserver'
           }
         ],

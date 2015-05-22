@@ -4,7 +4,7 @@ import { module, test } from 'qunit';
 
 var App;
 
-module('Acceptance: Parameter', {
+module('Acceptance: Parameters', {
   beforeEach: function() {
     App = startApp();
   },

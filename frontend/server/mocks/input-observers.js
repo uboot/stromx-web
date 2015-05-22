@@ -35,6 +35,17 @@ module.exports = function(app) {
         input: 2,
         value: 4,
         view: 2
+      },
+      {
+        id: 4,
+        zvalue: 5,
+        visualization: 'points',
+        properties: {
+          color: '#ff0000'
+        },
+        input: 1,
+        value: 6,
+        view: 1
       }
     ]});
   });

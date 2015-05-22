@@ -17,7 +17,7 @@
   {{/if}}
   {{#if svgPoints}}
     {{#each point in matrixDataNx2 itemController="view.circle"}}
-      <circle cx={{point.cx}} cy={{point.cy}} stroke={{color}} r="3"/>
+      <circle cx={{point.cx}} cy={{point.cy}} fill={{color}} r="3"/>
     {{/each}}
   {{/if}}
   {{#if svgPolygon}}

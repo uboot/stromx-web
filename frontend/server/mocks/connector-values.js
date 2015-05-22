@@ -182,6 +182,22 @@ module.exports = function(app) {
             [100, 120, 100, 50]
           ]
         }
+      },
+      {
+        id: 6,
+        variant: {
+          ident: 'matrix'
+        },
+        value: {
+          rows: 4,
+          cols: 2,
+          values: [
+            [180, 180],
+            [180, 220],
+            [220, 220],
+            [220, 180]
+          ]
+        }
       }
     ]});
   });
