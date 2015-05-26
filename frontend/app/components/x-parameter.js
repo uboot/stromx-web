@@ -56,8 +56,8 @@ export default Ember.Component.extend({
     return this.get('model.state') === 'accessFailed';
   }.property('model.state'),
 
-  editValue:  function(key, value) {
-    if (value === undefined) {
+  editValue: Ember.computed('model.value', 'model.variant', {
+    get: function() {
       switch (this.get('model.variant.ident')) {
         case 'float':
           return this.get('model.value').toPrecision(3);
@@ -67,7 +67,8 @@ export default Ember.Component.extend({
         default:
           return '';
       }
-    } else {
+    },
+    set: function(key, value) {
       var v = null;
       switch (this.get('model.variant.ident')) {
         case 'int':
@@ -96,39 +97,40 @@ export default Ember.Component.extend({
       this.set('model.value', v);
       return v;
     }
-  }.property('model.value', 'model.variant'),
+  }),
 
-  displayValue: function(key, newValue) {
-    if (newValue !== undefined) {
+  displayValue: Ember.computed('model.value', 'model.variant', 'isEditing', {
+    set: function(key, newValue) {
       return newValue;
-    }
+    },
+    get: function() {
+      if (! this.get('current')) {
+        return '';
+      }
 
-    if (! this.get('current')) {
-      return '';
-    }
+      if (this.get('isEditing')) {
+        return '';
+      }
 
-    if (this.get('isEditing')) {
-      return '';
+      var value = this.get('model.value');
+      switch (this.get('model.variant.ident')) {
+        case 'float':
+          return value.toPrecision(3);
+        case 'enum':
+          return this.updateEnumTitle(value);
+        case 'bool':
+          return value ? 'Active' : 'Inactive';
+        case 'matrix':
+          return value.rows + ' x ' + value.cols + ' matrix';
+        case 'image':
+          return value.width + ' x ' + value.height + ' image';
+        case 'trigger':
+          return 'Trigger';
+        default:
+          return value;
+      }
     }
-
-    var value = this.get('model.value');
-    switch (this.get('model.variant.ident')) {
-      case 'float':
-        return value.toPrecision(3);
-      case 'enum':
-        return this.updateEnumTitle(value);
-      case 'bool':
-        return value ? 'Active' : 'Inactive';
-      case 'matrix':
-        return value.rows + ' x ' + value.cols + ' matrix';
-      case 'image':
-        return value.width + ' x ' + value.height + ' image';
-      case 'trigger':
-        return 'Trigger';
-      default:
-        return value;
-    }
-  }.property('model.value', 'model.variant', 'isEditing'),
+  }),
 
   // cf. http://stackoverflow.com/q/20623027
   updateEnumTitle: function(enumValue) {

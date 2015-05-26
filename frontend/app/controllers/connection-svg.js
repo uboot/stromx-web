@@ -1,3 +1,4 @@
+import Ember from "ember";
 import { Constant } from 'stromx-web/controllers/operator-svg';
 import ConnectionController from 'stromx-web/controllers/connection';
 import OutputController from 'stromx-web/controllers/output-svg';
@@ -14,29 +15,30 @@ export default ConnectionController.extend({
     return pos.x + Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE;
   }.property('model.output.operator.position'),
 
-  y1: function(key, value) {
-    if (value !== undefined) {
+  y1: Ember.computed('model.output.operator.position', {
+    get: function(key, value) {
       return value;
-    }
+    },
+    set: function() {
+      var _this = this;
+      this.get('model.output').then(function(connector) {
+        if (connector === null) {
+          return;
+        }
 
-    var _this = this;
-    this.get('model.output').then(function(connector) {
-      if (connector === null) {
-        return;
-      }
+        var connectorController = OutputController.create({
+          model: connector
+        });
 
-      var connectorController = OutputController.create({
-        model: connector
+        var pos = connector.get('operator.position');
+        if (pos === undefined) {
+          return;
+        }
+        var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
+        _this.set('y1', y);
       });
-
-      var pos = connector.get('operator.position');
-      if (pos === undefined) {
-        return;
-      }
-      var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
-      _this.set('y1', y);
-    });
-  }.property('model.output.operator.position'),
+    }
+  }),
 
   x2: function() {
     var pos = this.get('model.input.operator.position');
@@ -48,30 +50,31 @@ export default ConnectionController.extend({
     return pos.x - Constant.CONNECTOR_SIZE;
   }.property('model.input.operator.position'),
 
-  y2: function(key, value) {
-    if (value !== undefined) {
+  y2: Ember.computed('model.input.operator.position', {
+    get: function(key, value) {
       return value;
-    }
+    },
+    set: function() {
+      var _this = this;
+      this.get('model.input').then(function(connector) {
+        if (connector === null) {
+          return;
+        }
 
-    var _this = this;
-    this.get('model.input').then(function(connector) {
-      if (connector === null) {
-        return;
-      }
+        var connectorController = InputController.create({
+          model: connector
+        });
 
-      var connectorController = InputController.create({
-        model: connector
+        var pos = connector.get('operator.position');
+        if (! pos) {
+          return;
+        }
+        
+        var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
+        _this.set('y2', y);
       });
-
-      var pos = connector.get('operator.position');
-      if (! pos) {
-        return;
-      }
-      
-      var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
-      _this.set('y2', y);
-    });
-  }.property('model.input.operator.position'),
+    }
+  }),
 
   path: function() {
     return computePath(this.get('x1'), this.get('y1'), this.get('x2'), this.get('y2'));

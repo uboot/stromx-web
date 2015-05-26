@@ -30,8 +30,8 @@ export default Ember.Component.extend({
     return record ? record['label'] : '';
   }.property('model.visualization'),
 
-  value: function(key, value) {
-    if (value === undefined) {
+  value: Ember.computed('model.value', {
+    get: function() {
       var _this = this;
       var valuePromise = this.get('model.value');
       if (! valuePromise) {
@@ -43,10 +43,11 @@ export default Ember.Component.extend({
       });
 
       return null;
-    } else {
+    },
+    set: function(key, value) {
       return value;
     }
-  }.property('model.value'),
+  }),
 
   actions: {
     editColor: function() {

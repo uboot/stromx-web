@@ -12,9 +12,8 @@ export default Ember.Component.extend({
   rowsWritable: Ember.computed.equal('rows', 0),
   colsWritable: Ember.computed.equal('cols', 0),
   
-  actualRows: function(key, rows) {
-    // setter
-    if (arguments.length > 1) {
+  actualRows: Ember.computed('value.rows', {
+    set: function(key, rows) {
       var oldRows = this.get('value.rows');
       var oldValues = this.get('value.values').copy();
       var values = [[]];
@@ -35,15 +34,14 @@ export default Ember.Component.extend({
       
       this.set('value.rows', rows);
       this.set('value.values', values);
+    },
+    get: function() {
+      return this.get('value.rows');
     }
-
-    // getter
-    return this.get('value.rows');
-  }.property('value.rows'),
+  }),
   
-  actualCols: function(key, cols) {
-    // setter
-    if (arguments.length > 1) {
+  actualCols: Ember.computed('value.cols', {
+    set: function(key, cols) {
       var oldCols = this.get('value.cols');
       var oldValues = this.get('value.values').copy();
       
@@ -65,11 +63,11 @@ export default Ember.Component.extend({
       
       this.set('value.cols', cols);
       this.set('value.values', values);
+    },
+    get: function() {
+      return this.get('value.cols');
     }
-
-    // getter
-    return this.get('value.cols');
-  }.property('value.cols'),
+  }),
   
   actions: {
     storeValue: function(row, col, value) {

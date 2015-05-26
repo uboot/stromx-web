@@ -20,18 +20,19 @@ export default Ember.Controller.extend({
     }
   }.property('model.thread'),
 
-  title: function(key, value) {
-    if (value !== undefined) {
+  title: Ember.computed('model.input', 'model.output', {
+    set: function(key, value) {
       return value;
+    },
+    get: function() {
+      var _this = this;
+      Ember.RSVP.all([
+        this.get('model.input'),
+        this.get('model.output')
+      ]).then(function(connectors) {
+        _this.set('title', connectors[0].get('title') + ' -> ' + connectors[1].get('title'));
+      });
     }
-    
-    var _this = this;
-    Ember.RSVP.all([
-      this.get('model.input'),
-      this.get('model.output')
-    ]).then(function(connectors) {
-      _this.set('title', connectors[0].get('title') + ' -> ' + connectors[1].get('title'));
-    });
-  }.property('model.input', 'model.output')
+  })
 });
 

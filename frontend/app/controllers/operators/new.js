@@ -4,28 +4,29 @@ export default Ember.Controller.extend({
   selectedOperator: null,
   selectedPackage: null,
   name: '',
-  packages: function(key, value) {
-    if (value !== undefined) {
+  packages: Ember.computed({
+    set: function(key, value) {
       return value;
+    },
+    get: function() {
+      var _this = this;
+      this.store.find('operatorTemplate').then(function(templates) {
+        var packageNames = new Set(templates.mapBy('package'));
+        var packages = [];
+        for (var p of packageNames.values()){
+          var operators = templates.filterBy('package', p);
+          packages.push({
+            name: p,
+            operators: operators.sortBy('type')
+          });
+        }
+        packages = packages.sortBy('name');
+        _this.set('packages', packages);
+      });
+
+      return [];
     }
-
-    var _this = this;
-    this.store.find('operatorTemplate').then(function(templates) {
-      var packageNames = new Set(templates.mapBy('package'));
-      var packages = [];
-      for (var p of packageNames.values()){
-        var operators = templates.filterBy('package', p);
-        packages.push({
-          name: p,
-          operators: operators.sortBy('type')
-        });
-      }
-      packages = packages.sortBy('name');
-      _this.set('packages', packages);
-    });
-
-    return [];
-  }.property(),
+  }),
   saveIsDisabled: Ember.computed.equal('selectedOperator', null),
   updateName: function() {
     var op = this.get('selectedOperator');
