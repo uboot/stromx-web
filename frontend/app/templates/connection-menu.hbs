@@ -1,8 +1,0 @@
-{{#context-menu}}
-  <li role="presentation" class="dropdown-header">{{output.title}} -> {{input.title}}</li>
-  <li><a {{action "remove"}}>Remove</a></li>
-  <li role="presentation" class="divider"></li>
-  {{#each parentController.threads itemController="thread"}}
-    <li><a {{action "setThread" this.model}}>{{name}}</a></li>
-  {{/each}}
-{{/context-menu}}

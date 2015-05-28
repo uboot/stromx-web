@@ -28,7 +28,7 @@ test('visit connection', function(assert) {
 test('remove connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('.stromx-accept');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -47,7 +47,7 @@ test('remove connection', function(assert) {
 test('cancel removing connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('.stromx-cancel');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -65,9 +65,12 @@ test('cancel removing connection', function(assert) {
 
 test('add connection', function(assert) {
   visit('/streams/2');
-  triggerEvent('a[href="/streams/2/operators/0"] + g', 'mousedown');
-  triggerEvent('a[href="/streams/2/operators/2"] + g', 'mouseenter');
-  triggerEvent('a[href="/streams/2/operators/0"] + g', 'mouseup');
+  triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mousedown');
+  triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
+               'mouseenter');
+  triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mouseup');
 
   andThen(function() {
     assert.equal(
@@ -83,17 +86,20 @@ test('add connection', function(assert) {
   });
 });
 
-/*test('remove and add connection', function(assert) {
+test('remove and add connection', function(assert) {
   visit('/streams/2/connections/2/delete');
-  click('button#accept');
-  visit('/streams/2/connections/2');
+  click('.stromx-accept');
+  waitForModal();
   
-  triggerEvent('a[href="/streams/2/operators/0"] + g', 'mousedown');
-  triggerEvent('a[href="/streams/2/operators/2"] + g', 'mouseenter');
-  triggerEvent('a[href="/streams/2/operators/0"] + g', 'mouseup');
+  triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mousedown');
+  triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
+               'mouseenter');
+  triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mouseup');
 
   andThen(function() {
     assert.equal(find('.stromx-svg-connection-path').length, 2,
                  'Two connections are shown');
   });
-});*/
+});

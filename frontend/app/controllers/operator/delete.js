@@ -6,10 +6,10 @@ export default OperatorController.extend({
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.transitionToRoute('stream.index', this.get('stream'));
+        this.transitionToRoute('stream.index');
         this.set('wasRemoved', false);
       } else {
-        this.transitionToRoute('operator.index', this.get('model'));
+        this.transitionToRoute('operator.index');
       }
     },
     remove: function () {

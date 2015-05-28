@@ -1,10 +1,20 @@
 import Ember from "ember";
+
 import { Constant } from 'stromx-web/controllers/operator-svg';
-import ConnectionController from 'stromx-web/controllers/connection';
 import OutputController from 'stromx-web/controllers/output-svg';
 import InputController from 'stromx-web/controllers/input-svg';
+import { COLORS, NO_THREAD_COLOR } from 'stromx-web/colors';
 
-export default ConnectionController.extend({
+export default Ember.Component.extend({
+  tagName: 'g',
+  color: function() {
+    var thread = this.get('model.thread');
+    if (thread === undefined || thread == null) {
+      return NO_THREAD_COLOR;
+    } else {
+      return COLORS[thread % COLORS.length].value;
+    }
+  }.property('model.thread'),
   x1: function() {
     var pos = this.get('model.output.operator.position');
 
@@ -16,10 +26,10 @@ export default ConnectionController.extend({
   }.property('model.output.operator.position'),
 
   y1: Ember.computed('model.output.operator.position', {
-    get: function(key, value) {
+    set: function(key, value) {
       return value;
     },
-    set: function() {
+    get: function() {
       var _this = this;
       this.get('model.output').then(function(connector) {
         if (connector === null) {
@@ -51,10 +61,10 @@ export default ConnectionController.extend({
   }.property('model.input.operator.position'),
 
   y2: Ember.computed('model.input.operator.position', {
-    get: function(key, value) {
+    set: function(key, value) {
       return value;
     },
-    set: function() {
+    get: function() {
       var _this = this;
       this.get('model.input').then(function(connector) {
         if (connector === null) {
@@ -380,4 +390,3 @@ var computePath = function(x1, y1, x2, y2) {
 
   return path;
 };
-

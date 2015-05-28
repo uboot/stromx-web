@@ -1,6 +1,6 @@
-import Stream from 'stromx-web/controllers/stream';
+import Ember from "ember";
 
-export default Stream.extend({
+export default Ember.Component.extend({
   zoom: 1.0,
   width: function() {
     return 1280 * this.get('zoom');
@@ -9,23 +9,23 @@ export default Stream.extend({
     return 1024 * this.get('zoom');
   }.property('zoom'),
   patternUri: function() {
-    return 'url(' + this.get('parentController.target.url') + '#grid)';
-  }.property('parentController.target.url'),
+    return 'url(' + this.get('targetObject.target.url') + '#grid)';
+  }.property('targetObject.target.url'),
   activeOutput: null,
   activeInput: null,
 
   addConnection: function(input, output) {
-    var store = this.get('store');
     var model = this.get('model');
+    var store = this.get('targetObject').store;
     var connection = store.createRecord('connection', {
       output: output,
       input: input,
       stream: model
     });
 
-    var _this = this;
+    var targetObject = this.get('targetObject');
     connection.save().then(function(connection) {
-      _this.transitionToRoute('connection', connection);
+      targetObject.transitionToRoute('connection', connection);
     });
   },
 

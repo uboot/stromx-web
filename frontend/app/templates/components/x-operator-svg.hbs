@@ -1,0 +1,14 @@
+{{#svg-transform transform=transform class="stromx-operator-transform"}}
+  {{#link-to "operator.index" model}}
+    {{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd"}}
+      <rect width=50 height=50 rx=5 ry=5 class="stromx-svg-operator-rect"/>
+      <text x="25" y="65" class="stromx-svg-operator-name">{{model.name}}</text>
+    {{/svg-drag}}
+  {{/link-to}}
+  {{#each input in model.inputs}}
+    {{x-input-svg model=input operator=this}}
+  {{/each}}
+  {{#each output in model.outputs}}
+    {{x-output-svg model=output operator=this}}
+  {{/each}}
+{{/svg-transform}}

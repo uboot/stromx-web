@@ -13,7 +13,7 @@ module('Acceptance: Files', {
   }
 });
 
-test('visit /', function(assert) {
+test('visit files', function(assert) {
   visit('/');
 
   andThen(function() {
@@ -22,10 +22,9 @@ test('visit /', function(assert) {
 });
 
 test('remove file', function(assert) {
-  visit('/');
-  click('.stromx-file-row:nth-child(2) a.stromx-delete-file');
+  visit('/files/2/delete');
   click('button.stromx-accept');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(find('tbody tr').length, 1, 'A list of one file is shown');
@@ -35,10 +34,9 @@ test('remove file', function(assert) {
 });
 
 test('dismiss remove file', function(assert) {
-  visit('/');
-  click('.stromx-file-row:nth-child(2) a.stromx-delete-file');
+  visit('/files/2/delete');
   click('button.stromx-cancel');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(find('tbody tr').length, 2,

@@ -225,12 +225,12 @@ test('display rectangles', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('svg > g > rect').length,
+      find('g:not([transform]) > rect').length,
       2,
-      'Two rectangles are displayed'
+      'Two rectangles without transformation are displayed'
     );
     assert.equal(
-      find('svg > g > rect')[0].getAttribute('stroke'),
+      find('g:not([transform]) > rect')[0].getAttribute('stroke'),
       '#00ffff',
       'Their color is cyan'
     );
@@ -242,17 +242,17 @@ test('display rotated rectangles', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('svg > g > g > rect').length,
+      find('g[transform] > rect').length,
       2,
       'Two rectangles within a transformation group are displayed'
     );
     assert.equal(
-      find('svg > g > g > rect')[0].getAttribute('stroke'),
+      find('g[transform] > rect')[0].getAttribute('stroke'),
       '#ff00ff',
       'Their color is magenta'
     );
     assert.equal(
-      find('svg > g > g')[0].getAttribute('transform'),
+      find('g[transform]')[0].getAttribute('transform'),
       'rotate(20 100 50)',
       'The first rectangle is rotated by 20 degrees (counter-clockwise) around its center'
     );

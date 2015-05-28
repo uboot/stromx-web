@@ -52,7 +52,7 @@ test('deinitialize operator', function(assert) {
 test('remove operator', function(assert) {
   visit('/streams/2/operators/0/delete');
   click('.stromx-accept');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -66,7 +66,7 @@ test('remove operator', function(assert) {
 test('cancel removing operator', function(assert) {
   visit('/streams/2/operators/0/delete');
   click('.stromx-cancel');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(

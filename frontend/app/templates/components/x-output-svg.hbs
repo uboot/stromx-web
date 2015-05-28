@@ -1,0 +1,7 @@
+{{#svg-drag dragStart="dragStart" dragMove="dragMove" dragEnd="dragEnd" enter="enter" leave="leave"}}
+  <title>{{model.title}}</title>
+  <rect x={{x}} y={{y}} width=10 height=10 />
+{{/svg-drag}}
+{{#if isDraggingConnection}}
+  <line x1={{x1}} y1={{y1}} x2={{x2}} y2={{y2}} stroke-width={{strokeWidth}} class="stromx-svg-drag-line"/>
+{{/if}}

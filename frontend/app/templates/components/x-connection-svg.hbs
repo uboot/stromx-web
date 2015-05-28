@@ -1,0 +1,12 @@
+{{#link-to "connection.index" model}}
+  <path d={{path}} stroke={{color}} class="stromx-svg-connection-path"/>
+  {{#if displayStartArrow}}
+    <use id="startArrows" xlink:href="#arrows" transform={{startArrowTransform}} />
+  {{/if}}
+  {{#if displayCenterArrow}}
+    <use id="centerArrows" xlink:href="#arrows" transform={{centerArrowTransform}} />
+  {{/if}}
+  {{#if displayEndArrow}}
+    <use id="endArrows" xlink:href="#arrows" transform={{endArrowTransform}} />
+  {{/if}}
+{{/link-to}}

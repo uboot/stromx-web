@@ -1,0 +1,34 @@
+{{#unless isEditing}}
+  {{#if closed}}
+    <span class="stromx-status-indicator closed" data-toggle="tooltip" title="Opened"/>
+  {{else}}
+    <span class="stromx-status-indicator opened" data-toggle="tooltip" title="Closed"/>
+  {{/if}}
+  {{#if closed}}
+    <a {{action "open"}} class="stromx-file-name">{{model.name}}</a>
+  {{else}}
+    {{#link-to 'stream' model.stream class="stromx-file-name"}}{{model.name}}{{/link-to}}
+  {{/if}}
+  <a {{action "edit"}} class="stromx-rename-file">
+    <span class="glyphicon glyphicon-pencil pull-right stromx-margin-left" aria-hidden="true"></span>
+  </a>
+  <a href={{url}} download>
+    <span class="glyphicon glyphicon-download-alt pull-right stromx-margin-left" aria-hidden="true"></span>
+  </a>
+  {{#if closed}}
+    {{#link-to 'file.delete' model type="button" class="stromx-delete-file"}}
+      <span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span>
+    {{/link-to}}
+  {{/if}}
+{{else}}
+  <form class="form-inline">
+    <div class="form-group">
+      <label class="sr-only" for="stromx-file-input">Name</label>
+      {{input value=model.name class="form-control" id="stromx-file-input"}}
+    </div>
+    <div class="form-group">
+      <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+      <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
+    </div>
+  </form>
+{{/unless}}

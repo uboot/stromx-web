@@ -11,13 +11,13 @@
     <text x="10" y="20" fill={{color}}>{{textData}}</text>
   {{/if}}
   {{#if svgLines}}
-    {{#each line in matrixDataNx4 itemController="view.line"}}
-      <line x1={{line.x1}} y1={{line.y1}} x2={{line.x2}} y2={{line.y2}} stroke={{color}} />
+    {{#each line in matrixDataNx4}}
+      {{x-svg-line model=line color=color}}
     {{/each}}
   {{/if}}
   {{#if svgPoints}}
-    {{#each point in matrixDataNx2 itemController="view.circle"}}
-      <circle cx={{point.cx}} cy={{point.cy}} fill={{color}} r="3"/>
+    {{#each point in matrixDataNx2}}
+      {{x-svg-point model=point color=color}}
     {{/each}}
   {{/if}}
   {{#if svgPolygon}}
@@ -27,15 +27,13 @@
     <polyline points={{pointsData}} stroke={{color}} fill="none"/>
   {{/if}}
   {{#if svgRectangle}}
-    {{#each rect in matrixDataNx4 itemController="view.rectangle"}}
-      <rect x={{rect.x}} y={{rect.y}} width={{rect.width}} height={{rect.height}} stroke={{color}} fill="none"/>
+    {{#each rect in matrixDataNx4}}
+      {{x-svg-rectangle model=rect color=color}}
     {{/each}}
   {{/if}}
   {{#if svgRotatedRectangle}}
-    {{#each rect in matrixDataNx5 itemController="view.rotatedRectangle"}}
-      {{#svg-transform transform=rect.transform}}
-        <rect x={{rect.x}} y={{rect.y}} width={{rect.width}} height={{rect.height}} stroke={{color}} fill="none"/>
-      {{/svg-transform}}
+    {{#each rect in matrixDataNx5}}
+      {{x-svg-rotated-rectangle model=rect color=color}}
     {{/each}}
   {{/if}}
 {{/if}}

@@ -5,10 +5,10 @@ export default Ember.Controller.extend({
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.transitionToRoute('view.index', this.get('model.view'));
+        this.transitionToRoute('view.index');
         this.set('wasRemoved', false);
       } else {
-        this.transitionToRoute('parameterObserver.index', this.get('model'));
+        this.transitionToRoute('parameterObserver.index');
       }
     },
     remove: function () {

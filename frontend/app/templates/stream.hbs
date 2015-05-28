@@ -68,29 +68,22 @@
 
   <div class="col-sm-8">
     <ul class="nav nav-tabs">
-      <li {{bind-attr class="isVisible:active"}} role="presentation">{{#link-to (query-params view='null') class="stromx-display-stream"}}Stream{{/link-to}}</li>
-      {{#each view in model.views itemController="view"}}
-        <li {{bind-attr class="view.isVisible:active"}} role="presentation">
-          {{#link-to (query-params view=view.model.id) class="stromx-display-view"}}
-            {{view.model.name}}
-          {{/link-to}}
-        </li>
+      <li class="{{if isVisible 'active'}}" role="presentation">
+        <a {{action "show"}} class="stromx-display-stream">Stream</a>
+      </li>
+      {{#each view in model.views}}
+        {{x-view-item model=view stream=this}}
       {{/each}}
       <div class="pull-right stromx-nav-div">
-      {{#link-to "views.new" id="new-view" class="stromx-new-view"}}New view{{/link-to}}
+        {{#link-to "views.new" id="new-view" class="stromx-new-view"}}New view{{/link-to}}
       </div>
     </ul>
 
     {{#if isVisible}}
-      {{render "stream-details" model}}
+      {{x-stream-details model=model}}
     {{else}}
-      {{#each view in model.views itemController="view"}}
-        {{#if view.isVisible}}
-          {{render "view-details" view.model}}
-        {{/if}}
-      {{/each}}
+      {{x-view-details model=viewModel}}
     {{/if}}
-    {{outlet "display"}}
   </div>
 </div>
 

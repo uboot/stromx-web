@@ -1,16 +1,17 @@
 import Ember from "ember";
 
-export default Ember.Controller.extend({
-  x1: function() {
+export default Ember.Component.extend({
+  tagName: 'g',
+  x: function() {
     return this.get('model')[0];
   }.property(),
-  y1: function() {
+  y: function() {
     return this.get('model')[1];
   }.property(),
-  x2: function() {
+  width: function() {
     return this.get('model')[2];
   }.property(),
-  y2: function() {
+  height: function() {
     return this.get('model')[3];
   }.property()
 });

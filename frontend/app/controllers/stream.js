@@ -15,11 +15,6 @@ export default Ember.Controller.extend({
     }
   }.property('view'),
 
-  removeConnection: function(connection) {
-    connection.deleteRecord();
-    connection.save();
-  },
-
   actions: {
     save: function() {
       this.get('model.file').then(function(file) {
@@ -28,15 +23,15 @@ export default Ember.Controller.extend({
       });
     },
     start: function() {
-        var stream = this.get('model');
-        stream.set('active', true);
-        stream.save().catch(function() {
-          stream.rollback();
-        }).then(function(stream) {
-          stream.get('connections').forEach(function (connection) {
-            connection.reload();
-          });
+      var stream = this.get('model');
+      stream.set('active', true);
+      stream.save().catch(function() {
+        stream.rollback();
+      }).then(function(stream) {
+        stream.get('connections').forEach(function (connection) {
+          connection.reload();
         });
+      });
     },
     stop: function() {
         var stream = this.get('model');
@@ -44,14 +39,34 @@ export default Ember.Controller.extend({
         stream.save();
     },
     pause: function() {
-        var stream = this.get('model');
-        stream.set('paused', true);
-        stream.save();
+      var stream = this.get('model');
+      stream.set('paused', true);
+      stream.save();
     },
     resume: function() {
-        var stream = this.get('model');
-        stream.set('paused', false);
-        stream.save();
+      var stream = this.get('model');
+      stream.set('paused', false);
+      stream.save();
+    },
+    show: function() {
+      this.set('view', null);
+    },
+    removeConnection: function(connection) {
+      connection.deleteRecord();
+      connection.save();
+    },
+    addConnection: function(input, output) {
+      var store = this.get('store');
+      var connection = store.createRecord('connection', {
+        output: output,
+        input: input,
+        stream: this.get('model')
+      });
+
+      var _this = this;
+      connection.save().then(function(connection) {
+        _this.transitionToRoute('connection', connection);
+      });
     }
   }
 });

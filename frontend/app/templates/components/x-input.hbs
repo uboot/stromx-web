@@ -1,0 +1,22 @@
+<header class="stromx-cell-title">{{model.title}}</header>
+{{#unless isEditingObserver}}
+  {{model.variant.title}}
+  <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right stromx-edit-input-observer" aria-hidden="true"></span></a>
+{{else}}
+  <div class="form-group">
+    {{#if viewsExist}}
+      {{view "select" value=viewId content=views optionValuePath="content.id" optionLabelPath="content.name" prompt="Choose view" class="stromx-views-select"}}
+      <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+      {{#if view}}
+        {{#if observerExists}}
+          <button {{action "showObserver"}} class="btn btn-primary stromx-show-input-observer">Show</button>
+        {{else}}
+          <button {{action "addObserver"}} class="btn btn-primary stromx-add-input-observer">Add</button>
+        {{/if}}
+      {{/if}}
+    {{else}}
+      <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+      {{#link-to "views.new" class="btn btn-primary stromx-new-view"}}New view{{/link-to}}
+    {{/if}}
+  </div>
+{{/unless}}

@@ -39,6 +39,20 @@ test('display stream', function(assert) {
   });
 });
 
+test('display stream on operator route', function(assert) {
+  visit('/streams/2/operators/0');
+  click('li:nth-child(3) .stromx-display-view');
+  click('.stromx-display-stream');
+
+  andThen(function() {
+    assert.equal(
+      currentURL(),
+      '/streams/2/operators/0',
+      'No view ID is appended as a query parameter to the current URL'
+    );
+  });
+});
+
 test('display view', function(assert) {
   visit('/streams/2');
   click('li:nth-child(3) .stromx-display-view');
@@ -53,6 +67,24 @@ test('display view', function(assert) {
       currentURL(),
       '/streams/2?view=2',
       'The view ID is appended as a query parameter to the URL'
+    );
+  });
+});
+
+test('display view on operator route', function(assert) {
+  visit('/streams/2/operators/0');
+  click('li:nth-child(3) .stromx-display-view');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-view-view').length,
+      1,
+      'The view template is shown'
+    );
+    assert.equal(
+      currentURL(),
+      '/streams/2/operators/0?view=2',
+      'The view ID is appended as a query parameter to the current URL'
     );
   });
 });
@@ -265,6 +297,7 @@ test('move an operator', function(assert) {
     );
   });
 });
+
 
 
 

@@ -1,6 +1,7 @@
 import Ember from "ember";
 
-export default Ember.Controller.extend({
+export default Ember.Component.extend({
+  tagName: 'g',
   transform: function() {
     var cx = this.get('model')[0];
     var cy = this.get('model')[1];

@@ -1,7 +1,7 @@
 import Ember from "ember";
 import ENV from '../config/environment';
 
-export default Ember.Controller.extend({
+export default Ember.Component.extend({
   isEditing: false,
   closed: Ember.computed.not('model.opened'),
   url: function() {
@@ -41,4 +41,5 @@ export default Ember.Controller.extend({
       });
     }
   }
+  
 });

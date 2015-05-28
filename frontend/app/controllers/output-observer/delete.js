@@ -6,10 +6,10 @@ export default DeleteController.extend({
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.transitionToRoute('view.index', this.get('view'));
+        this.transitionToRoute('view.index');
         this.set('wasRemoved', false);
       } else {
-        this.transitionToRoute('outputObserver.index', this.get('model'));
+        this.transitionToRoute('outputObserver.index');
       }
     }
   }

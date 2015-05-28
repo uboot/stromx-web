@@ -24,5 +24,5 @@
 
 <div class="form-group">
   <button {{action "cancel"}} class="btn btn-default" type="submit">Cancel</button>
-  <button {{action "save"}} {{bind-attr class=":btn :btn-primary saveIsDisabled:disabled"}} type="submit">Save</button>
+  <button {{action "save"}} class="btn btn-primary {{if saveIsDisabled 'disabled'}}"}} type="submit">Save</button>
 </div>

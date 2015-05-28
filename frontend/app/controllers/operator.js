@@ -1,6 +1,7 @@
 import Ember from "ember";
 
 import ViewController from 'stromx-web/controllers/view-details';
+import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
 
 export default Ember.Controller.extend({
   isEditingName: false,
@@ -125,18 +126,28 @@ export default Ember.Controller.extend({
   reloadConnectionsAndObservers: function() {
     var model = this.get('model');
     model.get('stream').then(function(stream) {
-      stream.reload();
+      return stream.reload();
     });
-    var views = model.get('stream.views').map(function(view) {
-      return view.reload();
-    });
-    Ember.RSVP.all(views).then(function(views) {
-      views.forEach(function(view) {
-        view.get('observers').then(function(observers) {
-          observers.forEach(function(observer) {
-            observer.reload();
+    model.get('stream.views').then(function(views) {
+      var reloadedViews = views.map(function(view) {
+        return view.reload();
+      });
+      Ember.RSVP.all(reloadedViews).then(function(views) {
+        views.forEach(function(view) {
+          view.get('observers').then(function(observers) {
+            observers.forEach(function(observer) {
+              observer.reload();
+            });
           });
         });
+      });
+    });
+  },
+  
+  reloadView: function(view) {
+    view.reload().then(function(view) {
+      view.get('observers').forEach(function(observer) {
+        observer.reload();
       });
     });
   },
@@ -166,6 +177,48 @@ export default Ember.Controller.extend({
       this.get('model').save().then(function() {
         _this.reloadConnectionsAndObservers();
       });
+    },
+    addInputObserver: function(view, input) {
+      var numObservers = view.get('observers.length');
+      var observer = this.store.createRecord('input-observer', {
+        view: view,
+        input: input,
+        zvalue: numObservers + 1,
+        properties: {
+          color: DEFAULT_OBSERVER_COLOR
+        },
+        visualization: 'default'
+      });
+
+      var _this = this;
+      observer.save().then(function(observer) {
+        _this.reloadView(view);
+        _this.transitionToRoute('inputObserver.index', observer);
+      });
+    },
+    showInputObserver: function(observer) {
+      this.transitionToRoute('inputObserver.index', observer);
+    },
+    addOutputObserver: function(view, output) {
+      var numObservers = view.get('observers.length');
+      var observer = this.store.createRecord('output-observer', {
+        view: view,
+        output: output,
+        zvalue: numObservers + 1,
+        properties: {
+          color: DEFAULT_OBSERVER_COLOR
+        },
+        visualization: 'default'
+      });
+
+      var _this = this;
+      observer.save().then(function(observer) {
+        _this.reloadView(view);
+        _this.transitionToRoute('outputObserver.index', observer);
+      });
+    },
+    showOutputObserver: function(observer) {
+      this.transitionToRoute('outputObserver.index', observer);
     }
   }
 });

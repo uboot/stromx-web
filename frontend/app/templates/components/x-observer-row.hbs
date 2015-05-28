@@ -1,0 +1,16 @@
+{{#if isInputObserver}}
+  <header class="stromx-cell-title">Input observer</header>
+  {{#link-to "inputObserver" model}}{{model.title}}{{/link-to}}
+{{else if isOutputObserver}}
+  <header class="stromx-cell-title">Output observer</header>
+  {{#link-to "outputObserver" model}}{{model.title}}{{/link-to}}
+{{else if isParameterObserver}}
+  <header class="stromx-cell-title">Parameter observer</header>
+  {{#link-to "parameterObserver" model}}{{model.title}}{{/link-to}}
+{{/if}}
+<a {{action "moveUp"}}>
+  <span class="glyphicon glyphicon-arrow-up pull-right stromx-margin-left stromx-move-up" aria-hidden="true"></span>
+</a>
+<a {{action "moveDown"}}>
+  <span class="glyphicon glyphicon-arrow-down pull-right stromx-move-down" aria-hidden="true"></span>
+</a>

@@ -47,25 +47,10 @@
       </tr>
     </thead>
     <tbody>
-      {{#each observer in sortedObservers itemController="observer"}}
+      {{#each observer in sortedObservers}}
         <tr class="stromx-observer-row">
           <td>
-            {{#if observer.isInputObserver}}
-              <header class="stromx-cell-title">Input observer</header>
-              {{#link-to "inputObserver" observer.model}}{{observer.model.title}}{{/link-to}}
-            {{else if observer.isOutputObserver}}
-              <header class="stromx-cell-title">Output observer</header>
-              {{#link-to "outputObserver" observer.model}}{{observer.model.title}}{{/link-to}}
-            {{else if observer.isParameterObserver}}
-              <header class="stromx-cell-title">Parameter observer</header>
-              {{#link-to "parameterObserver" observer.model}}{{observer.model.title}}{{/link-to}}
-            {{/if}}
-            <a {{action "moveUp"}}>
-              <span class="glyphicon glyphicon-arrow-up pull-right stromx-margin-left stromx-move-up" aria-hidden="true"></span>
-            </a>
-            <a {{action "moveDown"}}>
-              <span class="glyphicon glyphicon-arrow-down pull-right stromx-move-down" aria-hidden="true"></span>
-            </a>
+            {{x-observer-row model=observer}}
           </td>
         </tr>
       {{/each}}
