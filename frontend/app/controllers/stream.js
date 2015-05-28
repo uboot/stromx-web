@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
   view: null,
 
   isVisible: Ember.computed.equal('viewModel', null),
-  
+
   viewModel: function() {
     var view = this.get('view');
     if (view === null) {
@@ -16,6 +16,9 @@ export default Ember.Controller.extend({
   }.property('view'),
 
   actions: {
+    showView: function(viewId) {
+      this.set('view', viewId);
+    },
     save: function() {
       this.get('model.file').then(function(file) {
         file.set('saved', true);

@@ -39,6 +39,30 @@ test('remove view', function(assert) {
   });
 });
 
+test('add view', function(assert) {
+  visit('/streams/2/views/new');
+  fillIn('#stromx-view-input', 'New view');
+  click('.stromx-save');
+
+  andThen(function() {
+    assert.equal(
+      currentRouteName(),
+      'view.index',
+      'The view is shown'
+    );
+    assert.equal(
+      find('li:nth-child(4) .stromx-display-view')[0].text.trim(),
+      'New view',
+      'The view tab is shown'
+    );
+    assert.equal(
+      find('.stromx-display-list li:nth-child(4)')[0].getAttribute('class'),
+      'ember-view',
+      'The view tab is not active'
+    );
+  });
+});
+
 test('cancel removing view', function(assert) {
   visit('/streams/2/views/1/delete');
   click('.stromx-cancel');

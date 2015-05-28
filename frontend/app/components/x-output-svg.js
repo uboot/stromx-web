@@ -7,16 +7,15 @@ export default Ember.Component.extend({
   classNames: ['stromx-svg-output'],
   x: Constant.OPERATOR_SIZE,
   y: function() {
-    var inputs = this.get('model.operator.outputs');
-    var numConnectors = inputs.get('length');
-    var index = inputs.indexOf(this.get('model'));
+    var numConnectors = this.get('numConnectors');
+    var index = this.get('index');
 
     var opCenter = (Constant.OPERATOR_SIZE +
                     Constant.CONNECTOR_SIZE) / 2;
     var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
 
     return offset + 2 * Constant.CONNECTOR_SIZE * index;
-  }.property('model.operator.position', 'model.operator.outputs'),
+  }.property('numConnectors', 'index'),
 
   isDraggingConnection: false,
   strokeWidth: function() {
@@ -27,7 +26,7 @@ export default Ember.Component.extend({
 
   x1: Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE / 2,
   y1: function() {
-    return this.get('y') + 5;
+    return this.get('y') + Constant.CONNECTOR_SIZE / 2;
   }.property('y'),
 
   x2: 0,
@@ -64,7 +63,7 @@ export default Ember.Component.extend({
       if (input === null) {
         return;
       }
-      
+
       streamController.addConnection(input, this.get('model'));
     },
     enter: function() {

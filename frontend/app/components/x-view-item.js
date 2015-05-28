@@ -6,11 +6,11 @@ export default Ember.Component.extend({
   attributeBindings: ['role'],
   role: 'presentation',
   active: function() {
-    return this.get('stream.view') === this.get('model.id');
-  }.property('stream.view'),
+    return this.get('viewId') === this.get('model.id');
+  }.property('viewId', 'model.id'),
   actions: {
     show: function() {
-      this.get('stream').set('view', this.get('model.id'));
+      this.sendAction('show', this.get('model.id'));
     }
   }
 });

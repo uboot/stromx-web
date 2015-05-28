@@ -5,10 +5,10 @@
       <text x="25" y="65" class="stromx-svg-operator-name">{{model.name}}</text>
     {{/svg-drag}}
   {{/link-to}}
-  {{#each input in model.inputs}}
-    {{x-input-svg model=input operator=this}}
+  {{#each model.inputs as |input i|}}
+    {{x-input-svg model=input numConnectors=model.inputs.length index=i operator=this}}
   {{/each}}
-  {{#each output in model.outputs}}
-    {{x-output-svg model=output operator=this}}
+  {{#each model.outputs as |output i|}}
+    {{x-output-svg model=output numConnectors=model.outputs.length index=i operator=this}}
   {{/each}}
 {{/svg-transform}}

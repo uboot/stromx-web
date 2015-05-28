@@ -67,12 +67,12 @@
   </div>
 
   <div class="col-sm-8">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs stromx-display-list">
       <li class="{{if isVisible 'active'}}" role="presentation">
         <a {{action "show"}} class="stromx-display-stream">Stream</a>
       </li>
       {{#each view in model.views}}
-        {{x-view-item model=view stream=this}}
+        {{x-view-item model=view viewId=this.view show="showView"}}
       {{/each}}
       <div class="pull-right stromx-nav-div">
         {{#link-to "views.new" id="new-view" class="stromx-new-view"}}New view{{/link-to}}
