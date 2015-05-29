@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-import ViewController from 'stromx-web/controllers/view-details';
+import ViewController from 'stromx-web/controllers/view';
 import { DEFAULT_OBSERVER_COLOR } from 'stromx-web/colors';
 
 export default Ember.Controller.extend({

@@ -6,9 +6,13 @@
     {{/svg-drag}}
   {{/link-to}}
   {{#each model.inputs as |input i|}}
-    {{x-input-svg model=input numConnectors=model.inputs.length index=i operator=this}}
+    {{x-input-svg model=input numConnectors=model.inputs.length index=i 
+      dragStart="inputDragStart" dragMove="inputDragMove" dragEnd="inputDragEnd"
+      enter="inputEnter" leave="inputLeave"}}
   {{/each}}
   {{#each model.outputs as |output i|}}
-    {{x-output-svg model=output numConnectors=model.outputs.length index=i operator=this}}
+    {{x-output-svg model=output numConnectors=model.outputs.length index=i
+      dragStart="outputDragStart" dragMove="outputDragMove" dragEnd="outputDragEnd"
+      enter="outputEnter" leave="outputLeave"}}
   {{/each}}
 {{/svg-transform}}

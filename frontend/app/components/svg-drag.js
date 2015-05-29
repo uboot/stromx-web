@@ -39,9 +39,9 @@ export default Ember.Component.extend({
   },
 
   transform: function(event) {
-    var node = $('.stromx-stream-svg')[0];
-    var transform = node.getScreenCTM().inverse();
-    var point = node.createSVGPoint();
+    var svg = document.getElementById('stromx-stream-svg-id');
+    var transform = svg.getScreenCTM().inverse();
+    var point = svg.createSVGPoint();
     if (event.clientX === undefined || event.clientY === undefined) {
       return point;
     }

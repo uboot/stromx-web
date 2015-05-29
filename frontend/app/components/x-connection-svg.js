@@ -1,9 +1,7 @@
 import Ember from "ember";
 
-import { Constant } from 'stromx-web/controllers/operator-svg';
-import OutputController from 'stromx-web/controllers/output-svg';
-import InputController from 'stromx-web/controllers/input-svg';
 import { COLORS, NO_THREAD_COLOR } from 'stromx-web/colors';
+import { OPERATOR_SIZE, CONNECTOR_SIZE } from 'stromx-web/geometry';
 
 export default Ember.Component.extend({
   tagName: 'g',
@@ -22,7 +20,7 @@ export default Ember.Component.extend({
       return;
     }
 
-    return pos.x + Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE;
+    return pos.x + OPERATOR_SIZE + CONNECTOR_SIZE;
   }.property('model.output.operator.position'),
 
   y1: Ember.computed('model.output.operator.position', {
@@ -35,16 +33,14 @@ export default Ember.Component.extend({
         if (connector === null) {
           return;
         }
-
-        var connectorController = OutputController.create({
-          model: connector
-        });
-
+        
         var pos = connector.get('operator.position');
         if (pos === undefined) {
           return;
         }
-        var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
+        
+        var y = pos.y + outputY(connector) + CONNECTOR_SIZE / 2;
+        
         _this.set('y1', y);
       });
     }
@@ -57,7 +53,7 @@ export default Ember.Component.extend({
       return;
     }
 
-    return pos.x - Constant.CONNECTOR_SIZE;
+    return pos.x - CONNECTOR_SIZE;
   }.property('model.input.operator.position'),
 
   y2: Ember.computed('model.input.operator.position', {
@@ -71,16 +67,12 @@ export default Ember.Component.extend({
           return;
         }
 
-        var connectorController = InputController.create({
-          model: connector
-        });
-
         var pos = connector.get('operator.position');
         if (! pos) {
           return;
         }
         
-        var y = pos.y + connectorController.get('y') + Constant.CONNECTOR_SIZE / 2;
+        var y = pos.y + inputY(connector) + CONNECTOR_SIZE / 2;
         _this.set('y2', y);
       });
     }
@@ -108,8 +100,8 @@ export default Ember.Component.extend({
       return;
     }
 
-    var ARROW_LENGTH = 2 * Constant.CONNECTOR_SIZE;
-    var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
+    var ARROW_LENGTH = 2 * CONNECTOR_SIZE;
+    var RADIUS = 1.5 * CONNECTOR_SIZE;
     var ARC_RECT_SIZE = 2*RADIUS;
     var EXTRA_HEIGHT = 20;
 
@@ -260,7 +252,7 @@ var computeWidth = function(height, angle) {
 };
 
 var drawArc = function(large, ccw, x, y) {
-  var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
+  var RADIUS = 1.5 * CONNECTOR_SIZE;
   var largeArcSweepFlag = large === 1 ? 1 : 0;
   var sweepFlag = ccw === 1 ? 0 : 1;
   return 'A' + RADIUS + ',' + RADIUS + ',0,' +
@@ -284,7 +276,7 @@ var computePath = function(x1, y1, x2, y2) {
     return 'M0,0';
   }
 
-  var RADIUS = 1.5 * Constant.CONNECTOR_SIZE;
+  var RADIUS = 1.5 * CONNECTOR_SIZE;
   var EXTRA_HEIGHT = 20;
 
   var xDiff = x2 - x1;
@@ -389,4 +381,28 @@ var computePath = function(x1, y1, x2, y2) {
   path += drawLine(x2, y2);
 
   return path;
+};
+
+var inputY = function(input) {
+  var inputs = input.get('operator.inputs');
+  var numConnectors = inputs.get('length');
+  var index = inputs.indexOf(input);
+
+  var opCenter = (OPERATOR_SIZE +
+                  CONNECTOR_SIZE) / 2;
+  var offset = opCenter - CONNECTOR_SIZE * numConnectors;
+
+  return offset + 2 * CONNECTOR_SIZE * index;
+};
+  
+var outputY = function(output) {
+  var inputs = output.get('operator.outputs');
+  var numConnectors = inputs.get('length');
+  var index = inputs.indexOf(output);
+
+  var opCenter = (OPERATOR_SIZE +
+                  CONNECTOR_SIZE) / 2;
+  var offset = opCenter - CONNECTOR_SIZE * numConnectors;
+
+  return offset + 2 * CONNECTOR_SIZE * index;
 };

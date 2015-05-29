@@ -1,6 +1,7 @@
 import Ember from "ember";
 
 export default Ember.Component.extend({
+  tagName: 'td',
   isEditingObserver: false,
 
   viewId: null,
@@ -17,11 +18,11 @@ export default Ember.Component.extend({
       this.findObserver(view).then( function(observer) {
         _this.set('observerExists', observer !== null);
       });
-      
+
       return false;
     }
   }),
-  
+
   view: Ember.computed('viewId',  {
     set: function(key, value) {
       return value;
@@ -31,7 +32,7 @@ export default Ember.Component.extend({
       if (viewId === null) {
         return null;
       }
-      
+
       return this.get('views').find(function(view) {
         return view.get('id') === viewId;
       });

@@ -63,13 +63,36 @@ test('cancel removing connection', function(assert) {
   });
 });
 
-test('add connection', function(assert) {
+test('add connection output -> input', function(assert) {
   visit('/streams/2');
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mousedown');
   triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
                'mouseenter');
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mouseup');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-svg-connection-path').length,
+      3,
+      'Three connections are shown'
+    );
+    assert.equal(
+      currentRouteName(),
+      'connection.index',
+      'After adding a connection it is shown'
+    );
+  });
+});
+
+test('add connection input -> output', function(assert) {
+  visit('/streams/2');
+  triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
+               'mousedown');
+  triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
+               'mouseenter');
+  triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
                'mouseup');
 
   andThen(function() {

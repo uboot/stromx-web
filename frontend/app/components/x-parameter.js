@@ -2,7 +2,6 @@ import Ember from "ember";
 
 export default Ember.Component.extend({
   isEditing: false,
-  model: null,
   tagName: 'td',
 
   isEnum: function() {
@@ -151,7 +150,7 @@ export default Ember.Component.extend({
 
     return value;
   },
-  
+
   save: function() {
     var model = this.get('model');
     model.save().catch(function() {

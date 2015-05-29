@@ -10,7 +10,7 @@
       <a {{action "magnify"}} class="btn btn-default stromx-zoom-in">+</a>
     </div>
   </form>
-  <svg width={{width}} height={{height}} viewBox="0 0 1280 1024" class="stromx-stream-svg">
+  <svg width={{width}} height={{height}} viewBox="0 0 1280 1024" class="stromx-stream-svg" id="stromx-stream-svg-id">
     <defs>
       <g id="arrows" transform="scale(5)" class="stromx-svg-arrows">
         <path d="M-1.5,0L-2.0,-1.0L-1.0,-1.0L-0.5,0.0L-1.0,1.0L-2.0,1.0Z"/>
@@ -22,12 +22,21 @@
     </defs>
     <rect width="100%" height="100%" fill={{patternUri}} />
     {{#each op in model.operators}}
-      {{x-operator-svg model=op stream=this}}
+      {{x-operator-svg model=op inputDragStart="inputDragStart"
+        inputDragMove="inputDragMove" inputDragEnd="inputDragEnd"
+        inputEnter="inputEnter" inputLeave="inputLeave"
+        outputDragStart="outputDragStart" outputDragMove="outputDragMove"
+        outputDragEnd="outputDragEnd" outputEnter="outputEnter"
+        outputLeave="outputLeave"}}
     {{/each}}
 
     {{#each connection in model.connections}}
       {{x-connection-svg model=connection}}
     {{/each}}
+    
+    {{#if isDraggingConnection}}
+      <line x1={{x1}} y1={{y1}} x2={{x2}} y2={{y2}} stroke-width={{strokeWidth}} class="stromx-svg-drag-line"/>
+    {{/if}}
   </svg>
 </div>
 

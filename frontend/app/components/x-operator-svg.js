@@ -1,10 +1,5 @@
 import Ember from "ember";
 
-export var Constant = {
-  OPERATOR_SIZE: 50,
-  CONNECTOR_SIZE: 10
-};
-
 export default Ember.Component.extend({
   tagName: 'g',
   classNames: ['stromx-svg-operator'],
@@ -47,8 +42,37 @@ export default Ember.Component.extend({
       this.set('model.position', newPos);
       this.get('model').save();
     },
-    show: function() {
-      this.transitionToRoute('operator', this.get('model'));
+    inputDragStart: function(input, x, y) {
+      this.sendAction('inputDragStart', input, x, y); 
+    },
+    inputDragMove: function(input, x, y) {
+      this.sendAction('inputDragMove', input, x, y); 
+    },
+    inputDragEnd: function(input) {
+      this.sendAction('inputDragEnd', input); 
+    },
+    inputEnter: function(input) {
+      this.sendAction('inputEnter', input); 
+    },
+    inputLeave: function(input) {
+      this.sendAction('inputLeave', input); 
+    },
+    outputDragStart: function(output, x, y) {
+      this.sendAction('outputDragStart', output, x, y); 
+    },
+    outputDragMove: function(output, x, y) {
+      this.sendAction('outputDragMove', output, x, y); 
+    },
+    outputDragEnd: function(output) {
+      this.sendAction('outputDragEnd', output); 
+    },
+    outputEnter: function(output) {
+      this.sendAction('outputEnter', output); 
+    },
+    outputLeave: function(output) {
+      this.sendAction('outputLeave', output); 
     }
   }
 });
+
+

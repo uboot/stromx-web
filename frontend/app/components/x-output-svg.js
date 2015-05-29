@@ -1,78 +1,49 @@
 import Ember from "ember";
 
-import { Constant } from 'stromx-web/controllers/operator-svg';
+import { OPERATOR_SIZE, CONNECTOR_SIZE } from 'stromx-web/geometry';
 
 export default Ember.Component.extend({
   tagName: 'g',
   classNames: ['stromx-svg-output'],
-  x: Constant.OPERATOR_SIZE,
+  x: OPERATOR_SIZE,
   y: function() {
     var numConnectors = this.get('numConnectors');
     var index = this.get('index');
 
-    var opCenter = (Constant.OPERATOR_SIZE +
-                    Constant.CONNECTOR_SIZE) / 2;
-    var offset = opCenter - Constant.CONNECTOR_SIZE * numConnectors;
+    var opCenter = (OPERATOR_SIZE +
+                    CONNECTOR_SIZE) / 2;
+    var offset = opCenter - CONNECTOR_SIZE * numConnectors;
 
-    return offset + 2 * Constant.CONNECTOR_SIZE * index;
+    return offset + 2 * CONNECTOR_SIZE * index;
   }.property('numConnectors', 'index'),
-
-  isDraggingConnection: false,
-  strokeWidth: function() {
-    var stream = this.get('operator.stream');
-    var output = stream.get('activeInput');
-    return output === null ? 2 : 4;
-  }.property('operator.stream.activeInput'),
-
-  x1: Constant.OPERATOR_SIZE + Constant.CONNECTOR_SIZE / 2,
-  y1: function() {
-    return this.get('y') + Constant.CONNECTOR_SIZE / 2;
-  }.property('y'),
-
-  x2: 0,
-  y2: 0,
+  
+  localToGlobal: function(x, y) {
+    var svg = document.getElementById('stromx-stream-svg-id');
+    var point = svg.createSVGPoint();
+    point.x = x;
+    point.y = y;
+    var transform = this.element.getTransformToElement(svg);
+    return point.matrixTransform(transform);
+  },
 
   actions: {
     dragStart: function() {
-      this.setProperties({
-        'x2': this.get('x1'),
-        'y2': this.get('y1')
-      });
-      this.set('isDraggingConnection', true);
+      var x = OPERATOR_SIZE + CONNECTOR_SIZE / 2;
+      var y = this.get('y') + CONNECTOR_SIZE / 2;
+      var global = this.localToGlobal(x, y);
+      this.sendAction('dragStart', this.get('model'), global.x, global.y);
     },
     dragMove: function(dx, dy, x, y) {
-      if (! this.isDraggingConnection) {
-        return;
-      }
-
-      var opPos = this.get('operator.model.position');
-      this.setProperties({
-        'x2': x - opPos.x,
-        'y2': y - opPos.y
-      });
+      this.sendAction('dragMove', this.get('model'), x, y);
     },
     dragEnd: function() {
-      if (! this.isDraggingConnection) {
-        return;
-      }
-
-      this.set('isDraggingConnection', false);
-
-      var streamController = this.get('operator.stream');
-      var input = streamController.get('activeInput');
-      if (input === null) {
-        return;
-      }
-
-      streamController.addConnection(input, this.get('model'));
+      this.sendAction('dragEnd', this.get('model'));
     },
     enter: function() {
-      var stream = this.get('operator.stream');
-      stream.set('activeOutput', this.get('model'));
+      this.sendAction('enter', this.get('model'));
     },
     leave: function() {
-      var stream = this.get('operator.stream');
-      stream.set('activeOutput', null);
+      this.sendAction('leave', this.get('model'));
     }
   }
 });
