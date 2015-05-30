@@ -70,6 +70,9 @@ export default Ember.Controller.extend({
       connection.save().then(function(connection) {
         _this.transitionToRoute('connection', connection);
       });
+    },
+    pushConnectorValue: function(value) {
+      this.store.pushPayload('connector-value', value);
     }
   }
 });

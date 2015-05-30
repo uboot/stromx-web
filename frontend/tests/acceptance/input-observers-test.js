@@ -32,9 +32,9 @@ test('remove observer', function(assert) {
 
   andThen(function() {
     assert.equal(
-      currentRouteName(),
-      'view.index',
-      'After removing the observer the view is shown'
+      currentURL(),
+      '/streams/2/views/1',
+      'After removing the observer the former view is shown'
     );
   });
 });

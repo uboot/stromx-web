@@ -21,6 +21,16 @@ test('visit files', function(assert) {
   });
 });
 
+test('open file', function(assert) {
+  visit('/');
+  click('.stromx-file-row:nth-child(2) a.stromx-file-name');
+
+  andThen(function() {
+    assert.equal(currentRouteName(), 'stream.index',
+       'After opening the file the stream in the file is shown');
+  });
+});
+
 test('remove file', function(assert) {
   visit('/files/2/delete');
   click('button.stromx-accept');
@@ -55,7 +65,7 @@ test('rename file', function(assert) {
   andThen(function() {
     assert.equal(
        find('.stromx-file-row:nth-child(1) a.stromx-file-name').text(),
-      'new.stromx', 
+      'new.stromx',
       'Pressing save after editing the file name saves the changes'
     );
   });

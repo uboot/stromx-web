@@ -19,5 +19,8 @@ module.exports = function(app) {
   parameterObserversRouter.put('/', function(req, res) {
     res.send('null');
   });
+  parameterObserversRouter.delete('/', function(req, res) {
+    res.send('null');
+  });
   app.use('/api/parameterObservers/*', parameterObserversRouter);
 };

@@ -4,8 +4,8 @@ export default Ember.Component.extend({
   tagName: 'g',
   cx: function() {
     return this.get('model')[0];
-  }.property(),
+  }.property('model'),
   cy: function() {
     return this.get('model')[1];
-  }.property()
+  }.property('model')
 });

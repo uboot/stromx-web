@@ -82,7 +82,7 @@
     {{#if isVisible}}
       {{x-stream-details model=model}}
     {{else}}
-      {{x-view-details model=viewModel}}
+      {{x-view-details model=viewModel pushValue="pushConnectorValue"}}
     {{/if}}
   </div>
 </div>

@@ -4,14 +4,14 @@ export default Ember.Component.extend({
   tagName: 'g',
   x: function() {
     return this.get('model')[0];
-  }.property(),
+  }.property('model'),
   y: function() {
     return this.get('model')[1];
-  }.property(),
+  }.property('model'),
   width: function() {
     return this.get('model')[2];
-  }.property(),
+  }.property('model'),
   height: function() {
     return this.get('model')[3];
-  }.property()
+  }.property('model')
 });

@@ -1,18 +1,16 @@
-import Ember from "ember";
+import DeleteController from 'stromx-web/controllers/delete-observer';
 
-export default Ember.Controller.extend({
+export default DeleteController.extend({
   wasRemoved: false,
+  view: null,
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.transitionToRoute('view.index');
+        this.transitionToRoute('view.index', this.get('view'));
         this.set('wasRemoved', false);
       } else {
         this.transitionToRoute('parameterObserver.index');
       }
-    },
-    remove: function () {
-      this.set('wasRemoved', true);
     }
   }
 });

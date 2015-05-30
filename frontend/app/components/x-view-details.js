@@ -16,7 +16,7 @@ export default Ember.Component.extend({
   height: function() {
     return 1024 * this.get('zoom');
   }.property('zoom'),
-  
+
   didInsertElement: function() {
     this.send('connect');
   },
@@ -54,7 +54,7 @@ export default Ember.Component.extend({
       ws.onmessage = function(event) {
         ws.send(ACK);
         var payload = JSON.parse(event.data);
-        _this.store.pushPayload('connector-value', payload);
+        _this.sendAction('pushValue', payload);
       };
       this.set('socket', ws);
     },

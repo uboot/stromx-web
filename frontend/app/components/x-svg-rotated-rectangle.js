@@ -8,17 +8,17 @@ export default Ember.Component.extend({
     var angle = this.get('model')[4];
 
     return 'rotate(' + angle + ' ' + cx + ' ' + cy + ')';
-  }.property(''),
+  }.property('model'),
   x: function() {
     return this.get('model')[0] - this.get('width')/2;
-  }.property(),
+  }.property('model'),
   y: function() {
     return this.get('model')[1] - this.get('height')/2;
-  }.property(),
+  }.property('model'),
   width: function() {
     return this.get('model')[2];
-  }.property(),
+  }.property('model'),
   height: function() {
     return this.get('model')[3];
-  }.property()
+  }.property('model')
 });

@@ -28,12 +28,12 @@ test('visit observer', function(assert) {
 test('remove observer', function(assert) {
   visit('/streams/2/parameterObservers/0/delete');
   click('.stromx-accept');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(
-      currentRouteName(),
-      'view.index',
+      currentURL(),
+      '/streams/2/views/1',
       'After removing the observer the view is shown'
     );
   });
@@ -42,7 +42,7 @@ test('remove observer', function(assert) {
 test('cancel removing observer', function(assert) {
   visit('/streams/2/parameterObservers/0/delete');
   click('.stromx-cancel');
-  triggerEvent('.modal', 'hidden.bs.modal');
+  waitForModal();
 
   andThen(function() {
     assert.equal(

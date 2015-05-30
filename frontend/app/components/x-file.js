@@ -24,22 +24,8 @@ export default Ember.Component.extend({
       this.get('model').rollback();
     },
     open: function () {
-      var file = this.get('model');
-      file.set('opened', true);
-      var controller = this;
-      file.save().then( function(file) {
-        if (! file.get('opened')) {
-          return;
-        }
-
-        var stream = file.get('stream');
-        if (stream !== null) {
-          controller.transitionToRoute('stream', stream);
-        }
-      }, function() {
-        file.rollback();
-      });
+      this.sendAction('open', this.get('model'));
     }
   }
-  
+
 });
