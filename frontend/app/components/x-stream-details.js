@@ -96,19 +96,16 @@ export default Ember.Component.extend({
       });
     },
     inputEnter: function(input) {
-      console.log('inputEnter');
       if (this.get('isDraggingOutputToInput')) {
         this.set('activeInput', input);
       }
     },
     inputLeave: function() {
-      console.log('inputLeave');
       if (this.get('isDraggingOutputToInput')) {
         this.set('activeInput', null);
       }
     },
     outputDragStart: function(output, x, y) {
-      console.log('outputDragStart');
       this.setProperties({
         activeOutput: output,
         x1: x,
@@ -119,14 +116,12 @@ export default Ember.Component.extend({
       });
     },
     outputDragMove: function(output, x, y) {
-      console.log('outputDragMove');
       this.setProperties({
         x2: x,
         y2: y
       });
     },
     outputDragEnd: function() {
-      console.log('outputDragEnd');
       if (this.get('isDraggingValidConnection')) {
         this.addConnection(this.get('activeInput'), this.get('activeOutput'));
       }

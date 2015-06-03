@@ -39,6 +39,20 @@ test('remove view', function(assert) {
   });
 });
 
+test('remove view while view details are displayed', function(assert) {
+  visit('/streams/2/views/1/delete?view=1');
+  click('.stromx-accept');
+  triggerEvent('.modal', 'hidden.bs.modal');
+
+  andThen(function() {
+    assert.equal(
+      currentURL(),
+      '/streams/2',
+      'After removing the view the stream details are shown'
+    );
+  });
+});
+
 test('add view', function(assert) {
   visit('/streams/2/views/new');
   fillIn('#stromx-view-input', 'New view');
