@@ -1,8 +1,24 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
-  selectedOperator: null,
-  selectedPackage: null,
+  selectedOperator: Ember.computed('operatorValue', function() {
+    var operatorValue = this.get('operatorValue');
+    if (operatorValue === null) {
+      return null;
+    }
+    
+    return this.get('selectedPackage.operators')[operatorValue];
+  }),
+  selectedPackage: Ember.computed('packageValue', function() {
+    var packageValue = this.get('packageValue');
+    if (packageValue === null) {
+      return null;
+    }
+    
+    return this.get('packages')[packageValue];
+  }),
+  packageValue: null,
+  operatorValue: null,
   name: '',
   packages: Ember.computed({
     set: function(key, value) {
@@ -13,12 +29,21 @@ export default Ember.Controller.extend({
       this.store.find('operatorTemplate').then(function(templates) {
         var packageNames = new Set(templates.mapBy('package'));
         var packages = [];
+        var i = 0;
         for (var p of packageNames.values()){
           var operators = templates.filterBy('package', p);
           packages.push({
+            value: i,
             name: p,
-            operators: operators.sortBy('type')
+            operators: operators.sortBy('type').map(function(op, index) {
+              return {
+                value: index,
+                type: op.get('type'),
+                package: op.get('package')
+              };
+            })
           });
+          i++;
         }
         packages = packages.sortBy('name');
         _this.set('packages', packages);
@@ -38,7 +63,7 @@ export default Ember.Controller.extend({
       return; 
     }
       
-    this.set('name', op.get('type'));
+    this.set('name', op.type);
   }.observes('selectedOperator'),
   actions: {
     cancel: function() {

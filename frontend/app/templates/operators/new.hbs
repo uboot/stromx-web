@@ -8,21 +8,21 @@
 </h3>
 
 <div class="form-group">
-  <label for="package">Package</label>
-  {{view "select" value=selectedPackage content=packages optionLabelPath="content.name" prompt="Select a package" id="package"}}
+  <label for="stromx-operator-package">Package</label>
+  {{view "select" value=packageValue content=packages optionValuePath="content.value" optionLabelPath="content.name" prompt="Select a package" id="stromx-operator-package"}}
 </div>
 
 <div class="form-group">
-  <label for="type">Operator</label>
-  {{view "select" value=selectedOperator content=selectedPackage.operators optionLabelPath="content.type" prompt="Select an operator" id="type"}}
+  <label for="stromx-operator-type">Operator</label>
+  {{view "select" value=operatorValue content=selectedPackage.operators optionValuePath="content.value" optionLabelPath="content.type" prompt="Select an operator" id="stromx-operator-type"}}
 </div>
 
 <div class="form-group">
-  <label for="name">Name</label>
-  {{input value=name class="form-control" placeholder="Enter operator name" id="name"}}
+  <label for="stromx-operator-name">Name</label>
+  {{input value=name class="form-control" placeholder="Enter operator name" id="stromx-operator-name"}}
 </div>
 
 <div class="form-group">
-  <button {{action "cancel"}} class="btn btn-default" type="submit">Cancel</button>
-  <button {{action "save"}} class="btn btn-primary {{if saveIsDisabled 'disabled'}}"}} type="submit">Save</button>
+  <button {{action "cancel"}} class="btn btn-default stromx-cancel" type="submit">Cancel</button>
+  <button {{action "save"}} class="btn btn-primary stromx-save {{if saveIsDisabled 'disabled'}}" type="submit">Save</button>
 </div>

@@ -25,6 +25,73 @@ test('visit operator', function(assert) {
   });
 });
 
+test('new operator', function(assert) {
+  visit('/streams/2/operators/new');
+  fillIn('#stromx-operator-package', 1);
+  fillIn('#stromx-operator-type', 1);
+  click('.stromx-save');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-svg-operator-rect').length,
+      5,
+      'The new operator is displayed in the stream view'
+    );
+    
+    assert.equal(
+      currentRouteName(),
+      'operator.index',
+      'The operator is shown'
+    );
+  });
+});
+
+test('no new operator template is selected', function(assert) {
+  visit('/streams/2/operators/new');
+  fillIn('#stromx-operator-package', 1);
+
+  andThen(function() {
+    assert.ok(
+      find('.stromx-save')[0].classList.contains('disabled'),
+      'The save button is disabled if no valid operator is selected'
+    );
+  });
+});
+
+test('an operator template is selected', function(assert) {
+  visit('/streams/2/operators/new');
+  fillIn('#stromx-operator-package', 1);
+  fillIn('#stromx-operator-type', 1);
+
+  andThen(function() {
+    assert.ok(
+      ! find('.stromx-save')[0].classList.contains('disabled'),
+      'The save button is enabled if no valid operator is selected'
+    );
+  });
+});
+
+test('cancel creating an operator', function(assert) {
+  visit('/streams/2/operators/new');
+  fillIn('#stromx-operator-package', 1);
+  fillIn('#stromx-operator-type', 1);
+  click('.stromx-cancel');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-svg-operator-rect').length,
+      4,
+      'No new operator is displayed in the stream view'
+    );
+    
+    assert.equal(
+      currentRouteName(),
+      'stream.index',
+      'The stream is shown'
+    );
+  });
+});
+
 test('initialize operator', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-initialize-operator');

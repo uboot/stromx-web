@@ -41,6 +41,7 @@ export default Ember.Component.extend({
 
   actions: {
     editObserver: function() {
+      this.set('viewId', null);
       this.set('isEditingObserver', true);
     },
     discardChanges: function() {
