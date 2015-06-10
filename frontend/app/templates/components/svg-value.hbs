@@ -1,5 +1,5 @@
 {{#if isList}}
-  {{#each item in listData}}
+  {{#each listData key="@index" as |item|}}
     {{svg-value value=item observer=observer}}
   {{/each}}
 {{else}}
@@ -11,12 +11,12 @@
     <text x="10" y="20" fill={{color}}>{{textData}}</text>
   {{/if}}
   {{#if svgLines}}
-    {{#each line in matrixDataNx4}}
+    {{#each matrixDataNx4 key="@index" as |line|}}
       {{x-svg-line model=line color=color}}
     {{/each}}
   {{/if}}
   {{#if svgPoints}}
-    {{#each point in matrixDataNx2}}
+    {{#each matrixDataNx2 key="@index" as |point|}}
       {{x-svg-point model=point color=color}}
     {{/each}}
   {{/if}}
@@ -27,12 +27,12 @@
     <polyline points={{pointsData}} stroke={{color}} fill="none"/>
   {{/if}}
   {{#if svgRectangle}}
-    {{#each rect in matrixDataNx4}}
+    {{#each matrixDataNx4 key="@index" as |rect|}}
       {{x-svg-rectangle model=rect color=color}}
     {{/each}}
   {{/if}}
   {{#if svgRotatedRectangle}}
-    {{#each rect in matrixDataNx5}}
+    {{#each matrixDataNx5 key="@index" as |rect|}}
       {{x-svg-rotated-rectangle model=rect color=color}}
     {{/each}}
   {{/if}}

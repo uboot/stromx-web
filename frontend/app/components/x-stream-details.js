@@ -30,7 +30,6 @@ export default Ember.Component.extend({
   isDraggingValidConnection: function() {
     var activeInput = this.get('activeInput') !== null;
     var activeOutput = this.get('activeOutput') !== null;
-    console.log(activeInput, activeOutput);
     return activeInput && activeOutput;
   }.property('activeInput', 'activeOutput'),
 

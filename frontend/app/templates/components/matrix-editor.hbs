@@ -15,9 +15,9 @@
   <label for="values">Values</label>
   <table class="table table-bordered table-condensed" id="values">
     <tbody>
-      {{#each value.values as |row i|}}
+      {{#each value.values key="@index" as |row i|}}
         <tr>
-          {{#each row as |value j|}}
+          {{#each row key="@index" as |value j|}}
             <td class="stromx-matrix-cell">
               {{matrix-value value=value storeValue="storeValue" row=i col=j}}
             </td>

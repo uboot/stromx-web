@@ -3,7 +3,7 @@
     Color<span class="caret"></span>
   </button>
   <ul class="dropdown-menu color-menu" role="menu">
-    {{#each color in colors}}
+    {{#each colors key="@index" as |color|}}
       <li class="stromx-color-item"><a {{action "choose" color.value}}>{{color.name}}</a></li>
     {{/each}}
   </ul>

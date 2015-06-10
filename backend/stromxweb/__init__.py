@@ -204,6 +204,7 @@ def start(configFile):
     execfile(configFile, config) 
     
     appModel = model.Model(config['DATA_DIR'])
+    appModel.executionDelay = config['EXECUTION_DELAY']
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")
     assetsDir = os.path.join(staticDir, "assets")

@@ -21,7 +21,7 @@
       </pattern>
     </defs>
     <rect width="100%" height="100%" fill={{patternUri}} />
-    {{#each op in model.operators}}
+    {{#each model.operators key="@index" as |op|}}
       {{x-operator-svg model=op inputDragStart="inputDragStart"
         inputDragMove="inputDragMove" inputDragEnd="inputDragEnd"
         inputEnter="inputEnter" inputLeave="inputLeave"
@@ -30,7 +30,7 @@
         outputLeave="outputLeave"}}
     {{/each}}
 
-    {{#each connection in model.connections}}
+    {{#each model.connections key="@index" as |connection|}}
       {{x-connection-svg model=connection}}
     {{/each}}
     

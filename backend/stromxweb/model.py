@@ -13,8 +13,6 @@ import stromx.runtime
 import conversion
 import view
 
-_EXECUTION_DELAY = 1000 # ms
-
 def _str(value):
     return str(value.encode('utf-8'))
 
@@ -37,6 +35,7 @@ class Model(object):
         self.__outputObservers = OutputObservers(self)
         self.__connectorValues = ConnectorValues(self)
         self.__operatorTemplates = OperatorTemplates(self)
+        self.__executionDelay = 1000 # ms
     
     @property
     def files(self):
@@ -101,6 +100,14 @@ class Model(object):
     @property
     def operatorTemplates(self):
         return self.__operatorTemplates
+    
+    @property
+    def executionDelay(self):
+        return self.__executionDelay
+    
+    @executionDelay.setter
+    def executionDelay(self, value):
+        self.__executionDelay = value
     
 class Items(dict):
     def __init__(self, model = None):
@@ -358,7 +365,7 @@ class Stream(Item):
             self.__stream = stromx.runtime.Stream()
             
         # set execution delay to a sane value to avoid CPU overload
-        self.__stream.setDelay(_EXECUTION_DELAY)
+        self.__stream.setDelay(self.model.executionDelay)
             
         # install the exception observer
         self.__stream.addObserver(self.__exceptionObserver)

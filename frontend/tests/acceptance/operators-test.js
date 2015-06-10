@@ -28,14 +28,20 @@ test('visit operator', function(assert) {
 test('new operator', function(assert) {
   visit('/streams/2/operators/new');
   fillIn('#stromx-operator-package', 1);
-  fillIn('#stromx-operator-type', 1);
+  fillIn('#stromx-operator-type', 0);
   click('.stromx-save');
 
   andThen(function() {
     assert.equal(
-      find('.stromx-svg-operator-rect').length,
+      find('.stromx-svg-operator').length,
       5,
       'The new operator is displayed in the stream view'
+    );
+    
+    assert.equal(
+      find('.stromx-svg-operator:nth-of-type(5) text').text(),
+      "Test",
+      'The new operator is named "Test"'
     );
     
     assert.equal(
@@ -61,12 +67,12 @@ test('no new operator template is selected', function(assert) {
 test('an operator template is selected', function(assert) {
   visit('/streams/2/operators/new');
   fillIn('#stromx-operator-package', 1);
-  fillIn('#stromx-operator-type', 1);
+  fillIn('#stromx-operator-type', 0);
 
   andThen(function() {
     assert.ok(
       ! find('.stromx-save')[0].classList.contains('disabled'),
-      'The save button is enabled if no valid operator is selected'
+      'The save button is enabled if a valid operator is selected'
     );
   });
 });
@@ -79,7 +85,7 @@ test('cancel creating an operator', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('.stromx-svg-operator-rect').length,
+      find('.stromx-svg-operator').length,
       4,
       'No new operator is displayed in the stream view'
     );

@@ -12,7 +12,12 @@ export default Ember.Component.extend({
     });
   },
   willDestroyElement: function() {
-    this.$('.modal').modal('hide');
+    var element = this.$('.modal');
+    if (element === undefined) {
+      return;
+    }
+    
+    element.modal('hide');
   },
   showDoNotAccept: Ember.computed.notEmpty('doNotAcceptText'),
   actions: {

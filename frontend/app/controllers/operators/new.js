@@ -7,7 +7,8 @@ export default Ember.Controller.extend({
       return null;
     }
     
-    return this.get('selectedPackage.operators')[operatorValue];
+    var op = this.get('selectedPackage.operators').findBy('value', operatorValue);
+    return op === undefined ? null : op;
   }),
   selectedPackage: Ember.computed('packageValue', function() {
     var packageValue = this.get('packageValue');
@@ -15,7 +16,8 @@ export default Ember.Controller.extend({
       return null;
     }
     
-    return this.get('packages')[packageValue];
+    var p = this.get('packages').findBy('value', packageValue);
+    return p === undefined ? null : p;
   }),
   packageValue: null,
   operatorValue: null,

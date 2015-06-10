@@ -3,7 +3,7 @@
 
   {{#if length}}
   <div class="well">
-    {{#each error in this}}
+    {{#each this key="@index" as |error|}}
       {{x-error model=error}}
     {{/each}}
   </div>
