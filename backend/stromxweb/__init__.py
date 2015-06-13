@@ -154,6 +154,8 @@ class SocketHandler(tornado.websocket.WebSocketHandler, BaseHandler):
         
     def doSend(self, json):
         if self.__queueLength > _MAX_SOCKET_QUEUE_LENGTH:
+            print ("Discard data because the maximal socket queue length has "
+                   "been reached")
             return
             
         try:
