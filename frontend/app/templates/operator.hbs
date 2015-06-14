@@ -71,7 +71,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model.inputs key="@index" as |input|}}
+      {{#each model.inputs as |input|}}
         <tr class="stromx-input-row">
           {{x-input model=input showObserver="showInputObserver" addObserver="addInputObserver"}}
         </tr>
@@ -88,7 +88,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model.outputs key="@index" as |output|}}
+      {{#each model.outputs as |output|}}
         <tr class="stromx-output-row">
           {{x-output model=output showObserver="showOutputObserver" addObserver="addOutputObserver"}}
         </tr>
@@ -105,7 +105,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each model.parameters key="@index" as |param|}}
+      {{#each model.parameters as |param|}}
         <tr class="stromx-parameter-row">
         {{x-parameter model=param}}
         </tr>

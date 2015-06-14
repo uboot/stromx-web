@@ -71,7 +71,7 @@
       <li class="{{if isVisible 'active'}}" role="presentation">
         <a {{action "show"}} class="stromx-display-stream">Stream</a>
       </li>
-      {{#each model.views key="@index" as |view|}}
+      {{#each model.views as |view|}}
         {{x-view-item model=view viewId=this.view show="showView"}}
       {{/each}}
       <div class="pull-right stromx-nav-div">
