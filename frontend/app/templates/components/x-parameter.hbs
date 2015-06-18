@@ -26,8 +26,8 @@
       </div>
     {{else if isFile}}
       <div class="form-group">
-        <label for="upload-file">File</label>
-        {{view "upload-file" content=editValue id="upload-file"}}
+        <label for="stromx-upload-file">File</label>
+        {{x-upload-file content=editValue id="stromx-upload-file"}}
       </div>
       <div class="form-group">
         <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>

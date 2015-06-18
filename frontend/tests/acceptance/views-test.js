@@ -71,7 +71,7 @@ test('add view', function(assert) {
     );
     assert.equal(
       find('.stromx-display-list li:nth-child(4)')[0].getAttribute('class'),
-      'ember-view',
+      '',
       'The view tab is not active'
     );
   });

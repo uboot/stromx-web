@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-        {{#each model as |file|}}
+        {{#each model key="@index" as |file|}}
           <tr class="stromx-file-row">
             <td>
               {{x-file model=file open="openFile"}}

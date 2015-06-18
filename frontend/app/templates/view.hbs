@@ -47,7 +47,7 @@
       </tr>
     </thead>
     <tbody>
-      {{#each sortedObservers as |observer|}}
+      {{#each sortedObservers key="@index" as |observer|}}
         <tr class="stromx-observer-row">
           <td>
             {{x-observer-row model=observer}}
