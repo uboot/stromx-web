@@ -8,13 +8,23 @@
 </h3>
 
 <div class="form-group">
-  <label for="stromx-operator-package">Package</label>
-  {{view "select" value=packageValue content=packages optionValuePath="content.value" optionLabelPath="content.name" prompt="Select a package" id="stromx-operator-package"}}
+  <label for="stromx-operator-package">Package</label>  
+  <select onchange={{action (mut packageValue) value="target.value"}} id="stromx-operator-package">
+    <option selected={{is-not packageValue}}>Select a package</option>
+    {{#each packages key="@index" as |item|}}
+      <option selected={{is-equal item.value packageValue}} value={{item.value}}>{{item.name}}</option>
+    {{/each}}
+  </select>
 </div>
-
+    
 <div class="form-group">
-  <label for="stromx-operator-type">Operator</label>
-  {{view "select" value=operatorValue content=selectedPackage.operators optionValuePath="content.value" optionLabelPath="content.type" prompt="Select an operator" id="stromx-operator-type"}}
+  <label for="stromx-operator-type">Operator</label>  
+  <select onchange={{action (mut operatorValue) value="target.value"}} id="stromx-operator-type">
+    <option selected={{is-not operatorValue}}>Select an operator</option>
+    {{#each selectedPackage.operators key="@index" as |item|}}
+      <option selected={{is-equal item.value operatorValue}} value={{item.value}}>{{item.type}}</option>
+    {{/each}}
+  </select>
 </div>
 
 <div class="form-group">

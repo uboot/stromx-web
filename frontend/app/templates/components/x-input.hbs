@@ -5,9 +5,14 @@
 {{else}}
   <div class="form-group">
     {{#if viewsExist}}
-      {{view "select" value=viewId content=views optionValuePath="content.id" optionLabelPath="content.name" prompt="Choose view" class="stromx-views-select"}}
+      <select onchange={{action (mut viewId) value="target.value"}} class="stromx-views-select">
+        <option selected={{is-not viewId}}>Choose view</option>
+        {{#each views key="@index" as |item|}}
+          <option selected={{is-equal item.id viewId}} value={{item.id}}>{{item.name}}</option>
+        {{/each}}
+      </select>
       <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
-      {{#if view}}
+      {{#if viewId}}
         {{#if observerExists}}
           <button {{action "showObserver"}} class="btn btn-primary stromx-show-input-observer">Show</button>
         {{else}}

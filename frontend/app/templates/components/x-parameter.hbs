@@ -16,9 +16,12 @@
         <button {{action "trigger"}} class="btn btn-primary stromx-send-trigger">Send</button>
       </div>
     {{else if isEnum}}
-      <div class="form-group">
-        {{view "select" value=model.value content=model.descriptions
-        optionValuePath="content.value" optionLabelPath="content.title" class="stromx-parameter-select"}}
+      <div class="form-group">        
+        <select onchange={{action (mut editValue) value="target.value"}} class="stromx-parameter-select">
+          {{#each model.descriptions key="@index" as |item|}}
+            <option selected={{is-equal item.value editValue}} value={{item.value}}>{{item.title}}</option>
+          {{/each}}
+        </select>
       </div>
       <div class="form-group">
         <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>

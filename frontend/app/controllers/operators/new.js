@@ -19,8 +19,22 @@ export default Ember.Controller.extend({
     var p = this.get('packages').findBy('value', packageValue);
     return p === undefined ? null : p;
   }),
-  packageValue: null,
-  operatorValue: null,
+  packageValue: Ember.computed({
+    set: function(key, value) {
+      return parseInt(value);
+    }, 
+    get: function() {
+      return null;
+    }
+  }),
+  operatorValue: Ember.computed('packageValue', {
+    set: function(key, value) {
+      return parseInt(value);
+    }, 
+    get: function() {
+      return null;
+    }
+  }),
   name: '',
   packages: Ember.computed({
     set: function(key, value) {
@@ -32,7 +46,7 @@ export default Ember.Controller.extend({
         var packageNames = new Set(templates.mapBy('package'));
         var packages = [];
         var i = 0;
-        for (var p of packageNames.values()){
+        for (var p of packageNames.values()) {
           var operators = templates.filterBy('package', p);
           packages.push({
             value: i,
@@ -50,7 +64,6 @@ export default Ember.Controller.extend({
         packages = packages.sortBy('name');
         _this.set('packages', packages);
       });
-
       return [];
     }
   }),

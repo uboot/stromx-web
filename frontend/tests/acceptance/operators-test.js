@@ -195,6 +195,52 @@ test('show input observer', function(assert) {
   });
 });
 
+test('edit input', function(assert) {
+  visit('/streams/2/operators/2');
+  click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
+  
+  andThen(function() {
+    assert.equal(
+      find('.stromx-cancel').length,
+      1,
+      'If no view is selected the show cancel button is shown'
+    );
+    assert.equal(
+      find('.stromx-show-input-observer').length,
+      0,
+      'If no view is selected the show button is not shown'
+    );
+    assert.equal(
+      find('.stromx-add-input-observer').length,
+      0,
+      'If no view is selected the add button is not shown'
+    );
+  });
+});
+
+test('edit output', function(assert) {
+  visit('/streams/2/operators/0');
+  click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
+  
+  andThen(function() {
+    assert.equal(
+      find('.stromx-cancel').length,
+      1,
+      'If no view is selected the show cancel button is shown'
+    );
+    assert.equal(
+      find('.stromx-show-output-observer').length,
+      0,
+      'If no view is selected the show button is not shown'
+    );
+    assert.equal(
+      find('.stromx-add-output-observer').length,
+      0,
+      'If no view is selected the add button is not shown'
+    );
+  });
+});
+
 test('add input observer', function(assert) {
   visit('/streams/2/operators/2');
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');

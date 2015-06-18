@@ -71,9 +71,9 @@
       <li class="{{if isVisible 'active'}}" role="presentation">
         <a {{action "show"}} class="stromx-display-stream">Stream</a>
       </li>      
-      {{#each model.views key="@index" as |view|}}
-        <li class="{{is-active view.id this.view}}" role="presentation">
-          <a {{action "showView" view.id}} class="stromx-display-view">{{view.name}}</a>
+      {{#each model.views key="@index" as |item|}}
+        <li class="{{is-active item.id this.view}}" role="presentation">
+          <a {{action "showView" item.id}} class="stromx-display-view">{{item.name}}</a>
         </li>
       {{/each}}
       

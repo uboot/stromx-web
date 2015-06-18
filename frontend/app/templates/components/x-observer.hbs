@@ -23,7 +23,11 @@
         {{else}}
           <form class="form-inline">
             <div class="form-group">
-              <label class="sr-only" for="stromx-observer-visualization">Name</label>{{view "select" value=model.visualization content=visualizations optionValuePath="content.value" optionLabelPath="content.label" id="stromx-visualization-select"}}
+              <select onchange={{action (mut model.visualization) value="target.value"}} id="stromx-visualization-select">
+                {{#each visualizations key="@index" as |item|}}
+                  <option selected={{is-equal item.value model.visualization}} value={{item.value}}>{{item.label}}</option>
+                {{/each}}
+              </select>
             </div>
             <div class="form-group">
               <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>

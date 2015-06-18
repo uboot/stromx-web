@@ -62,6 +62,7 @@ export default Ember.Component.extend({
           return this.get('model.value').toPrecision(3);
         case 'int':
         case 'string':
+        case 'enum':
           return this.get('model.value');
         default:
           return '';
@@ -89,6 +90,9 @@ export default Ember.Component.extend({
           v = {
             values: value
           };
+          break;
+        case 'enum':
+          v = parseInt(value);
           break;
         default:
       }

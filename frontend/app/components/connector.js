@@ -30,7 +30,7 @@ export default Ember.Component.extend({
     get: function() {
       var viewId = this.get('viewId');
       if (viewId === null) {
-        return null;
+        return false;
       }
 
       return this.get('views').find(function(view) {
