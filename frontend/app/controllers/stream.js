@@ -29,7 +29,7 @@ export default Ember.Controller.extend({
       var stream = this.get('model');
       stream.set('active', true);
       stream.save().catch(function() {
-        stream.rollback();
+        stream.rollbackAttributes();
       }).then(function(stream) {
         stream.get('connections').forEach(function (connection) {
           connection.reload();

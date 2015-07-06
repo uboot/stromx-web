@@ -162,13 +162,13 @@ export default Ember.Controller.extend({
     },
     discardChanges: function() {
       this.set('isEditingName', false);
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
     },
     initialize: function() {
       var model = this.get('model');
       model.set('status', 'initialized');
       this.get('model').save().catch(function() {
-        model.rollback();
+        model.rollbackAttributes();
       });
     },
     deinitialize: function() {

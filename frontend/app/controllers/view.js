@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
     },
     discardChanges: function() {
       this.set('isEditingName', false);
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
     },
     editName: function() {
       this.set('isEditingName', true);

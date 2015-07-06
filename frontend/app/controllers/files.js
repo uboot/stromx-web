@@ -1,6 +1,6 @@
 import Ember from "ember";
 
-export default Ember.ArrayController.extend({
+export default Ember.Controller.extend({
   actions: {
     openFile: function(file) {
       file.set('opened', true);
@@ -15,7 +15,7 @@ export default Ember.ArrayController.extend({
           controller.transitionToRoute('stream', stream);
         }
       }, function() {
-        file.rollback();
+        file.rollbackAttributes();
       });
     }
   }
