@@ -131,7 +131,7 @@ class Items(dict):
     
     def addItem(self, item):
         item.index = self.__index
-        self[str(self.__index)] =  item
+        self[str(self.__index)] = item
         self.__index += 1
     
     def addItems(self, items):
@@ -140,7 +140,11 @@ class Items(dict):
         
     def delete(self, index):
         item = self.pop(index)
-        item.delete()
+        try:
+            item.delete()
+        except Failed as e:
+            self[item.index] = item
+            raise e
         
     def addData(self, data):
         raise NotImplementedError()
@@ -740,9 +744,19 @@ class Operator(Item):
         return self.__op
     
     def delete(self):
+        if self.__stream.active: 
+            self.model.errors.addError('Can not remove operator while stream '
+                                       'is active.')
+            raise Failed()
+        
         self.__removeParameters()
         self.__removeConnectors() 
-        self.__stream.removeOperator(self)
+        
+        try:
+            self.__stream.removeOperator(self)
+        except stromx.runtime.WrongState as e:
+            self.model.errors.addError(e)
+            raise Failed()
         
     def removeInput(self, input):
         self.__inputs.remove(input)
@@ -994,9 +1008,10 @@ class Connection(Item):
         self.__thread = value
         
     def delete(self):     
+        assert(self.__stream != None)
+        
         try:          
-          if self.__stream != None:
-              self.__stream.removeConnection(self)
+          self.__stream.removeConnection(self)
         except stromx.runtime.Exception as e:
           self.model.errors.addError(e)
           raise Failed()

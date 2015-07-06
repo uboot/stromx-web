@@ -185,7 +185,6 @@ class DummyItem(model.Item):
     def write(self, value):
         self.__write = value
     
-    
 class ItemTest(unittest.TestCase):
     def setUp(self):
         self.items = DummyItems()
@@ -198,6 +197,17 @@ class ItemTest(unittest.TestCase):
         
     def testSet(self):
         self.item.set({'dummyItem': {'read': 0, 'write': 0}})
+    
+    
+class ItemsTest(unittest.TestCase):
+    def setUp(self):
+        self.items = DummyItems()
+        
+    def testDelete(self):
+        item = DummyItem()
+        self.items.addItem(item)
+        self.items.delete(item.index)
+        self.assertFalse(item.index in self.items.keys())
         
 class OperatorTemplatesTest(unittest.TestCase):
     def setUp(self):
@@ -250,11 +260,20 @@ class FilesTest(unittest.TestCase):
     def testSetOpenTrue(self):
         f = self.files.set('0', {'file': {'opened': True}})
         self.assertEqual({'file': _openedFile}, f)
-        self.assertEqual({'stream':_stream}, self.streams['0'].data)
+        self.assertEqual({'stream': _stream}, self.streams['0'].data)
         
     def testSetOpenFalse(self):
         self.files.set('0', {'file': {'opened': True}})
         f = self.files.set('0', {'file': {'opened': False}})
+        self.assertEqual(False, f['file']['opened'])
+        self.assertEqual({'streams': []}, self.streams.data)
+        
+    def testSetOpenFalseWhileActive(self):
+        self.files.set('0', {'file': {'opened': True}})
+        self.streams.set('0', {'stream': {'active': True}})
+        
+        f = self.files.set('0', {'file': {'opened': False}})
+                          
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual({'streams': []}, self.streams.data)
         
@@ -612,6 +631,7 @@ class OperatorsTest(unittest.TestCase):
         self.stromxStream.initializeOperator(self.stromxOp)
         self.stromxOp.setName('Name')
         self.operator = self.operators.addStromxOp(self.stromxOp, self.stream)
+        self.stream.addOperator(self.operator)
         
     def testSetName(self):
         self.operators.set('0', {'operator': {'name': 'New name'}})
@@ -813,20 +833,25 @@ class OperatorsTest(unittest.TestCase):
                          self.errorSink.errors[0].description)    
         
     def testDelete(self):
-        data = {'operator': {'package': 'runtime',
-                             'type': 'Dump',
-                             'stream': '0'}}
-        opId = self.operators.addData(data)['operator']['id']
-        opModel = self.model.operators[opId]
+        self.operators.delete('0')
         
-        self.operators.delete(opId)
+        self.assertFalse(self.stromxOp in self.stromxStream.operators())
+        self.assertFalse('5' in self.stream.operators)
+        self.assertEqual(0, len(self.model.operators))
+        self.assertEqual(0, len(self.model.inputs))
+        self.assertEqual(0, len(self.model.outputs))
+        self.assertEqual(0, len(self.model.parameters))    
         
-        self.assertFalse(opModel.stromxOp in self.stromxStream.operators())
-        self.assertFalse(opId in self.stream.operators)
+    def testDeleteWhileActive(self):
+        self.stromxStream.start()
+          
+        self.assertRaises(model.Failed, self.operators.delete, '0')
+        
         self.assertEqual(1, len(self.model.operators))
         self.assertEqual(1, len(self.model.inputs))
         self.assertEqual(1, len(self.model.outputs))
-        self.assertEqual(3, len(self.model.parameters))
+        self.assertEqual(3, len(self.model.parameters)) 
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def tearDown(self):
         self.__stream = None
@@ -1184,13 +1209,14 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual('2', data['connection']['output'])
         self.assertEqual('0', data['connection']['input'])
         
-    def testAddData(self):
-        newData = {'connection': {'output': '1', 
+    def testAddDataWhileActive(self):
+        newData = {'connection': {'output': '2', 
                                   'input': '0'}}
-                               
-        data = self.model.connections.addData(newData)
+                  
+        self.assertRaises(model.Failed, self.model.connections.addData, newData)
         
-        self.assertEqual(None, data['connection']['thread'])
+        self.assertEqual(0, len(self.model.connections))
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testAddDataInputConnected(self):
         newData = {'connection': {'output': '2', 
@@ -1235,6 +1261,17 @@ class ConnectionsTest(unittest.TestCase):
         
         output = self.stromxStream.connectionSource(self.fork.stromxOp, 0)
         self.assertFalse(output.valid())
+        
+    def testDeleteWileActive(self):
+        newData = {'connection': {'output': '2', 
+                                  'input': '0'}}
+        self.model.connections.addData(newData)
+        self.stromxStream.start()
+        
+        self.assertRaises(model.Failed, self.model.connections.delete, '0')
+        
+        self.assertEqual(1, len(self.errorSink.errors))
+        self.assertEqual(1, len(self.model.connections))
         
     def testDeleteWhileActive(self):
         newData = {'connection': {'thread': '0',
