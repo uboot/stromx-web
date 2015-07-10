@@ -11,7 +11,7 @@ export default Ember.Controller.extend({
     if (view === null) {
       return null;
     } else {
-      return this.get('store').find('view', view);
+      return this.get('store').findRecord('view', view);
     }
   }.property('view'),
 

@@ -71,7 +71,7 @@ export default Ember.Component.extend({
     discardChanges: function() {
       this.set('isEditingColor', false);
       this.set('isEditingVisualization', false);
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
     }
   }
 });

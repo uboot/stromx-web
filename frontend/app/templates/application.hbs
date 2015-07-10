@@ -1,13 +1,13 @@
 <div class="container">
   {{outlet}}
 
-  {{#if length}}
+  {{#if model.length}}
   <div class="well">
     {{#each model key="@index" as |error|}}
       {{x-error model=error}}
     {{/each}}
   </div>
-  <button {{action "clearErrors"}} class="btn btn-default pull-left">Clear Errors</button>
+  <button {{action "clearErrors"}} class="btn btn-default pull-left">Clear errors</button>
   {{/if}}
 </div>
 

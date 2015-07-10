@@ -158,7 +158,7 @@ export default Ember.Component.extend({
   save: function() {
     var model = this.get('model');
     model.save().catch(function() {
-      model.rollback();
+      model.rollbackAttributes();
     });
   },
 
@@ -172,7 +172,7 @@ export default Ember.Component.extend({
     },
     discardChanges: function() {
       this.set('isEditing', false);
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
     },
     reload: function() {
       this.get('model').reload();

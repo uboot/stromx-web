@@ -23,7 +23,7 @@ export default Ember.Route.extend({
       _this.store.pushPayload('error', payload);
       Ember.run.next(function() {
         _this.store.findRecord('error', payload.error.id).then(function(error) {
-          _this.controller.pushObject(error);
+          _this.controller.model.pushObject(error);
         });
       });
     };

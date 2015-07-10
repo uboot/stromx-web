@@ -42,7 +42,7 @@ export default Ember.Controller.extend({
     },
     get: function() {
       var _this = this;
-      this.store.find('operatorTemplate').then(function(templates) {
+      this.store.findAll('operatorTemplate').then(function(templates) {
         var packageNames = new Set(templates.mapBy('package'));
         var packages = [];
         var i = 0;

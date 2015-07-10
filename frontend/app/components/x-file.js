@@ -21,7 +21,7 @@ export default Ember.Component.extend({
     },
     discardChanges: function() {
       this.set('isEditing', false);
-      this.get('model').rollback();
+      this.get('model').rollbackAttributes();
     },
     open: function () {
       this.sendAction('open', this.get('model'));

@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
       var _this = this;
       var viewId = this.get('viewId');
       if (viewId !== null) {
-        this.store.find('view', this.get('viewId')).then(function(view) {
+        this.store.findRecord('view', this.get('viewId')).then(function(view) {
           _this.set('view', view);
         });
       }

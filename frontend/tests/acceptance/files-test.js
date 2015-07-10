@@ -159,3 +159,4 @@ test('cancel uploading new file', function(assert) {
     );
   });
 });
+
