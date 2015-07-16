@@ -7,50 +7,77 @@ var Router = Ember.Router.extend(googlePageview, {
 });
 
 Router.map(function () {
-  this.resource('files', { path: '/'}, function() {
+  this.route('files', { path: '/'}, function() {
     this.route('upload');
     this.route('new');
-    this.resource('file', { path: 'files/:file_id' }, function() {
+    this.route('file', { 
+      path: 'files/:file_id',
+      resetNamespace: true 
+    }, function() {
       this.route('delete');
     });
   });
-  this.resource('streams', function() {
-    this.resource('stream', { path: '/:stream_id' }, function() {
+  this.route('streams', function() {
+    this.route('stream', { 
+      path: '/:stream_id',
+      resetNamespace: true 
+    }, function() {
       this.route('close');
-      this.resource('operators', function() {
-        this.resource('operator', { path: '/:operator_id' }, function() {
+      this.route('operators', { resetNamespace: true }, function() {
+        this.route('operator', {
+          path: '/:operator_id',
+          resetNamespace: true 
+        }, function() {
           this.route('delete');
-          this.resource('parameters', function() {
-            this.resource('parameter', { path: '/:parameter_id' }, function() {
+          this.route('parameters', { resetNamespace: true }, function() {
+            this.route('parameter', {
+              path: '/:parameter_id',
+              resetNamespace: true 
+            }, function() {
               this.route('edit');
             });
           });
         });
         this.route('new');
       });
-      this.resource('views', function() {
-        this.resource('view', { path: '/:view_id' }, function() {
+      this.route('views', { resetNamespace: true }, function() {
+        this.route('view', {
+          path: '/:view_id',
+          resetNamespace: true
+        }, function() {
           this.route('delete');
         });
         this.route('new');
       });
-      this.resource('connections', function() {
-        this.resource('connection', { path: '/:connection_id' }, function() {
+      this.route('connections', { resetNamespace: true }, function() {
+        this.route('connection', {
+          path: '/:connection_id',
+          resetNamespace: true
+        }, function() {
           this.route('delete');
         });
       });
-      this.resource('inputObservers', function() {
-        this.resource('inputObserver', { path: '/:inputObserver_id' }, function() {
+      this.route('inputObservers', { resetNamespace: true }, function() {
+        this.route('inputObserver', {
+          path: '/:inputObserver_id',
+          resetNamespace: true
+        }, function() {
           this.route('delete');
         });
       });
-      this.resource('outputObservers', function() {
-        this.resource('outputObserver', { path: '/:outputObserver_id' }, function() {
+      this.route('outputObservers', { resetNamespace: true }, function() {
+        this.route('outputObserver', {
+          path: '/:outputObserver_id',
+          resetNamespace: true
+        }, function() {
           this.route('delete');
         });
       });
-      this.resource('parameterObservers', function() {
-        this.resource('parameterObserver', { path: '/:parameterObserver_id' }, function() {
+      this.route('parameterObservers', { resetNamespace: true }, function() {
+        this.route('parameterObserver', {
+          path: '/:parameterObserver_id',
+          resetNamespace: true
+        }, function() {
           this.route('delete');
         });
       });
