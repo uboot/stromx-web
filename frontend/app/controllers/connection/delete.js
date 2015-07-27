@@ -1,8 +1,8 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  stream: Ember.inject.controller(),
   wasRemoved: false,
-  needs: ['stream'],
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
       }
     },
     remove: function () {
-      var streamController = this.get('controllers.stream');
+      var streamController = this.get('stream');
       streamController.send('removeConnection', this.get('model'));
       this.set('wasRemoved', true);
     }

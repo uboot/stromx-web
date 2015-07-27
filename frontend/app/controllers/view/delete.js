@@ -1,12 +1,12 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
-  needs: ['stream'],
+  stream: Ember.inject.controller(),
   wasRemoved: false,
   actions: {
     dismiss: function () {
       if (this.get('wasRemoved')) {
-        this.set('controllers.stream.view', null);
+        this.set('stream.view', null);
         this.transitionToRoute('stream.index');
         this.set('wasRemoved', false);
       } else {

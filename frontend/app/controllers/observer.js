@@ -4,8 +4,8 @@ import InputObserverModel from 'stromx-web/models/input-observer';
 import OutputObserverModel from 'stromx-web/models/output-observer';
 
 export default Ember.Controller.extend({
-  needs: ['stream'],
-
+  stream: Ember.inject.controller(),
+  
   isParameterObserver: function() {
     return this.get('model') instanceof ParameterObserverModel;
   }.property('model'),
