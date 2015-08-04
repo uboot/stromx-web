@@ -17,6 +17,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'inactive',
+        behavior: 'persistent',
         descriptions: [],
         operator: 1,
         observers: []
@@ -35,6 +36,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'none',
+        behavior: 'persistent',
         descriptions: [0, 1, 2],
         operator: 2,
         observers: []
@@ -53,6 +55,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 2,
         observers: [0]
@@ -71,6 +74,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'timedOut',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 2,
         observers: []
@@ -89,6 +93,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 2,
         observers: []
@@ -107,6 +112,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'inactive',
+        behavior: 'persistent',
         descriptions: [],
         operator: 3,
         observers: []
@@ -125,6 +131,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'accessFailed',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 2,
         observers: []
@@ -151,6 +158,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []
@@ -169,6 +177,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'inactive',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []
@@ -187,6 +196,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []
@@ -205,6 +215,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []
@@ -223,6 +234,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [3, 4, 5],
         operator: 2,
         observers: []
@@ -245,6 +257,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []
@@ -263,6 +276,7 @@ module.exports = function(app) {
         cols: 0,
         state: 'current',
         access: 'full',
+        behavior: 'persistent',
         descriptions: [],
         operator: 4,
         observers: []

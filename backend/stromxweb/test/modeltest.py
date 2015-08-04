@@ -901,6 +901,7 @@ class ParametersTest(unittest.TestCase):
                               },
                               'operator': '0',
                               'access': 'inactive',
+                              'behavior': 'persistent',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -936,6 +937,7 @@ class ParametersTest(unittest.TestCase):
                               },
                               'operator': '0',
                               'access': 'inactive',
+                              'behavior': 'persistent',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -982,6 +984,7 @@ class ParametersTest(unittest.TestCase):
                               },
                               'operator': '0',
                               'access': 'none',
+                              'behavior': 'persistent',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -1011,6 +1014,7 @@ class ParametersTest(unittest.TestCase):
                               },
                               'operator': '0',
                               'access': 'inactive',
+                              'behavior': 'persistent',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -1058,6 +1062,7 @@ class ParametersTest(unittest.TestCase):
                               },
                               'operator': '0',
                               'access': 'full',
+                              'behavior': 'persistent',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -1092,6 +1097,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['7']
         
         self.assertEqual('trigger', param.data['parameter']['variant']['ident'])
+        self.assertEqual('push', param.data['parameter']['behavior'])
         self.assertEqual(0, valueParam.data['parameter']['value'])
         
     def testSetTrigger(self):

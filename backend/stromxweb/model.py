@@ -781,7 +781,7 @@ class Operator(Item):
     def __allocateParameters(self):
         parameters = self.model.parameters
         for param in self.__op.info().parameters():
-            if not _parameterIsReadable(self.__op, param):
+            if not _parameterIsAccessible(self.__op, param):
                 continue
             
             parameter = parameters.addStromxParameter(self, param)
@@ -809,7 +809,7 @@ class Parameters(Items):
     
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
-                  'minimum', 'maximum', 'rows', 'cols', 'access',
+                  'minimum', 'maximum', 'rows', 'cols', 'access', 'behavior',
                   'descriptions', 'state', 'observers']
     
     def __init__(self, op, param, model):
@@ -820,7 +820,7 @@ class Parameter(Item):
         self.__descriptions = []
         self.__observers = []
         for desc in self.__param.descriptions():
-            if not _parameterIsReadable(op.stromxOp, param):
+            if not _parameterIsAccessible(op.stromxOp, param):
                 continue
             
             description = (
@@ -895,6 +895,18 @@ class Parameter(Item):
     @property
     def access(self):
         return _parameterAccess(self.stromxOp, self.__param)
+    
+    @property
+    def behavior(self):
+        UpdateBehavior = stromx.runtime.Parameter.UpdateBehavior
+        if self.__param.updateBehavior() == UpdateBehavior.PERSISTENT:
+            return 'persistent'
+        elif self.__param.updateBehavior() == UpdateBehavior.PUSH:
+            return 'push'
+        elif self.__param.updateBehavior() == UpdateBehavior.PULL:
+            return 'pull'
+        else:
+            return ''
         
     @property
     def descriptions(self):
@@ -1682,10 +1694,15 @@ def _resourceName(name):
     else:
         return name[0].lower() + name[1:]
 
-def _parameterIsReadable(op, param):
+def _parameterIsAccessible(op, param):
+    updateBehavior = param.updateBehavior();
+    UpdateBehavior = stromx.runtime.Parameter.UpdateBehavior
+    
+    if updateBehavior == UpdateBehavior.INTERNAL:
+        return False
+    
     status = op.status()
     accessMode = param.accessMode()
-    
     AccessMode = stromx.runtime.Parameter.AccessMode
     Status = stromx.runtime.Operator.Status
     

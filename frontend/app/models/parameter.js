@@ -10,6 +10,7 @@ export default DS.Model.extend({
   rows: DS.attr('number'),
   state: DS.attr('string'),
   access: DS.attr('string'),
+  behavior: DS.attr('string'),
   operator: DS.belongsTo('operator', {async: true}),
   descriptions: DS.hasMany('enum-description', {async: true}),
   observers: DS.hasMany('parameter-observer', {async: true})
