@@ -10,7 +10,7 @@ RUN apt-get install -y software-properties-common \
 
 ENV PATH $PATH:./node_modules/.bin
 
-RUN git clone --branch 0.1.0 https://github.com/uboot/stromx-web.git \
+RUN git clone --branch 0.1.x https://github.com/uboot/stromx-web.git \
     && cd stromx-web/frontend \
     && npm install \
     && npm install bower \
