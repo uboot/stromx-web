@@ -3,14 +3,14 @@ FROM ubuntu:14.04
 MAINTAINER Matthias Fuchs <matz.fuchs@gmx.at>
 
 RUN apt-get install -y software-properties-common \
-    && add-apt-repository ppa:stromx-developers/packages \
+    && add-apt-repository ppa:stromx-developers/stromx-stable \
     && apt-get update \
     && apt-get install -y curl python-pip python-daemon python-opencv python-stromx git nodejs-legacy npm \
     && pip install tornado
 
 ENV PATH $PATH:./node_modules/.bin
 
-RUN git clone https://github.com/uboot/stromx-web.git \
+RUN git clone --branch 0.1.0 https://github.com/uboot/stromx-web.git \
     && cd stromx-web/frontend \
     && npm install \
     && npm install bower \
