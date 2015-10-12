@@ -8,7 +8,9 @@ export default Ember.Component.extend({
     // send the according action after it has been hidden again
     var _this = this;
     this.$('.modal').one('hidden.bs.modal', function() {
-      _this.sendAction("dismiss");
+      if (! _this.get('isDestroying')) {
+        _this.sendAction("dismiss");
+      }
     });
   },
   willDestroyElement: function() {
@@ -16,7 +18,6 @@ export default Ember.Component.extend({
     if (element === undefined) {
       return;
     }
-    
     element.modal('hide');
   },
   showDoNotAccept: Ember.computed.notEmpty('doNotAcceptText'),
