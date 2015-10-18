@@ -10,7 +10,7 @@ export default Ember.Controller.extend({
       return COLORS[thread % COLORS.length].value;
     }
   }.property('model.thread'),
-  
+
   thread: function() {
     var thread = this.get('model.thread');
     if (thread === undefined || thread == null) {
@@ -30,6 +30,9 @@ export default Ember.Controller.extend({
         this.get('model.input'),
         this.get('model.output')
       ]).then(function(connectors) {
+        if (! (connectors[0] && connectors[1])) {
+          return;
+        }
         _this.set('title', connectors[0].get('title') + ' -> ' + connectors[1].get('title'));
       });
     }

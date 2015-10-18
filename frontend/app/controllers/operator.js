@@ -33,7 +33,7 @@ export default Ember.Controller.extend({
       var observerLists = inputs.map( function(input) {
         return input.get('observers');
       });
-      
+
       return Ember.RSVP.all(observerLists);
     }).then(function(observerLists) {
       var promises = [];
@@ -47,15 +47,15 @@ export default Ember.Controller.extend({
           promises.pushObject(viewController.removeObserver(observer));
         });
       });
-      
+
       return Ember.RSVP.all(promises);
     });
-    
+
     var removeOutputObservers = this.get('model.outputs').then(function(outputs) {
       var observerLists = outputs.map( function(input) {
         return input.get('observers');
       });
-      
+
       return Ember.RSVP.all(observerLists);
     }).then(function(observerLists) {
       var promises = [];
@@ -69,13 +69,13 @@ export default Ember.Controller.extend({
           promises.pushObject(viewController.removeObserver(observer));
         });
       });
-      
+
       return Ember.RSVP.all(promises);
     });
-    
+
     return Ember.RSVP.all([removeInputObservers, removeOutputObservers]);
   },
-  
+
   removeConnections: function() {
     var removeIncoming = this.get('model.inputs').then(function(inputs) {
       var connections = inputs.map( function(input) {
@@ -89,7 +89,7 @@ export default Ember.Controller.extend({
           return connection.save();
         }
       });
-      
+
       return Ember.RSVP.all(removed);
     });
 
@@ -115,35 +115,41 @@ export default Ember.Controller.extend({
 
     return Ember.RSVP.all([removeIncoming, removeOutgoing]);
   },
-  
+
   removeDependencies: function() {
     return Ember.RSVP.all([
       this.removeConnections(),
       this.removeObservers()
     ]);
   },
-  
+
   reloadConnectionsAndObservers: function() {
     var model = this.get('model');
     model.get('stream').then(function(stream) {
-      return stream.reload();
-    });
-    model.get('stream.views').then(function(views) {
-      var reloadedViews = views.map(function(view) {
-        return view.reload();
-      });
-      Ember.RSVP.all(reloadedViews).then(function(views) {
-        views.forEach(function(view) {
-          view.get('observers').then(function(observers) {
-            observers.forEach(function(observer) {
-              observer.reload();
+      if (! stream) {
+        return;
+      }
+
+
+      stream.get('views').then(function(views) {
+        var reloadedViews = views.map(function(view) {
+          return view.reload();
+        });
+        Ember.RSVP.all(reloadedViews).then(function(views) {
+          views.forEach(function(view) {
+            view.get('observers').then(function(observers) {
+              observers.forEach(function(observer) {
+                observer.reload();
+              });
             });
           });
         });
       });
+
+      return stream.reload();
     });
   },
-  
+
   reloadView: function(view) {
     view.reload().then(function(view) {
       view.get('observers').forEach(function(observer) {
@@ -151,7 +157,7 @@ export default Ember.Controller.extend({
       });
     });
   },
-  
+
   actions: {
     editName: function() {
       this.set('isEditingName', true);
