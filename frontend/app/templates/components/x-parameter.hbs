@@ -16,7 +16,7 @@
         <button {{action "trigger"}} class="btn btn-primary stromx-send-trigger">Send</button>
       </div>
     {{else if isEnum}}
-      <div class="form-group">        
+      <div class="form-group">
         <select onchange={{action (mut editValue) value="target.value"}} class="stromx-parameter-select">
           {{#each model.descriptions key="@index" as |item|}}
             <option selected={{is-equal item.value editValue}} value={{item.value}}>{{item.title}}</option>
@@ -46,25 +46,26 @@
       </div>
     {{/if}}
   </form>
-{{else if timedOut}}
-  <em>Access timed out</em>
-  <a {{action "reload"}} class="stromx-reload-parameter">
-    <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-  </a>
-{{else if accessFailed}}
-  <em>Access failed</em>
-  <a {{action "reload"}} class="stromx-reload-parameter">
-    <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
-  </a>
-{{else if writable}}
-  {{#if isMatrix}}
-    {{#link-to "parameter.edit" model}}
-      <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
-    {{/link-to}}
-  {{else}}
-    <a {{action "editValue"}}>
-      <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
+{{else}}
+  {{#if timedOut}}
+    <em>Access timed out</em>
+  {{else if accessFailed}}
+    <em>Access failed</em>
+  {{/if}}
+  {{#if offerReload}}
+    <a {{action "reload"}} class="stromx-reload-parameter">
+      <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
     </a>
+  {{else if writable}}
+    {{#if isMatrix}}
+      {{#link-to "parameter.edit" model}}
+        <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
+      {{/link-to}}
+    {{else}}
+      <a {{action "editValue"}}>
+        <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
+      </a>
+    {{/if}}
   {{/if}}
 {{/if}}
 <span class="stromx-parameter-value">{{displayValue}}</span>

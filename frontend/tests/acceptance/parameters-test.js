@@ -61,3 +61,15 @@ test('increase the number of matrix cols', function(assert) {
   });
 });
 
+
+test('edit null value matrix', function(assert) {
+  visit('/streams/2/operators/4/parameters/15/edit');
+  fillIn('#num-rows', 2);
+  fillIn('#num-cols', 3);
+
+  andThen(function() {
+    assert.equal(find('table#values tr').length, 2, 'The table has 2 rows');
+    assert.equal(find('table#values tr:nth-child(1) td').length, 3,
+                 'The table has 3 columns');
+  });
+});

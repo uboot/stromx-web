@@ -1,3 +1,5 @@
+/*exported Router */
+
 import Ember from 'ember';
 import Application from '../../app';
 import Router from '../../router';

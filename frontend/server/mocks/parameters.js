@@ -280,6 +280,44 @@ module.exports = function(app) {
         descriptions: [],
         operator: 4,
         observers: []
+      },
+      {
+        id: 15,
+        title: 'Push parameter',
+        variant: {
+          ident: 'matrix',
+          title: '32-bit float matrix'
+        },
+        value: null,
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'accessFailed',
+        access: 'full',
+        behavior: 'push',
+        descriptions: [],
+        operator: 4,
+        observers: []
+      },
+      {
+        id: 16,
+        title: 'Pull parameter',
+        variant: {
+          ident: 'float',
+          title: 'Float32'
+        },
+        value: 3.0,
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'current',
+        access: 'full',
+        behavior: 'pull',
+        descriptions: [],
+        operator: 4,
+        observers: []
       }
     ]});
   });

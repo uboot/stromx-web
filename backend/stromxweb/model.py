@@ -942,7 +942,15 @@ class Parameter(Item):
             value = conversion.toPythonValue(variant, data)
         except stromx.runtime.Exception as e:
             self.__state = 'accessFailed'
-            value = ''
+            value = None
+            
+            # we try to read push parameters (which are not meant to be read),
+            # but suppress error reporting in case reading fails
+            updateBehavior = self.__param.updateBehavior()
+            PUSH = stromx.runtime.Parameter.UpdateBehavior.PUSH
+            if updateBehavior == PUSH:
+                return value 
+            
             self.model.errors.addError(e)
         return value
         
@@ -953,6 +961,13 @@ class Parameter(Item):
         try:
             self.stromxOp.setParameter(self.__param.id(), data)
         except stromx.runtime.Exception as e:
+            # we try to set pull parameters (which are not meant to be set),
+            # but suppress error reporting in case setting fails
+            updateBehavior = self.__param.updateBehavior()
+            PULL = stromx.runtime.Parameter.UpdateBehavior.PULL
+            if updateBehavior == PULL:
+                return
+            
             self.model.errors.addError(e)
             raise Failed()
     

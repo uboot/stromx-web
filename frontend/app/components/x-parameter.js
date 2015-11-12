@@ -32,12 +32,23 @@ export default Ember.Component.extend({
     return this.get('model.state') === 'current';
   }.property('model.state'),
 
+  offerReload: function() {
+    if (this.get('model.behavior') === 'push') {
+      return false;
+    }
+
+    if (this.get('model.behavior') === 'pull') {
+      return true;
+    }
+
+    return this.get('timedOut') || this.get('accessFailed');
+  }.property('timedOut', 'accessFailed', 'model.behavior'),
+
   writable: function() {
     var variant = this.get('model.variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger',
                       'matrix', 'image'];
-    var currentAndKnown = this.get('current') && knownTypes.contains(variant);
-    if (! currentAndKnown) {
+    if (! knownTypes.contains(variant)) {
       return false;
     }
 
@@ -57,13 +68,14 @@ export default Ember.Component.extend({
 
   editValue: Ember.computed('model.value', 'model.variant', {
     get: function() {
+      var value = this.get('model.value');
       switch (this.get('model.variant.ident')) {
         case 'float':
-          return this.get('model.value').toPrecision(3);
+          return value ? this.get('model.value').toPrecision(3) : 0.0;
         case 'int':
         case 'string':
         case 'enum':
-          return this.get('model.value');
+          return value ? this.get('model.value') : '';
         default:
           return '';
       }

@@ -37,13 +37,13 @@ test('new operator', function(assert) {
       5,
       'The new operator is displayed in the stream view'
     );
-    
+
     assert.equal(
       find('.stromx-svg-operator:nth-of-type(5) text').text(),
       "Test",
       'The new operator is named "Test"'
     );
-    
+
     assert.equal(
       currentRouteName(),
       'operator.index',
@@ -89,7 +89,7 @@ test('cancel creating an operator', function(assert) {
       4,
       'No new operator is displayed in the stream view'
     );
-    
+
     assert.equal(
       currentRouteName(),
       'stream.index',
@@ -185,7 +185,7 @@ test('show input observer', function(assert) {
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
   fillIn('.stromx-views-select', 1);
   click('.stromx-show-input-observer');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -198,7 +198,7 @@ test('show input observer', function(assert) {
 test('edit input', function(assert) {
   visit('/streams/2/operators/2');
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-cancel').length,
@@ -221,7 +221,7 @@ test('edit input', function(assert) {
 test('edit output', function(assert) {
   visit('/streams/2/operators/0');
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-cancel').length,
@@ -246,7 +246,7 @@ test('add input observer', function(assert) {
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
   fillIn('.stromx-views-select', 2);
   click('.stromx-add-input-observer');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -260,7 +260,7 @@ test('cancel editing input', function(assert) {
   visit('/streams/2/operators/1');
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.form-group').length,
@@ -279,7 +279,7 @@ test('editing an input and adding a view', function(assert) {
   visit('/streams/3/operators/3');
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
   click('.stromx-new-view');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -293,7 +293,7 @@ test('cancelling adding a new view when editing an input', function(assert) {
   visit('/streams/3/operators/3');
   click('.stromx-input-row:nth-child(1) .stromx-edit-input-observer');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.form-group').length,
@@ -313,7 +313,7 @@ test('show output observer', function(assert) {
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
   fillIn('.stromx-views-select', 2);
   click('.stromx-show-output-observer');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -328,7 +328,7 @@ test('add output observer', function(assert) {
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
   fillIn('.stromx-views-select', 2);
   click('.stromx-add-output-observer');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -342,7 +342,7 @@ test('cancel editing output', function(assert) {
   visit('/streams/2/operators/0');
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.form-group').length,
@@ -361,7 +361,7 @@ test('editing an output and adding a view', function(assert) {
   visit('/streams/3/operators/3');
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
   click('.stromx-new-view');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -375,7 +375,7 @@ test('cancelling adding a new view when editing an output', function(assert) {
   visit('/streams/3/operators/3');
   click('.stromx-output-row:nth-child(1) .stromx-edit-output-observer');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.form-group').length,
@@ -392,7 +392,7 @@ test('cancelling adding a new view when editing an output', function(assert) {
 
 test('read-only parameter', function(assert) {
   visit('/streams/2/operators/2');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter').length,
@@ -404,7 +404,7 @@ test('read-only parameter', function(assert) {
 
 test('writable parameter', function(assert) {
   visit('/streams/2/operators/2');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(2) .stromx-edit-parameter').length,
@@ -417,7 +417,7 @@ test('writable parameter', function(assert) {
 test('reload timed out parameter', function(assert) {
   visit('/streams/2/operators/2');
   click('.stromx-parameter-row:nth-child(3) .stromx-reload-parameter');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(3) .stromx-reload-parameter').length,
@@ -430,7 +430,7 @@ test('reload timed out parameter', function(assert) {
 test('reload inaccessible parameter', function(assert) {
   visit('/streams/2/operators/2');
   click('.stromx-parameter-row:nth-child(3) .stromx-reload-parameter');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(5) .stromx-reload-parameter').length,
@@ -445,7 +445,7 @@ test('editing a float parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(2) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 77.7);
   click('.stromx-save');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(2) .stromx-parameter-value').text(),
@@ -460,7 +460,7 @@ test('cancel editing a float parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(2) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 77.7);
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(2) .stromx-parameter-value').text(),
@@ -475,7 +475,7 @@ test('editing an integer parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 8080);
   click('.stromx-save');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-parameter-value').text(),
@@ -490,7 +490,7 @@ test('cancel editing an integer parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 8080);
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-parameter-value').text(),
@@ -505,7 +505,7 @@ test('editing a string parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 'stromx.org');
   click('.stromx-save');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-parameter-value').text(),
@@ -520,7 +520,7 @@ test('cancel editing a string parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter');
   fillIn('.stromx-parameter-input', 'stromx.org');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-parameter-value').text(),
@@ -535,7 +535,7 @@ test('editing an enum parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(6) .stromx-edit-parameter');
   fillIn('.stromx-parameter-select', 7);
   click('.stromx-save');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(6) .stromx-parameter-value').text(),
@@ -550,7 +550,7 @@ test('cancel editing an enum parameter', function(assert) {
   click('.stromx-parameter-row:nth-child(6) .stromx-edit-parameter');
   fillIn('.stromx-parameter-select', 7);
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(6) .stromx-parameter-value').text(),
@@ -562,7 +562,7 @@ test('cancel editing an enum parameter', function(assert) {
 
 test('matrix parameter', function(assert) {
   visit('/streams/2/operators/4');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(1) .stromx-parameter-value').text(),
@@ -575,7 +575,7 @@ test('matrix parameter', function(assert) {
 test('editing a matrix parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(1) .stromx-edit-parameter');
-  
+
   andThen(function() {
     assert.equal(
       currentRouteName(),
@@ -587,7 +587,7 @@ test('editing a matrix parameter', function(assert) {
 
 test('unknown variant parameter', function(assert) {
   visit('/streams/2/operators/4');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(2) .stromx-parameter-value').text(),
@@ -601,7 +601,7 @@ test('send trigger', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(3) .stromx-edit-parameter');
   click('.stromx-send-trigger');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(3) .stromx-parameter-value').text(),
@@ -615,7 +615,7 @@ test('cancel sending a trigger', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(3) .stromx-edit-parameter');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.form-group').length,
@@ -629,7 +629,7 @@ test('cancel editing a bool parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(4) .stromx-edit-parameter');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(4) .stromx-parameter-value').text(),
@@ -643,7 +643,7 @@ test('activate a bool parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(4) .stromx-edit-parameter');
   click('.stromx-activate');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(4) .stromx-parameter-value').text(),
@@ -657,7 +657,7 @@ test('deactivate a bool parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(5) .stromx-edit-parameter');
   click('.stromx-deactivate');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(5) .stromx-parameter-value').text(),
@@ -669,7 +669,7 @@ test('deactivate a bool parameter', function(assert) {
 
 test('image parameter', function(assert) {
   visit('/streams/2/operators/4');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(6) .stromx-parameter-value').text(),
@@ -683,7 +683,7 @@ test('edit image parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(6) .stromx-edit-parameter');
   click('.stromx-save');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(6) .stromx-parameter-value').text(),
@@ -697,12 +697,34 @@ test('cancel editing image parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(6) .stromx-edit-parameter');
   click('.stromx-cancel');
-  
+
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(6) .stromx-parameter-value').text(),
       '200 x 300 image',
       'Clicking cancel when editing an image parameter does not change its value'
+    );
+  });
+});
+
+test('display push parameter', function(assert) {
+  visit('/streams/2/operators/4');
+
+  andThen(function() {
+    assert.ok(
+      find('.stromx-parameter-row:nth-child(7) .stromx-edit-parameter').length,
+      'An edit button is displayed for a push parameter'
+    );
+  });
+});
+
+test('display pull parameter', function(assert) {
+  visit('/streams/2/operators/4');
+
+  andThen(function() {
+    assert.ok(
+      find('.stromx-parameter-row:nth-child(8) .stromx-reload-parameter').length,
+      'A reload button is displayed for a pull parameter'
     );
   });
 });

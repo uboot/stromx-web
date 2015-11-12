@@ -1,3 +1,5 @@
+/*exported waitForModal */
+
 import Ember from 'ember';
 
 export default Ember.Test.registerAsyncHelper('waitForModal', function() {

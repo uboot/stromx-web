@@ -65,6 +65,8 @@ def toPythonValue(variant, data):
         return stromxMatrixToData(data)
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return {'numItems': len(data.content()) }
+    elif variant.isVariant(stromx.runtime.Variant.FILE):
+        return {'path': data.path() }
     else:
         return 0
        
@@ -123,6 +125,8 @@ def variantToString(variant):
         return 'matrix'
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return 'list'
+    elif variant.isVariant(stromx.runtime.Variant.FILE):
+        return 'file'
     else:
         return 'none'
     

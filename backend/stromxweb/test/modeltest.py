@@ -222,7 +222,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                         'type': 'Block',
                                         'version': '0.1.0'}}
                                          
-        self.assertEqual(80, len(self.templates)) 
+        self.assertEqual(82, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -749,7 +749,7 @@ class OperatorsTest(unittest.TestCase):
                              'type': 'ParameterOperator',
                              'status': 'none',
                              'version': '1.2.3',
-                             'parameters': ['11'],
+                             'parameters': ['13'],
                              'outputs': [],
                              'inputs': [],
                              'position': {'x': 0.0, 'y': 0.0},
@@ -772,7 +772,7 @@ class OperatorsTest(unittest.TestCase):
                              'status': 'initialized',
                              'version': '1.2.3',
                              'parameters': ['4', '5', '6', '7', '8', '9', '10',
-                                            '11'],
+                                            '11', '12', '13'],
                              'inputs': ['1', '2'],
                              'outputs': ['1', '2'],
                              'position': {'x': 0.0, 'y': 0.0},
@@ -1100,6 +1100,32 @@ class ParametersTest(unittest.TestCase):
         self.assertEqual('push', param.data['parameter']['behavior'])
         self.assertEqual(0, valueParam.data['parameter']['value'])
         
+    def testDataPushParameter(self):
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
+        param = self.parameters['8']
+        
+        self.assertEqual('push', param.data['parameter']['behavior'])
+        self.assertEqual(0, len(self.errorSink.errors))
+        self.assertEqual(None, param.data['parameter']['value'])
+        
+    def testDataPullParameter(self):
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
+        param = self.parameters['9']
+        
+        self.assertEqual('pull', param.data['parameter']['behavior'])
+        self.assertEqual(0, len(self.errorSink.errors))
+        self.assertEqual(3.0, param.data['parameter']['value'])
+        
+    def testSetDataPullParameter(self):
+        self.model.operators.addStromxOp(self.parameterOperator, self.stream)
+        param = self.parameters['9']
+        
+        param.set({'parameter': {'id': '9',
+                                 'value': 1.3}})
+        
+        self.assertEqual(0, len(self.errorSink.errors))
+        self.assertEqual(3.0, param.data['parameter']['value'])
+        
     def testSetTrigger(self):
         self.model.operators.addStromxOp(self.parameterOperator, self.stream)
         valueParam = self.parameters['6']
@@ -1215,15 +1241,6 @@ class ConnectionsTest(unittest.TestCase):
         self.assertEqual('2', data['connection']['output'])
         self.assertEqual('0', data['connection']['input'])
         
-    def testAddDataWhileActive(self):
-        newData = {'connection': {'output': '2', 
-                                  'input': '0'}}
-                  
-        self.assertRaises(model.Failed, self.model.connections.addData, newData)
-        
-        self.assertEqual(0, len(self.model.connections))
-        self.assertEqual(1, len(self.errorSink.errors))
-        
     def testAddDataInputConnected(self):
         newData = {'connection': {'output': '2', 
                                   'input': '0'}}
@@ -1240,6 +1257,7 @@ class ConnectionsTest(unittest.TestCase):
                                
         self.assertRaises(model.Failed, self.model.connections.addData,
                           newData)
+        self.assertEqual(0, len(self.model.connections))
         self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetStromxThreadId(self):
