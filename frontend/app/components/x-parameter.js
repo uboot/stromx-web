@@ -1,4 +1,5 @@
 import Ember from "ember";
+import ENV from '../config/environment';
 
 export default Ember.Component.extend({
   isEditing: false,
@@ -43,6 +44,21 @@ export default Ember.Component.extend({
 
     return this.get('timedOut') || this.get('accessFailed');
   }.property('timedOut', 'accessFailed', 'model.behavior'),
+
+  offerDownload: Ember.computed.equal('model.variant.ident', 'file'),
+
+  url: function() {
+    if (! this.get('model.variant.ident') === 'file')
+    {
+      return '';
+    }
+
+    if (ENV.APP.API_HOST) {
+      return ENV.APP.API_HOST + '/files/' + this.get('model.value.name');
+    } else {
+      return 'files/' + this.get('model.value.name');
+    }
+  }.property('model.value'),
 
   writable: function() {
     var variant = this.get('model.variant.ident');
@@ -141,6 +157,8 @@ export default Ember.Component.extend({
           return value.width + ' x ' + value.height + ' image';
         case 'trigger':
           return 'Trigger';
+        case 'file':
+          return value['name'];
         default:
           return value;
       }

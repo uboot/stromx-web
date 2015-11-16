@@ -318,6 +318,27 @@ module.exports = function(app) {
         descriptions: [],
         operator: 4,
         observers: []
+      },
+      {
+        id: 17,
+        title: 'File parameter',
+        variant: {
+          ident: 'file',
+          title: 'File'
+        },
+        value: {
+          name: '28e5-8a4c-c5cf-375b.xml'
+        },
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'current',
+        access: 'full',
+        behavior: 'persistent',
+        descriptions: [],
+        operator: 4,
+        observers: []
       }
     ]});
   });

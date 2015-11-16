@@ -4,6 +4,7 @@ import base64
 import cv2
 import io
 import numpy as np
+import os
 import re
 
 import stromx.runtime
@@ -45,7 +46,7 @@ def toPythonObserverValue(variant, data):
     else:
         return toPythonValue(variant, data)
     
-def toPythonValue(variant, data):
+def toPythonValue(variant, data):  
     if data.variant().isVariant(stromx.runtime.Variant.NONE):
         return None
     
@@ -66,7 +67,7 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return {'numItems': len(data.content()) }
     elif variant.isVariant(stromx.runtime.Variant.FILE):
-        return {'path': data.path() }
+        return {'name': os.path.basename(data.path()) }
     else:
         return 0
        

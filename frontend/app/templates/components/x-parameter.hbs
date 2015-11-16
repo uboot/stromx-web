@@ -52,6 +52,11 @@
   {{else if accessFailed}}
     <em>Access failed</em>
   {{/if}}
+  {{#if offerDownload}}
+    <a href={{url}} download>
+      <span class="glyphicon glyphicon-download-alt pull-right stromx-margin-left" aria-hidden="true"></span>
+    </a>
+  {{/if}}
   {{#if offerReload}}
     <a {{action "reload"}} class="stromx-reload-parameter">
       <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>

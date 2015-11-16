@@ -138,6 +138,12 @@ class ConversionTest(unittest.TestCase):
         self.assertAlmostEqual(78.27293396, value['value']['values'][1][0])
         self.assertAlmostEqual(56.86110687, value['value']['values'][2][1])
         
+    def testStromxFileToData(self):
+        stromxFile = stromx.runtime.File('data/image/lenna.jpg',
+                                         stromx.runtime.File.OpenMode.TEXT)
+        data = conversion.toPythonValue(stromxFile.variant(), stromxFile)
+        self.assertEqual(data, {'name': 'lenna.jpg'})      
+        
     def testStromxMatrixToDataFloat32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.FLOAT_32
         matrix = stromx.cvsupport.Matrix.eye(3, 4, valueType)

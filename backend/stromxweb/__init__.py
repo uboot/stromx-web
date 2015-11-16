@@ -267,6 +267,8 @@ def start(configFile):
         (r"/socket/error", SocketHandler, dict(items = appModel.errors)),
         (r"/socket/connectorValue", SocketHandler,
          dict(items = appModel.connectorValues)),
+        (r"/files/(.*)", tornado.web.StaticFileHandler,
+         {"path": model.FILES_PATH}),
         (r"/download/(.*)", tornado.web.StaticFileHandler,
          {"path": config['DATA_DIR']}),
         (r"/(.*)", MainHandler)
