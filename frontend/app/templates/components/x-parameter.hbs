@@ -30,7 +30,7 @@
     {{else if isFile}}
       <div class="form-group">
         <label for="stromx-upload-file">File</label>
-        {{x-upload-file content=editValue id="stromx-upload-file"}}
+        {{x-upload-file value=fileName content=editValue id="stromx-upload-file"}}
       </div>
       <div class="form-group">
         <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
@@ -52,11 +52,6 @@
   {{else if accessFailed}}
     <em>Access failed</em>
   {{/if}}
-  {{#if offerDownload}}
-    <a href={{url}} download>
-      <span class="glyphicon glyphicon-download-alt pull-right stromx-margin-left" aria-hidden="true"></span>
-    </a>
-  {{/if}}
   {{#if offerReload}}
     <a {{action "reload"}} class="stromx-reload-parameter">
       <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
@@ -68,9 +63,14 @@
       {{/link-to}}
     {{else}}
       <a {{action "editValue"}}>
-        <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-pencil pull-right stromx-margin-left stromx-edit-parameter" aria-hidden="true"></span>
       </a>
     {{/if}}
   {{/if}}
+{{/if}}
+{{#if offerDownload}}
+  <a href={{url}} download>
+    <span class="glyphicon glyphicon-download-alt pull-right" aria-hidden="true"></span>
+  </a>
 {{/if}}
 <span class="stromx-parameter-value">{{displayValue}}</span>

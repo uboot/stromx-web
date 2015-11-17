@@ -22,7 +22,8 @@ export default Ember.Component.extend({
   }.property('model.variant'),
 
   isFile: function() {
-    return this.get('model.variant.ident') === 'image';
+    return this.get('model.variant.ident') === 'image' ||
+      this.get('model.variant.ident') === 'file';
   }.property('model.variant'),
 
   timedOut: function() {
@@ -48,22 +49,22 @@ export default Ember.Component.extend({
   offerDownload: Ember.computed.equal('model.variant.ident', 'file'),
 
   url: function() {
-    if (! this.get('model.variant.ident') === 'file')
+    if (this.get('model.variant.ident') !== 'file')
     {
       return '';
     }
 
     if (ENV.APP.API_HOST) {
-      return ENV.APP.API_HOST + '/files/' + this.get('model.value.name');
+      return ENV.APP.API_HOST + '/temp/' + this.get('model.value.name');
     } else {
-      return 'files/' + this.get('model.value.name');
+      return 'temp/' + this.get('model.value.name');
     }
   }.property('model.value'),
 
   writable: function() {
     var variant = this.get('model.variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger',
-                      'matrix', 'image'];
+                      'matrix', 'image', 'file'];
     if (! knownTypes.contains(variant)) {
       return false;
     }
@@ -82,6 +83,18 @@ export default Ember.Component.extend({
     return this.get('model.state') === 'accessFailed';
   }.property('model.state'),
 
+  fileName: Ember.computed('model.value', {
+    get: function() {
+      return '';
+    },
+    set: function(key, value) {
+      var strippedName = value.replace(/^.*[\\\/]/, '');
+      var v = this.get('model.value');
+      v.name = strippedName;
+      this.set('model.value', v);
+    }
+  }),
+
   editValue: Ember.computed('model.value', 'model.variant', {
     get: function() {
       var value = this.get('model.value');
@@ -97,7 +110,7 @@ export default Ember.Component.extend({
       }
     },
     set: function(key, value) {
-      var v = null;
+      var v = this.get('model.value');
       switch (this.get('model.variant.ident')) {
         case 'int':
           v = parseInt(value, 10);
@@ -118,6 +131,9 @@ export default Ember.Component.extend({
           v = {
             values: value
           };
+          break;
+        case 'file':
+          v.content = value;
           break;
         case 'enum':
           v = parseInt(value);

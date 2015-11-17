@@ -67,7 +67,7 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.Variant.LIST):
         return {'numItems': len(data.content()) }
     elif variant.isVariant(stromx.runtime.Variant.FILE):
-        return {'name': os.path.basename(data.path()) }
+        return {'name': os.path.basename(data.path()), 'content': None }
     else:
         return 0
        
@@ -104,6 +104,8 @@ def toStromxData(variant, value):
         return dataToStromxMatrix(value, stromx.runtime.Matrix.ValueType.FLOAT_32)
     elif variant.isVariant(stromx.runtime.Variant.MATRIX):
         return dataToStromxMatrix(value, stromx.runtime.Matrix.ValueType.FLOAT_32)
+    elif variant.isVariant(stromx.runtime.Variant.FILE):
+        return dataToStromxFile(value)
     else:
         return None
     
@@ -191,7 +193,7 @@ def stromxListToData(stromxList):
     return { 'numItems': len(values), 'values': values }
 
 def dataToStromxImage(data):
-    content = re.sub("data:.*;base64,", "", data['values'], re.MULTILINE)
+    content = re.sub('data:.*;base64,', '', data['values'], re.MULTILINE)
     buf = np.frombuffer(base64.decodestring(content), dtype = np.uint8)
     array = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED)
     
@@ -215,6 +217,18 @@ def dataToStromxMatrix(data, valueType):
     matrixData[:, :] = data['values']
     
     return matrix
+
+def dataToStromxFile(data):
+    openMode = stromx.runtime.File.OpenMode.BINARY
+    content = re.sub('data:.*;base64,', '', data['content'], re.MULTILINE)
+    #buf = np.frombuffer(base64.decodestring(content), dtype = np.uint8)
+    _, extension = os.path.splitext(data['name'])
+    tempPath = stromx.runtime.File.tempPath(str(extension))
+    
+    with open(tempPath, 'w') as f:
+        f.write(base64.decodestring(content))
+    
+    return stromx.runtime.File(tempPath, openMode)
 
 def stromxColorToString(color):
     return '#{0:02x}{1:02x}{2:02x}'.format(color.r(), color.g(), color.b())

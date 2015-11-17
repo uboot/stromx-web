@@ -18,7 +18,7 @@ def _str(value):
 
 from error import Failed
 
-FILES_PATH = os.path.dirname(os.path.abspath(stromx.runtime.File.tempPath('')))
+TEMP_PATH = stromx.runtime.File.tempDir()
 
 class Model(object):
     def __init__(self, directory = ""):

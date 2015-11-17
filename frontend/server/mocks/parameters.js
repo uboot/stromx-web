@@ -327,7 +327,8 @@ module.exports = function(app) {
           title: 'File'
         },
         value: {
-          name: '28e5-8a4c-c5cf-375b.xml'
+          name: '28e5-8a4c-c5cf-375b.xml',
+          content: null
         },
         minimum: 0,
         maximum: 0,

@@ -41,6 +41,24 @@ sybGeV1lnHdY5o06IteZfB3TRqH7XV14b1K4d7HR0lTyYXaI3EP2WxTy3ZTnjJKt1XPFeh+Lf22Pjb+y
 1qf/CmfgtqVpYaLpLzW6R31hDdO5huJbdW3OmV/dQxDHqpP8Vf/9k=
 """)
 
+_statisticalModel = ("""
+"data:text/xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxvcGVuY3Zfc3RvcmFnZT4KPG15X3
+N2bSB0eXBlX2lkPSJvcGVuY3YtbWwtc3ZtIj4KICA8c3ZtX3R5cGU+Q19TVkM8L3N2bV90eXBlPgogID
+xrZXJuZWw+PHR5cGU+UkJGPC90eXBlPgogICAgPGdhbW1hPjEuPC9nYW1tYT48L2tlcm5lbD4KICA8Qz
+4xLjwvQz4KICA8dGVybV9jcml0ZXJpYT48ZXBzaWxvbj4xLjE5MjA5Mjg5NTUwNzgxMjVlLTA3PC9lcH
+NpbG9uPgogICAgPGl0ZXJhdGlvbnM+MTAwMDwvaXRlcmF0aW9ucz48L3Rlcm1fY3JpdGVyaWE+CiAgPH
+Zhcl9hbGw+MTwvdmFyX2FsbD4KICA8dmFyX2NvdW50PjE8L3Zhcl9jb3VudD4KICA8Y2xhc3NfY291bn
+Q+MjwvY2xhc3NfY291bnQ+CiAgPGNsYXNzX2xhYmVscyB0eXBlX2lkPSJvcGVuY3YtbWF0cml4Ij4KIC
+AgIDxyb3dzPjE8L3Jvd3M+CiAgICA8Y29scz4yPC9jb2xzPgogICAgPGR0Pmk8L2R0PgogICAgPGRhdG
+E+CiAgICAgIC0xIDE8L2RhdGE+PC9jbGFzc19sYWJlbHM+CiAgPHN2X3RvdGFsPjI8L3N2X3RvdGFsPg
+ogIDxzdXBwb3J0X3ZlY3RvcnM+CiAgICA8Xz4KICAgICAgLTEuPC9fPgogICAgPF8+CiAgICAgIDEuPC
+9fPjwvc3VwcG9ydF92ZWN0b3JzPgogIDxkZWNpc2lvbl9mdW5jdGlvbnM+CiAgICA8Xz4KICAgICAgPH
+N2X2NvdW50PjI8L3N2X2NvdW50PgogICAgICA8cmhvPjEuODMxNTYzOTM0NjgzNzk5N2UtMDI8L3Jobz
+4KICAgICAgPGFscGhhPgogICAgICAgIDEuIC0xLjwvYWxwaGE+CiAgICAgIDxpbmRleD4KICAgICAgIC
+AwIDE8L2luZGV4PjwvXz48L2RlY2lzaW9uX2Z1bmN0aW9ucz48L215X3N2bT4KPC9vcGVuY3Zfc3Rvcm
+FnZT4K"
+""")
+
 class ConversionTest(unittest.TestCase):
     def testStromxRgbImageToData(self):
         bgrImage = cv2.imread('data/image/lenna.jpg')
@@ -142,7 +160,7 @@ class ConversionTest(unittest.TestCase):
         stromxFile = stromx.runtime.File('data/image/lenna.jpg',
                                          stromx.runtime.File.OpenMode.TEXT)
         data = conversion.toPythonValue(stromxFile.variant(), stromxFile)
-        self.assertEqual(data, {'name': 'lenna.jpg'})      
+        self.assertEqual(data, {'name': 'lenna.jpg', 'content': None})      
         
     def testStromxMatrixToDataFloat32(self):
         valueType = stromx.cvsupport.Matrix.ValueType.FLOAT_32
@@ -200,3 +218,12 @@ class ConversionTest(unittest.TestCase):
         
         firstRow = np.asarray(matrix.data())[0]
         self.assertListEqual([10.5], list(firstRow))
+        
+    def testDataToStromxFile(self):
+        data = { 'name': u'model.xml',
+                 'content': _statisticalModel }
+        
+        stromxFile = conversion.dataToStromxFile(data)
+        self.assertTrue(stromxFile.path() != '');
+        self.assertEqual('.xml', stromxFile.extension());
+        
