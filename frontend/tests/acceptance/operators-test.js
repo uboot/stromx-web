@@ -728,3 +728,32 @@ test('display pull parameter', function(assert) {
     );
   });
 });
+
+test('edit file parameter', function(assert) {
+  visit('/streams/2/operators/4');
+  click('.stromx-parameter-row:nth-child(9) .stromx-edit-parameter');
+  click('.stromx-save');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-parameter-row:nth-child(9) .stromx-parameter-value').text(),
+      '28e5-8a4c-c5cf-375b.xml',
+      'A file can be uploaded to change a file parameter'
+    );
+  });
+});
+
+test('cancel editing file parameter', function(assert) {
+  visit('/streams/2/operators/4');
+  click('.stromx-parameter-row:nth-child(9) .stromx-edit-parameter');
+  click('.stromx-cancel');
+
+  andThen(function() {
+    assert.equal(
+      find('.stromx-parameter-row:nth-child(9) .stromx-parameter-value').text(),
+      '28e5-8a4c-c5cf-375b.xml',
+      'Editing a file can be cancelled'
+    );
+  });
+});
+
