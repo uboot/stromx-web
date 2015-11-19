@@ -173,15 +173,18 @@ export default Ember.Controller.extend({
     initialize: function() {
       var model = this.get('model');
       model.set('status', 'initialized');
-      this.get('model').save().catch(function() {
+      model.save().catch(function() {
         model.rollbackAttributes();
       });
     },
     deinitialize: function() {
       this.set('model.status', 'none');
+      var model = this.get('model');
       var _this = this;
-      this.get('model').save().then(function() {
+      model.save().then(function() {
         _this.reloadConnectionsAndObservers();
+      }).catch(function() {
+        model.rollbackAttributes();
       });
     },
     addInputObserver: function(view, input) {
