@@ -6,7 +6,7 @@ export default Ember.Controller.extend({
     if (operatorValue === null) {
       return null;
     }
-    
+
     var op = this.get('selectedPackage.operators').findBy('value', operatorValue);
     return op === undefined ? null : op;
   }),
@@ -15,14 +15,14 @@ export default Ember.Controller.extend({
     if (packageValue === null) {
       return null;
     }
-    
+
     var p = this.get('packages').findBy('value', packageValue);
     return p === undefined ? null : p;
   }),
   packageValue: Ember.computed({
     set: function(key, value) {
       return parseInt(value);
-    }, 
+    },
     get: function() {
       return null;
     }
@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
   operatorValue: Ember.computed('packageValue', {
     set: function(key, value) {
       return parseInt(value);
-    }, 
+    },
     get: function() {
       return null;
     }
@@ -71,13 +71,13 @@ export default Ember.Controller.extend({
   updateName: function() {
     var op = this.get('selectedOperator');
     if (op === null) {
-      return; 
+      return;
     }
-    
+
     if (this.get('name') !== '') {
-      return; 
+      return;
     }
-      
+
     this.set('name', op.type);
   }.observes('selectedOperator'),
   actions: {
@@ -103,6 +103,8 @@ export default Ember.Controller.extend({
       var _this = this;
       op.save().then(function(op) {
         _this.transitionToRoute('operator', op);
+      }).catch(function() {
+        op.rollbackAttributes();
       });
     }
   }
