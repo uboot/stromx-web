@@ -26,22 +26,23 @@ export default Ember.Component.extend({
           return true;
       }
     }
-    
+
     return false;
   }.property('visualization', 'variant'),
 
   textData: function() {
     var data = this.get('data');
     var variant = this.get('variant');
-    
+
     switch (variant) {
       case 'int':
       case 'float':
+      case 'bool':
         return data;
       case 'matrix':
         return data.rows + ' x ' + data.cols + ' [' + data.values + ']';
       default:
-        return false;
+        return null;
     }
 
     return data;
