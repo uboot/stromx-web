@@ -1,4 +1,4 @@
-/*exported Router */
+/*exported Router, waitForModal */
 
 import Ember from 'ember';
 import Application from '../../app';
