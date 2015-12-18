@@ -3,12 +3,16 @@
   <form class="form-inline">
     {{#if isBool}}
       <div class="form-group">
+      <label>
+        <input checked={{model.value}} onchange={{action (mut editValue) value="target.value"}} value="true" name="bool" type="radio" class="stromx-parameter-radio">True
+      </label>
+      <label>
+        <input checked={{is-not model.value}} onchange={{action (mut editValue) value="target.value"}} value="false" name="bool" type="radio"class="stromx-parameter-radio">False
+      </label>
+      </div>
+      <div class="form-group">
         <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
-        {{#if model.value}}
-          <button {{action "setFalse"}} class="btn btn-primary stromx-deactivate">Deactivate</button>
-        {{else}}
-          <button {{action "setTrue"}} class="btn btn-primary stromx-activate">Activate</button>
-        {{/if}}
+        <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
       </div>
     {{else if isTrigger}}
       <div class="form-group">

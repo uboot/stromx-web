@@ -203,7 +203,7 @@ module.exports = function(app) {
       },
       {
         id: 11,
-        title: 'Inactive bool property',
+        title: 'False bool property',
         variant: {
           ident: 'bool',
           title: 'Bool'
@@ -264,7 +264,7 @@ module.exports = function(app) {
       },
       {
         id: 14,
-        title: 'Active property',
+        title: 'True bool property',
         variant: {
           ident: 'bool',
           title: 'Bool'

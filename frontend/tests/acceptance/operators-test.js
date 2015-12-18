@@ -628,41 +628,44 @@ test('cancel sending a trigger', function(assert) {
 test('cancel editing a bool parameter', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(4) .stromx-edit-parameter');
+  fillIn('label:nth-child(2) .stromx-parameter-radio', 'true');
   click('.stromx-cancel');
 
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(4) .stromx-parameter-value').text(),
-      'Inactive',
+      'False',
       'Clicking cancel when editing a bool parameter restores its previous value'
     );
   });
 });
 
-test('activate a bool parameter', function(assert) {
+test('set a bool parameter to true', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(4) .stromx-edit-parameter');
-  click('.stromx-activate');
+  fillIn('label:nth-child(2) .stromx-parameter-radio', 'true');
+  click('.stromx-save');
 
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(4) .stromx-parameter-value').text(),
-      'Active',
-      'Activating a bool parameter sets its value to active'
+      'True',
+      'Saving a true bool value sets its value to true'
     );
   });
 });
 
-test('deactivate a bool parameter', function(assert) {
+test('set a bool parameter false', function(assert) {
   visit('/streams/2/operators/4');
   click('.stromx-parameter-row:nth-child(5) .stromx-edit-parameter');
-  click('.stromx-deactivate');
+  fillIn('label:nth-child(2) .stromx-parameter-radio', 'false');
+  click('.stromx-save');
 
   andThen(function() {
     assert.equal(
       find('.stromx-parameter-row:nth-child(5) .stromx-parameter-value').text(),
-      'Inactive',
-      'Deactivating a bool parameter sets its value to inactive'
+      'False',
+      'Saving a false bool value sets its value to false'
     );
   });
 });

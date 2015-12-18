@@ -138,6 +138,9 @@ export default Ember.Component.extend({
         case 'enum':
           v = parseInt(value);
           break;
+        case 'bool':
+          v = value === 'true';
+          break;
         default:
       }
 
@@ -145,6 +148,9 @@ export default Ember.Component.extend({
       return v;
     }
   }),
+
+  isTrue: Ember.computed.alias('model.value'),
+  isFalse: Ember.computed.not('model.value'),
 
   displayValue: Ember.computed('model.value', 'model.variant', 'isEditing', {
     set: function(key, newValue) {
@@ -166,7 +172,7 @@ export default Ember.Component.extend({
         case 'enum':
           return this.updateEnumTitle(value);
         case 'bool':
-          return value ? 'Active' : 'Inactive';
+          return value ? 'True' : 'False';
         case 'matrix':
           return value.rows + ' x ' + value.cols + ' matrix';
         case 'image':
@@ -222,16 +228,6 @@ export default Ember.Component.extend({
     },
     reload: function() {
       this.get('model').reload();
-    },
-    setTrue: function() {
-      this.set('isEditing', false);
-      this.set('model.value', true);
-      this.save();
-    },
-    setFalse: function() {
-      this.set('isEditing', false);
-      this.set('model.value', false);
-      this.save();
     },
     trigger: function() {
       this.set('isEditing', false);
