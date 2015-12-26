@@ -17,7 +17,7 @@ for root, dirs, files in os.walk('stromxweb/static', ):
 
 print static_files
 setup(name='stromx-web',
-      version='0.1',
+      version='0.2',
       description='Web interface to operate stromx streams',
       author='Matthias Fuchs',
       author_email='stromx-devel@googlegroups.com',
