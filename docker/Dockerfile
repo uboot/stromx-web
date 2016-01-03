@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 MAINTAINER Matthias Fuchs <matz.fuchs@gmx.at>
 
 RUN apt-get install -y software-properties-common \
-    && add-apt-repository ppa:stromx-developers/packages \
+    && add-apt-repository ppa:stromx-developers/stromx-stable \
     && apt-get update \
     && apt-get install -y curl python-pip python-daemon python-opencv python-stromx git nodejs-legacy npm \
     && pip install tornado
