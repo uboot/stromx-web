@@ -1,17 +1,7 @@
-import Ember from 'ember';
-import startApp from '../helpers/start-app';
-import { module, test } from 'qunit';
+import moduleForAcceptance from '../helpers/module-for-acceptance';
+import { test }from 'qunit';
 
-var App;
-
-module('Acceptance: Parameters', {
-  beforeEach: function() {
-    App = startApp();
-  },
-  afterEach: function() {
-    Ember.run(App, 'destroy');
-  }
-});
+moduleForAcceptance('Acceptance: Parameters');
 
 test('decrease the number of matrix rows', function(assert) {
   visit('/streams/2/operators/4/parameters/8/edit');

@@ -1,17 +1,7 @@
-import Ember from 'ember';
-import startApp from '../helpers/start-app';
-import { module, test } from 'qunit';
+import moduleForAcceptance from '../helpers/module-for-acceptance';
+import { test }from 'qunit';
 
-var App;
-
-module('Acceptance: Views', {
-  beforeEach: function() {
-    App = startApp();
-  },
-  afterEach: function() {
-    Ember.run(App, 'destroy');
-  }
-});
+moduleForAcceptance('Acceptance: Views');
 
 test('visit view', function(assert) {
   visit('/streams/2/views/1');

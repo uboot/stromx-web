@@ -1,17 +1,7 @@
-import Ember from 'ember';
-import startApp from '../helpers/start-app';
-import { module, test } from 'qunit';
+import moduleForAcceptance from '../helpers/module-for-acceptance';
+import { test }from 'qunit';
 
-var App;
-
-module('Acceptance: OutputObservers', {
-  beforeEach: function() {
-    App = startApp();
-  },
-  afterEach: function() {
-    Ember.run(App, 'destroy');
-  }
-});
+moduleForAcceptance('Acceptance: OutputObservers');
 
 test('visit observer', function(assert) {
   visit('/streams/2/outputObservers/3');
