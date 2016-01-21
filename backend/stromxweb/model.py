@@ -4,7 +4,6 @@ import base64
 import datetime
 import json
 import os
-import pkgutil
 import re
 import threading
 
@@ -21,7 +20,7 @@ from error import Failed
 TEMP_PATH = stromx.runtime.File.tempDir()
 
 class Model(object):
-    def __init__(self, directory = ""):
+    def __init__(self, directory = "", packages = []):
         self.__files = Files(directory, self)
         self.__streams = Streams(self)
         self.__errors = Errors()
@@ -36,7 +35,7 @@ class Model(object):
         self.__inputObservers = InputObservers(self)
         self.__outputObservers = OutputObservers(self)
         self.__connectorValues = ConnectorValues(self)
-        self.__operatorTemplates = OperatorTemplates(self)
+        self.__operatorTemplates = OperatorTemplates(self, packages)
         self.__executionDelay = 1000 # ms
     
     @property
@@ -585,12 +584,12 @@ class OperatorTemplate(Item):
                                     version.revision())
          
 class OperatorTemplates(Items):
-    def __init__(self, model):
+    def __init__(self, model, packages):
         super(OperatorTemplates, self).__init__(model)
         self.__factory = stromx.runtime.Factory()
-        
-        # register the remaining packages
-        _registerPackages(self.__factory)
+   
+        for package in packages:
+            stromx.register(package, self.__factory)
         
         for op in self.__factory.availableOperators():
             template = OperatorTemplate(op, self.model)
@@ -1752,21 +1751,4 @@ def _parameterAccess(op, param):
     else:
         return "none"  
     
-def _registerPackages(factory):
-    # register 'runtime' first to make sure the unit tests pass
-    stromx.runtime.register(factory)
-    
-    for importer, modname, ispkg in pkgutil.iter_modules(stromx.__path__):
-        if modname == 'runtime':
-            continue
-            
-        # this produces a lot of output on the console so ignore it for now
-        if modname == 'cvhighgui':
-            continue
-            
-        try:
-            package = importer.find_module(modname).load_module(modname)
-            package.register(factory)
-        except ImportError:
-            pass
         

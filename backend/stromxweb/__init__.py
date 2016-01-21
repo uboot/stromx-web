@@ -205,7 +205,7 @@ def start(configFile):
     #tornado.log.enable_pretty_logging()
     execfile(configFile, config) 
     
-    appModel = model.Model(config['DATA_DIR'])
+    appModel = model.Model(config['DATA_DIR'], config['PACKAGES'])
     appModel.executionDelay = config['EXECUTION_DELAY']
     serverDir = os.path.dirname(os.path.abspath(__file__))
     staticDir = os.path.join(serverDir, "static")

@@ -13,6 +13,12 @@ import stromx.test
 
 import model
 
+_packages = [
+    'runtime',
+    'cvsupport',
+    'test'
+]
+
 _content = (
 """
 data:application/octet-stream;base64,
@@ -213,7 +219,7 @@ class OperatorTemplatesTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/stream', 'temp')
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.templates = self.model.operatorTemplates
         
     def testData(self):
@@ -222,7 +228,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                         'type': 'Block',
                                         'version': '0.1.0'}}
                                          
-        self.assertEqual(82, len(self.templates)) 
+        self.assertEqual(29, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
@@ -230,7 +236,7 @@ class FilesTest(unittest.TestCase):
         shutil.rmtree('temp', True)
         shutil.copytree('data/stream', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.files = self.model.files
         self.streams = self.model.streams
         self.errorSink = ErrorSink()
@@ -292,13 +298,13 @@ class FilesTest(unittest.TestCase):
         os.mkdir('temp')
         with file('temp/invalid.stromx', 'w') as f:
             f.write("nonsense")
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.files = self.model.files
         self.model.errors.addHandler(self.errorSink.handleError)
-             
+                
         self.assertRaises(model.Failed, self.files.set, 
                           '0', {'file': {'opened': True}})
-        
+          
         f = self.files['0'].data
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual(1, len(self.errorSink.errors))
@@ -444,21 +450,21 @@ class StreamsTest(unittest.TestCase):
     def setUpStream(self):
         shutil.copytree('data/stream', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
     def setUpDeinitialized(self):
         shutil.copytree('data/deinitialized', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
     def setUpException(self):
         shutil.copytree('data/exception', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.model.errors.addHandler(self.errorSink.handleError)
         self.streams = self.model.streams
         self.activateFile = self.model.files['0']
@@ -469,7 +475,7 @@ class StreamsTest(unittest.TestCase):
     def setUpViews(self):
         shutil.copytree('data/views', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.streams = self.model.streams
         self.streamFile = self.model.files['0']
         
@@ -617,7 +623,7 @@ class StreamsTest(unittest.TestCase):
         
 class OperatorsTest(unittest.TestCase):
     def setUp(self):
-        self.model = model.Model()
+        self.model = model.Model(packages = _packages)
         self.errorSink = ErrorSink()
         self.model.errors.addHandler(self.errorSink.handleError)
         self.operators = self.model.operators
@@ -1400,13 +1406,13 @@ class ViewsTest(unittest.TestCase):
     def setupViewData(self):
         shutil.copytree('data/views', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.streamFile = self.model.files['0']
         self.model.streams.addFile(self.streamFile)
         
     def testAddData(self):
         shutil.copytree('data/stream', 'temp')
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         stream = self.model.streams.addFile(self.model.files['0'])
         viewData = {'view': {'name': 'View name',
                              'observers': [],
@@ -1471,7 +1477,7 @@ class ObserversTest(unittest.TestCase):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         self.streamFile = self.model.files['1']
         self.model.streams.addFile(self.streamFile)
         
@@ -1502,7 +1508,7 @@ class ParameterObserversTest(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         
     def setupView(self):
         streamFile = self.model.files['1']
@@ -1549,7 +1555,7 @@ class ConnectorObserversTestBase(unittest.TestCase):
     def setUp(self):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         
     def setupEmptyView(self):
         streamFile = self.model.files['0']
@@ -1651,7 +1657,7 @@ class ConnectorValuesTest(unittest.TestCase):
         shutil.rmtree('temp', True)
         shutil.copytree('data/views', 'temp')
         
-        self.model = model.Model('temp')
+        self.model = model.Model('temp', _packages)
         
         observerFile = self.model.files['1']
         self.observerStream = self.model.streams.addFile(observerFile)
