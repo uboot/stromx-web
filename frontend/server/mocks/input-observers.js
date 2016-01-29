@@ -7,6 +7,7 @@ module.exports = function(app) {
         id: 0,
         zvalue: 1,
         visualization: 'line_segments',
+        visualizations: ['line_segments', 'values'],
         properties: {
           color: '#0000ff'
         },
@@ -18,6 +19,7 @@ module.exports = function(app) {
         id: 2,
         zvalue: 0,
         visualization: 'image',
+        visualizations: [],
         properties: {
           color: '#00ff00'
         },
@@ -29,6 +31,7 @@ module.exports = function(app) {
         id: 3,
         zvalue: 0,
         visualization: 'rotated_rectangle',
+        visualizations: ['rotated_rectangle', 'values'],
         properties: {
           color: '#ff00ff'
         },
@@ -40,6 +43,7 @@ module.exports = function(app) {
         id: 4,
         zvalue: 5,
         visualization: 'points',
+        visualizations: ['points', 'values'],
         properties: {
           color: '#ff0000'
         },

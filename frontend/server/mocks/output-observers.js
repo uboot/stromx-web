@@ -7,6 +7,7 @@ module.exports = function(app) {
         id: 3,
         zvalue: 3,
         visualization: 'default',
+        visualizations: [],
         properties: {
           color: '#ff0000'
         },
@@ -18,6 +19,7 @@ module.exports = function(app) {
         id: 4,
         zvalue: 4,
         visualization: 'polygon',
+        visualizations: ['polygon', 'values'],
         properties: {
           color: '#00ff00'
         },
@@ -29,6 +31,7 @@ module.exports = function(app) {
         id: 5,
         zvalue: 4,
         visualization: 'rectangle',
+        visualizations: ['rectangle', 'values'],
         properties: {
           color: '#00ffff'
         },
@@ -40,6 +43,7 @@ module.exports = function(app) {
         id: 6,
         zvalue: 5,
         visualization: 'polyline',
+        visualizations: ['polyline', 'values'],
         properties: {
           color: '#ff0000'
         },
