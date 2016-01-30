@@ -67,7 +67,7 @@ test('cancel editing visualization', function(assert) {
   andThen(function() {
     assert.equal(
       find('.stromx-visualization-label').text(),
-      'Slider',
+      'Value',
       'Cancelling restores the previous visualization'
     );
   });

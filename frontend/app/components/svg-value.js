@@ -37,11 +37,12 @@ export default Ember.Component.extend({
       case 'image':
       case 'polygon':
       case 'polyline':
-      case 'points':
       case 'rectangle':
       case 'rotated_rectangle':
         return visualization;
-      case 'line_segments':
+      case 'point':
+        return 'points'
+      case 'line_segment':
         return 'lines';
       default:
         return '';

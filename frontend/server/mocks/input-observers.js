@@ -6,8 +6,8 @@ module.exports = function(app) {
       {
         id: 0,
         zvalue: 1,
-        visualization: 'line_segments',
-        visualizations: ['line_segments', 'values'],
+        visualization: 'line_segment',
+        visualizations: ['line_segment', 'values'],
         properties: {
           color: '#0000ff'
         },
@@ -42,8 +42,8 @@ module.exports = function(app) {
       {
         id: 4,
         zvalue: 5,
-        visualization: 'points',
-        visualizations: ['points', 'values'],
+        visualization: 'point',
+        visualizations: ['point', 'values'],
         properties: {
           color: '#ff0000'
         },

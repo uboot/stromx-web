@@ -67,7 +67,7 @@ test('cancel editing visualization', function(assert) {
   andThen(function() {
     assert.equal(
       find('.stromx-visualization-label').text(),
-      'Line segments',
+      'Line segment',
       'Cancelling restores the previous visualization'
     );
   });

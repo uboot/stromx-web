@@ -6,8 +6,8 @@ module.exports = function(app) {
       {
         id: 0,
         zvalue: 2,
-        visualization: 'slider',
-        visualizations: ['slider', 'values'],
+        visualization: 'value',
+        visualizations: [],
         properties: {
           color: '#000000',
           position: 'top'

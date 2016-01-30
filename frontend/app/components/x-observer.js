@@ -8,9 +8,9 @@ export default Ember.Component.extend({
   visualizations: [
     {label: 'Default', value: 'default'},
     {label: 'Image', value: 'image'},
-    {label: 'Line segments', value: 'line_segments'},
-    {label: 'Slider', value: 'slider'},
-    {label: 'Points', value: 'points'},
+    {label: 'Line segment', value: 'line_segment'},
+    {label: 'Value', value: 'value'},
+    {label: 'Point', value: 'point'},
     {label: 'Polygon', value: 'polygon'},
     {label: 'Polyline', value: 'polyline'},
     {label: 'Rectangle', value: 'rectangle'},

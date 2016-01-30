@@ -138,18 +138,18 @@ class Observer(object):
         self.__deserializeProperties(values['properties'])
     
     def __serializeProperties(self):
-      properties = dict()
-      
-      for key in self.__properties:
-          value = self.__properties[key]
-          properties[key] = value
-      
-      return properties
+        properties = dict()
+        
+        for key in self.__properties:
+            value = self.__properties[key]
+            properties[key] = value
+        
+        return properties
         
     def __deserializeProperties(self, properties):
-      for key in properties:
-          value = properties[key]
-          self.__properties[key] = value
+        for key in properties:
+            value = properties[key]
+            self.__properties[key] = value
         
     @property
     def __opId(self):
