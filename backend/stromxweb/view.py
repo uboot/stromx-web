@@ -103,6 +103,10 @@ class Observer(object):
         self.__properties = value
         
     @property
+    def visualizations(self):
+        return []
+        
+    @property
     def zvalue(self):
         return self.__zvalue
         

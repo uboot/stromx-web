@@ -1340,7 +1340,8 @@ class Views(Items):
         return view.data
     
 class Observer(Item):
-    _properties = ['view', 'zvalue', 'visualization', 'properties', 'active']
+    _properties = ['view', 'zvalue', 'visualization', 'visualizations',
+                   'properties', 'active']
     
     def __init__(self, view, stromxObserver, model):
         super(Observer, self).__init__(model)
@@ -1366,6 +1367,10 @@ class Observer(Item):
     @visualization.setter
     def visualization(self, value):
         self.__observer.visualization = value
+        
+    @property
+    def visualizations(self):
+        return self.__observer.visualizations
         
     @property
     def properties(self):
