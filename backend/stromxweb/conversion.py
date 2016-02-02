@@ -237,3 +237,6 @@ def stringToStromxColor(string):
     green = int(string[3:5], 16)
     blue = int(string[5:], 16)
     return stromx.runtime.Color(red, green, blue)
+
+def stromxVariantsToVisualization(dataVariant, visualizationVariant):
+    return 'value', []

@@ -227,3 +227,63 @@ class ConversionTest(unittest.TestCase):
         self.assertTrue(stromxFile.path() != '');
         self.assertEqual('.xml', stromxFile.extension());
         
+class StromxVariantsToVisualizationTest(unittest.TestCase):#
+    def __convert(self, dataVariant, visualizationVariant):
+        return conversion.stromxVariantsToVisualization(dataVariant,
+                                                        visualizationVariant)
+    def testImage(self):
+        data = stromx.runtime.Variant.RGB_24_IMAGE
+        visualization = stromx.runtime.Variant.NONE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('image', visualization)
+        self.assertEqual(['image'], visualizations)
+        
+    def testFloat(self):
+        data = stromx.runtime.Variant.FLOAT_32
+        visualization = stromx.runtime.Variant.NONE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('value', visualization)
+        self.assertEqual(['value'], visualizations)
+        
+    def testMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.NONE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('value', visualization)
+        self.assertEqual(['value'], visualizations)
+        
+    def testRectangleMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.RECTANGLE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('rectangle', visualization)
+        self.assertEqual(['value, rectangle'], visualizations)
+        
+    def testRotatedRectangleMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.RECTANGLE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('rotated_rectangle', visualization)
+        self.assertEqual(['value, rotated_rectangle'], visualizations)
+        
+    def testPolylineMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.RECTANGLE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('polyline', visualization)
+        self.assertEqual(['value, polyline'], visualizations)
+        
+    def testPolygonMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.RECTANGLE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('polygon', visualization)
+        self.assertEqual(['value, polygon'], visualizations)
+        
+    def testEllipseMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.RECTANGLE
+        visualization, visualizations = self.__convert(data, visualization)
+        self.assertEqual('ellipse', visualization)
+        self.assertEqual(['value, ellipse, rotated_rectangle'], visualizations)
+        
