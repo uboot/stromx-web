@@ -19,7 +19,7 @@ module.exports = function(app) {
         id: 2,
         zvalue: 0,
         visualization: 'image',
-        visualizations: [],
+        visualizations: ['image'],
         properties: {
           color: '#00ff00'
         },

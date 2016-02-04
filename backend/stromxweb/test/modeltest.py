@@ -1528,8 +1528,8 @@ class ParameterObserversTest(unittest.TestCase):
                                          'view': '0',
                                          'active': True,
                                          'properties': {},
-                                         'visualization': 'default',
-                                         'visualizations': [],
+                                         'visualization': 'value',
+                                         'visualizations': ['value'],
                                          'zvalue': 0}}
         self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.parameterObservers['0'].data)
@@ -1585,7 +1585,7 @@ class InputObserversTest(ConnectorObserversTestBase):
                                      'active': True,
                                      'value': '0',
                                      'properties': {'color': '#00ff00'},
-                                     'visualization': 'default',
+                                     'visualization': '',
                                      'visualizations': [],
                                      'zvalue': 0}}
         self.assertEqual(refData, returned)
@@ -1628,7 +1628,7 @@ class OutputObserversTest(ConnectorObserversTestBase):
                                       'active': True,
                                       'value': '0',
                                       'properties': {'color': '#00ff00'},
-                                      'visualization': 'default',
+                                      'visualization': '',
                                       'visualizations': [],
                                       'zvalue': 0}}
         self.assertEqual(refData, returned)

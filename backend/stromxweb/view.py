@@ -1,5 +1,7 @@
 import stromx.runtime
 
+import conversion
+
 class View(object):
     def __init__(self, stream):
         self.__stream = stream
@@ -84,7 +86,7 @@ class Observer(object):
     def __init__(self, stream, op, parent):
         self.__zvalue = 0
         self.active = True
-        self.visualization = 'default'
+        self.__visualization = ''
         self.__properties = dict()
         self.__stream = stream
         self.__op = op
@@ -103,8 +105,19 @@ class Observer(object):
         self.__properties = value
         
     @property
+    def visualization(self):
+        if self.__visualization == '':
+            self.__visualization, _ = self.__getVisualizationData()
+        return self.__visualization
+    
+    @visualization.setter
+    def visualization(self, value):
+        self.__visualization = value
+        
+    @property
     def visualizations(self):
-        return []
+        _, visualizations = self.__getVisualizationData()
+        return visualizations
         
     @property
     def zvalue(self):
@@ -119,6 +132,13 @@ class Observer(object):
             
     def updateZvalue(self, value):
         self.__zvalue = value
+        
+    def __getVisualizationData(self):
+        description = self.getDescription()
+        dataVariant = description.variant()
+        visualizationVariant = description.visualization()
+        return conversion.stromxVariantsToVisualization(dataVariant,
+                                                        visualizationVariant)
     
     def serialize(self):
         data = {
@@ -136,7 +156,7 @@ class Observer(object):
     def deserialize(self, values):
         self.__zvalue = values['zvalue']
         self.active = values['active']
-        self.visualization = values['visualization']
+        self.__visualization = values['visualization']
         self.__op = self.__stream.operators()[values['op']]   
 
         self.__deserializeProperties(values['properties'])
@@ -185,7 +205,11 @@ class ParameterObserver(Observer):
         
     def deserialize(self, properties):
         super(ParameterObserver, self).deserialize(properties)
-        self.__index = properties['parameter']      
+        self.__index = properties['parameter']   
+    
+    
+    def getDescription(self):
+        return self.op.info().parameters()[self.__index]   
         
 class ConnectorObserver(Observer):
     def __init__(self, stream, parent, op = None, connectorType = None,
@@ -225,6 +249,14 @@ class ConnectorObserver(Observer):
         self.__connectorType = properties['type']
         self.__value = ConnectorValue(self.op, self.__connectorType,
                                       self.__index)
+    
+    def getDescription(self):
+        if self.__connectorType == stromx.runtime.Connector.Type.INPUT:
+            return self.op.info().inputs()[self.__index]
+        elif self.__connectorType == stromx.runtime.Connector.Type.OUTPUT:
+            return self.op.info().outputs()[self.__index]
+        else:
+            assert(False)
 
 class ObserverCallback(stromx.runtime.ConnectorObserver):
     connectorValue = None

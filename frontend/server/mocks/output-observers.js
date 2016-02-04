@@ -6,8 +6,8 @@ module.exports = function(app) {
       {
         id: 3,
         zvalue: 3,
-        visualization: 'default',
-        visualizations: [],
+        visualization: 'image',
+        visualizations: ['image'],
         properties: {
           color: '#ff0000'
         },

@@ -29,7 +29,7 @@ _refData = {
                 'zvalue': 0, 
                 'type': 2, 
                 'active': True,
-                'visualization': 'default',
+                'visualization': 'value',
                 'op': 3}
             }
         ],
@@ -48,7 +48,7 @@ _testData = {
                 'zvalue': 0, 
                 'type': 2, 
                 'active': True,
-                'visualization': 'default',
+                'visualization': '',
                 'op': 3}
             },{
             'ParameterObserver': {

@@ -239,4 +239,39 @@ def stringToStromxColor(string):
     return stromx.runtime.Color(red, green, blue)
 
 def stromxVariantsToVisualization(dataVariant, visualizationVariant):
-    return 'value', []
+    visualization = ''
+    visualizations = []
+    
+    if (dataVariant.isVariant(stromx.runtime.Variant.INT)
+        or dataVariant.isVariant(stromx.runtime.Variant.FLOAT)
+        or dataVariant.isVariant(stromx.runtime.Variant.STRING)
+        or dataVariant.isVariant(stromx.runtime.Variant.MATRIX)):
+        visualization = 'value'
+        visualizations = ['value']
+    
+    if (dataVariant.isVariant(stromx.runtime.Variant.IMAGE)):
+        visualization = 'image'
+        visualizations = ['image']
+    
+    if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYLINE)):
+        visualization = 'polyline'
+        visualizations.append('polyline')
+    
+    if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYGON)):
+        visualization = 'polygon'
+        visualizations.append('polygon')
+    
+    if (visualizationVariant.isVariant(stromx.runtime.Variant.RECTANGLE)):
+        visualization = 'rectangle'
+        visualizations.append('rectangle')
+    
+    if (visualizationVariant.isVariant(
+        stromx.runtime.Variant.ROTATED_RECTANGLE)):
+        visualization = 'rotated_rectangle'
+        visualizations.append('rotated_rectangle')
+    
+    if (visualizationVariant.isVariant(stromx.runtime.Variant.ELLIPSE)):
+        visualization = 'ellipse'
+        visualizations.append('ellipse')
+    
+    return visualization, visualizations
