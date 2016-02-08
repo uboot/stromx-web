@@ -46,13 +46,13 @@ test('cancel removing observer', function(assert) {
 test('edit visualization', function(assert) {
   visit('/streams/2/parameterObservers/0/delete');
   click('.stromx-edit-visualization');
-  fillIn('#stromx-visualization-select', 'polygon');
+  fillIn('#stromx-visualization-select', 'slider');
   click('.stromx-save');
 
   andThen(function() {
     assert.equal(
       find('.stromx-visualization-label').text(),
-      'Polygon',
+      'Slider',
       'Saving persists the chosen visualization'
     );
   });
@@ -61,7 +61,7 @@ test('edit visualization', function(assert) {
 test('cancel editing visualization', function(assert) {
   visit('/streams/2/parameterObservers/0/delete');
   click('.stromx-edit-visualization');
-  fillIn('#stromx-visualization-select', 'polygons');
+  fillIn('#stromx-visualization-select', 'slider');
   click('.stromx-cancel');
 
   andThen(function() {

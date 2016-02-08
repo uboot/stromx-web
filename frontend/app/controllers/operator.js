@@ -196,7 +196,7 @@ export default Ember.Controller.extend({
         properties: {
           color: DEFAULT_OBSERVER_COLOR
         },
-        visualization: 'default'
+        visualization: ''
       });
 
       var _this = this;
@@ -217,7 +217,7 @@ export default Ember.Controller.extend({
         properties: {
           color: DEFAULT_OBSERVER_COLOR
         },
-        visualization: 'default'
+        visualization: ''
       });
 
       var _this = this;

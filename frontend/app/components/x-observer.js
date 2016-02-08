@@ -1,21 +1,22 @@
 import Ember from "ember";
+import { VISUALIZATIONS } from 'stromx-web/visualizations';
 
 export default Ember.Component.extend({
   model: null,
   isEditingColor: false,
   isEditingVisualization: false,
 
-  visualizations: [
-    {label: 'Default', value: 'default'},
-    {label: 'Image', value: 'image'},
-    {label: 'Line segment', value: 'line_segment'},
-    {label: 'Value', value: 'value'},
-    {label: 'Point', value: 'point'},
-    {label: 'Polygon', value: 'polygon'},
-    {label: 'Polyline', value: 'polyline'},
-    {label: 'Rectangle', value: 'rectangle'},
-    {label: 'Rotated rectangle', value: 'rotated_rectangle'}
-  ],
+  visualizationMap: function() {
+    var values = this.get('model.visualizations');
+    return values.map(function(value) {
+      var label = VISUALIZATIONS[value];
+      return {
+        value: value,
+        label: label
+      };
+    });
+
+  }.property('model.visualizations'),
 
   // FIXME: Model rollback does not work if the color selector is bound to
   // 'properties.color'. Instead we use proxy property below and copy the value
@@ -24,10 +25,8 @@ export default Ember.Component.extend({
 
   visualizationLabel: function() {
     var visualization = this.get('model.visualization');
-
-    var array = Ember.ArrayProxy.create({content: this.visualizations});
-    var record = array.findBy('value', visualization);
-    return record ? record['label'] : '';
+    var label = VISUALIZATIONS[visualization];
+    return label ? label : '';
   }.property('model.visualization'),
 
   value: Ember.computed('model.value', {

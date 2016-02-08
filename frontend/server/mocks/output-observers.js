@@ -6,8 +6,8 @@ module.exports = function(app) {
       {
         id: 3,
         zvalue: 3,
-        visualization: 'image',
-        visualizations: ['image'],
+        visualization: 'value',
+        visualizations: ['value'],
         properties: {
           color: '#ff0000'
         },
@@ -19,7 +19,7 @@ module.exports = function(app) {
         id: 4,
         zvalue: 4,
         visualization: 'polygon',
-        visualizations: ['polygon', 'values'],
+        visualizations: ['polygon', 'value'],
         properties: {
           color: '#00ff00'
         },
@@ -31,7 +31,7 @@ module.exports = function(app) {
         id: 5,
         zvalue: 4,
         visualization: 'rectangle',
-        visualizations: ['rectangle', 'values'],
+        visualizations: ['rectangle', 'value'],
         properties: {
           color: '#00ffff'
         },
@@ -43,7 +43,7 @@ module.exports = function(app) {
         id: 6,
         zvalue: 5,
         visualization: 'polyline',
-        visualizations: ['polyline', 'values'],
+        visualizations: ['polyline', 'value'],
         properties: {
           color: '#ff0000'
         },

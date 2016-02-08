@@ -18,20 +18,6 @@ export default Ember.Component.extend({
 
   svgType: function() {
     var visualization = this.get('visualization');
-    var variant = this.get('variant');
-
-    if (variant === undefined) {
-      return;
-    }
-
-    if (visualization === 'default') {
-      switch (variant) {
-        case 'image':
-          return 'image';
-        default:
-          return '';
-      }
-    }
 
     switch (visualization) {
       case 'image':
@@ -41,13 +27,15 @@ export default Ember.Component.extend({
       case 'rotated_rectangle':
         return visualization;
       case 'point':
-        return 'points'
+        return 'points';
       case 'line_segment':
         return 'lines';
+      case 'value':
+        return 'text';
       default:
         return '';
     }
-  }.property('visualization', 'variant'),
+  }.property('visualization'),
 
   svgImage: Ember.computed.equal('svgType', 'image'),
   svgText: Ember.computed.equal('svgType', 'text'),

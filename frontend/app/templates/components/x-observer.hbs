@@ -24,7 +24,7 @@
           <form class="form-inline">
             <div class="form-group">
               <select onchange={{action (mut model.visualization) value="target.value"}} id="stromx-visualization-select">
-                {{#each visualizations key="@index" as |item|}}
+                {{#each visualizationMap key="@index" as |item|}}
                   <option selected={{is-equal item.value model.visualization}} value={{item.value}}>{{item.label}}</option>
                 {{/each}}
               </select>

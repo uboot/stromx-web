@@ -11,24 +11,9 @@ export default Ember.Component.extend({
 
   isText: function() {
     var visualization = this.get('visualization');
-    var variant = this.get('variant');
 
-    if (variant === undefined) {
-      return false;
-    }
-
-    if (visualization === 'default') {
-      switch (variant) {
-        case 'image':
-        case 'none':
-          return false;
-        default:
-          return true;
-      }
-    }
-
-    return false;
-  }.property('visualization', 'variant'),
+    return visualization === 'value';
+  }.property('visualization'),
 
   textData: function() {
     var data = this.get('data');

@@ -31,7 +31,7 @@ module.exports = function(app) {
         id: 3,
         zvalue: 0,
         visualization: 'rotated_rectangle',
-        visualizations: ['rotated_rectangle', 'values'],
+        visualizations: ['rotated_rectangle', 'value'],
         properties: {
           color: '#ff00ff'
         },
@@ -43,7 +43,7 @@ module.exports = function(app) {
         id: 4,
         zvalue: 5,
         visualization: 'point',
-        visualizations: ['point', 'values'],
+        visualizations: ['point', 'value'],
         properties: {
           color: '#ff0000'
         },
