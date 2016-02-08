@@ -16,13 +16,15 @@ export default Ember.Component.extend({
 
     return offset + 2 * CONNECTOR_SIZE * index;
   }.property('numConnectors', 'index'),
-  
+
   localToGlobal: function(x, y) {
     var svg = document.getElementById('stromx-stream-svg-id');
     var point = svg.createSVGPoint();
     point.x = x;
     point.y = y;
-    var transform = this.element.getTransformToElement(svg);
+    var transform = svg.getScreenCTM().inverse().multiply(this.element.getScreenCTM());
+
+    //getTransformToElement(svg);
     return point.matrixTransform(transform);
   },
 
