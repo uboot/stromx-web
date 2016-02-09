@@ -209,7 +209,7 @@ class ParameterObserver(Observer):
     
     
     def getDescription(self):
-        return self.op.info().parameters()[self.__index]   
+        return self.op.info().parameter(self.__index)
         
 class ConnectorObserver(Observer):
     def __init__(self, stream, parent, op = None, connectorType = None,
@@ -252,9 +252,9 @@ class ConnectorObserver(Observer):
     
     def getDescription(self):
         if self.__connectorType == stromx.runtime.Connector.Type.INPUT:
-            return self.op.info().inputs()[self.__index]
+            return self.op.info().input(self.__index)
         elif self.__connectorType == stromx.runtime.Connector.Type.OUTPUT:
-            return self.op.info().outputs()[self.__index]
+            return self.op.info().output(self.__index)
         else:
             assert(False)
 
