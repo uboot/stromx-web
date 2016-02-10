@@ -18,7 +18,6 @@ export default Ember.Controller.extend({
         file.set('opened', false);
         file.save();
       });
-      this.get('stream').set('view', null);
       this.set('wasAccepted', true);
     },
     close: function () {
