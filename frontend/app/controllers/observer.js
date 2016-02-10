@@ -5,7 +5,7 @@ import OutputObserverModel from 'stromx-web/models/output-observer';
 
 export default Ember.Controller.extend({
   stream: Ember.inject.controller(),
-  
+
   isParameterObserver: function() {
     return this.get('model') instanceof ParameterObserverModel;
   }.property('model'),
@@ -32,10 +32,8 @@ export default Ember.Controller.extend({
     model.set('zvalue', newZvalue);
     model.save().then(function() {
       view.then(function(view) {
-        view.reload().then(function(view) {
-          view.get('observers').forEach(function(observer) {
-            observer.reload();
-          });
+        view.get('observers').forEach(function(observer) {
+          observer.reload();
         });
       });
     });
