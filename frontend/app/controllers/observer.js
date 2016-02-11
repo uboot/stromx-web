@@ -6,18 +6,6 @@ import OutputObserverModel from 'stromx-web/models/output-observer';
 export default Ember.Controller.extend({
   stream: Ember.inject.controller(),
 
-  isParameterObserver: function() {
-    return this.get('model') instanceof ParameterObserverModel;
-  }.property('model'),
-
-  isInputObserver: function() {
-    return this.get('model') instanceof InputObserverModel;
-  }.property('model'),
-
-  isOutputObserver: function() {
-    return this.get('model') instanceof OutputObserverModel;
-  }.property('model'),
-
   updateZvalue: function(update) {
     var model = this.get('model');
     var zvalue = model.get('zvalue');
