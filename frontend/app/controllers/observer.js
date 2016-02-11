@@ -22,6 +22,7 @@ export default Ember.Controller.extend({
     var model = this.get('model');
     var zvalue = model.get('zvalue');
     var newZvalue = zvalue + update;
+    var view = model.get('view');
     var numObservers = view.get('observers.length');
 
     if (newZvalue < 0 || newZvalue >= numObservers) {
@@ -30,7 +31,6 @@ export default Ember.Controller.extend({
 
     model.set('zvalue', newZvalue);
     model.save().then(function() {
-      var view = model.get('view');
       view.then(function(view) {
         view.get('observers').forEach(function(observer) {
           observer.reload();
