@@ -50,7 +50,7 @@
       {{#each sortedObservers key="@index" as |observer|}}
         <tr class="stromx-observer-row">
           <td>
-            {{x-observer-row model=observer}}
+            {{x-observer-row model=observer updateZValue="updateSorting"}}
           </td>
         </tr>
       {{/each}}

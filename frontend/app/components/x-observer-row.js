@@ -27,15 +27,10 @@ export default Ember.Component.extend({
       return;
     }
 
+    var _this = this;
     model.set('zvalue', newZvalue);
     model.save().then(function() {
-      view.then(function(view) {
-        view.reload().then(function(view) {
-          view.get('observers').forEach(function(observer) {
-            observer.reload();
-          });
-        });
-      });
+      _this.sendAction('updateZValue');
     });
   },
 

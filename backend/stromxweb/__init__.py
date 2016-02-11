@@ -70,7 +70,7 @@ class ItemsHandler(BaseHandler):
     # FIXME: disable cross-origin connections by removing the function below
     def set_default_headers(self):
         # ember server runs on port 4200
-        self.set_header('Access-Control-Allow-Origin', 'http://0.0.0.0:4200')
+        self.set_header('Access-Control-Allow-Origin', 'http://localhost:4200')
     
     def options(self, *args, **kwargs):
         self.set_header('Access-Control-Allow-Headers', 

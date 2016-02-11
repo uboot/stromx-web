@@ -16,8 +16,6 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      // API_HOST: 'http://0.0.0.0:8080',
-      // SOCKET_HOST: 'ws://0.0.0.0:8080'
     }
   };
 
@@ -39,6 +37,11 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+  }
+
+  if (environment === 'api') {
+    ENV.APP.API_HOST = 'http://localhost:8080',
+    ENV.APP.SOCKET_HOST = 'ws://localhost:8080'
   }
 
   if (environment === 'production') {
