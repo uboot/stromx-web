@@ -7,5 +7,6 @@
     polyline: 'Polyline',
     rectangle: 'Rectangle',
     rotated_rectangle: 'Rotated rectangle',
-    slider: 'Slider'
+    slider: 'Slider',
+    default: 'Default'
   };

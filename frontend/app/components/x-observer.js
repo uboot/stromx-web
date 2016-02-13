@@ -8,7 +8,7 @@ export default Ember.Component.extend({
 
   visualizationMap: function() {
     var values = this.get('model.visualizations');
-    return values.map(function(value) {
+    var m = values.map(function(value) {
       var label = VISUALIZATIONS[value];
       return {
         value: value,
@@ -16,6 +16,8 @@ export default Ember.Component.extend({
       };
     });
 
+    m.push({value: 'default', label: 'Default'});
+    return m;
   }.property('model.visualizations'),
 
   // FIXME: Model rollback does not work if the color selector is bound to
