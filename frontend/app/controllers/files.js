@@ -1,6 +1,8 @@
 import Ember from "ember";
 
 export default Ember.Controller.extend({
+  sorting: ['name:incr'],
+  sortedFiles: Ember.computed.sort('model', 'sorting'),
   actions: {
     openFile: function(file) {
       file.set('opened', true);

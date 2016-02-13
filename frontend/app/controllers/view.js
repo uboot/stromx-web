@@ -20,8 +20,11 @@ export default Ember.Controller.extend({
     },
     updateSorting: function() {
       var model = this.get('model');
-      model.get('observers').forEach(function(observer) {
-        observer.reload();
+      var promises = model.get('observers').map(function(observer) {
+        return observer.reload();
+      });
+      Ember.RSVP.all(promises).then(function() {
+        model.reload();
       });
     }
   }

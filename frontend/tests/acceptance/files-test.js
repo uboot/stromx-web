@@ -48,13 +48,13 @@ test('dismiss remove file', function(assert) {
 
 test('rename file', function(assert) {
   visit('/');
-  click('.stromx-file-row:nth-child(1) a.stromx-rename-file');
+  click('.stromx-file-row:nth-child(2) a.stromx-rename-file');
   fillIn('input', 'new.stromx');
-  click('tr:nth-child(1) button.stromx-save');
+  click('tr:nth-child(2) button.stromx-save');
 
   andThen(function() {
     assert.equal(
-       find('.stromx-file-row:nth-child(1) a.stromx-file-name').text(),
+       find('.stromx-file-row:nth-child(2) a.stromx-file-name').text(),
       'new.stromx',
       'Pressing save after editing the file name saves the changes'
     );
@@ -63,13 +63,13 @@ test('rename file', function(assert) {
 
 test('cancel rename file', function(assert) {
   visit('/');
-  click('.stromx-file-row:nth-child(1) a.stromx-rename-file');
+  click('.stromx-file-row:nth-child(2) a.stromx-rename-file');
   fillIn('input', 'new.stromx');
-  click('.stromx-file-row:nth-child(1) button.stromx-cancel');
+  click('.stromx-file-row:nth-child(2) button.stromx-cancel');
 
   andThen(function() {
     assert.equal(
-      find('.stromx-file-row:nth-child(1) a.stromx-file-name').text(),
+      find('.stromx-file-row:nth-child(2) a.stromx-file-name').text(),
       'test.stromx',
       'Pressing cancel after editing the file name leaves it unchanged'
     );
@@ -83,7 +83,7 @@ test('new file', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('.stromx-file-row:nth-child(3) a.stromx-file-name').text(),
+      find('.stromx-file-row:nth-child(2) a.stromx-file-name').text(),
       'new.stromx',
       'Saving a new file name file adds the file'
     );
@@ -120,7 +120,7 @@ test('upload file', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('.stromx-file-row:nth-child(3) a.stromx-file-name').text(),
+      find('.stromx-file-row:nth-child(1) a.stromx-file-name').text(),
       '',
       'Uploading a new file name file adds the file'
     );
