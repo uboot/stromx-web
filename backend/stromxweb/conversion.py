@@ -240,38 +240,42 @@ def stringToStromxColor(string):
 
 def stromxVariantsToVisualization(dataVariant, visualizationVariant):
     visualization = ''
-    visualizations = []
+    visualizations = set()
     
     if (dataVariant.isVariant(stromx.runtime.Variant.INT)
         or dataVariant.isVariant(stromx.runtime.Variant.FLOAT)
         or dataVariant.isVariant(stromx.runtime.Variant.STRING)
         or dataVariant.isVariant(stromx.runtime.Variant.MATRIX)):
         visualization = 'value'
-        visualizations = ['value']
+        visualizations.add('value')
     
     if (dataVariant.isVariant(stromx.runtime.Variant.IMAGE)):
         visualization = 'image'
-        visualizations = ['image']
+        visualizations.add('image')
     
     if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYLINE)):
         visualization = 'polyline'
-        visualizations.append('polyline')
+        visualizations.add('polyline')
     
     if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYGON)):
         visualization = 'polygon'
-        visualizations.append('polygon')
+        visualizations.add('polygon')
     
     if (visualizationVariant.isVariant(stromx.runtime.Variant.RECTANGLE)):
         visualization = 'rectangle'
-        visualizations.append('rectangle')
+        visualizations.add('rectangle')
     
     if (visualizationVariant.isVariant(
         stromx.runtime.Variant.ROTATED_RECTANGLE)):
         visualization = 'rotated_rectangle'
-        visualizations.append('rotated_rectangle')
+        visualizations.add('rotated_rectangle')
     
     if (visualizationVariant.isVariant(stromx.runtime.Variant.ELLIPSE)):
         visualization = 'ellipse'
-        visualizations.append('ellipse')
+        visualizations.add('ellipse')
+    
+    if (visualizationVariant.isVariant(stromx.runtime.Variant.POINT)):
+        visualization = 'point'
+        visualizations.add('point')
     
     return visualization, visualizations

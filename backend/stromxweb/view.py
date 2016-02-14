@@ -117,7 +117,7 @@ class Observer(object):
     @property
     def visualizations(self):
         _, visualizations = self.__getVisualizationData()
-        return visualizations
+        return list(sorted(visualizations))
         
     @property
     def zvalue(self):
