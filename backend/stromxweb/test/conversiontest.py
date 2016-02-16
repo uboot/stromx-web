@@ -232,81 +232,113 @@ class StromxVariantsToVisualizationTest(unittest.TestCase):#
         return conversion.stromxVariantsToVisualization(dataVariant,
                                                         visualizationVariant)
         
+    def testData(self):
+        data = stromx.runtime.Variant.DATA
+        visualization = stromx.runtime.Variant.NONE
+        keys = self.__convert(data, visualization)
+        refKeys = ['image', 'line_segment', 'point', 
+                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
+                   'ellipse', 'value', 'none']
+        self.assertEqual(refKeys, keys)
+        
     def testImageOrString(self):
         data = stromx.runtime.Variant.IMAGE | stromx.runtime.Variant.STRING
         visualization = stromx.runtime.Variant.NONE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('value', visualization)
-        self.assertEqual({'value', 'image'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['image', 'value', 'none'], keys)
         
     def testImage(self):
         data = stromx.runtime.Variant.RGB_24_IMAGE
         visualization = stromx.runtime.Variant.NONE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('image', visualization)
-        self.assertEqual({'image'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['image', 'none'], keys)
         
     def testFloat(self):
         data = stromx.runtime.Variant.FLOAT_32
         visualization = stromx.runtime.Variant.NONE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('value', visualization)
-        self.assertEqual({'value'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['value', 'none'], keys)
         
     def testString(self):
         data = stromx.runtime.Variant.STRING
         visualization = stromx.runtime.Variant.NONE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('value', visualization)
-        self.assertEqual({'value'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['value', 'none'], keys)
         
     def testMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.NONE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('value', visualization)
-        self.assertEqual({'value'}, visualizations)
+        keys = self.__convert(data, visualization)
+        refKeys = ['line_segment', 'point', 
+                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
+                   'ellipse', 'value', 'none']
+        self.assertEqual(refKeys, keys)
         
     def testRectangleMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.RECTANGLE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('rectangle', visualization)
-        self.assertEqual({'value', 'rectangle'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['rectangle', 'value', 'none'], keys)
         
     def testRotatedRectangleMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.ROTATED_RECTANGLE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('rotated_rectangle', visualization)
-        self.assertEqual({'value', 'rotated_rectangle'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['rotated_rectangle', 'value', 'none'], keys)
         
     def testPolylineMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.POLYLINE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('polyline', visualization)
-        self.assertEqual({'value', 'polyline'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['polyline', 'value', 'none'], keys)
+        
+    def testImageOrMatrixPolygonOrRectangle(self):
+        data = (stromx.runtime.Variant.FLOAT_32_MATRIX | 
+                stromx.runtime.Variant.RGB_24_IMAGE)
+        visualization = (stromx.runtime.Variant.POLYGON | 
+                         stromx.runtime.Variant.RECTANGLE)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['image','polygon', 'rectangle', 'value', 'none'],
+                          keys)
         
     def testPolygonMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.POLYGON
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('polygon', visualization)
-        self.assertEqual({'value', 'polygon'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['polygon', 'value', 'none'], keys)
+        
+    def testPolylineOrPolygonMatrix(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = (stromx.runtime.Variant.POLYGON | 
+                         stromx.runtime.Variant.POLYLINE)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['polygon', 'polyline', 'value', 'none'], keys)
         
     def testPointMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.POINT
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('point', visualization)
-        self.assertEqual({'value', 'point'}, visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['point', 'value', 'none'], keys)
         
     def testEllipseMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.ELLIPSE
-        visualization, visualizations = self.__convert(data, visualization)
-        self.assertEqual('ellipse', visualization)
-        self.assertEqual({'value', 'rotated_rectangle', 'ellipse'},
-                         visualizations)
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['ellipse', 'value', 'none'], keys)
+        
+    def testListAndPoint(self):
+        data = stromx.runtime.Variant.LIST
+        visualization = stromx.runtime.Variant.POINT
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['point', 'value', 'none'], keys)
+        
+    def testImageOrMatrix(self):
+        data = (stromx.runtime.Variant.FLOAT_32_MATRIX | 
+                stromx.runtime.Variant.RGB_24_IMAGE)
+        visualization = stromx.runtime.Variant.NONE
+        keys = self.__convert(data, visualization)
+        refKeys = ['image', 'line_segment', 'point', 
+                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
+                   'ellipse', 'value', 'none']
+        self.assertEqual(refKeys, keys)
         

@@ -107,7 +107,8 @@ class Observer(object):
     @property
     def visualization(self):
         if self.__visualization == '':
-            self.__visualization, _ = self.__getVisualizationData()
+            visualizations = self.__getVisualizationData()
+            self.__visualization = visualizations[0]
         return self.__visualization
     
     @visualization.setter
@@ -116,8 +117,7 @@ class Observer(object):
         
     @property
     def visualizations(self):
-        _, visualizations = self.__getVisualizationData()
-        return list(sorted(visualizations))
+        return self.__getVisualizationData()
         
     @property
     def zvalue(self):

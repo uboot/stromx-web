@@ -239,43 +239,74 @@ def stringToStromxColor(string):
     return stromx.runtime.Color(red, green, blue)
 
 def stromxVariantsToVisualization(dataVariant, visualizationVariant):
-    visualization = ''
-    visualizations = set()
+    visualization = 'none'
+    visualizations = ['image', 'line_segment', 'point', 
+                      'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
+                      'ellipse', 'value', 'none']
+                      
+    filtered = _filterVisualizations(visualizations, dataVariant, 
+                                     visualizationVariant)
+                                     
+    for v in filtered:
+        visualizations.remove(v)
     
-    if (dataVariant.isVariant(stromx.runtime.Variant.INT)
-        or dataVariant.isVariant(stromx.runtime.Variant.FLOAT)
-        or dataVariant.isVariant(stromx.runtime.Variant.STRING)
-        or dataVariant.isVariant(stromx.runtime.Variant.MATRIX)):
-        visualization = 'value'
-        visualizations.add('value')
+    return visualizations
     
-    if (dataVariant.isVariant(stromx.runtime.Variant.IMAGE)):
-        visualization = 'image'
-        visualizations.add('image')
+def _filterVisualizations(visualizations, dataVariant, visualizationVariant):
+    if (dataVariant.compositeType() == 
+        stromx.runtime.VariantInterface.CompositeType.OR_COMPOSITE):
+        rhs = _filterVisualizations(visualizations, dataVariant.rhs(),
+                                    visualizationVariant)
+        lhs = _filterVisualizations(visualizations, dataVariant.lhs(),
+                                    visualizationVariant)
+        filtered = rhs.intersection(lhs)
+        return filtered
     
-    if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYLINE)):
-        visualization = 'polyline'
-        visualizations.add('polyline')
+    if (visualizationVariant.compositeType() == 
+        stromx.runtime.VariantInterface.CompositeType.OR_COMPOSITE):
+        rhs = _filterVisualizations(visualizations, dataVariant,
+                                    visualizationVariant.rhs())
+        lhs = _filterVisualizations(visualizations, dataVariant,
+                                    visualizationVariant.lhs())
+        filtered = rhs.intersection(lhs)
+        return filtered
     
-    if (visualizationVariant.isVariant(stromx.runtime.Variant.POLYGON)):
-        visualization = 'polygon'
-        visualizations.add('polygon')
+    filtered = set()
+        
+    isImage = dataVariant.isVariant(stromx.runtime.Variant.IMAGE)
+    if isImage:
+        filtered.add('value')
     
-    if (visualizationVariant.isVariant(stromx.runtime.Variant.RECTANGLE)):
-        visualization = 'rectangle'
-        visualizations.add('rectangle')
+    isPrimitive = (
+        dataVariant.isVariant(stromx.runtime.Variant.INT) or
+        dataVariant.isVariant(stromx.runtime.Variant.FLOAT) or
+        dataVariant.isVariant(stromx.runtime.Variant.BOOL) or
+        dataVariant.isVariant(stromx.runtime.Variant.STRING)
+    )
+        
+    isMatrix = (dataVariant.isVariant(stromx.runtime.Variant.MATRIX) and
+                not isImage)
+    if (isPrimitive or isMatrix):
+        filtered.add('image')
     
-    if (visualizationVariant.isVariant(
-        stromx.runtime.Variant.ROTATED_RECTANGLE)):
-        visualization = 'rotated_rectangle'
-        visualizations.add('rotated_rectangle')
+    if (not isImage and not isPrimitive and
+        visualizationVariant.isVariant(stromx.runtime.Variant.NONE)):
+        return filtered
     
-    if (visualizationVariant.isVariant(stromx.runtime.Variant.ELLIPSE)):
-        visualization = 'ellipse'
-        visualizations.add('ellipse')
+    for key in _VARIANT_MAP:
+        variant = _VARIANT_MAP[key]
+        isVariant = visualizationVariant.isVariant(variant)
+        if not isVariant:
+            filtered.add(key)                         
     
-    if (visualizationVariant.isVariant(stromx.runtime.Variant.POINT)):
-        visualization = 'point'
-        visualizations.add('point')
-    
-    return visualization, visualizations
+    return filtered
+
+_VARIANT_MAP = {
+    'polyline': stromx.runtime.Variant.POLYLINE,
+    'polygon': stromx.runtime.Variant.POLYGON,
+    'point': stromx.runtime.Variant.POINT,
+    'rotated_rectangle': stromx.runtime.Variant.ROTATED_RECTANGLE,
+    'rectangle': stromx.runtime.Variant.RECTANGLE,
+    'line_segment': stromx.runtime.Variant.LINE_SEGMENT,
+    'ellipse': stromx.runtime.Variant.ELLIPSE
+}

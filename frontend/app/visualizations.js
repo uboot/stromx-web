@@ -8,5 +8,6 @@
     rectangle: 'Rectangle',
     rotated_rectangle: 'Rotated rectangle',
     slider: 'Slider',
-    default: 'Default'
+    none: 'None',
+    ellipse: 'Ellipse'
   };
