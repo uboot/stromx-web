@@ -1585,17 +1585,8 @@ class InputObserversTest(ConnectorObserversTestBase):
                                      'active': True,
                                      'value': '0',
                                      'properties': {'color': '#00ff00'},
-                                     'visualization': 'image',
-                                     'visualizations': ['image',
-                                                        'line_segment',
-                                                        'point',
-                                                        'polygon',
-                                                        'polyline',
-                                                        'rectangle',
-                                                        'rotated_rectangle',
-                                                        'ellipse',
-                                                        'value',
-                                                        'none'],
+                                     'visualization': 'value',
+                                     'visualizations': ['value', 'none'],
                                      'zvalue': 0}}
         self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.inputObservers['0'].data)
@@ -1637,17 +1628,8 @@ class OutputObserversTest(ConnectorObserversTestBase):
                                       'active': True,
                                       'value': '0',
                                       'properties': {'color': '#00ff00'},
-                                      'visualization': 'image',
-                                      'visualizations': ['image',
-                                                         'line_segment',
-                                                         'point',
-                                                         'polygon',
-                                                         'polyline',
-                                                         'rectangle',
-                                                         'rotated_rectangle',
-                                                         'ellipse',
-                                                         'value',
-                                                         'none'],
+                                      'visualization': 'value',
+                                      'visualizations': ['value', 'none'],
                                       'zvalue': 0}}
         self.assertEqual(refData, returned)
         self.assertEqual(refData, self.model.outputObservers['0'].data)

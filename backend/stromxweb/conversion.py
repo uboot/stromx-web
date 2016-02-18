@@ -276,22 +276,8 @@ def _filterVisualizations(visualizations, dataVariant, visualizationVariant):
     isImage = dataVariant.isVariant(stromx.runtime.Variant.IMAGE)
     if isImage:
         filtered.add('value')
-    
-    isPrimitive = (
-        dataVariant.isVariant(stromx.runtime.Variant.INT) or
-        dataVariant.isVariant(stromx.runtime.Variant.FLOAT) or
-        dataVariant.isVariant(stromx.runtime.Variant.BOOL) or
-        dataVariant.isVariant(stromx.runtime.Variant.STRING)
-    )
-        
-    isMatrix = (dataVariant.isVariant(stromx.runtime.Variant.MATRIX) and
-                not isImage)
-    if (isPrimitive or isMatrix):
+    else:
         filtered.add('image')
-    
-    if (not isImage and not isPrimitive and
-        visualizationVariant.isVariant(stromx.runtime.Variant.NONE)):
-        return filtered
     
     for key in _VARIANT_MAP:
         variant = _VARIANT_MAP[key]

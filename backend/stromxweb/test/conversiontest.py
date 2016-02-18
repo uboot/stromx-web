@@ -236,9 +236,7 @@ class StromxVariantsToVisualizationTest(unittest.TestCase):#
         data = stromx.runtime.Variant.DATA
         visualization = stromx.runtime.Variant.NONE
         keys = self.__convert(data, visualization)
-        refKeys = ['image', 'line_segment', 'point', 
-                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
-                   'ellipse', 'value', 'none']
+        refKeys = ['value', 'none']
         self.assertEqual(refKeys, keys)
         
     def testImageOrString(self):
@@ -269,10 +267,7 @@ class StromxVariantsToVisualizationTest(unittest.TestCase):#
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
         visualization = stromx.runtime.Variant.NONE
         keys = self.__convert(data, visualization)
-        refKeys = ['line_segment', 'point', 
-                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
-                   'ellipse', 'value', 'none']
-        self.assertEqual(refKeys, keys)
+        self.assertEqual(['value', 'none'], keys)
         
     def testRectangleMatrix(self):
         data = stromx.runtime.Variant.FLOAT_32_MATRIX
@@ -332,13 +327,16 @@ class StromxVariantsToVisualizationTest(unittest.TestCase):#
         keys = self.__convert(data, visualization)
         self.assertEqual(['point', 'value', 'none'], keys)
         
+    def testList(self):
+        data = stromx.runtime.Variant.LIST
+        visualization = stromx.runtime.Variant.NONE
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['value', 'none'], keys)
+        
     def testImageOrMatrix(self):
         data = (stromx.runtime.Variant.FLOAT_32_MATRIX | 
                 stromx.runtime.Variant.RGB_24_IMAGE)
         visualization = stromx.runtime.Variant.NONE
         keys = self.__convert(data, visualization)
-        refKeys = ['image', 'line_segment', 'point', 
-                   'polygon', 'polyline',  'rectangle', 'rotated_rectangle',
-                   'ellipse', 'value', 'none']
-        self.assertEqual(refKeys, keys)
+        self.assertEqual(['image', 'value', 'none'], keys)
         
