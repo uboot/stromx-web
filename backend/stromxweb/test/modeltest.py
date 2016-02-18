@@ -293,21 +293,21 @@ class FilesTest(unittest.TestCase):
         self.assertEqual(False, f['file']['opened'])
         self.assertEqual({'streams': []}, self.streams.data)
         
-#     def testSetOpenFails(self):
-#         shutil.rmtree('temp', True)
-#         os.mkdir('temp')
-#         with file('temp/invalid.stromx', 'w') as f:
-#             f.write("nonsense")
-#         self.model = model.Model('temp', _packages)
-#         self.files = self.model.files
-#         self.model.errors.addHandler(self.errorSink.handleError)
-#                 
-#         self.assertRaises(model.Failed, self.files.set, 
-#                           '0', {'file': {'opened': True}})
-#           
-#         f = self.files['0'].data
-#         self.assertEqual(False, f['file']['opened'])
-#         self.assertEqual(1, len(self.errorSink.errors))
+    def testSetOpenFails(self):
+        shutil.rmtree('temp', True)
+        os.mkdir('temp')
+        with file('temp/invalid.stromx', 'w') as f:
+            f.write("nonsense")
+        self.model = model.Model('temp', _packages)
+        self.files = self.model.files
+        self.model.errors.addHandler(self.errorSink.handleError)
+                 
+        self.assertRaises(model.Failed, self.files.set, 
+                          '0', {'file': {'opened': True}})
+           
+        f = self.files['0'].data
+        self.assertEqual(False, f['file']['opened'])
+        self.assertEqual(1, len(self.errorSink.errors))
         
     def testSetName(self):
         f = self.files.set('0', {'file': {'name': 'renamed.stromx'}})
