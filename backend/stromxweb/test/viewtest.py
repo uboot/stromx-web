@@ -69,7 +69,7 @@ _testData = {
 class ViewTest(unittest.TestCase):
     def setUp(self):
         factory = stromx.runtime.Factory()
-        stromx.register('runtime', factory)
+        stromx.register('libstromx_runtime.so.0.7.0', factory)
         reader = stromx.runtime.XmlReader()
         
         self.stream = reader.readStream('data/stream/0_parallel.stromx', factory)
@@ -148,7 +148,7 @@ class ViewTest(unittest.TestCase):
 class ConnectorValueTest(unittest.TestCase):
     def setUp(self):
         factory = stromx.runtime.Factory()
-        stromx.register('runtime', factory)
+        stromx.register('libstromx_runtime.so.0.7.0', factory)
         reader = stromx.runtime.XmlReader()
         streamFile = 'data/views/1_view_with_observers.stromx'
         

@@ -14,9 +14,9 @@ import stromx.test
 import model
 
 _packages = [
-    'runtime',
-    'cvsupport',
-    'test'
+    'libstromx_runtime.so.0.7.0',
+    'libstromx_cvsupport.so.0.7.0',
+    'libstromx_test.so.0.1.0'
 ]
 
 _content = (
