@@ -1,7 +1,7 @@
 {
   "name": "stromx-web",
   "dependencies": {
-    "ember": "~2.3.0",
+    "ember": "~2.4.1",
     "ember-cli-shims": "0.1.0",
     "ember-cli-test-loader": "0.2.2",
     "ember-load-initializers": "0.1.7",
@@ -13,6 +13,6 @@
   },
   "resolutions": {
     "ember": "2.3.0",
-    "qunit-notifications": "~0.1.0"
+    "ember-qunit-notifications": "0.1.0"
   }
 }
