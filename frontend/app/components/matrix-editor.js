@@ -1,5 +1,3 @@
-/*global $ */
-
 import Ember from "ember";
 
 export default Ember.Component.extend({
@@ -10,24 +8,13 @@ export default Ember.Component.extend({
     cols: 0,
     values: []
   },
-  initialValue:  Ember.computed({
-    set: function(key, value) {
-      var defaultValue = {
-        rows: 1,
-        cols: 1,
-        values: [[0]]
-      };
-      var newValue = value ? $.extend(true,{},value) : defaultValue;
-      this.set('value', newValue);
-      this.sendAction("updateValue", newValue);
-    }
-  }),
 
   rowsWritable: Ember.computed.equal('rows', 0),
   colsWritable: Ember.computed.equal('cols', 0),
 
   actualRows: Ember.computed('value', {
-    set: function(key, rows) {
+    set: function(key, rowString) {
+      var rows = parseInt(rowString);
       var oldRows = this.get('value.rows');
       var oldValues = this.get('value.values').copy();
       var values = [[]];
@@ -56,7 +43,8 @@ export default Ember.Component.extend({
   }),
 
   actualCols: Ember.computed('value.cols', {
-    set: function(key, cols) {
+    set: function(key, colsString) {
+      var cols = parseInt(colsString);
       var oldCols = this.get('value.cols');
       var oldValues = this.get('value.values').copy();
 
@@ -86,7 +74,8 @@ export default Ember.Component.extend({
   }),
 
   actions: {
-    storeValue: function(row, col, value) {
+    storeValue: function(row, col, valueString) {
+      var value = parseFloat(valueString);
       this.get('value').values[row][col] = value;
     }
   }
