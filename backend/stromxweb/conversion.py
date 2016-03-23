@@ -288,11 +288,11 @@ def _filterVisualizations(visualizations, dataVariant, visualizationVariant):
     return filtered
 
 _VARIANT_MAP = {
-    'polyline': stromx.runtime.Variant.POLYLINE,
-    'polygon': stromx.runtime.Variant.POLYGON,
-    'point': stromx.runtime.Variant.POINT,
-    'rotated_rectangle': stromx.runtime.Variant.ROTATED_RECTANGLE,
-    'rectangle': stromx.runtime.Variant.RECTANGLE,
-    'line_segment': stromx.runtime.Variant.LINE_SEGMENT,
-    'ellipse': stromx.runtime.Variant.ELLIPSE
+    'polyline': stromx.runtime.Visualization.POLYLINE,
+    'polygon': stromx.runtime.Visualization.POLYGON,
+    'point': stromx.runtime.Visualization.POINT,
+    'rotated_rectangle': stromx.runtime.Visualization.ROTATED_RECTANGLE,
+    'rectangle': stromx.runtime.Visualization.RECTANGLE,
+    'line_segment': stromx.runtime.Visualization.LINE_SEGMENT,
+    'ellipse': stromx.runtime.Visualization.ELLIPSE
 }
