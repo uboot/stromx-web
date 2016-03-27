@@ -188,7 +188,6 @@ def stromxListToData(stromxList):
             'value': toPythonObserverValue(item.variant(), item)
         }
         values.append(value)
-    
     return { 'numItems': len(values), 'values': values }
 
 def dataToStromxImage(data):
@@ -201,13 +200,19 @@ def dataToStromxImage(data):
                                        stromx.runtime.Image.PixelType.BGR_24)
         imageData = np.asarray(image.data())
         imageData[:, :] = array.reshape(array.shape[0], array.shape[1] * 3)
+    elif len(array.shape) == 3 and array.shape[2] == 4:
+        image = stromx.cvsupport.Image(array.shape[1], array.shape[0],
+                                       stromx.runtime.Image.PixelType.BGR_24)
+        imageData = np.asarray(image.data())
+        rgb = array[:, :, :3]
+        imageData[:, :] = rgb.reshape(rgb.shape[0], rgb.shape[1] * 3)
     elif len(array.shape) == 2:
         image = stromx.cvsupport.Image(array.shape[1], array.shape[0],
                                        stromx.runtime.Image.PixelType.MONO_8)
         imageData = np.asarray(image.data())
         imageData[:, :] = array.reshape(array.shape[0], array.shape[1])
     else:
-        assert(False)
+        raise Failed()
     return image
     
 def dataToStromxMatrix(data, valueType):

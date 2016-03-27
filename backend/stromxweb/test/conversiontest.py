@@ -41,6 +41,13 @@ sybGeV1lnHdY5o06IteZfB3TRqH7XV14b1K4d7HR0lTyYXaI3EP2WxTy3ZTnjJKt1XPFeh+Lf22Pjb+y
 1qf/CmfgtqVpYaLpLzW6R31hDdO5huJbdW3OmV/dQxDHqpP8Vf/9k=
 """)
 
+_colorAlphaImage = ("""
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAYAAABLLYUHAAAABmJLR0QA/w
+D/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMbCigH1IalswAAAB1pVFh0Q29tbW
+VudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAFUlEQVQI12P8z8BQzwAFTAxIADcHAEuhAYZ3ZS
+8JAAAAAElFTkSuQmCC
+""")
+
 _statisticalModel = ("""
 "data:text/xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxvcGVuY3Zfc3RvcmFnZT4KPG15X3
 N2bSB0eXBlX2lkPSJvcGVuY3YtbWwtc3ZtIj4KICA8c3ZtX3R5cGU+Q19TVkM8L3N2bV90eXBlPgogID
@@ -178,6 +185,13 @@ class ConversionTest(unittest.TestCase):
         image = conversion.dataToStromxImage({'values': _colorImage})
         self.assertEqual(12, image.width())
         self.assertEqual(13, image.height())
+        self.assertEqual(stromx.runtime.Image.PixelType.BGR_24,
+                         image.pixelType())
+        
+    def testDataToStromxImageColorAlpha(self):
+        image = conversion.dataToStromxImage({'values': _colorAlphaImage})
+        self.assertEqual(3, image.width())
+        self.assertEqual(4, image.height())
         self.assertEqual(stromx.runtime.Image.PixelType.BGR_24,
                          image.pixelType())
         
