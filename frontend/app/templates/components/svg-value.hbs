@@ -7,9 +7,6 @@
     <image width={{imageWidth}} height={{imageHeight}}
     xlink:href={{imageData}} />
   {{/if}}
-  {{#if svgText}}
-    <text x="10" y="20" fill={{color}}>{{textData}}</text>
-  {{/if}}
   {{#if svgLines}}
     {{#each matrixDataNx4 key="@index" as |line|}}
       {{x-svg-line model=line color=color}}

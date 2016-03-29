@@ -30,15 +30,12 @@ export default Ember.Component.extend({
         return 'points';
       case 'line_segment':
         return 'lines';
-      case 'value':
-        return 'text';
       default:
         return '';
     }
   }.property('visualization'),
 
   svgImage: Ember.computed.equal('svgType', 'image'),
-  svgText: Ember.computed.equal('svgType', 'text'),
   svgLines: Ember.computed.equal('svgType', 'lines'),
   svgPolygon: Ember.computed.equal('svgType', 'polygon'),
   svgPolyline: Ember.computed.equal('svgType', 'polyline'),
@@ -86,15 +83,6 @@ export default Ember.Component.extend({
 
     return data.height;
   }.property('variant', 'data'),
-
-  textData: function() {
-    var data = this.get('data');
-    if (! data) {
-      return;
-    }
-
-    return data;
-  }.property('data'),
 
   matrixDataNx4: function() {
     return this.getMatrixData(4);

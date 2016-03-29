@@ -8,6 +8,7 @@ export default Ember.Component.extend({
   visualization: Ember.computed.alias('observer.visualization'),
   variant: Ember.computed.alias('value.variant.ident'),
   data: Ember.computed.alias('value.value'),
+  isList: Ember.computed.equal('variant', 'list'),
 
   isText: function() {
     var visualization = this.get('visualization');
@@ -23,6 +24,7 @@ export default Ember.Component.extend({
       case 'int':
       case 'float':
       case 'bool':
+      case 'string':
         return data;
       case 'matrix':
         return data.rows + ' x ' + data.cols + ' [' + data.values + ']';
@@ -31,5 +33,14 @@ export default Ember.Component.extend({
     }
 
     return data;
-  }.property('data')
+  }.property('data'),
+
+  listData: function() {
+    var variant = this.get('variant');
+    if (! variant || variant !== 'list') {
+      return;
+    }
+
+    return this.get('data.values');
+  }.property('variant', 'data')
 });

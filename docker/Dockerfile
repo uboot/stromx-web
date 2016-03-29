@@ -5,7 +5,7 @@ MAINTAINER Matthias Fuchs <matz.fuchs@gmx.at>
 RUN apt-get install -y software-properties-common \
     && add-apt-repository ppa:stromx-developers/packages \
     && apt-get update \
-    && apt-get install -y curl python-pip python-daemon python-opencv python-stromx libstromx-opencv git nodejs-legacy npm \
+    && apt-get install -y curl python-pip python-daemon python-opencv python-stromx libstromx-opencv libstromx-zbar git nodejs-legacy npm \
     && pip install tornado
 
 ENV PATH $PATH:./node_modules/.bin
