@@ -30,7 +30,12 @@
   <tbody>
     {{#each sortedObservers key="@index" as |observer|}}
       {{#if observer.value}}
-        {{html-value value=observer.value observer=observer}}
+        <tr>
+          <td>
+            <header class="stromx-cell-title">{{observer.title}}</header>
+            {{html-value value=observer.value observer=observer}}
+          </td>
+        </tr>
       {{/if}}
     {{/each}}
   </tbody>

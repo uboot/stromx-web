@@ -1,12 +1,9 @@
 {{#if isList}}
   {{#each listData key="@index" as |item|}}
-    {{html-value value=item observer=observer}}
+    {{html-value value=item observer=observer}}<br>
   {{/each}}
 {{else}}
   {{#if isText}}
-    <td>
-      <header class="stromx-cell-title">{{observer.title}}</header>
-      <span class="stromx-observer-value-text">{{textData}}</span>
-    </td>
+    <span class="stromx-observer-value-text">{{textData}}</span>
   {{/if}}
 {{/if}}

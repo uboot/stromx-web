@@ -3,7 +3,7 @@ import Ember from "ember";
 export default Ember.Component.extend({
   value: null,
   observer: null,
-  tagName: 'tr',
+  tagName: 'span',
 
   visualization: Ember.computed.alias('observer.visualization'),
   variant: Ember.computed.alias('value.variant.ident'),
