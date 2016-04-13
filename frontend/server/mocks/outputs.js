@@ -19,7 +19,7 @@ module.exports = function(app) {
         title: 'Generated number',
         operator: 0,
         connections: [1, 2],
-        observers: [4, 5, 6],
+        observers: [4, 5, 6, 7],
         variant: {
           ident: 'int',
           title: 'UInt32'

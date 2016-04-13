@@ -50,6 +50,18 @@ module.exports = function(app) {
         output: 5,
         value: 6,
         view: 2
+      },
+      {
+        id: 7,
+        zvalue: 6,
+        visualization: 'value',
+        visualizations: ['value'],
+        properties: {
+          color: '#ff0000'
+        },
+        output: 5,
+        value: 7,
+        view: 2
       }
     ]});
   });

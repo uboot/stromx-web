@@ -198,6 +198,28 @@ module.exports = function(app) {
             [220, 180]
           ]
         }
+      },
+      {
+        id: 7,
+        variant: {
+          ident: 'list'
+        },
+        value: {
+          numItems: 2,
+          values: [
+            {
+              variant: {
+                ident: 'string'
+              },
+              value: 'first list element'
+            }, {
+              variant: {
+                ident: 'string'
+              },
+              value: 'second list element'
+            }
+          ]
+        }
       }
     ]});
   });

@@ -48,6 +48,10 @@ module.exports = function(app) {
           {
             id: 6,
             type: 'outputObserver'
+          },
+          {
+            id: 7,
+            type: 'outputObserver'
           }
         ],
         stream: 2

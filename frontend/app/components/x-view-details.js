@@ -5,10 +5,9 @@ import ACK from 'stromx-web/socket';
 
 export default Ember.Component.extend({
   socket: null,
-  sorting: ['zvalue:desc'],
-  sortedObservers: Ember.computed.sort('model.observers', 'sorting'),
+  textObservers: Ember.computed.filterBy('model.observers', 'visualization', 'value'),
   svgSorting: ['zvalue:incr'],
-  svgSortedObservers: Ember.computed.sort('model.observers', 'svgSorting'),
+  svgObservers: Ember.computed.sort('model.observers', 'svgSorting'),
   zoom: 1.0,
   width: function() {
     return 1280 * this.get('zoom');

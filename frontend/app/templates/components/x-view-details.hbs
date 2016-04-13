@@ -11,7 +11,7 @@
     </div>
   </form>
   <svg width={{width}} height={{height}} viewBox="0 0 1280 1024">
-  {{#each svgSortedObservers key="@index" as |observer|}}
+  {{#each svgObservers key="@index" as |observer|}}
     {{#if observer.value}}
       {{svg-value value=observer.value observer=observer}}
     {{/if}}
@@ -28,7 +28,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each sortedObservers key="@index" as |observer|}}
+    {{#each textObservers key="@index" as |observer|}}
       {{#if observer.value}}
         <tr>
           <td>
