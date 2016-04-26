@@ -1,5 +1,5 @@
-import moduleForAcceptance from '../helpers/module-for-acceptance';
-import { test }from 'qunit';
+import { test } from 'qunit';
+import moduleForAcceptance from 'stromx-web/tests/helpers/module-for-acceptance';
 
 moduleForAcceptance('Acceptance: Connections');
 
@@ -58,7 +58,7 @@ test('add connection output -> input', function(assert) {
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mousedown');
   triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
-               'mouseenter');
+               'mouseover');
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mouseup');
 
@@ -81,7 +81,7 @@ test('add connection input -> output', function(assert) {
   triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
                'mousedown');
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
-               'mouseenter');
+               'mouseover');
   triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
                'mouseup');
 
@@ -107,7 +107,7 @@ test('remove and add connection', function(assert) {
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mousedown');
   triggerEvent('a[href="/streams/2/operators/2"] + g.stromx-svg-input g',
-               'mouseenter');
+               'mouseover');
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mouseup');
 

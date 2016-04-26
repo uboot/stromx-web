@@ -8,9 +8,11 @@ export default Ember.Component.extend({
     // send the according action after it has been hidden again
     var _this = this;
     this.$('.modal').one('hidden.bs.modal', function() {
-      if (! _this.get('isDestroying')) {
-        _this.sendAction("dismiss");
-      }
+      Ember.run(function() {
+        if (! _this.get('isDestroying')) {
+          _this.sendAction("dismiss");
+        }
+      });
     });
   },
   willDestroyElement: function() {
