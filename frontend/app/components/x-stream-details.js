@@ -17,9 +17,6 @@ export default Ember.Component.extend({
   height: function() {
     return 1024 * this.get('zoom');
   }.property('zoom'),
-  patternUri: function() {
-    return 'url(' + this.get('targetObject.target.url') + '#grid)';
-  }.property('targetObject.target.url'),
   
   strokeWidth: function() {
     return this.get('isDraggingValidConnection') ? 4 : 2;
