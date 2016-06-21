@@ -139,9 +139,9 @@ class ConversionTest(unittest.TestCase):
         op = stream.addOperator(stromx.test.TestDataOperator())
         stream.initializeOperator(op)
         
-        DATA_TYPE = 0
+        DATA_TYPE = 1
         MATRIX_FLOAT_32 = 5
-        OBJECT_TYPE = 1
+        OBJECT_TYPE = 2
         POLYGONS = 4
         op.setParameter(DATA_TYPE, stromx.runtime.Enum(MATRIX_FLOAT_32))
         op.setParameter(OBJECT_TYPE, stromx.runtime.Enum(POLYGONS))

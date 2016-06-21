@@ -14,66 +14,25 @@ import stromx.test
 import model
 
 _packages = [
-    'libstromx_runtime.so.0.7.0',
-    'libstromx_cvsupport.so.0.7.0',
-    'libstromx_test.so.0.1.0'
+    'libstromx_runtime.so.0.8.0',
+    'libstromx_cvsupport.so.0.8.0',
+    'libstromx_test.so.0.8.0'
 ]
 
 _content = (
 """
-data:application/octet-stream;base64,
-UEsDBBQAAAAAAOtVZESgtQ4rjAEAAIwBAAAWAAAAc3RyZWFtLnN0dWRpby5nZW9tZXR
-yeT/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAA/8AAAAAAAAAAAAC4B2dDLAAEAAAAAAAAAAAAAAAAAxwAAAGMAAAAAAAAAAAAAAMcAAABjAAA
-AAAAAAAAAKgAAAP8AAAAA/QAAAAAAAAAAAAAAAAAAAAQAAAAEAAAACAAAAAj8AAAAAAAAAAAuAdnQywA
-BAAAAAANuAAAAUQAABcIAAAMlAAADcAAAAGgAAAXAAAADIQAAAAAAAAAAAGQAAAD/AAAAAP0AAAABAAA
-AAwAAAlEAAABu/AEAAAAB+wAAABIASQBuAHAAdQB0AEwAaQBzAHQBAAAAAAAAAlEAAABSAQAABQAAAlE
-AAAI1AAAABAAAAAQAAAAIAAAACPwAAAAAAT/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/A
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8AAAAAAAAFBLAwQUAAAAAAApVmRE7do062UGAAB
-lBgAACgAAAHN0cmVhbS54bWw8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCIgc3RhbmR
-hbG9uZT0ibm8iID8+CjxTdHJvbXggdmVyc2lvbj0iMC4yLjAiPgoKICA8U3RyZWFtIG5hbWU9IiI+CiA
-gICA8T3BlcmF0b3IgaWQ9IjAiIG5hbWU9IkR1bXAiIHBhY2thZ2U9InJ1bnRpbWUiIHR5cGU9IkR1bXA
-iIHZlcnNpb249IjAuMi4wIj4KICAgICAgPElucHV0IGlkPSIwIiBvcGVyYXRvcj0iMSIgb3V0cHV0PSI
-wIi8+CiAgICA8L09wZXJhdG9yPgogICAgPE9wZXJhdG9yIGlkPSIxIiBuYW1lPSJKb2luIiBwYWNrYWd
-lPSJydW50aW1lIiB0eXBlPSJKb2luIiB2ZXJzaW9uPSIwLjIuMCI+CiAgICAgIDxQYXJhbWV0ZXIgaWQ
-9IjAiPgogICAgICAgIDxEYXRhIHBhY2thZ2U9InJ1bnRpbWUiIHR5cGU9IlVJbnQzMiIgdmVyc2lvbj0
-iMC4yLjAiPjI8L0RhdGE+CiAgICAgIDwvUGFyYW1ldGVyPgogICAgICA8SW5wdXQgaWQ9IjAiIG9wZXJ
-hdG9yPSIyIiBvdXRwdXQ9IjAiLz4KICAgICAgPElucHV0IGlkPSIxIiBvcGVyYXRvcj0iMiIgb3V0cHV
-0PSIxIi8+CiAgICA8L09wZXJhdG9yPgogICAgPE9wZXJhdG9yIGlkPSIyIiBuYW1lPSJGb3JrIiBwYWN
-rYWdlPSJydW50aW1lIiB0eXBlPSJGb3JrIiB2ZXJzaW9uPSIwLjIuMCI+CiAgICAgIDxQYXJhbWV0ZXI
-gaWQ9IjAiPgogICAgICAgIDxEYXRhIHBhY2thZ2U9InJ1bnRpbWUiIHR5cGU9IlVJbnQzMiIgdmVyc2l
-vbj0iMC4yLjAiPjI8L0RhdGE+CiAgICAgIDwvUGFyYW1ldGVyPgogICAgICA8SW5wdXQgaWQ9IjAiIG9
-wZXJhdG9yPSI0IiBvdXRwdXQ9IjAiLz4KICAgIDwvT3BlcmF0b3I+CiAgICA8T3BlcmF0b3IgaWQ9IjM
-iIG5hbWU9IkNvdW50ZXIiIHBhY2thZ2U9InJ1bnRpbWUiIHR5cGU9IkNvdW50ZXIiIHZlcnNpb249IjA
-uMi4wIi8+CiAgICA8T3BlcmF0b3IgaWQ9IjQiIG5hbWU9IlBlcmlvZGljRGVsYXkiIHBhY2thZ2U9InJ
-1bnRpbWUiIHR5cGU9IlBlcmlvZGljRGVsYXkiIHZlcnNpb249IjAuMi4wIj4KICAgICAgPFBhcmFtZXR
-lciBpZD0iMCI+CiAgICAgICAgPERhdGEgcGFja2FnZT0icnVudGltZSIgdHlwZT0iVUludDMyIiB2ZXJ
-zaW9uPSIwLjIuMCI+MTAwMDwvRGF0YT4KICAgICAgPC9QYXJhbWV0ZXI+CiAgICAgIDxJbnB1dCBpZD0
-iMCIgb3BlcmF0b3I9IjMiIG91dHB1dD0iMCIvPgogICAgPC9PcGVyYXRvcj4KICAgIDxUaHJlYWQgbmF
-tZT0iVGhyZWFkIEEiPgogICAgICA8SW5wdXRDb25uZWN0b3IgaW5wdXQ9IjAiIG9wZXJhdG9yPSI0Ii8
-+CiAgICAgIDxJbnB1dENvbm5lY3RvciBpbnB1dD0iMCIgb3BlcmF0b3I9IjIiLz4KICAgICAgPElucHV
-0Q29ubmVjdG9yIGlucHV0PSIwIiBvcGVyYXRvcj0iMCIvPgogICAgPC9UaHJlYWQ+CiAgICA8VGhyZWF
-kIG5hbWU9IlRocmVhZCBCIj4KICAgICAgPElucHV0Q29ubmVjdG9yIGlucHV0PSIwIiBvcGVyYXRvcj0
-iMSIvPgogICAgPC9UaHJlYWQ+CiAgICA8VGhyZWFkIG5hbWU9IlRocmVhZCBDIj4KICAgICAgPElucHV
-0Q29ubmVjdG9yIGlucHV0PSIxIiBvcGVyYXRvcj0iMSIvPgogICAgPC9UaHJlYWQ+CiAgPC9TdHJlYW0
-+Cgo8L1N0cm9teD4KPCEtLVhNTCBnZW5lcmF0ZWQgYXV0b21hdGljYWxseSBieSBYbWxXcml0ZXIgb2Y
-gdGhlIG9wZW4gc291cmNlIGxpYnJhcnkgU3Ryb214LS0+ClBLAwQUAAAAAADrVWREEiWzBL8AAAC/AAA
-AGAAAAHN0cmVhbV91bmluaXRpYWxpemVkLnhtbDw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IlV
-URi04IiBzdGFuZGFsb25lPSJubyIgPz4KPFN0cm9teCB2ZXJzaW9uPSIwLjIuMCI+CgogIDxQYXJhbWV
-0ZXJzLz4KCjwvU3Ryb214Pgo8IS0tWE1MIGdlbmVyYXRlZCBhdXRvbWF0aWNhbGx5IGJ5IFhtbFdyaXR
-lciBvZiB0aGUgb3BlbiBzb3VyY2UgbGlicmFyeSBTdHJvbXgtLT4KUEsDBBQAAAAAAOtVZES5gTwwhgE
-AAIYBAAANAAAAc3RyZWFtLnN0dWRpbyAREgIAAAAAAAAAAQAAAAAAAAAAAAAABUB7oAAAAAAAQHQQAAA
-AAABAenAAAAAAAEBeQAAAAAAAQGfAAAAAAABAXkAAAAAAAEBYgAAAAAAAQHQgAAAAAABAcFAAAAAAAEB
-0IAAAAAAAAAAAAAAAAAMB//++viAgLi4AAAH//yAgdXW8vAAAAf//AQGVlUdHAAAAAAABAAAAEABPAGI
-AcwBlAHIAdgBlAHIAAAABAAAAAAAAAAAAAAADAAAAGgB2AGkAcwB1AGEAbABpAHoAYQB0AGkAbwBuAAA
-AAgAAAAAAAAAACgBjAG8AbABvAHIAAABDAAH//yAgdXW8vAAAAAAADABhAGMAdABpAHYAZQAAAAEAAQA
-AAAMAAAAaAGQAZQBsAGEAeQBEAHUAcgBhAHQAaQBvAG4AAAACAAAAAGQAAAAWAGQAZQBsAGEAeQBBAGM
-AdABpAHYAZQAAAAEAAAAAABoAYQBjAGMAZQBzAHMAVABpAG0AZQBvAHUAdAAAAAIAAAATiFBLAQIUAxQ
-AAAAAAOtVZESgtQ4rjAEAAIwBAAAWAAAAAAAAAAAAAACkgQAAAABzdHJlYW0uc3R1ZGlvLmdlb21ldHJ
-5UEsBAhQDFAAAAAAAKVZkRO3aNOtlBgAAZQYAAAoAAAAAAAAAAAAAAKSBwAEAAHN0cmVhbS54bWxQSwE
-CFAMUAAAAAADrVWREEiWzBL8AAAC/AAAAGAAAAAAAAAAAAAAApIFNCAAAc3RyZWFtX3VuaW5pdGlhbGl
-6ZWQueG1sUEsBAhQDFAAAAAAA61VkRLmBPDCGAQAAhgEAAA0AAAAAAAAAAAAAAKSBQgkAAHN0cmVhbS5
-zdHVkaW9QSwUGAAAAAAQABAD9AAAA8woAAAAA
+data:;base64,UEsDBBQAAAAIAIya1EgdpDSCGQIAAKUIAAAKAAAAc3RyZWFtLnhtbL1WTW/bMAy951d
+w2mU7pP7qoQcnRZegQIZtLbAU61Wx1VSoLBmyPMT79aMtx0kM28maYD4Yoii+Jz5alMPbTSLgN9MZV3J
+CvCuXAJORirlcT8jT8n58QyAzVMZUKMkmRCoCt9NR+NNolWx2ke6Vj7HT0Qig9DGagKQJBuAc4BM+pEx
+TozTwGFcT4NlCcsOp4H8YzhidM1KHzPMkJZDS6I2u0dS5NDxBrynSxrtHXG16U4EW5dsSIuVCprnZ8qm
+aH5NEIzfosvPVcMmNQOyHykAma1YAxKkzcLYpdGXkDWb0VXHZn5H1npLRI9WIZ1jDWW/0R56scFK9AC+
+3nDURGDOnhvZSPy2kCfwD8puyjn7olHENsdMwd6jr76vr79T1O9UF91BftJ0O0KAHNOgG9Vqg3mll8wf
+Ldq/0W3/ZrPcyZbMp/ee6HZyK653E3sVORTAo70xhUkz3K9wsGBDZ6eK9HuR9ZJpjh4vmTNCin721rCX
+1CYX2G8ksFHxKuBA8Y5GScfb57GJ7ruu+u97Bhbrg8hWbfQyREiXqR7d6tkrXzrtWT54pKVlUFUtud1C
+NlvuMBx+ncyaCfzbC7lNzbFr/IMCXYwL4HeTQurXeTz87Rh900XtH6UPHXvV47VdD/CPAX4MP4/Hz92+
+wZrIMZjHQ3KiEGh5RIQpYFfCciF+aG9v6zCsreSRkKtcRA8FXmuoCLN54PB39BVBLAQIAABQAAAAIAIy
+a1EgdpDSCGQIAAKUIAAAKAAAAAAAAAAAAAAAAAAAAAABzdHJlYW0ueG1sUEsFBgAAAAABAAEAOAAAAEE
+CAAAAAA==
 """)
 
 _colorImage = (
@@ -801,7 +760,7 @@ class OperatorsTest(unittest.TestCase):
         kernel = stromx.test.ExceptionOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
         op = self.operators.addStromxOp(stromxOp, self.stream)
-        stromxOp.setParameter(0, stromx.runtime.Bool(True))
+        stromxOp.setParameter(1, stromx.runtime.Bool(True))
         
         self.assertRaises(model.Failed, self.operators.set,
                           '1', {'operator': {'status': 'initialized'}})
@@ -826,7 +785,7 @@ class OperatorsTest(unittest.TestCase):
         kernel = stromx.test.ExceptionOperator()
         stromxOp = self.stromxStream.addOperator(kernel)
         self.stromxStream.initializeOperator(stromxOp)
-        stromxOp.setParameter(4, stromx.runtime.Bool(True))
+        stromxOp.setParameter(5, stromx.runtime.Bool(True))
         op = self.operators.addStromxOp(stromxOp, self.stream)
         
         self.operators.set('1', {'operator': 
@@ -916,14 +875,14 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': '127.0.0.1'}})
-        self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
+        self.assertEqual('127.0.0.1', self.receive.getParameter(1).get())
         
     def testSetUrlUnicode(self):
         self.model.operators.addStromxOp(self.receive, self.stream)
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': u'127.0.0.1'}})
-        self.assertEqual('127.0.0.1', self.receive.getParameter(0).get())
+        self.assertEqual('127.0.0.1', self.receive.getParameter(1).get())
         
     def testDataPort(self):
         self.model.operators.addStromxOp(self.receive, self.stream)
@@ -970,7 +929,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['1']
         param.set({'parameter': {'id': '0',
                                  'value': 50000}})
-        self.assertEqual(50000, self.receive.getParameter(1).get())
+        self.assertEqual(50000, self.receive.getParameter(2).get())
         
     def testDataNumberOfOutputs(self):
         self.model.operators.addStromxOp(self.fork, self.stream)
@@ -1048,7 +1007,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['0']
         param.set({'parameter': {'id': '0',
                                  'value': 3}})
-        self.assertEqual(3, self.fork.getParameter(0).get())
+        self.assertEqual(3, self.fork.getParameter(1).get())
         
     def testDataPixelType(self):
         self.model.operators.addStromxOp(self.dummyCamera, self.stream)
@@ -1077,7 +1036,7 @@ class ParametersTest(unittest.TestCase):
         param = self.parameters['1']
         param.set({'parameter': {'id': '1',
                                  'value': 1}})
-        self.assertEqual(1, self.dummyCamera.getParameter(2).get())
+        self.assertEqual(1, self.dummyCamera.getParameter(4).get())
         
     def testDataException(self):
         self.__activateExceptionOnParameter()
@@ -1237,7 +1196,7 @@ class ConnectionsTest(unittest.TestCase):
         
         output = self.stromxStream.connectionSource(self.fork.stromxOp, 0)
         self.assertEqual(output.op(), self.receive.stromxOp)
-        self.assertEqual(output.id(), 0)
+        self.assertEqual(output.id(), 2)
         
         self.assertEqual(['0'], self.model.streams['0'].connections)
         
