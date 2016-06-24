@@ -114,7 +114,7 @@ _fork = {
     'package': 'runtime',
     'outputs': ['1', '2'],
     'inputs': ['3'],
-    'version': '0.1.0',
+    'version': '0.8.0',
     'position': {'y': 0.0, 'x': 0.0},
     'type': 'Fork', 'id': '2',
     'stream': '0'
@@ -185,7 +185,7 @@ class OperatorTemplatesTest(unittest.TestCase):
         refData = {'operatorTemplate': {'id': '0',
                                         'package': 'runtime',
                                         'type': 'Block',
-                                        'version': '0.1.0'}}
+                                        'version': '0.8.0'}}
                                          
         self.assertEqual(29, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
@@ -622,7 +622,7 @@ class OperatorsTest(unittest.TestCase):
                              'package': 'runtime',
                              'type': 'Block',
                              'status': 'initialized',
-                             'version': '0.1.0',
+                             'version': '0.8.0',
                              'parameters': ['0', '1', '2'],
                              'outputs': ['0'],
                              'inputs': ['0'],
@@ -686,7 +686,7 @@ class OperatorsTest(unittest.TestCase):
                              'package': 'runtime',
                              'type': 'Fork',
                              'status': 'none',
-                             'version': '0.1.0',
+                             'version': '0.8.0',
                              'parameters': ['3'],
                              'outputs': [],
                              'inputs': [],
