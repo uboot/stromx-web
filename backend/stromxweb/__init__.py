@@ -203,7 +203,7 @@ class RedirectHandler(tornado.web.RequestHandler):
         
 def start(configFile):
     #tornado.log.enable_pretty_logging()
-    execfile(configFile, config) 
+    exec(open(configFile).read(), config);
     
     appModel = model.Model(config['DATA_DIR'], config['PACKAGES'])
     appModel.executionDelay = config['EXECUTION_DELAY']
