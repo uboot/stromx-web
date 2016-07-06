@@ -1303,6 +1303,25 @@ class InputsTest(unittest.TestCase):
                           'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
         
+    def testSetTypePushParameter(self):
+        connector = self.model.inputs['0']
+        connector.set({'input': {'type': 'parameter', 'behavior': 'push'}})
+        
+        self.assertFalse(self.model.inputs.has_key('0'))
+        param = self.model.parameters['1']
+        self.assertEqual('input', param.data['parameter']['type'])
+        self.assertEqual('push', param.data['parameter']['behavior'])
+        
+    def testSetTypePersistentParameter(self):
+        connector = self.model.inputs['0']
+        connector.set({'input': {'type': 'parameter',
+                                 'behavior': 'persistent'}})
+        
+        self.assertFalse(self.model.inputs.has_key('0'))
+        param = self.model.parameters['1']
+        self.assertEqual('input', param.data['parameter']['type'])
+        self.assertEqual('persistent', param.data['parameter']['behavior'])
+        
     def testDelete(self):
         # create a connection
         source = self.model.outputs['0']

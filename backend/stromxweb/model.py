@@ -182,11 +182,12 @@ class Item(object):
         
     def set(self, data):
         name = _resourceName(self.__class__.__name__)
-        _properties = data[name]
+        properties = data[name]
         
-        for key in _properties:
+        for key in self.__class__._properties:
             try:
-                self.__setattr__(key, _properties[key])
+                if properties.has_key(key):
+                    self.__setattr__(key, properties[key])
             except AttributeError:
                 pass
             
@@ -759,14 +760,28 @@ class Operator(Item):
             self.model.errors.addError(e)
             raise Failed()
         
-    def removeInput(self, input):
-        self.__inputs.remove(input)
+    def removeInput(self, connector):
+        self.__inputs.remove(connector)
         
-    def removeOutput(self, output):
-        self.__outputs.remove(output)
+    def removeOutput(self, connector):
+        self.__outputs.remove(connector)
         
     def removeParameter(self, param):
         self.__parameters.remove(param)
+        
+    def setConnectorType(self, connector, connectorType, behavior):
+        stream = self.__stream.stromxStream
+        stream.setConnectorType(self.__op, connector.stromxId,
+                                 connectorType, behavior)
+        if connector.type == 'input':
+            self.model.inputs.delete(connector.index)
+            self.__inputs.remove(connector)
+        
+        if connectorType == stromx.runtime.Description.Type.PARAMETER:
+            stromxParam = self.__op.info().parameter(connector.stromxId)
+            parameters = self.model.parameters
+            parameter = parameters.addStromxParameter(self, stromxParam)
+            self.__parameters.append(parameter)
     
     def __allocateConnectors(self):
         inputs = self.model.inputs
@@ -1093,6 +1108,7 @@ class ConnectorBase(Item):
         self.__description = description
         self.__op = op
         self.__observers = []
+        self.__behavior = ''
         
     @property
     def operator(self):
@@ -1119,9 +1135,20 @@ class ConnectorBase(Item):
     def behavior(self):
         return ''
     
+    @behavior.setter
+    def behavior(self, value):
+        self.__behavior = value
+    
     @property
     def type(self):
         return _descriptionType(self.__description)
+        
+    @type.setter
+    def type(self, value):
+        stromxDescriptionType = _stromxDescriptionType(value)
+        stromxBehavior = _stromxUpdateBehavior(self.__behavior)
+        self.operatorModel.setConnectorType(self, stromxDescriptionType, 
+                                            stromxBehavior)
     
     @property
     def stromxOp(self):
@@ -1777,4 +1804,22 @@ def _descriptionType(description):
         return 'input'
     elif description.originalType() == ConnectorType.OUTPUT:
         return 'output'
+
+def _stromxDescriptionType(descriptionType):
+    ConnectorType = stromx.runtime.Description.Type
+    if descriptionType == 'parameter':
+        return ConnectorType.PARAMETER
+    elif descriptionType == 'input':
+        return ConnectorType.INPUT
+    elif descriptionType == 'output':
+        return ConnectorType.OUTPUT
+
+def _stromxUpdateBehavior(behavior):
+    UpdateBehavior = stromx.runtime.Description.UpdateBehavior
+    if behavior == 'push':
+        return UpdateBehavior.PUSH
+    elif behavior == 'pull':
+        return UpdateBehavior.PULL
+    elif behavior == 'persistent':
+        return UpdateBehavior.PERSISTENT
         
