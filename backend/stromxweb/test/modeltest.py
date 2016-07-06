@@ -867,6 +867,7 @@ class ParametersTest(unittest.TestCase):
                               'operator': '0',
                               'access': 'inactive',
                               'behavior': 'persistent',
+                              'type': 'parameter',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -903,6 +904,7 @@ class ParametersTest(unittest.TestCase):
                               'operator': '0',
                               'access': 'inactive',
                               'behavior': 'persistent',
+                              'type': 'parameter',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -950,6 +952,7 @@ class ParametersTest(unittest.TestCase):
                               'operator': '0',
                               'access': 'none',
                               'behavior': 'persistent',
+                              'type': 'parameter',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -980,6 +983,7 @@ class ParametersTest(unittest.TestCase):
                               'operator': '0',
                               'access': 'inactive',
                               'behavior': 'persistent',
+                              'type': 'parameter',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -1028,6 +1032,7 @@ class ParametersTest(unittest.TestCase):
                               'operator': '0',
                               'access': 'full',
                               'behavior': 'persistent',
+                              'type': 'parameter',
                               'observers': []}}
         self.assertEqual(data, param.data)
         
@@ -1293,7 +1298,9 @@ class InputsTest(unittest.TestCase):
                           'title': 'Input',
                           'observers': [],
                           'connection': None,
-                           'variant': { 'ident': 'none', 'title': 'Data' }}}
+                          'behavior': '',
+                          'type': 'input',
+                          'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
         
     def testDelete(self):
@@ -1333,6 +1340,8 @@ class OutputsTest(unittest.TestCase):
         data = {'output': {'id': '1',
                            'operator': '0',
                            'title': 'Output 1',
+                           'behavior': '',
+                           'type': 'output',
                            'observers': [],
                            'connections': [],
                            'variant': { 'ident': 'none', 'title': 'Data' }}}

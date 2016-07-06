@@ -811,7 +811,7 @@ class Parameters(Items):
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
                   'minimum', 'maximum', 'rows', 'cols', 'access', 'behavior',
-                  'descriptions', 'state', 'observers']
+                  'type', 'descriptions', 'state', 'observers']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -908,6 +908,10 @@ class Parameter(Item):
             return 'pull'
         else:
             return ''
+        
+    @property
+    def type(self):
+        return _descriptionType(self.__param)
         
     @property
     def descriptions(self):
@@ -1081,7 +1085,8 @@ class Connections(Items):
         return connection.data
         
 class ConnectorBase(Item):
-    _properties = ['operator', 'title', 'variant', 'observers']
+    _properties = ['operator', 'title', 'variant', 'observers', 'behavior', 
+                   'type']
     
     def __init__(self, op, description, model):
         super(ConnectorBase, self).__init__(model)
@@ -1109,6 +1114,14 @@ class ConnectorBase(Item):
             'title': stromxVariant.title()
         }
         return variant
+    
+    @property
+    def behavior(self):
+        return ''
+    
+    @property
+    def type(self):
+        return _descriptionType(self.__description)
     
     @property
     def stromxOp(self):
@@ -1756,4 +1769,12 @@ def _parameterAccess(op, param):
     else:
         return "none"  
     
+def _descriptionType(description):
+    ConnectorType = stromx.runtime.Description.Type
+    if description.originalType() == ConnectorType.PARAMETER:
+        return 'parameter'
+    elif description.originalType() == ConnectorType.INPUT:
+        return 'input'
+    elif description.originalType() == ConnectorType.OUTPUT:
+        return 'output'
         
