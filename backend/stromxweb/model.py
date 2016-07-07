@@ -184,7 +184,7 @@ class Item(object):
         name = _resourceName(self.__class__.__name__)
         properties = data[name]
         
-        for key in self.__class__._properties:
+        for key in self._properties:
             try:
                 if properties.has_key(key):
                     self.__setattr__(key, properties[key])
@@ -769,19 +769,40 @@ class Operator(Item):
     def removeParameter(self, param):
         self.__parameters.remove(param)
         
-    def setConnectorType(self, connector, connectorType, behavior):
+    def setConnectorType(self, connector, connectorType, behavior = None):
         stream = self.__stream.stromxStream
-        stream.setConnectorType(self.__op, connector.stromxId,
-                                 connectorType, behavior)
+        
         if connector.type == 'input':
             self.model.inputs.delete(connector.index)
             self.__inputs.remove(connector)
-        
+        elif connector.type == 'output':
+            self.model.outputs.delete(connector.index)
+            self.__outputs.remove(connector)
+        elif connector.type == 'parameter':
+            self.model.parameters.delete(connector.index)
+            self.__parameters.remove(connector)
+            
+        try:
+            if behavior:
+                stream.setConnectorType(self.__op, connector.stromxId,
+                                        connectorType, behavior)
+            else:
+                stream.setConnectorType(self.__op, connector.stromxId,
+                                        connectorType)
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
+            raise Failed()
+                    
         if connectorType == stromx.runtime.Description.Type.PARAMETER:
             stromxParam = self.__op.info().parameter(connector.stromxId)
             parameters = self.model.parameters
             parameter = parameters.addStromxParameter(self, stromxParam)
             self.__parameters.append(parameter)
+        elif connectorType == stromx.runtime.Description.Type.INPUT:
+            stromxInput = self.__op.info().input(connector.stromxId)
+            inputs = self.model.inputs
+            inputModel = inputs.addStromxInput(self, stromxInput)
+            self.__inputs.append(inputModel)
     
     def __allocateConnectors(self):
         inputs = self.model.inputs
@@ -926,7 +947,12 @@ class Parameter(Item):
         
     @property
     def type(self):
-        return _descriptionType(self.__param)
+        return _descriptionType(self.__param.originalType())
+    
+    @type.setter
+    def type(self, value):
+        stromxDescriptionType = _stromxDescriptionType(value)
+        self.__op.setConnectorType(self, stromxDescriptionType)
         
     @property
     def descriptions(self):
@@ -1058,10 +1084,10 @@ class Connection(Item):
         assert(self.__stream != None)
         
         try:          
-          self.__stream.removeConnection(self)
+            self.__stream.removeConnection(self)
         except stromx.runtime.Exception as e:
-          self.model.errors.addError(e)
-          raise Failed()
+            self.model.errors.addError(e)
+            raise Failed()
           
         self.__output.removeConnection(self)
         self.__input.setConnection(None)
@@ -1796,13 +1822,13 @@ def _parameterAccess(op, param):
     else:
         return "none"  
     
-def _descriptionType(description):
+def _descriptionType(stromxType):
     ConnectorType = stromx.runtime.Description.Type
-    if description.originalType() == ConnectorType.PARAMETER:
+    if stromxType == ConnectorType.PARAMETER:
         return 'parameter'
-    elif description.originalType() == ConnectorType.INPUT:
+    elif stromxType == ConnectorType.INPUT:
         return 'input'
-    elif description.originalType() == ConnectorType.OUTPUT:
+    elif stromxType == ConnectorType.OUTPUT:
         return 'output'
 
 def _stromxDescriptionType(descriptionType):

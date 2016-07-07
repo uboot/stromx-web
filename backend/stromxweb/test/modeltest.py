@@ -1105,7 +1105,7 @@ class ParametersTest(unittest.TestCase):
                                  'value': 1}})
         self.assertEqual(1, valueParam.data['parameter']['value'])
         
-    def testSetOutputIndex(self):
+    def testSetBool(self):
         self.stromxStream.deinitializeOperator(self.dummyCamera)
         self.model.operators.addStromxOp(self.dummyCamera, self.stream)
         param = self.parameters['0']
@@ -1113,6 +1113,17 @@ class ParametersTest(unittest.TestCase):
         param.set({'parameter': {'id': '7',
                                  'value': True}})
         self.assertEqual(True, param.data['parameter']['value'])
+        
+    def testTypeInput(self):
+        op = self.model.operators.addStromxOp(self.fork, self.stream)
+        connector = self.model.inputs['0']
+        connector.set({'input': {'type': 'parameter', 'behavior': 'push'}})
+        param = self.model.parameters['1']
+        param.set({'parameter': {'type': 'input'}})
+        
+        self.assertFalse(self.model.parameters.has_key('1'))
+        self.assertTrue(self.model.inputs.has_key('2'))
+        self.assertTrue(op.data['operator']['parameters'].count('2'))
         
     def testDelete(self):
         # create some parameters
@@ -1281,6 +1292,8 @@ class ConnectionsTest(unittest.TestCase):
 class InputsTest(unittest.TestCase):
     def setUp(self):
         self.model = model.Model()
+        self.errorSink = ErrorSink()
+        self.model.errors.addHandler(self.errorSink.handleError)
         
         fileModel = model.File("", self.model)
         self.stream = self.model.streams.addFile(fileModel)
@@ -1311,6 +1324,15 @@ class InputsTest(unittest.TestCase):
         param = self.model.parameters['1']
         self.assertEqual('input', param.data['parameter']['type'])
         self.assertEqual('push', param.data['parameter']['behavior'])
+        
+    def testSetTypePullParameter(self):
+        connector = self.model.inputs['0']
+        
+        self.assertRaises(model.Failed, connector.set, 
+                          {'input': {'type': 'parameter', 'behavior': 'pull'}})
+        self.assertEqual(1, len(self.errorSink.errors))
+        self.assertTrue(self.model.inputs.has_key('0'))
+        self.assertFalse(self.model.parameters.has_key('1'))
         
     def testSetTypePersistentParameter(self):
         connector = self.model.inputs['0']
@@ -1365,6 +1387,25 @@ class OutputsTest(unittest.TestCase):
                            'connections': [],
                            'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
+        
+    def testSetTypePullParameter(self):
+        connector = self.model.outputs['1']
+        connector.set({'output': {'type': 'parameter', 'behavior': 'pull'}})
+        
+        self.assertFalse(self.model.outputs.has_key('1'))
+        param = self.model.parameters['1']
+        self.assertEqual('output', param.data['parameter']['type'])
+        self.assertEqual('pull', param.data['parameter']['behavior'])
+        
+    def testSetTypePersistentParameter(self):
+        connector = self.model.outputs['1']
+        connector.set({'output': {'type': 'parameter',
+                                  'behavior': 'persistent'}})
+        
+        self.assertFalse(self.model.outputs.has_key('1'))
+        param = self.model.parameters['1']
+        self.assertEqual('output', param.data['parameter']['type'])
+        self.assertEqual('persistent', param.data['parameter']['behavior'])
         
     def testDelete(self):
         # create a connection
