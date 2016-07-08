@@ -136,6 +136,7 @@ class DummyItem(model.Item):
     _properties = ['read', 'write']
     
     def __init__(self):
+        super(DummyItem, self).__init__()
         self.__write = 0
     
     @property
@@ -1122,8 +1123,8 @@ class ParametersTest(unittest.TestCase):
         param.set({'parameter': {'type': 'input'}})
         
         self.assertFalse(self.model.parameters.has_key('1'))
-        self.assertTrue(self.model.inputs.has_key('2'))
-        self.assertTrue(op.data['operator']['parameters'].count('2'))
+        self.assertTrue(self.model.inputs.has_key('1'))
+        self.assertTrue(op.data['operator']['inputs'].count('1'))
         
     def testDelete(self):
         # create some parameters
@@ -1324,6 +1325,17 @@ class InputsTest(unittest.TestCase):
         param = self.model.parameters['1']
         self.assertEqual('input', param.data['parameter']['type'])
         self.assertEqual('push', param.data['parameter']['behavior'])
+        
+    def testSetTypeStreamActive(self):
+        self.stream.active = True
+        connector = self.model.inputs['0']
+        
+        self.assertRaises(model.Failed, connector.set, 
+                          {'input': {'type': 'parameter',
+                                     'behavior': 'persistent'}})
+        self.assertEqual(1, len(self.errorSink.errors))
+        self.assertTrue(self.model.inputs.has_key('0'))
+        self.assertFalse(self.model.parameters.has_key('1'))
         
     def testSetTypePullParameter(self):
         connector = self.model.inputs['0']

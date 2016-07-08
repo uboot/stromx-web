@@ -155,10 +155,13 @@ class Item(object):
     
     def __init__(self, model = None):
         self.__index = ""
+        self.__isDeleted = False
         self.__model = model
         
     @property
     def data(self):
+        if self.__isDeleted:
+            return {}
         props = {prop: self.__getattribute__(prop) for prop in self._properties}
         props['id'] = self.index
         name = self.modelName
@@ -195,6 +198,9 @@ class Item(object):
         
     def delete(self):
         pass
+    
+    def markAsDeleted(self):
+        self.__isDeleted = True
         
 class Files(Items):
     @property
@@ -769,37 +775,65 @@ class Operator(Item):
     def removeParameter(self, param):
         self.__parameters.remove(param)
         
-    def setConnectorType(self, connector, connectorType, behavior = None):
+    def setConnectorType(self, connector, connectorType, behavior):
         stream = self.__stream.stromxStream
+        stromxId = connector.stromxId
+        
+        if self.__stream.active:
+            self.model.errors.addError('Can not set connector type while the '
+                                       'stream is active')
+            raise Failed()
         
         if connector.type == 'input':
+            if behavior == stromx.runtime.Description.UpdateBehavior.PULL:
+                self.model.errors.addError('Invalid behavior for input')
+                raise Failed()
             self.model.inputs.delete(connector.index)
             self.__inputs.remove(connector)
         elif connector.type == 'output':
+            if behavior == stromx.runtime.Description.UpdateBehavior.PUSH:
+                self.model.errors.addError('Invalid behavior for output')
+                raise Failed()
             self.model.outputs.delete(connector.index)
             self.__outputs.remove(connector)
-        elif connector.type == 'parameter':
-            self.model.parameters.delete(connector.index)
-            self.__parameters.remove(connector)
             
         try:
-            if behavior:
-                stream.setConnectorType(self.__op, connector.stromxId,
-                                        connectorType, behavior)
-            else:
-                stream.setConnectorType(self.__op, connector.stromxId,
-                                        connectorType)
+            stream.setConnectorType(self.__op, stromxId, connectorType,
+                                    behavior)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
             raise Failed()
-                    
-        if connectorType == stromx.runtime.Description.Type.PARAMETER:
-            stromxParam = self.__op.info().parameter(connector.stromxId)
-            parameters = self.model.parameters
-            parameter = parameters.addStromxParameter(self, stromxParam)
-            self.__parameters.append(parameter)
+              
+        stromxParam = self.__op.info().parameter(stromxId)
+        parameters = self.model.parameters
+        parameter = parameters.addStromxParameter(self, stromxParam)
+        self.__parameters.append(parameter)      
+        
+    def setParameterType(self, parameter, connectorType):
+        stream = self.__stream.stromxStream
+        stromxId = parameter.stromxId
+        
+        if self.__stream.active:
+            self.model.errors.addError('Can not set parameter type while the '
+                                       'stream is active')
+            raise Failed()
+        
+        self.model.parameters.delete(parameter.index)
+        self.__parameters.remove(parameter)
+            
+        try:
+            stream.setConnectorType(self.__op, stromxId, connectorType)
+        except stromx.runtime.Exception as e:
+            self.model.errors.addError(e)
+            raise Failed()
+             
+        if connectorType == stromx.runtime.Description.Type.OUTPUT:
+            stromxOutput = self.__op.info().output(stromxId)
+            outputs = self.model.outputs
+            outputModel = outputs.addStromxInput(self, stromxOutput)
+            self.__outputs.append(outputModel)
         elif connectorType == stromx.runtime.Description.Type.INPUT:
-            stromxInput = self.__op.info().input(connector.stromxId)
+            stromxInput = self.__op.info().input(stromxId)
             inputs = self.model.inputs
             inputModel = inputs.addStromxInput(self, stromxInput)
             self.__inputs.append(inputModel)
@@ -952,7 +986,8 @@ class Parameter(Item):
     @type.setter
     def type(self, value):
         stromxDescriptionType = _stromxDescriptionType(value)
-        self.__op.setConnectorType(self, stromxDescriptionType)
+        self.__op.setParameterType(self, stromxDescriptionType)
+        self.markAsDeleted()
         
     @property
     def descriptions(self):
@@ -1167,7 +1202,7 @@ class ConnectorBase(Item):
     
     @property
     def type(self):
-        return _descriptionType(self.__description)
+        return _descriptionType(self.__description.originalType())
         
     @type.setter
     def type(self, value):
@@ -1175,6 +1210,7 @@ class ConnectorBase(Item):
         stromxBehavior = _stromxUpdateBehavior(self.__behavior)
         self.operatorModel.setConnectorType(self, stromxDescriptionType, 
                                             stromxBehavior)
+        self.markAsDeleted()
     
     @property
     def stromxOp(self):
@@ -1822,13 +1858,13 @@ def _parameterAccess(op, param):
     else:
         return "none"  
     
-def _descriptionType(stromxType):
+def _descriptionType(stromxDescriptionType):
     ConnectorType = stromx.runtime.Description.Type
-    if stromxType == ConnectorType.PARAMETER:
+    if stromxDescriptionType == ConnectorType.PARAMETER:
         return 'parameter'
-    elif stromxType == ConnectorType.INPUT:
+    elif stromxDescriptionType == ConnectorType.INPUT:
         return 'input'
-    elif stromxType == ConnectorType.OUTPUT:
+    elif stromxDescriptionType == ConnectorType.OUTPUT:
         return 'output'
 
 def _stromxDescriptionType(descriptionType):
