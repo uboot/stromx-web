@@ -1,8 +1,5 @@
 <header class="stromx-cell-title">{{model.title}}</header>
-{{#unless isEditingObserver}}
-  {{model.variant.title}}
-  <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right stromx-edit-output-observer" aria-hidden="true"></span></a>
-{{else}}
+{{#if isEditingObserver}}
   <div class="form-group">
     {{#if viewsExist}}
       <select onchange={{action (mut viewId) value="target.value"}} class="stromx-views-select">
@@ -24,4 +21,13 @@
       {{#link-to "views.new" class="btn btn-primary stromx-new-view"}}New view{{/link-to}}
     {{/if}}
   </div>
-{{/unless}}
+{{else if isEditingDescription}}
+  <div class="form-group">
+    <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+    <button {{action "setTypeToParameter"}} class="btn btn-primary stromx-save">Parameter</button>
+  </div>
+{{else}}
+  {{model.variant.title}}
+  <a {{action "editObserver"}}><span class="glyphicon glyphicon-eye-open pull-right stromx-margin-left" aria-hidden="true"></span></a>
+  <a {{action "editDescription"}}><span class="glyphicon glyphicon-cog pull-right" aria-hidden="true"></span></a>
+{{/if}}

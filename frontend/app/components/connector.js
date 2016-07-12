@@ -3,6 +3,7 @@ import Ember from "ember";
 export default Ember.Component.extend({
   tagName: 'td',
   isEditingObserver: false,
+  isEditingDescription: false,
 
   viewId: null,
   viewsExist: Ember.computed.gt('views.length', 0),
@@ -44,8 +45,12 @@ export default Ember.Component.extend({
       this.set('viewId', null);
       this.set('isEditingObserver', true);
     },
+    editDescription: function() {
+      this.set('isEditingDescription', true);
+    },
     discardChanges: function() {
       this.set('isEditingObserver', false);
+      this.set('isEditingDescription', false);
     },
     addObserver: function() {
       var view = this.get('view');
@@ -63,7 +68,21 @@ export default Ember.Component.extend({
       this.findObserver(view).then( function(observer) {
         _this.sendAction('showObserver', observer);
       });
+    },
+    setTypeToParameter: function() {
+      this.set('isEditingDescription', false);
+
+      this.set('model.behavior', 'persistent');
+      this.set('model.currentType', 'parameter');
+      var model = this.get('model');
+      var op = this.get('model.operator');
+      model.save().catch(function() {
+        model.rollbackAttributes();
+      }).then(function() {
+        op.then(function(op) {
+          op.reload();
+        });
+      });
     }
   }
 });
-

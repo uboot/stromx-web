@@ -3,6 +3,7 @@ import ENV from '../config/environment';
 
 export default Ember.Component.extend({
   isEditing: false,
+  isEditingParameter: false,
   tagName: 'td',
 
   isEnum: function() {
@@ -95,6 +96,22 @@ export default Ember.Component.extend({
     }
   }),
 
+  isConnector: function() {
+    return this.get('model.originalType') !== 'parameter';
+  }.property('model.originalType'),
+
+  originalType: function() {
+    switch (this.get('model.originalType'))
+    {
+      case 'input':
+        return 'Input';
+      case 'output':
+        return 'Output';
+      default:
+        return '';
+    }
+  }.property('model.originalType'),
+
   editValue: Ember.computed('model.value', 'model.variant', {
     get: function() {
       var value = this.get('model.value');
@@ -161,10 +178,6 @@ export default Ember.Component.extend({
         return '';
       }
 
-      if (this.get('isEditing')) {
-        return '';
-      }
-
       var value = this.get('model.value');
       switch (this.get('model.variant.ident')) {
         case 'float':
@@ -209,9 +222,12 @@ export default Ember.Component.extend({
 
   save: function() {
     var model = this.get('model');
-    model.save().catch(function() {
+    return model.save().catch(function() {
       model.rollbackAttributes();
     });
+  },
+
+  reloadOperator: function() {
   },
 
   actions: {
@@ -224,6 +240,7 @@ export default Ember.Component.extend({
     },
     discardChanges: function() {
       this.set('isEditing', false);
+      this.set('isEditingParameter', false);
       this.get('model').rollbackAttributes();
     },
     reload: function() {
@@ -233,6 +250,21 @@ export default Ember.Component.extend({
       this.set('isEditing', false);
       this.set('model.value', 1);
       this.save();
+    },
+    editParameter: function() {
+      this.set('isEditingParameter', true);
+    },
+    setTypeToConnector: function() {
+      this.set('isEditingParameter', false);
+
+      var originalType = this.get('model.originalType');
+      this.set('model.currentType', originalType);
+      var op = this.get('model.operator');
+      this.save().then(function() {
+        op.then(function(op) {
+          op.reload();
+        });
+      });
     }
   }
 });

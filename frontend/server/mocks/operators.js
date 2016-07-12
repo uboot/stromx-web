@@ -82,6 +82,22 @@ module.exports = function(app) {
         inputs: [],
         outputs: [],
         stream: 2
+      },
+      {
+        id: 6,
+        name: 'Description types',
+        status: 'initialized',
+        type: 'DescriptionTypes',
+        package: 'mypackage',
+        version: '0.0.1',
+        parameters: [18],
+        position: {
+          x: 200,
+          y: 100
+        },
+        inputs: [5],
+        outputs: [7],
+        stream: 3
       }
     ]});
   });

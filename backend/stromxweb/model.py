@@ -775,7 +775,7 @@ class Operator(Item):
     def removeParameter(self, param):
         self.__parameters.remove(param)
         
-    def setConnectorType(self, connector, connectorType, behavior):
+    def setConnectorTypeToParameter(self, connector, behavior):
         stream = self.__stream.stromxStream
         stromxId = connector.stromxId
         
@@ -784,13 +784,13 @@ class Operator(Item):
                                        'stream is active')
             raise Failed()
         
-        if connector.type == 'input':
+        if connector.currentType == 'input':
             if behavior == stromx.runtime.Description.UpdateBehavior.PULL:
                 self.model.errors.addError('Invalid behavior for input')
                 raise Failed()
             self.model.inputs.delete(connector.index)
             self.__inputs.remove(connector)
-        elif connector.type == 'output':
+        elif connector.currentType == 'output':
             if behavior == stromx.runtime.Description.UpdateBehavior.PUSH:
                 self.model.errors.addError('Invalid behavior for output')
                 raise Failed()
@@ -798,7 +798,8 @@ class Operator(Item):
             self.__outputs.remove(connector)
             
         try:
-            stream.setConnectorType(self.__op, stromxId, connectorType,
+            PARAMETER = stromx.runtime.Description.Type.PARAMETER
+            stream.setConnectorType(self.__op, stromxId, PARAMETER,
                                     behavior)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
@@ -818,6 +819,17 @@ class Operator(Item):
                                        'stream is active')
             raise Failed()
         
+        stromxParam = self.__op.info().parameter(stromxId)
+        if connectorType != stromxParam.originalType():
+            self.model.errors.addError('Can only set parameter type to its '
+                                       'original type')
+            raise Failed()
+        
+        if self.__stream.active:
+            self.model.errors.addError('Can not set parameter type while the '
+                                       'stream is active')
+            raise Failed()
+        
         self.model.parameters.delete(parameter.index)
         self.__parameters.remove(parameter)
             
@@ -830,7 +842,7 @@ class Operator(Item):
         if connectorType == stromx.runtime.Description.Type.OUTPUT:
             stromxOutput = self.__op.info().output(stromxId)
             outputs = self.model.outputs
-            outputModel = outputs.addStromxInput(self, stromxOutput)
+            outputModel = outputs.addStromxOutput(self, stromxOutput)
             self.__outputs.append(outputModel)
         elif connectorType == stromx.runtime.Description.Type.INPUT:
             stromxInput = self.__op.info().input(stromxId)
@@ -881,7 +893,8 @@ class Parameters(Items):
 class Parameter(Item):
     _properties = ['title', 'variant', 'operator', 'value',
                   'minimum', 'maximum', 'rows', 'cols', 'access', 'behavior',
-                  'type', 'descriptions', 'state', 'observers']
+                  'currentType', 'originalType', 'descriptions', 'state',
+                  'observers']
     
     def __init__(self, op, param, model):
         super(Parameter, self).__init__(model)
@@ -980,14 +993,21 @@ class Parameter(Item):
             return ''
         
     @property
-    def type(self):
-        return _descriptionType(self.__param.originalType())
+    def currentType(self):
+        return _descriptionType(self.__param.currentType())
     
-    @type.setter
-    def type(self, value):
+    @currentType.setter
+    def currentType(self, value):
+        if value == 'parameter':
+            return
+            
         stromxDescriptionType = _stromxDescriptionType(value)
         self.__op.setParameterType(self, stromxDescriptionType)
         self.markAsDeleted()
+        
+    @property
+    def originalType(self):
+        return _descriptionType(self.__param.originalType())
         
     @property
     def descriptions(self):
@@ -1162,7 +1182,7 @@ class Connections(Items):
         
 class ConnectorBase(Item):
     _properties = ['operator', 'title', 'variant', 'observers', 'behavior', 
-                   'type']
+                   'currentType']
     
     def __init__(self, op, description, model):
         super(ConnectorBase, self).__init__(model)
@@ -1201,15 +1221,16 @@ class ConnectorBase(Item):
         self.__behavior = value
     
     @property
-    def type(self):
+    def currentType(self):
         return _descriptionType(self.__description.originalType())
         
-    @type.setter
-    def type(self, value):
-        stromxDescriptionType = _stromxDescriptionType(value)
+    @currentType.setter
+    def currentType(self, value):
+        if value != 'parameter':
+            return
+        
         stromxBehavior = _stromxUpdateBehavior(self.__behavior)
-        self.operatorModel.setConnectorType(self, stromxDescriptionType, 
-                                            stromxBehavior)
+        self.operatorModel.setConnectorTypeToParameter(self, stromxBehavior)    
         self.markAsDeleted()
     
     @property

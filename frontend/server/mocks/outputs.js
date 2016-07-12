@@ -12,7 +12,9 @@ module.exports = function(app) {
         variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
-        }
+        },
+        behavior: '',
+        currentType: 'output'
       },
       {
         id: 5,
@@ -23,7 +25,9 @@ module.exports = function(app) {
         variant: {
           ident: 'int',
           title: 'UInt32'
-        }
+        },
+        behavior: '',
+        currentType: 'output'
       },
       {
         id: 6,
@@ -34,9 +38,27 @@ module.exports = function(app) {
         variant: {
           ident: 'image',
           title: 'RGB image 24-bit'
-        }
+        },
+        behavior: '',
+        currentType: 'output'
+      },
+      {
+        id: 7,
+        title: 'Output',
+        operator: 6,
+        connection: null,
+        observers: [],
+        variant: {
+          ident: 'int',
+          title: 'Int32'
+        },
+        behavior: '',
+        currentType: 'output'
       }
     ]});
+  });
+  outputsRouter.put('/', function(req, res) {
+    res.send('null');
   });
   app.use('/api/outputs/*', outputsRouter);
 };

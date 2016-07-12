@@ -50,6 +50,11 @@
       </div>
     {{/if}}
   </form>
+{{else if isEditingParameter}}
+  <div class="form-group">
+    <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
+    <button {{action "setTypeToConnector"}} class="btn btn-primary stromx-save">{{originalType}}</button>
+  </div>
 {{else}}
   {{#if timedOut}}
     <em>Access timed out</em>
@@ -58,7 +63,7 @@
   {{/if}}
   {{#if offerReload}}
     <a {{action "reload"}} class="stromx-reload-parameter">
-      <span class="glyphicon glyphicon-repeat pull-right stromx-space" aria-hidden="true"></span>
+      <span class="glyphicon glyphicon-repeat pull-right stromx-margin-left " aria-hidden="true"></span>
     </a>
   {{else if writable}}
     {{#if isMatrix}}
@@ -71,11 +76,14 @@
       </a>
     {{/if}}
   {{/if}}
-{{/if}}
-{{#if offerDownload}}
-  <a href={{url}}>
+  {{#if isConnector}}
+    <a {{action "editParameter"}}><span class="glyphicon glyphicon-cog pull-right" aria-hidden="true"></span></a>
+  {{/if}}
+  {{#if offerDownload}}
+    <a href={{url}}>
+      <span class="stromx-parameter-value">{{displayValue}}</span>
+    </a>
+  {{else}}
     <span class="stromx-parameter-value">{{displayValue}}</span>
-  </a>
-{{else}}
-  <span class="stromx-parameter-value">{{displayValue}}</span>
+  {{/if}}
 {{/if}}

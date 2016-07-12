@@ -12,7 +12,9 @@ module.exports = function(app) {
         variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
-        }
+        },
+        behavior: '',
+        currentType: 'input'
       },
       {
         id: 2,
@@ -23,7 +25,9 @@ module.exports = function(app) {
         variant: {
           ident: 'int',
           title: 'Int32'
-        }
+        },
+        behavior: '',
+        currentType: 'input'
       },
       {
         id: 3,
@@ -34,7 +38,9 @@ module.exports = function(app) {
         variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
-        }
+        },
+        behavior: '',
+        currentType: 'input'
       },
       {
         id: 4,
@@ -45,9 +51,27 @@ module.exports = function(app) {
         variant: {
           ident: 'image',
           title: 'Mono image 8-bit'
-        }
+        },
+        behavior: '',
+        currentType: 'input'
+      },
+      {
+        id: 5,
+        title: 'Input',
+        operator: 6,
+        connection: null,
+        observers: [],
+        variant: {
+          ident: 'int',
+          title: 'Int32'
+        },
+        behavior: '',
+        currentType: 'input'
       }
     ]});
+  });
+  inputsRouter.put('/', function(req, res) {
+    res.send('null');
   });
   app.use('/api/inputs/*', inputsRouter);
 };

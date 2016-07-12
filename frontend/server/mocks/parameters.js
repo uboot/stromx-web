@@ -18,6 +18,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'inactive',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 1,
         observers: []
@@ -37,6 +39,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'none',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [0, 1, 2],
         operator: 2,
         observers: []
@@ -56,6 +60,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 2,
         observers: [0]
@@ -75,6 +81,8 @@ module.exports = function(app) {
         state: 'timedOut',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 2,
         observers: []
@@ -94,6 +102,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 2,
         observers: []
@@ -113,6 +123,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'inactive',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 3,
         observers: []
@@ -132,6 +144,8 @@ module.exports = function(app) {
         state: 'accessFailed',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 2,
         observers: []
@@ -159,6 +173,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -178,6 +194,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'inactive',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -197,6 +215,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -216,6 +236,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -235,6 +257,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [3, 4, 5],
         operator: 2,
         observers: []
@@ -258,6 +282,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -277,6 +303,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -296,6 +324,8 @@ module.exports = function(app) {
         state: 'accessFailed',
         access: 'full',
         behavior: 'push',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -315,6 +345,8 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'pull',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
         observers: []
@@ -337,8 +369,31 @@ module.exports = function(app) {
         state: 'current',
         access: 'full',
         behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'parameter',
         descriptions: [],
         operator: 4,
+        observers: []
+      },
+      {
+        id: 18,
+        title: 'Input parameter',
+        variant: {
+          ident: 'float',
+          title: 'Float32'
+        },
+        value: 42.0,
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'current',
+        access: 'full',
+        behavior: 'persistent',
+        currentType: 'parameter',
+        originalType: 'input',
+        descriptions: [],
+        operator: 6,
         observers: []
       }
     ]});
