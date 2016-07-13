@@ -72,7 +72,6 @@ export default Ember.Component.extend({
     setTypeToParameter: function() {
       this.set('isEditingDescription', false);
 
-      this.set('model.behavior', 'persistent');
       this.set('model.currentType', 'parameter');
       var model = this.get('model');
       var op = this.get('model.operator');

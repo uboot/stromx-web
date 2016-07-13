@@ -4,6 +4,18 @@ import Connector from 'stromx-web/components/connector';
 import InputObserver from 'stromx-web/models/input-observer';
 
 export default Connector.extend({
+  isPushParameter: Ember.computed('view', {
+    set: function (key, value) {
+      if (value)
+        this.set('model.behavior', 'push');
+      else
+        this.set('model.behavior', 'persistent');
+      return value;
+    },
+    get: function() {
+      return this.get('model.behavior') === 'push';
+    }
+  }),
   findObserver: function(view) {
     if (! view) {
       return Ember.RSVP.resolve(null);

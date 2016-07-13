@@ -982,6 +982,9 @@ class Parameter(Item):
     
     @property
     def behavior(self):
+        if self.originalType == 'output':
+            return 'pull'
+        
         UpdateBehavior = stromx.runtime.Parameter.UpdateBehavior
         if self.__param.updateBehavior() == UpdateBehavior.PERSISTENT:
             return 'persistent'
@@ -1214,7 +1217,7 @@ class ConnectorBase(Item):
     
     @property
     def behavior(self):
-        return ''
+        return 'persistent'
     
     @behavior.setter
     def behavior(self, value):

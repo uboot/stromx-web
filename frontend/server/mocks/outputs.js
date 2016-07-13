@@ -13,7 +13,7 @@ module.exports = function(app) {
           ident: 'image',
           title: 'Mono image 8-bit'
         },
-        behavior: '',
+        behavior: 'persistent',
         currentType: 'output'
       },
       {
@@ -26,7 +26,7 @@ module.exports = function(app) {
           ident: 'int',
           title: 'UInt32'
         },
-        behavior: '',
+        behavior: 'persistent',
         currentType: 'output'
       },
       {
@@ -39,7 +39,7 @@ module.exports = function(app) {
           ident: 'image',
           title: 'RGB image 24-bit'
         },
-        behavior: '',
+        behavior: 'persistent',
         currentType: 'output'
       },
       {
@@ -52,7 +52,7 @@ module.exports = function(app) {
           ident: 'int',
           title: 'Int32'
         },
-        behavior: '',
+        behavior: 'persistent',
         currentType: 'output'
       }
     ]});

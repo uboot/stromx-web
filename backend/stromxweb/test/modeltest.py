@@ -1353,7 +1353,7 @@ class InputsTest(unittest.TestCase):
                           'title': 'Input',
                           'observers': [],
                           'connection': None,
-                          'behavior': '',
+                          'behavior': 'persistent',
                           'currentType': 'input',
                           'variant': { 'ident': 'none', 'title': 'Data' }}}
         self.assertEqual(data, connector.data)
@@ -1445,7 +1445,7 @@ class OutputsTest(unittest.TestCase):
         data = {'output': {'id': '1',
                            'operator': '0',
                            'title': 'Output 1',
-                           'behavior': '',
+                           'behavior': 'persistent',
                            'currentType': 'output',
                            'observers': [],
                            'connections': [],
@@ -1472,7 +1472,7 @@ class OutputsTest(unittest.TestCase):
         param = self.model.parameters['1']
         self.assertEqual('parameter', param.data['parameter']['currentType'])
         self.assertEqual('output', param.data['parameter']['originalType'])
-        self.assertEqual('persistent', param.data['parameter']['behavior'])
+        self.assertEqual('pull', param.data['parameter']['behavior'])
         
     def testDelete(self):
         # create a connection
