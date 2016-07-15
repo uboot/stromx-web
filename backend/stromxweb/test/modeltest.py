@@ -936,6 +936,13 @@ class ParametersTest(unittest.TestCase):
                                  'value': 50000}})
         self.assertEqual(50000, self.receive.getParameter(2).get())
         
+    def testSetNone(self):
+        self.model.operators.addStromxOp(self.receive, self.stream)
+        param = self.parameters['1']
+        param.set({'parameter': {'id': '0',
+                                 'value': None}})
+        self.assertEqual(49152, self.receive.getParameter(2).get())
+        
     def testDataNumberOfOutputs(self):
         self.model.operators.addStromxOp(self.fork, self.stream)
         param = self.parameters['0']
@@ -1049,6 +1056,15 @@ class ParametersTest(unittest.TestCase):
                                  'value': 1}})
         self.assertEqual(1, self.dummyCamera.getParameter(4).get())
         
+    def testSetPixelTypeZero(self):
+        self.model.operators.addStromxOp(self.dummyCamera, self.stream)
+        param = self.parameters['1']
+        param.set({'parameter': {'id': '1',
+                                 'value': 1}})
+        param.set({'parameter': {'id': '1',
+                                 'value': 0}})
+        self.assertEqual(0, self.dummyCamera.getParameter(4).get())
+        
     def testDataException(self):
         self.__activateExceptionOnParameter()
         param = self.parameters['6']
@@ -1142,6 +1158,19 @@ class ParametersTest(unittest.TestCase):
         
         self.assertTrue(self.model.parameters.has_key('1'))
         self.assertTrue(op.data['operator']['parameters'].count('1'))
+        self.assertTrue('push', param.data['parameter']['behavior'])
+        
+    def testBehavior(self):
+        self.model.operators.addStromxOp(self.fork, self.stream)
+        connector = self.model.inputs['0']
+        connector.set({'input': {'currentType': 'parameter',
+                                 'behavior': 'push'}})
+        param = self.model.parameters['1']
+        self.assertEqual('push', param.data['parameter']['behavior'])
+        
+        param.set({'parameter': {'currentType': 'parameter',
+                                 'behavior': 'persistent'}})
+        self.assertEqual('persistent', param.data['parameter']['behavior'])
         
     def testTypeOutput(self):
         op = self.model.operators.addStromxOp(self.fork, self.stream)
@@ -1472,7 +1501,7 @@ class OutputsTest(unittest.TestCase):
         param = self.model.parameters['1']
         self.assertEqual('parameter', param.data['parameter']['currentType'])
         self.assertEqual('output', param.data['parameter']['originalType'])
-        self.assertEqual('pull', param.data['parameter']['behavior'])
+        self.assertEqual('persistent', param.data['parameter']['behavior'])
         
     def testDelete(self):
         # create a connection

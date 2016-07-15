@@ -58,7 +58,7 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.Variant.STRING):
         return str(data.get())
     elif variant.isVariant(stromx.runtime.Variant.TRIGGER):
-        return 0
+        return None
     elif variant.isVariant(stromx.runtime.Variant.IMAGE):
         return {'width': data.width(), 'height': data.height() }
     elif variant.isVariant(stromx.runtime.Variant.MATRIX):
@@ -68,9 +68,12 @@ def toPythonValue(variant, data):
     elif variant.isVariant(stromx.runtime.Variant.FILE):
         return {'name': os.path.basename(data.path()), 'content': None }
     else:
-        return 0
+        return None
        
 def toStromxData(variant, value):
+    if value == None:
+        return None
+    
     if variant.isVariant(stromx.runtime.Variant.BOOL):
         return stromx.runtime.Bool(bool(value))
     elif variant.isVariant(stromx.runtime.Variant.ENUM):

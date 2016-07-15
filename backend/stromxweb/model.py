@@ -778,19 +778,20 @@ class Operator(Item):
     def setConnectorTypeToParameter(self, connector, behavior):
         stream = self.__stream.stromxStream
         stromxId = connector.stromxId
+        currentType = connector.currentType
         
         if self.__stream.active:
             self.model.errors.addError('Can not set connector type while the '
                                        'stream is active')
             raise Failed()
         
-        if connector.currentType == 'input':
+        if currentType == 'input':
             if behavior == stromx.runtime.Description.UpdateBehavior.PULL:
                 self.model.errors.addError('Invalid behavior for input')
                 raise Failed()
             self.model.inputs.delete(connector.index)
             self.__inputs.remove(connector)
-        elif connector.currentType == 'output':
+        elif currentType == 'output':
             if behavior == stromx.runtime.Description.UpdateBehavior.PUSH:
                 self.model.errors.addError('Invalid behavior for output')
                 raise Failed()
@@ -804,11 +805,12 @@ class Operator(Item):
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
             raise Failed()
-              
-        stromxParam = self.__op.info().parameter(stromxId)
-        parameters = self.model.parameters
-        parameter = parameters.addStromxParameter(self, stromxParam)
-        self.__parameters.append(parameter)      
+           
+        if connector.currentType != 'parameter':   
+            stromxParam = self.__op.info().parameter(stromxId)
+            parameters = self.model.parameters
+            parameter = parameters.addStromxParameter(self, stromxParam)
+            self.__parameters.append(parameter)      
         
     def setParameterType(self, parameter, connectorType):
         stream = self.__stream.stromxStream
@@ -942,6 +944,9 @@ class Parameter(Item):
     def value(self, value):
         variant = self.__param.variant()
         data = conversion.toStromxData(variant, value)
+        if data == None:
+            return
+        
         self.__setParameter(data)
         
     @property
@@ -982,9 +987,6 @@ class Parameter(Item):
     
     @property
     def behavior(self):
-        if self.originalType == 'output':
-            return 'pull'
-        
         UpdateBehavior = stromx.runtime.Parameter.UpdateBehavior
         if self.__param.updateBehavior() == UpdateBehavior.PERSISTENT:
             return 'persistent'
@@ -994,6 +996,16 @@ class Parameter(Item):
             return 'pull'
         else:
             return ''
+    
+    @behavior.setter
+    def behavior(self, value):
+        if self.behavior == value:
+            return
+        
+        stromxId = self.stromxId
+        stromxBehavior = _stromxUpdateBehavior(value)
+        self.__op.setConnectorTypeToParameter(self, stromxBehavior)
+        self.__param = self.stromxOp.info().parameter(stromxId)
         
     @property
     def currentType(self):

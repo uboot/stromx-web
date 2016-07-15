@@ -39,8 +39,10 @@ export default Ember.Component.extend({
     if (this.get('model.behavior') === 'push') {
       return false;
     }
-
     if (this.get('model.behavior') === 'pull') {
+      return true;
+    }
+    if (this.get('model.originalType') === 'output') {
       return true;
     }
 
@@ -168,6 +170,26 @@ export default Ember.Component.extend({
 
   isTrue: Ember.computed.alias('model.value'),
   isFalse: Ember.computed.not('model.value'),
+  isInput: Ember.computed.equal('model.originalType', 'input'),
+  isPushParameter: Ember.computed('model.behavior', {
+    get: function() {
+      return this.get('model.behavior') === 'push';
+    },
+    set: function(key, value) {
+      this.set('model.behavior', value ? 'push' : 'persistent');
+      return value;
+    }
+  }),
+
+  isPullParameter: Ember.computed('model.behavior', {
+    get: function() {
+      return this.get('model.behavior') === 'pull';
+    },
+    set: function(key, value) {
+      this.set('model.behavior', value ? 'pull' : 'persistent');
+      return value;
+    }
+  }),
 
   displayValue: Ember.computed('model.value', 'model.variant', 'isEditing', {
     set: function(key, newValue) {
@@ -227,9 +249,6 @@ export default Ember.Component.extend({
     });
   },
 
-  reloadOperator: function() {
-  },
-
   actions: {
     editValue: function() {
       this.set('isEditing', true);
@@ -265,6 +284,10 @@ export default Ember.Component.extend({
           op.reload();
         });
       });
+    },
+    setBehavior: function() {
+      this.set('isEditingParameter', false);
+      this.save();
     }
   }
 });
