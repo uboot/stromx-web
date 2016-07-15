@@ -6,10 +6,11 @@ import OutputObserver from 'stromx-web/models/output-observer';
 export default Connector.extend({
   isPullParameter: Ember.computed('view', {
     set: function (key, value) {
-      if (value)
+      if (value) {
         this.set('model.behavior', 'pull');
-      else
+      } else {
         this.set('model.behavior', 'persistent');
+      }
       return value;
     },
     get: function() {

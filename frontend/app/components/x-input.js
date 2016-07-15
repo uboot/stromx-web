@@ -6,10 +6,11 @@ import InputObserver from 'stromx-web/models/input-observer';
 export default Connector.extend({
   isPushParameter: Ember.computed('view', {
     set: function (key, value) {
-      if (value)
+      if (value) {
         this.set('model.behavior', 'push');
-      else
+      } else {
         this.set('model.behavior', 'persistent');
+      }
       return value;
     },
     get: function() {
