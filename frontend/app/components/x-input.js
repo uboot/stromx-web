@@ -4,6 +4,7 @@ import Connector from 'stromx-web/components/connector';
 import InputObserver from 'stromx-web/models/input-observer';
 
 export default Connector.extend({
+  connectorType: 'input',
   isPushParameter: Ember.computed('view', {
     set: function (key, value) {
       if (value) {

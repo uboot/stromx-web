@@ -4,12 +4,14 @@ import unittest
 
 import conversiontest
 import modeltest
+import regressiontest
 import viewtest
 
 def load_tests(loader, tests, pattern):
     suites = []
     suites.append(loader.loadTestsFromModule(conversiontest))
     suites.append(loader.loadTestsFromModule(modeltest))
+    suites.append(loader.loadTestsFromModule(regressiontest))
     suites.append(loader.loadTestsFromModule(viewtest))
     
     return unittest.TestSuite(suites)

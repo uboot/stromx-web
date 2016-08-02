@@ -23,14 +23,27 @@
   </div>
 {{else if isEditingDescription}}
   <form>
-    <div class="checkbox">
+    <div class="form-group">
       <label>
-        <input checked={{isPullParameter}} onchange={{action (mut isPullParameter) value="target.checked"}} type="checkbox"> Pull parameter
+        <input checked={{is-equal model.currentType "output"}} onchange={{action (mut model.currentType) value="target.value"}} value="output" name="currentType" type="radio">Output
+      </label>
+      <label>
+        <input checked={{is-equal model.currentType "parameter"}} onchange={{action (mut model.currentType) value="target.value"}} value="parameter" name="currentType" type="radio">Parameter
       </label>
     </div>
+    {{#if isParameter}}
+      <div class="form-group">
+        <label>
+          <input checked={{is-equal model.behavior "persistent"}} onchange={{action (mut model.behavior) value="target.value"}} value="persistent" name="behavior" type="radio">Persistent
+        </label>
+        <label>
+          <input checked={{is-equal model.behavior "pull"}} onchange={{action (mut model.behavior) value="target.value"}} value="pull" name="behavior" type="radio">Pull
+        </label>
+      </div>
+    {{/if}}
     <div class="form-group">
       <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
-      <button {{action "setTypeToParameter"}} class="btn btn-primary stromx-save">Parameter</button>
+      <button {{action "saveChanges"}} class="btn btn-primary stromx-save">Save</button>
     </div>
   </form>
 {{else}}

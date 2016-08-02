@@ -807,9 +807,8 @@ class Operator(Item):
             raise Failed()
            
         if connector.currentType != 'parameter':   
-            stromxParam = self.__op.info().parameter(stromxId)
             parameters = self.model.parameters
-            parameter = parameters.addStromxParameter(self, stromxParam)
+            parameter = parameters.addStromxParameter(self, stromxId)
             self.__parameters.append(parameter)      
         
     def setParameterType(self, parameter, connectorType):
@@ -842,25 +841,23 @@ class Operator(Item):
             raise Failed()
              
         if connectorType == stromx.runtime.Description.Type.OUTPUT:
-            stromxOutput = self.__op.info().output(stromxId)
             outputs = self.model.outputs
-            outputModel = outputs.addStromxOutput(self, stromxOutput)
+            outputModel = outputs.addStromxOutput(self, stromxId)
             self.__outputs.append(outputModel)
         elif connectorType == stromx.runtime.Description.Type.INPUT:
-            stromxInput = self.__op.info().input(stromxId)
             inputs = self.model.inputs
-            inputModel = inputs.addStromxInput(self, stromxInput)
+            inputModel = inputs.addStromxInput(self, stromxId)
             self.__inputs.append(inputModel)
     
     def __allocateConnectors(self):
         inputs = self.model.inputs
         outputs = self.model.outputs
         for description in self.__op.info().inputs():
-            connector = inputs.addStromxInput(self, description)
+            connector = inputs.addStromxInput(self, description.id())
             self.__inputs.append(connector)
             
         for description in self.__op.info().outputs():
-            connector = outputs.addStromxOutput(self, description)
+            connector = outputs.addStromxOutput(self, description.id())
             self.__outputs.append(connector)
             
     def __allocateParameters(self):
@@ -869,7 +866,7 @@ class Operator(Item):
             if not _parameterIsAccessible(self.__op, param):
                 continue
             
-            parameter = parameters.addStromxParameter(self, param)
+            parameter = parameters.addStromxParameter(self, param.id())
             self.__parameters.append(parameter)
             
     def __removeConnectors(self):
@@ -887,8 +884,8 @@ class Operator(Item):
         self.__parameters = []       
             
 class Parameters(Items):
-    def addStromxParameter(self, op, param):
-        parameter = Parameter(op, param, self.model)
+    def addStromxParameter(self, op, stromxId):
+        parameter = Parameter(op, stromxId, self.model)
         self.addItem(parameter)
         return parameter
     
@@ -898,15 +895,17 @@ class Parameter(Item):
                   'currentType', 'originalType', 'descriptions', 'state',
                   'observers']
     
-    def __init__(self, op, param, model):
+    def __init__(self, op, stromxId, model):
         super(Parameter, self).__init__(model)
-        self.__param = param
+        self.__stromxId = stromxId
         self.__op = op
         self.__state = 'current'
         self.__descriptions = []
         self.__observers = []
-        for desc in self.__param.descriptions():
-            if not _parameterIsAccessible(op.stromxOp, param):
+        
+        stromxDescription = self.__stromxDescription
+        for desc in stromxDescription.descriptions():
+            if not _parameterIsAccessible(op.stromxOp, stromxDescription):
                 continue
             
             description = (
@@ -920,11 +919,11 @@ class Parameter(Item):
     
     @property
     def title(self):
-        return self.__param.title()
+        return self.__stromxDescription.title()
     
     @property
     def variant(self):
-        stromxVariant = self.__param.variant()
+        stromxVariant = self.__stromxDescription.variant()
         variant = {
             'ident': conversion.variantToString(stromxVariant),
             'title': stromxVariant.title()
@@ -937,12 +936,12 @@ class Parameter(Item):
         
     @property
     def value(self):
-        variant = self.__param.variant()
+        variant = self.__stromxDescription.variant()
         return self.__getParameter(variant)
         
     @value.setter
     def value(self, value):
-        variant = self.__param.variant()
+        variant = self.__stromxDescription.variant()
         data = conversion.toStromxData(variant, value)
         if data == None:
             return
@@ -951,11 +950,11 @@ class Parameter(Item):
         
     @property
     def minimum(self):
-        variant = self.__param.variant()
+        variant = self.__stromxDescription.variant()
         if not conversion.isNumber(variant):
             return 0
         
-        data = self.__param.min()
+        data = self.__stromxDescription.min()
         value = conversion.toPythonValue(variant, data)
         if value == None:
             return 0
@@ -963,11 +962,11 @@ class Parameter(Item):
         
     @property
     def maximum(self):
-        variant = self.__param.variant()
+        variant = self.__stromxDescription.variant()
         if not conversion.isNumber(variant):
             return 0
         
-        data = self.__param.max()
+        data = self.__stromxDescription.max()
         value = conversion.toPythonValue(variant, data)
         if value == None:
             return 0
@@ -975,24 +974,24 @@ class Parameter(Item):
         
     @property
     def rows(self):
-        return self.__param.rows()
+        return self.__stromxDescription.rows()
         
     @property
     def cols(self):
-        return self.__param.cols()
+        return self.__stromxDescription.cols()
     
     @property
     def access(self):
-        return _parameterAccess(self.stromxOp, self.__param)
+        return _parameterAccess(self.stromxOp, self.__stromxDescription)
     
     @property
     def behavior(self):
         UpdateBehavior = stromx.runtime.Parameter.UpdateBehavior
-        if self.__param.updateBehavior() == UpdateBehavior.PERSISTENT:
+        if self.__stromxDescription.updateBehavior() == UpdateBehavior.PERSISTENT:
             return 'persistent'
-        elif self.__param.updateBehavior() == UpdateBehavior.PUSH:
+        elif self.__stromxDescription.updateBehavior() == UpdateBehavior.PUSH:
             return 'push'
-        elif self.__param.updateBehavior() == UpdateBehavior.PULL:
+        elif self.__stromxDescription.updateBehavior() == UpdateBehavior.PULL:
             return 'pull'
         else:
             return ''
@@ -1005,11 +1004,11 @@ class Parameter(Item):
         stromxId = self.stromxId
         stromxBehavior = _stromxUpdateBehavior(value)
         self.__op.setConnectorTypeToParameter(self, stromxBehavior)
-        self.__param = self.stromxOp.info().parameter(stromxId)
+        self.__stromxDescription = self.stromxOp.info().parameter(stromxId)
         
     @property
     def currentType(self):
-        return _descriptionType(self.__param.currentType())
+        return _descriptionType(self.__stromxDescription.currentType())
     
     @currentType.setter
     def currentType(self, value):
@@ -1022,7 +1021,7 @@ class Parameter(Item):
         
     @property
     def originalType(self):
-        return _descriptionType(self.__param.originalType())
+        return _descriptionType(self.__stromxDescription.originalType())
         
     @property
     def descriptions(self):
@@ -1035,7 +1034,7 @@ class Parameter(Item):
     
     @property
     def stromxId(self):
-        return self.__param.id()
+        return self.__stromxId
         
     @property
     def observers(self):
@@ -1050,10 +1049,14 @@ class Parameter(Item):
     def delete(self):
         for observer in self.observers:
             self.model.parameterObservers.delete(observer)
+            
+    @property
+    def __stromxDescription(self):
+        return self.__op.stromxOp.info().parameter(self.__stromxId)
     
     def __getParameter(self, variant):
         try:
-            data = self.stromxOp.getParameter(self.__param.id())
+            data = self.stromxOp.getParameter(self.__stromxDescription.id())
             self.__state = 'current'
             value = conversion.toPythonValue(variant, data)
         except stromx.runtime.Exception as e:
@@ -1062,7 +1065,7 @@ class Parameter(Item):
             
             # we try to read push parameters (which are not meant to be read),
             # but suppress error reporting in case reading fails
-            updateBehavior = self.__param.updateBehavior()
+            updateBehavior = self.__stromxDescription.updateBehavior()
             PUSH = stromx.runtime.Parameter.UpdateBehavior.PUSH
             if updateBehavior == PUSH:
                 return value 
@@ -1075,11 +1078,11 @@ class Parameter(Item):
             return
             
         try:
-            self.stromxOp.setParameter(self.__param.id(), data)
+            self.stromxOp.setParameter(self.__stromxDescription.id(), data)
         except stromx.runtime.Exception as e:
             # we try to set pull parameters (which are not meant to be set),
             # but suppress error reporting in case setting fails
-            updateBehavior = self.__param.updateBehavior()
+            updateBehavior = self.__stromxDescription.updateBehavior()
             PULL = stromx.runtime.Parameter.UpdateBehavior.PULL
             if updateBehavior == PULL:
                 return
@@ -1199,9 +1202,9 @@ class ConnectorBase(Item):
     _properties = ['operator', 'title', 'variant', 'observers', 'behavior', 
                    'currentType']
     
-    def __init__(self, op, description, model):
+    def __init__(self, op, stromxId, model):
         super(ConnectorBase, self).__init__(model)
-        self.__description = description
+        self.__stromxId = stromxId
         self.__op = op
         self.__observers = []
         self.__behavior = ''
@@ -1216,11 +1219,11 @@ class ConnectorBase(Item):
     
     @property
     def title(self):
-        return self.__description.title()
+        return self.__stromxDescription.title()
     
     @property
     def variant(self):
-        stromxVariant = self.__description.variant()
+        stromxVariant = self.__stromxDescription.variant()
         variant = {
             'ident': conversion.variantToString(stromxVariant),
             'title': stromxVariant.title()
@@ -1237,7 +1240,7 @@ class ConnectorBase(Item):
     
     @property
     def currentType(self):
-        return _descriptionType(self.__description.originalType())
+        return _descriptionType(self.__stromxDescription.originalType())
         
     @currentType.setter
     def currentType(self, value):
@@ -1258,7 +1261,7 @@ class ConnectorBase(Item):
     
     @property
     def stromxId(self):
-        return self.__description.id()
+        return self.__stromxId
     
     def addObserver(self, observer):
         self.__observers.append(observer)
@@ -1266,11 +1269,15 @@ class ConnectorBase(Item):
     def removeObserver(self, observer):
         self.__observers.remove(observer)
         
+    @property
+    def __stromxDescription(self):
+        return self.stromxOp.info().description(self.__stromxId)
+        
 class Input(ConnectorBase):
     _properties = ConnectorBase._properties + ['connection']
     
-    def __init__(self, op, description, model):
-        super(Input, self).__init__(op, description, model)
+    def __init__(self, op, stromxId, model):
+        super(Input, self).__init__(op, stromxId, model)
         self.__connection = None
     
     @property
@@ -1305,8 +1312,8 @@ class Inputs(Items):
 class Output(ConnectorBase):
     _properties = ConnectorBase._properties + ['connections']
     
-    def __init__(self, op, description, model):
-        super(Output, self).__init__(op, description, model)
+    def __init__(self, op, stromxId, model):
+        super(Output, self).__init__(op, stromxId, model)
         self.__connections = []
     
     @property

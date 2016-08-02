@@ -4,10 +4,12 @@ export default Ember.Component.extend({
   tagName: 'td',
   isEditingObserver: false,
   isEditingDescription: false,
+  parameterType: 'persistent',
 
   viewId: null,
   viewsExist: Ember.computed.gt('views.length', 0),
   views: Ember.computed.alias('model.operator.stream.views'),
+  isParameter: Ember.computed.equal('model.currentType', 'parameter'),
 
   observerExists: Ember.computed('view', {
     set: function (key, value) {
@@ -48,9 +50,22 @@ export default Ember.Component.extend({
     editDescription: function() {
       this.set('isEditingDescription', true);
     },
+    saveChanges: function() {
+      this.set('isEditingDescription', false);
+      var model = this.get('model');
+      var op = this.get('model.operator');
+      model.save().catch(function() {
+        model.rollbackAttributes();
+      }).then(function() {
+        op.then(function(op) {
+          op.reload();
+        });
+      });
+    },
     discardChanges: function() {
       this.set('isEditingObserver', false);
       this.set('isEditingDescription', false);
+      this.get('model').rollbackAttributes();
     },
     addObserver: function() {
       var view = this.get('view');
@@ -67,20 +82,6 @@ export default Ember.Component.extend({
       var _this = this;
       this.findObserver(view).then( function(observer) {
         _this.sendAction('showObserver', observer);
-      });
-    },
-    setTypeToParameter: function() {
-      this.set('isEditingDescription', false);
-
-      this.set('model.currentType', 'parameter');
-      var model = this.get('model');
-      var op = this.get('model.operator');
-      model.save().catch(function() {
-        model.rollbackAttributes();
-      }).then(function() {
-        op.then(function(op) {
-          op.reload();
-        });
       });
     }
   }

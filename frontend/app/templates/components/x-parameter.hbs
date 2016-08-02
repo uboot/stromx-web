@@ -3,12 +3,12 @@
   <form class="form-inline">
     {{#if isBool}}
       <div class="form-group">
-      <label>
-        <input checked={{model.value}} onchange={{action (mut editValue) value="target.value"}} value="true" name="bool" type="radio" class="stromx-parameter-radio">True
-      </label>
-      <label>
-        <input checked={{is-not model.value}} onchange={{action (mut editValue) value="target.value"}} value="false" name="bool" type="radio"class="stromx-parameter-radio">False
-      </label>
+        <label>
+          <input checked={{model.value}} onchange={{action (mut editValue) value="target.value"}} value="true" name="bool" type="radio" class="stromx-parameter-radio">True
+        </label>
+        <label>
+          <input checked={{is-not model.value}} onchange={{action (mut editValue) value="target.value"}} value="false" name="bool" type="radio"class="stromx-parameter-radio">False
+        </label>
       </div>
       <div class="form-group">
         <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
@@ -51,27 +51,40 @@
     {{/if}}
   </form>
 {{else if isEditingParameter}}
-
   <form>
     <div class="form-group">
-      <div class="checkbox">
+      {{#if isInput}}
         <label>
-          {{#if isInput}}
-            <input checked={{isPushParameter}} onchange={{action (mut isPushParameter) value="target.checked"}} type="checkbox"> Push parameter
-          {{else}}
-            <input checked={{isPullParameter}} onchange={{action (mut isPullParameter) value="target.checked"}} type="checkbox"> Pull parameter
-          {{/if}}
+          <input checked={{is-equal model.currentType "input"}} onchange={{action (mut model.currentType) value="target.value"}} value="input" name="currentType" type="radio">Input
         </label>
-      </div>
+      {{else}}
+        <label>
+          <input checked={{is-equal model.currentType "output"}} onchange={{action (mut model.currentType) value="target.value"}} value="output" name="currentType" type="radio">Output
+        </label>
+      {{/if}}
+      <label>
+        <input checked={{is-equal model.currentType "parameter"}} onchange={{action (mut model.currentType) value="target.value"}} value="parameter" name="currentType" type="radio">Parameter
+      </label>
     </div>
+    {{#if isParameter}}
+      <div class="form-group">
+        <label>
+          <input checked={{is-equal model.behavior "persistent"}} onchange={{action (mut model.behavior) value="target.value"}} value="persistent" name="behavior" type="radio">Persistent
+        </label>
+        {{#if isInput}}
+          <label>
+            <input checked={{is-equal model.behavior "push"}} onchange={{action (mut model.behavior) value="target.value"}} value="push" name="behavior" type="radio">Push
+          </label>
+        {{else}}
+          <label>
+            <input checked={{is-equal model.behavior "pull"}} onchange={{action (mut model.behavior) value="target.value"}} value="pull" name="behavior" type="radio">Pull
+          </label>
+        {{/if}}
+      </div>
+    {{/if}}
     <div class="form-group">
       <button {{action "discardChanges"}} class="btn btn-default stromx-cancel">Cancel</button>
-      <button {{action "setBehavior"}} class="btn btn-primary stromx-save">Parameter</button>
-      {{#if isInput}}
-        <button {{action "setTypeToConnector"}} class="btn btn-primary stromx-save">Input</button>
-      {{else}}
-        <button {{action "setTypeToConnector"}} class="btn btn-primary stromx-save">Output</button>
-      {{/if}}
+      <button {{action "saveParameterChanges"}} class="btn btn-primary stromx-save">Save</button>
     </div>
   </form>
 {{else}}

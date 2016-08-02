@@ -395,6 +395,27 @@ module.exports = function(app) {
         descriptions: [],
         operator: 6,
         observers: []
+      },
+      {
+        id: 19,
+        title: 'Output parameter',
+        variant: {
+          ident: 'float',
+          title: 'Float32'
+        },
+        value: 43.0,
+        minimum: 0,
+        maximum: 0,
+        rows: 0,
+        cols: 0,
+        state: 'current',
+        access: 'full',
+        behavior: 'pull',
+        currentType: 'parameter',
+        originalType: 'output',
+        descriptions: [],
+        operator: 6,
+        observers: []
       }
     ]});
   });

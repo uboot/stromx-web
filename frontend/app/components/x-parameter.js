@@ -5,6 +5,7 @@ export default Ember.Component.extend({
   isEditing: false,
   isEditingParameter: false,
   tagName: 'td',
+  isParameter: Ember.computed.equal('model.currentType', 'parameter'),
 
   isEnum: function() {
     return this.get('model.variant.ident') === 'enum';
@@ -273,11 +274,8 @@ export default Ember.Component.extend({
     editParameter: function() {
       this.set('isEditingParameter', true);
     },
-    setTypeToConnector: function() {
+    saveParameterChanges: function() {
       this.set('isEditingParameter', false);
-
-      var originalType = this.get('model.originalType');
-      this.set('model.currentType', originalType);
       var op = this.get('model.operator');
       this.save().then(function() {
         op.then(function(op) {

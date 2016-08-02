@@ -4,6 +4,7 @@ import Connector from 'stromx-web/components/connector';
 import OutputObserver from 'stromx-web/models/output-observer';
 
 export default Connector.extend({
+  connectorType: 'output',
   isPullParameter: Ember.computed('view', {
     set: function (key, value) {
       if (value) {
