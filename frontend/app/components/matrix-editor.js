@@ -1,14 +1,6 @@
 import Ember from "ember";
 
 export default Ember.Component.extend({
-  rows: 0,
-  cols: 0,
-  value: {
-    rows: 0,
-    cols: 0,
-    values: []
-  },
-
   rowsWritable: Ember.computed.equal('rows', 0),
   colsWritable: Ember.computed.equal('cols', 0),
 

@@ -416,6 +416,27 @@ module.exports = function(app) {
         descriptions: [],
         operator: 6,
         observers: []
+      },
+      {
+        id: 20,
+        title: 'Null matrix',
+        variant: {
+          ident: 'matrix',
+          title: '32-bit float matrix'
+        },
+        value: null,
+        minimum: 0,
+        maximum: 0,
+        rows: 2,
+        cols: 3,
+        state: 'current',
+        access: 'full',
+        behavior: 'pull',
+        currentType: 'parameter',
+        originalType: 'parameter',
+        descriptions: [],
+        operator: 6,
+        observers: []
       }
     ]});
   });

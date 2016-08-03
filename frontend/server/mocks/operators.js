@@ -90,7 +90,7 @@ module.exports = function(app) {
         type: 'DescriptionTypes',
         package: 'mypackage',
         version: '0.0.1',
-        parameters: [18, 19],
+        parameters: [18, 19, 20],
         position: {
           x: 200,
           y: 100

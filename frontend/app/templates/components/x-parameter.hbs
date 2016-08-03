@@ -97,10 +97,11 @@
     <a {{action "reload"}} class="stromx-reload-parameter">
       <span class="glyphicon glyphicon-repeat pull-right stromx-margin-left " aria-hidden="true"></span>
     </a>
-  {{else if writable}}
+  {{/if}}
+  {{#if writable}}
     {{#if isMatrix}}
       {{#link-to "parameter.edit" model}}
-        <span class="glyphicon glyphicon-pencil pull-right stromx-edit-parameter" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-pencil pull-right stromx-margin-left stromx-edit-parameter" aria-hidden="true"></span>
       {{/link-to}}
     {{else}}
       <a {{action "editValue"}}>
