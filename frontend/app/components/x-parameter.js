@@ -210,9 +210,9 @@ export default Ember.Component.extend({
         case 'bool':
           return value ? 'True' : 'False';
         case 'matrix':
-          return value.rows + ' x ' + value.cols + ' matrix';
+          return value ? value.rows + ' x ' + value.cols + ' matrix' : '';
         case 'image':
-          return value.width + ' x ' + value.height + ' image';
+          return value ? value.width + ' x ' + value.height + ' image' : '';
         case 'trigger':
           return 'Trigger';
         case 'file':
