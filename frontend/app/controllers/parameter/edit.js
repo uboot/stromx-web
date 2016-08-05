@@ -21,8 +21,10 @@ export default Ember.Controller.extend({
   }),
   actions: {
     dismiss: function () {
-      this.get('model').rollbackAttributes();
       this.transitionToRoute('operator.index', this.get('model.operator'));
+    },
+    cancel: function () {
+      this.get('model').rollbackAttributes();
     },
     save: function () {
       this.get('model').save();
