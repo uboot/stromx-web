@@ -61,7 +61,8 @@ export default Ember.Component.extend({
     if (ENV.APP.API_HOST) {
       return ENV.APP.API_HOST + '/temp/' + this.get('model.value.name');
     } else {
-      return 'temp/' + this.get('model.value.name');
+      var location =  window.location.protocol + '//' + window.location.host;
+      return location + '/temp/' + this.get('model.value.name');
     }
   }.property('model.value'),
 
