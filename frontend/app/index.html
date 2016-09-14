@@ -9,17 +9,17 @@
 
     {{content-for "head"}}
 
-    <link rel="stylesheet" href="/assets/vendor.css">
-    <link rel="stylesheet" href="/assets/stromx-web.css">
-    <link rel="icon" href="/assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/stromx-web.css">
+    <link rel="icon" href="{{rootURL}}assets/favicon.png" type="image/png">
 
     {{content-for "head-footer"}}
   </head>
   <body>
     {{content-for "body"}}
 
-    <script src="/assets/vendor.js"></script>
-    <script src="/assets/stromx-web.js"></script>
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/stromx-web.js"></script>
 
     {{content-for "body-footer"}}
   </body>
