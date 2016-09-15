@@ -70,27 +70,22 @@
     <ul class="nav nav-tabs stromx-display-list">
       <li class="{{if isVisible 'active'}}" role="presentation">
         <a {{action "show"}} class="stromx-display-stream">Stream</a>
-      </li>      
+      </li>
       {{#each model.views key="@index" as |item|}}
         <li class="{{is-active item.id this.view}}" role="presentation">
           <a {{action "showView" item.id}} class="stromx-display-view">{{item.name}}</a>
         </li>
       {{/each}}
-      
+
       <div class="pull-right stromx-nav-div">
         {{#link-to "views.new" id="new-view" class="stromx-new-view"}}New view{{/link-to}}
       </div>
     </ul>
 
     {{#if isVisible}}
-      {{x-stream-details model=model}}
+      {{x-stream-details model=model addConnection="addConnection"}}
     {{else}}
       {{x-view-details model=viewModel pushValue="pushConnectorValue"}}
     {{/if}}
   </div>
 </div>
-
-
-
-
-

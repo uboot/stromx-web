@@ -10,40 +10,25 @@ export default Ember.Component.extend({
   y1: 0,
   x2: 0,
   y2: 0,
-  
+
   width: function() {
     return 1280 * this.get('zoom');
   }.property('zoom'),
   height: function() {
     return 1024 * this.get('zoom');
   }.property('zoom'),
-  
+
   strokeWidth: function() {
     return this.get('isDraggingValidConnection') ? 4 : 2;
   }.property('isDraggingValidConnection'),
-  
+
   isDraggingConnection: Ember.computed.or('isDraggingInputToOutput', 'isDraggingOutputToInput'),
-  
+
   isDraggingValidConnection: function() {
     var activeInput = this.get('activeInput') !== null;
     var activeOutput = this.get('activeOutput') !== null;
     return activeInput && activeOutput;
   }.property('activeInput', 'activeOutput'),
-
-  addConnection: function(input, output) {
-    var model = this.get('model');
-    var store = this.get('targetObject').store;
-    var connection = store.createRecord('connection', {
-      output: output,
-      input: input,
-      stream: model
-    });
-
-    var targetObject = this.get('targetObject');
-    connection.save().then(function(connection) {
-      targetObject.transitionToRoute('connection', connection);
-    });
-  },
 
   actions: {
     magnify: function() {
@@ -63,7 +48,7 @@ export default Ember.Component.extend({
         if (connection !== null) {
           return;
         }
-        
+
         _this.setProperties({
           activeInput: input,
           x1: x,
@@ -82,9 +67,10 @@ export default Ember.Component.extend({
     },
     inputDragEnd: function() {
       if (this.get('isDraggingValidConnection')) {
-        this.addConnection(this.get('activeInput'), this.get('activeOutput'));
+        this.sendAction('addConnection', this.get('activeInput'),
+                        this.get('activeOutput'));
       }
-      
+
       this.setProperties({
         activeInput: null,
         activeOutput: null,
@@ -119,9 +105,10 @@ export default Ember.Component.extend({
     },
     outputDragEnd: function() {
       if (this.get('isDraggingValidConnection')) {
-        this.addConnection(this.get('activeInput'), this.get('activeOutput'));
+        this.sendAction('addConnection', this.get('activeInput'),
+                        this.get('activeOutput'));
       }
-      
+
       this.setProperties({
         activeInput: null,
         activeOutput: null,
