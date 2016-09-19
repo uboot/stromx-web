@@ -110,6 +110,7 @@ test('close stream and save', function(assert) {
   click('.stromx-close-stream');
   click('.stromx-accept');
   waitForModal();
+  wait();
 
   andThen(function() {
     assert.equal(
@@ -125,6 +126,7 @@ test('close stream and do not save', function(assert) {
   click('.stromx-close-stream');
   click('.stromx-do-not-accept');
   waitForModal();
+  wait();
 
   andThen(function() {
     assert.equal(
@@ -287,7 +289,3 @@ test('move an operator', function(assert) {
     );
   });
 });
-
-
-
-
