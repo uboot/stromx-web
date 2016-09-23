@@ -70,7 +70,7 @@ export default Ember.Component.extend({
     var variant = this.get('model.variant.ident');
     var knownTypes = ['string', 'enum', 'int', 'float', 'bool', 'trigger',
                       'matrix', 'image', 'file'];
-    if (! knownTypes.contains(variant)) {
+    if (! knownTypes.includes(variant)) {
       return false;
     }
 
