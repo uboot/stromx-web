@@ -232,6 +232,31 @@ class ConversionTest(unittest.TestCase):
         
         firstRow = np.asarray(matrix.data())[0]
         self.assertListEqual([10.5], list(firstRow))
+                         
+    def testDataToStromxInt32(self):
+        value = conversion.toStromxData(stromx.runtime.Variant.INT_32, 4);
+        self.assertTrue(value.isVariant(stromx.runtime.Variant.INT_32))
+        self.assertEqual(4, value.get());
+                         
+    def testDataToStromxInt16(self):
+        value = conversion.toStromxData(stromx.runtime.Variant.INT_16, 4);
+        self.assertTrue(value.isVariant(stromx.runtime.Variant.INT_16))
+        self.assertEqual(4, value.get());
+                         
+    def testDataToStromxUInt16(self):
+        value = conversion.toStromxData(stromx.runtime.Variant.UINT_16, 4);
+        self.assertTrue(value.isVariant(stromx.runtime.Variant.UINT_16))
+        self.assertEqual(4, value.get());
+                         
+    def testDataToStromxInt(self):
+        value = conversion.toStromxData(stromx.runtime.Variant.INT, 4);
+        self.assertTrue(value.isVariant(stromx.runtime.Variant.INT_32))
+        self.assertEqual(4, value.get());
+                         
+    def testDataToStromxUInt(self):
+        value = conversion.toStromxData(stromx.runtime.Variant.UINT, 4);
+        self.assertTrue(value.isVariant(stromx.runtime.Variant.UINT_32))
+        self.assertEqual(4, value.get());
         
     def testDataToStromxFile(self):
         data = { 'name': u'model.xml',

@@ -14,5 +14,6 @@
       "port": 4200,
       "host": "localhost"
     }
-  }
+  },
+  "phantomjs_debug_port": 9000
 }

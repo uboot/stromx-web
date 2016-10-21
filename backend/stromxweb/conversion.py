@@ -78,17 +78,19 @@ def toStromxData(variant, value):
         return stromx.runtime.Bool(bool(value))
     elif variant.isVariant(stromx.runtime.Variant.ENUM):
         return stromx.runtime.Enum(value)
-    elif variant.isVariant(stromx.runtime.Variant.UINT_8):
-        return stromx.runtime.UInt8(value)
     elif variant.isVariant(stromx.runtime.Variant.UINT_16):
         return stromx.runtime.UInt16(value)
     elif variant.isVariant(stromx.runtime.Variant.UINT_32):
+        return stromx.runtime.UInt32(value)
+    elif variant.isVariant(stromx.runtime.Variant.UINT):
         return stromx.runtime.UInt32(value)
     elif variant.isVariant(stromx.runtime.Variant.INT_8):
         return stromx.runtime.Int8(value)
     elif variant.isVariant(stromx.runtime.Variant.INT_16):
         return stromx.runtime.Int16(value)
     elif variant.isVariant(stromx.runtime.Variant.INT_32):
+        return stromx.runtime.Int32(value)
+    elif variant.isVariant(stromx.runtime.Variant.INT):
         return stromx.runtime.Int32(value)
     elif variant.isVariant(stromx.runtime.Variant.FLOAT_32):
         return stromx.runtime.Float32(value)
