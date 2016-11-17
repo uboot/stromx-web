@@ -188,7 +188,7 @@ class OperatorTemplatesTest(unittest.TestCase):
                                         'type': 'Block',
                                         'version': '0.8.0'}}
                                          
-        self.assertEqual(29, len(self.templates)) 
+        self.assertEqual(31, len(self.templates)) 
         self.assertEqual(refData, self.templates['0'].data)
 
 class FilesTest(unittest.TestCase):
