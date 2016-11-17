@@ -217,8 +217,7 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).__init__(stream, op, parent)
         self.__connectorType = connectorType
         self.__index = index
-        self.__value = ConnectorValue(self.op, self.__connectorType,
-                                      self.__index)
+        self.__value = ConnectorValue(self)
     
     @property
     def connectorIndex(self):
@@ -247,8 +246,7 @@ class ConnectorObserver(Observer):
         super(ConnectorObserver, self).deserialize(properties)
         self.__index = properties['connector']
         self.__connectorType = properties['type']
-        self.__value = ConnectorValue(self.op, self.__connectorType,
-                                      self.__index)
+        self.__value = ConnectorValue(self)
     
     def getDescription(self):
         if self.__connectorType == stromx.runtime.Connector.Type.INPUT:
@@ -265,10 +263,8 @@ class ObserverCallback(stromx.runtime.ConnectorObserver):
         self.connectorValue.observe(connector, oldData, newData)
         
 class ConnectorValue(object):
-    def __init__(self, op, connectorType, connectorIndex):
-        self.__op = op
-        self.__connectorType = connectorType
-        self.__connectorIndex = connectorIndex
+    def __init__(self, connectorObserver):
+        self.__connectorObserver = connectorObserver
         self.__callback = ObserverCallback()
         self.__callback.connectorValue = self
         self.__handler = None
@@ -282,14 +278,16 @@ class ConnectorValue(object):
         self.__handler = value
         
     def activate(self):
-        self.__op.addObserver(self.__callback)
+        self.__connectorObserver.op.addObserver(self.__callback)
         
     def deactivate(self):
-        self.__op.removeObserver(self.__callback)
+        self.__connectorObserver.op.removeObserver(self.__callback)
       
     def observe(self, connector, oldData, newData):
-        if (connector.id() != self.__connectorIndex or 
-            connector.type() != self.__connectorType):
+        connectorIndex = self.__connectorObserver.connectorIndex
+        connectorType = self.__connectorObserver.connectorType
+        if (connector.id() != connectorIndex or 
+            connector.type() != connectorType):
             return
         
         data = None
@@ -304,6 +302,7 @@ class ConnectorValue(object):
             return
             
         if self.__handler:
-            self.__handler(data)
+            self.__handler(data, self.__connectorObserver.visualization, 
+                           self.__connectorObserver.properties)
         
     

@@ -1719,9 +1719,11 @@ class OutputObservers(Observers):
 class ConnectorValueBase(Item):
     _properties = ['variant', 'value']
     
-    def __init__(self, dataAccess, model):
+    def __init__(self, dataAccess, visualization, properties, model):
         super(ConnectorValueBase, self).__init__(model)
         self.__access = None
+        self.__visualization = visualization
+        self.__properties = properties
         if dataAccess != None:
             if not dataAccess.empty():
                 self.__access = dataAccess
@@ -1738,8 +1740,8 @@ class ConnectorValueBase(Item):
     def value(self):
         if self.__access == None:
             return None
-        return conversion.toPythonObserverValue(self.__access.get().variant(),
-                                      self.__access.get())
+        variant = self.__access.get().variant()
+        return conversion.toPythonObserverValue(variant, self.__access.get())
         
     @property
     def stromxConnectorValue(self):
@@ -1753,7 +1755,7 @@ class ConnectorValue(ConnectorValueBase):
     _properties = ['variant', 'value']
     
     def __init__(self, stromxConnectorValue, model):
-        super(ConnectorValue, self).__init__(None, model)
+        super(ConnectorValue, self).__init__(None, None, None, model)
         stromxConnectorValue.handler = self.handleData
         stromxConnectorValue.activate()
         self.__value = stromxConnectorValue
@@ -1762,10 +1764,11 @@ class ConnectorValue(ConnectorValueBase):
     def stromxConnectorValue(self):
         return self.__value
     
-    def handleData(self, data):
+    def handleData(self, data, visualization, properties):
         try:
             with stromx.runtime.ReadAccess(data) as access:
-                value = ConnectorValueBase(access, self.model)
+                value = ConnectorValueBase(access, visualization, properties,
+                                           self.model)
                 value.index = self.index
                 self.model.connectorValues.sendValue(value)
         except stromx.runtime.Exception as e:

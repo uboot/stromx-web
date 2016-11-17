@@ -166,7 +166,7 @@ class ConnectorValueTest(unittest.TestCase):
         self.stream = stream
         self.data = None
         
-    def setData(self, data):
+    def setData(self, data, visualization, properties):
         self.data = data
         
     def testActivate(self):
