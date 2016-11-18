@@ -150,7 +150,7 @@ class ConversionTest(unittest.TestCase):
         container = op.getOutputData(0)
         value = stromx.runtime.ReadAccess(container).get()
         
-        data = conversion.stromxListToData(value)
+        data = conversion.stromxListToData(value, 'default', {})
         self.assertEqual(6, data['numItems'])
         self.assertEqual(6, len(data['values']))   
 

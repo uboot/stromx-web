@@ -37,11 +37,17 @@ def hasStringRepresentation(variant):
     else:
         return False
     
-def toPythonObserverValue(variant, data):
+def toPythonObserverValue(data, visualization, properties):
+    variant = data.variant()
+    
+    if (visualization == 'image' and 
+        variant.isVariant(stromx.runtime.Variant.MATRIX)):
+        return stromxMatrixToImage(data)
+            
     if variant.isVariant(stromx.runtime.Variant.IMAGE):
         return stromxImageToData(data)
     elif variant.isVariant(stromx.runtime.Variant.LIST):
-        return stromxListToData(data)
+        return stromxListToData(data, visualization, properties)
     else:
         return toPythonValue(variant, data)
     
@@ -182,7 +188,15 @@ def stromxMatrixToData(stromxData):
     
     return data
 
-def stromxListToData(stromxList):
+def stromxMatrixToImage(stromxData):
+    # make sure this is a matrix
+    matrix = stromx.runtime.Matrix.data_cast(stromxData)
+    if not matrix:
+        raise Failed()
+    
+    return None
+
+def stromxListToData(stromxList, visualization, properties):
     l = stromx.runtime.List.data_cast(stromxList)
     values = []
     for item in l.content():
@@ -190,7 +204,7 @@ def stromxListToData(stromxList):
             'variant': {
                 'ident': variantToString(item.variant())
             },
-            'value': toPythonObserverValue(item.variant(), item)
+            'value': toPythonObserverValue(item, visualization, properties)
         }
         values.append(value)
     return { 'numItems': len(values), 'values': values }

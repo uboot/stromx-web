@@ -1740,8 +1740,9 @@ class ConnectorValueBase(Item):
     def value(self):
         if self.__access == None:
             return None
-        variant = self.__access.get().variant()
-        return conversion.toPythonObserverValue(variant, self.__access.get())
+        return conversion.toPythonObserverValue(self.__access.get(), 
+                                                self.__visualization,
+                                                self.__properties)
         
     @property
     def stromxConnectorValue(self):
