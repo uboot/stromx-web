@@ -66,6 +66,17 @@ AwIDE8L2luZGV4PjwvXz48L2RlY2lzaW9uX2Z1bmN0aW9ucz48L215X3N2bT4KPC9vcGVuY3Zfc3Rvcm
 FnZT4K"
 """)
 
+_matrixImage = ("""
+data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAIBAQEBAQIBAQECAgICAgQDA
+gICAgUEBAMEBgUGBgYFBgYGBwkIBgcJBwYGCAsICQoKCgoKBggLDAsKDAkKCgr/wAALCAAPABQBAREA/
+8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRB
+RIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTV
+FVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDx
+MXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/9oACAEBAAA/APws8BeAj4oKfud272r2z
+wF+xufFGz/iVbt2P4K9a0f/AIJgnULBLr/hHs7v+mVeR/sc+B4vEv2XeqndjrX6u/scfsi2PiX7Lvt4j
+u29SK/Sb4X/APBNjSL/AMHW1ybG2O7/AGl9BX//2Q==
+""")
+
 class ConversionTest(unittest.TestCase):
     def testStromxRgbImageToData(self):
         bgrImage = cv2.imread('data/image/lenna.jpg')
@@ -117,8 +128,8 @@ class ConversionTest(unittest.TestCase):
         self.assertRaises(conversion.Failed, conversion.stromxImageToData, None)
         
     def testStromxMatrixToDataInt32(self):
-        valueType = stromx.cvsupport.Matrix.ValueType.INT_32
-        matrix = stromx.cvsupport.Matrix.eye(3, 4, valueType)
+        INT_32 = stromx.cvsupport.Matrix.ValueType.INT_32
+        matrix = stromx.cvsupport.Matrix.eye(3, 4, INT_32)
         data = conversion.stromxMatrixToData(matrix)
         refData = {'rows': 3,
                    'cols': 4,
@@ -133,6 +144,17 @@ class ConversionTest(unittest.TestCase):
         
     def testStromxMatrixToDataNone(self):
         self.assertRaises(conversion.Failed, conversion.stromxMatrixToData, None)
+        
+    def testStromxMatrixFloatToImage(self):
+        FLOAT_32 = stromx.cvsupport.Matrix.ValueType.FLOAT_32
+        matrix = stromx.cvsupport.Matrix(15, 20, FLOAT_32)
+        x, y = np.meshgrid(np.linspace(0, 1, 20), np.linspace(0, 1, 15))
+        np.asmatrix(matrix.data())[:, :] = x * y - 0.5
+        data = conversion.stromxMatrixToImage(matrix)
+        
+        self.assertEqual(20, data['width'])
+        self.assertEqual(15, data['height'])
+        self.assertEqual(_matrixImage.replace('\n', ''), data['values'])
         
     def testStromxListToData(self):
         stream = stromx.runtime.Stream()

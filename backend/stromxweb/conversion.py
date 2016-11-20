@@ -190,11 +190,28 @@ def stromxMatrixToData(stromxData):
 
 def stromxMatrixToImage(stromxData):
     # make sure this is a matrix
-    matrix = stromx.runtime.Matrix.data_cast(stromxData)
-    if not matrix:
+    stromxMatrix = stromx.runtime.Matrix.data_cast(stromxData)
+    if not stromxMatrix:
+        raise Failed()    
+    
+    matrix = np.asarray(stromxMatrix.data())
+    if matrix.ndim != 2:
         raise Failed()
     
-    return None
+    offset = -np.min(matrix)
+    scaling = 255 / (np.max(matrix) + offset)
+    
+    image = np.array((matrix + offset) * scaling, dtype = np.ubyte)
+    _, jpg = cv2.imencode('.jpg', image)
+    values = 'data:image/jpg;base64,{0}'.format(
+                                base64.encodestring(jpg.data).replace("\n", ""))
+    data = {
+        'width': image.shape[1],
+        'height': image.shape[0],
+        'values': values
+    }
+    
+    return data
 
 def stromxListToData(stromxList, visualization, properties):
     l = stromx.runtime.List.data_cast(stromxList)
