@@ -314,7 +314,8 @@ def _filterVisualizations(visualizations, dataVariant, visualizationVariant):
     
     filtered = set()
         
-    isImage = dataVariant.isVariant(stromx.runtime.Variant.IMAGE)
+    isImage = (dataVariant.isVariant(stromx.runtime.Variant.IMAGE) or
+               visualizationVariant.isVariant(stromx.runtime.Variant.IMAGE))
     if isImage:
         filtered.add('value')
     else:

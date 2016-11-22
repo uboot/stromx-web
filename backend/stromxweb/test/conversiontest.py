@@ -401,3 +401,9 @@ class StromxVariantsToVisualizationTest(unittest.TestCase):#
         keys = self.__convert(data, visualization)
         self.assertEqual(['image', 'value', 'none'], keys)
         
+    def testMatrixAsImage(self):
+        data = stromx.runtime.Variant.FLOAT_32_MATRIX
+        visualization = stromx.runtime.Variant.IMAGE
+        keys = self.__convert(data, visualization)
+        self.assertEqual(['image', 'none'], keys)
+        
