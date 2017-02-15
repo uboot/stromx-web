@@ -40,16 +40,17 @@ def hasStringRepresentation(variant):
 def toPythonObserverValue(data, visualization, properties):
     variant = data.variant()
     
+    if variant.isVariant(stromx.runtime.Variant.IMAGE):
+        return stromxImageToData(data)
+    
     if (visualization == 'image' and 
         variant.isVariant(stromx.runtime.Variant.MATRIX)):
         return stromxMatrixToImage(data)
             
-    if variant.isVariant(stromx.runtime.Variant.IMAGE):
-        return stromxImageToData(data)
-    elif variant.isVariant(stromx.runtime.Variant.LIST):
+    if variant.isVariant(stromx.runtime.Variant.LIST):
         return stromxListToData(data, visualization, properties)
-    else:
-        return toPythonValue(variant, data)
+    
+    return toPythonValue(variant, data)
     
 def toPythonValue(variant, data):  
     if data.variant().isVariant(stromx.runtime.Variant.NONE):
