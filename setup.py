@@ -10,8 +10,8 @@ os.chdir('frontend')
 if os.path.exists('dist'):
     shutil.rmtree('dist')
 env = os.environ.copy()
+subprocess.call(['npm', 'install'])
 env['PATH'] = './node_modules/.bin'
-subprocess.call(['npm', 'install'], env = env)
 subprocess.call(['bower', '--allow-root', 'install'], env = env)
 subprocess.call(['ember', 'build', '--environment', 'production'], env = env)
 os.chdir('..')
