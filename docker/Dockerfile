@@ -17,11 +17,11 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && npm install bower \
     && bower --allow-root install \
     && ember build --environment production \
-    && cd ../backend \
+    && cd .. \
     && python setup.py build \
     && python setup.py install \
     && mkdir /var/stromx \
-    && cd ../.. \
+    && cd .. \
     && rm -rf stromx-web
 
 ADD stromx.conf /etc/stromx/
