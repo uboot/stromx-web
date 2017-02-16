@@ -11,7 +11,8 @@ if os.path.exists('dist'):
     shutil.rmtree('dist')
 env = os.environ.copy()
 subprocess.call(['npm', 'install'])
-subprocess.call(['./node_modules/.bin/bower', 'install'], shell=True)
+subprocess.call(['npm', 'install', 'bower'])
+subprocess.call(['./node_modules/.bin/bower', '--allow-root', 'install'], shell=True)
 subprocess.call(['./node_modules/.bin/ember', 'build', '--environment', 'production'], shell=True)
 os.chdir('..')
 
