@@ -11,9 +11,8 @@ if os.path.exists('dist'):
     shutil.rmtree('dist')
 env = os.environ.copy()
 subprocess.call(['npm', 'install'])
-env['PATH'] = './node_modules/.bin'
-subprocess.call(['bower', '--allow-root', 'install'], env = env)
-subprocess.call(['ember', 'build', '--environment', 'production'], env = env)
+subprocess.call(['./node_modules/.bin/bower', '--allow-root', 'install'])
+subprocess.call(['./node_modules/.bin/ember', 'build', '--environment', 'production'])
 os.chdir('..')
 
 # copy the client
