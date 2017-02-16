@@ -12,8 +12,8 @@ if os.path.exists('dist'):
 env = os.environ.copy()
 subprocess.call(['npm', 'install'])
 subprocess.call(['npm', 'install', 'bower'])
-subprocess.call(['./node_modules/.bin/bower', '--allow-root', 'install'], shell=True)
-subprocess.call(['./node_modules/.bin/ember', 'build', '--environment', 'production'], shell=True)
+subprocess.call(['./node_modules/.bin/bower --allow-root install'], shell=True)
+subprocess.call(['./node_modules/.bin/ember build --environment production'], shell=True)
 os.chdir('..')
 
 # copy the client
