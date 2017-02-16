@@ -3,19 +3,29 @@
 from distutils.core import setup
 import os
 import shutil
+import subprocess
 
+# build the client
+os.chdir('frontend')
+if os.path.exists('dist'):
+    shutil.rmtree('dist')
+subprocess.call(['npm', 'install'])
+subprocess.call(['bower', '--allow-root', 'install'])
+subprocess.call(['ember', 'build', '--environment', 'production'])
+os.chdir('..')
+
+# copy the client
 if os.path.exists('backend/stromxweb/static'):
     shutil.rmtree('backend/stromxweb/static')
 shutil.copytree('frontend/dist', 'backend/stromxweb/static')
 
+# collect the client file
 static_files = []
-
 for root, dirs, files in os.walk('backend/stromxweb/static', ):
     relative_root = os.path.relpath(root, 'backend/stromxweb')
     paths = [os.path.join(relative_root, f) for f in files]
     static_files.extend(paths)
 
-print static_files
 setup(name='stromx-web',
       version='0.3',
       description='Web interface to operate stromx streams',
