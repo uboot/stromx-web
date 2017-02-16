@@ -9,8 +9,6 @@ RUN apt-get update \
     && apt-get install -y curl python-pip python-daemon python-opencv python-stromx libstromx-opencv libstromx-zbar git nodejs-legacy npm \
     && pip install tornado
 
-ENV PATH $PATH:./node_modules/.bin
-
 RUN git clone https://github.com/uboot/stromx-web.git \
     && cd stromx-web \
     && python setup.py build \
