@@ -12,7 +12,7 @@ RUN apt-get update \
 ENV PATH $PATH:./node_modules/.bin
 
 RUN git clone https://github.com/uboot/stromx-web.git \
-    && cd stromx-web
+    && cd stromx-web \
     && python setup.py build \
     && python setup.py install \
     && mkdir /var/stromx \
