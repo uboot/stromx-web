@@ -12,12 +12,7 @@ RUN apt-get update \
 ENV PATH $PATH:./node_modules/.bin
 
 RUN git clone https://github.com/uboot/stromx-web.git \
-    && cd stromx-web/frontend \
-    && npm install \
-    && npm install bower \
-    && bower --allow-root install \
-    && ember build --environment production \
-    && cd .. \
+    && cd stromx-web
     && python setup.py build \
     && python setup.py install \
     && mkdir /var/stromx \
