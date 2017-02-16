@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
+
+build/stromx-web::
+	python setup.py build
+
+install/stromx-web::
+	python setup.py install --install-layout=deb --root $(CURDIR)/debian/tmp
+
+clean::
+	-for i in $(cdbs_python_build_versions); do \
+	  python$$i-dbg ./setup.py clean -a; \
+	done

@@ -1,0 +1,13 @@
+Source: stromx-web
+Priority: extra
+Maintainer: Matthias Fuchs <stromx-devel@googlegroups.com>
+Build-Depends: debhelper (>= 7.0.50~), cdbs, python
+Standards-Version: 3.9.1
+Section: libs
+Homepage: http://www.stromx.org
+
+Package: stromx-web
+Section: web
+Architecture: any
+Depends: ${python:Depends}, python
+Description: HTML5 GUI for stromx
