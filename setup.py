@@ -9,9 +9,11 @@ import subprocess
 os.chdir('frontend')
 if os.path.exists('dist'):
     shutil.rmtree('dist')
-subprocess.call(['npm', 'install'])
-subprocess.call(['bower', '--allow-root', 'install'])
-subprocess.call(['ember', 'build', '--environment', 'production'])
+env = os.environ.copy()
+env['PATH'] = './node_modules/.bin'
+subprocess.call(['npm', 'install'], env = env)
+subprocess.call(['bower', '--allow-root', 'install'], env = env)
+subprocess.call(['ember', 'build', '--environment', 'production'], env = env)
 os.chdir('..')
 
 # copy the client
