@@ -13,7 +13,7 @@ env = os.environ.copy()
 subprocess.call(['npm', 'install'])
 subprocess.call(['npm', 'install', 'bower'])
 subprocess.call(['node', './node_modules/.bin/bower', '--allow-root', 'install'])
-subprocess.call(['./node_modules/.bin/ember', 'build', '--environment=production'])
+subprocess.call(['node', './node_modules/.bin/ember', 'build', '--environment=production'])
 os.chdir('..')
 
 # copy the client
