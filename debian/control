@@ -9,5 +9,5 @@ Homepage: http://www.stromx.org
 Package: stromx-web
 Section: web
 Architecture: any
-Depends: ${python:Depends}, python
+Depends: ${python:Depends}, python, python-daemon
 Description: HTML5 GUI for stromx
