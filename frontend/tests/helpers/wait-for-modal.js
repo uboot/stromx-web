@@ -1,4 +1,4 @@
-/*exported waitForModal */
+/*global $:true*/
 
 import Ember from 'ember';
 

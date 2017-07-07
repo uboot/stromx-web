@@ -1,5 +1,5 @@
 import moduleForAcceptance from '../helpers/module-for-acceptance';
-import { test }from 'qunit';
+import { test } from 'qunit';
 
 moduleForAcceptance('Acceptance: Streams');
 

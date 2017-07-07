@@ -31,8 +31,6 @@ export default Ember.Component.extend({
       default:
         return null;
     }
-
-    return data;
   }.property('data'),
 
   listData: function() {
