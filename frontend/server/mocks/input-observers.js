@@ -55,7 +55,7 @@ module.exports = function(app) {
   });
   inputObserversRouter.post('/', function(req, res) {
     res.send({
-      "input-observer": { id: 2 }
+      "input-observer": { id: 5 }
     });
   });
   inputObserversRouter.put('/', function(req, res) {

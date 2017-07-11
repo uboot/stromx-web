@@ -7,22 +7,19 @@ export default Ember.Controller.extend({
     remove: function () {
       var model = this.get('model');
       var view = model.get('view');
-      
-      model.deleteRecord();
-      
+
       Ember.RSVP.hash({
-        view: view,
-        observer: model.save()
+        removedObserver: model.destroy(),
+        observers: model.get('view.observers')
       }).then(function(hash) {
-        hash.view.reload().then(function(view) {
-          view.get('observers').then(function(observers) {
-            observers.forEach(function(observer) {
-              observer.reload();
-            });
-          });
+        hash.observers.removeObject(hash.removedObserver);
+        hash.observers.forEach(function(observer) {
+          if (! observer.get('isDeleted')) {
+            observer.reload();
+          }
         });
       });
-      
+
       // remember the view
       this.set('view', view);
       this.set('wasRemoved', true);

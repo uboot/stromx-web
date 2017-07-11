@@ -749,4 +749,3 @@ test('cancel editing file parameter', function(assert) {
     );
   });
 });
-

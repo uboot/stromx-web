@@ -67,7 +67,7 @@ module.exports = function(app) {
   });
   outputObserversRouter.post('/', function(req, res) {
     res.send({
-      "output-observer": { id: 4 }
+      "output-observer": { id: 8 }
     });
   });
   outputObserversRouter.put('/', function(req, res) {
