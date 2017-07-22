@@ -5,8 +5,9 @@ MAINTAINER Matthias Fuchs <matz.fuchs@gmx.at>
 RUN apt-get update \
     && apt-get install -y software-properties-common \
     && add-apt-repository ppa:stromx-developers/packages \
+    && curl -sL https://deb.nodesource.com/setup_6.x | bash - \
     && apt-get update \
-    && apt-get install -y curl python-pip python-daemon python-opencv python-stromx libstromx-opencv libstromx-zbar git nodejs-legacy npm \
+    && apt-get install -y curl python-pip python-daemon python-opencv python-stromx libstromx-opencv libstromx-zbar git \
     && pip install tornado
 
 RUN git clone https://github.com/uboot/stromx-web.git \
