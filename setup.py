@@ -11,8 +11,6 @@ if os.path.exists('dist'):
     shutil.rmtree('dist')
 env = os.environ.copy()
 subprocess.call(['npm', 'install'])
-subprocess.call(['npm', 'install', 'bower'])
-subprocess.call(['node', './node_modules/.bin/bower', '--allow-root', 'install'])
 subprocess.call(['node', './node_modules/.bin/ember', 'build', '--environment=production'])
 os.chdir('..')
 
@@ -34,7 +32,7 @@ setup(name='stromx-web',
       author='Matthias Fuchs',
       author_email='stromx-devel@googlegroups.com',
       url='http://www.stromx.org',
-      
+
       packages=['stromxweb'],
       package_data={'stromxweb': static_files},
       package_dir={'stromxweb': 'backend/stromxweb'},
