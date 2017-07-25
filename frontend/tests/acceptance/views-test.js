@@ -18,7 +18,6 @@ test('visit view', function(assert) {
 test('remove view', function(assert) {
   visit('/streams/2/views/1/delete');
   click('.stromx-accept');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -32,7 +31,6 @@ test('remove view', function(assert) {
 test('remove view while view details are displayed', function(assert) {
   visit('/streams/2/views/1/delete?view=1');
   click('.stromx-accept');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -70,7 +68,6 @@ test('add view', function(assert) {
 test('cancel removing view', function(assert) {
   visit('/streams/2/views/1/delete');
   click('.stromx-cancel');
-  waitForModal();
 
   andThen(function() {
     assert.equal(

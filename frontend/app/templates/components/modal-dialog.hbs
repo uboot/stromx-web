@@ -1,20 +1,16 @@
-<div class="modal fade">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
-        <h4 class="modal-title">{{title}}</h4>
-      </div>
-      <div class="modal-body">
-        {{yield}}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default stromx-cancel" data-dismiss="modal" {{action "cancel"}}>{{cancelText}}</button>
-        {{#if showDoNotAccept}}
-          <button type="button" class="btn btn-default stromx-do-not-accept" data-dismiss="modal" {{action "doNotAccept"}}>{{doNotAcceptText}}</button>
-        {{/if}}
-        <button type="button" class="btn btn-primary stromx-accept" data-dismiss="modal" {{action "accept"}}>{{acceptText}}</button>
-      </div>
-    </div>
+{{#bs-modal open=open onHidden=(action "close")}}
+  <div class="modal-header">
+    <button type="button" class="close" {{action "cancel"}} data-dismiss="modal">×</button>
+    <h4 class="modal-title">{{title}}</h4>
   </div>
-</div>
+  <div class="modal-body">
+    {{yield}}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default stromx-cancel" data-dismiss="modal" {{action "cancel"}}>{{cancelText}}</button>
+    {{#if showDoNotAccept}}
+      <button type="button" class="btn btn-default stromx-do-not-accept" data-dismiss="modal" {{action "doNotAccept"}}>{{doNotAcceptText}}</button>
+    {{/if}}
+    <button type="button" class="btn btn-primary stromx-accept" data-dismiss="modal" {{action "accept"}}>{{acceptText}}</button>
+  </div>
+{{/bs-modal}}

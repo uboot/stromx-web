@@ -24,7 +24,6 @@ test('open file', function(assert) {
 test('remove file', function(assert) {
   visit('/files/2/delete');
   click('button.stromx-accept');
-  waitForModal();
 
   andThen(function() {
     assert.equal(find('tbody tr').length, 1, 'A list of one file is shown');
@@ -36,7 +35,6 @@ test('remove file', function(assert) {
 test('dismiss remove file', function(assert) {
   visit('/files/2/delete');
   click('button.stromx-cancel');
-  waitForModal();
 
   andThen(function() {
     assert.equal(find('tbody tr').length, 2,

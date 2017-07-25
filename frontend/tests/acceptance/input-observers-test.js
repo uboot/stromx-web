@@ -18,7 +18,6 @@ test('visit observer', function(assert) {
 test('remove observer', function(assert) {
   visit('/streams/2/inputObservers/0/delete');
   click('.stromx-accept');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -32,7 +31,6 @@ test('remove observer', function(assert) {
 test('cancel removing observer', function(assert) {
   visit('/streams/2/inputObservers/0/delete');
   click('.stromx-cancel');
-  waitForModal();
 
   andThen(function() {
     assert.equal(

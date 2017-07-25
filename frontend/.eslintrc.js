@@ -12,7 +12,6 @@ module.exports = {
   rules: {
   },
   globals: {
-    "waitForModal": false,
     "wait": false
   }
 };

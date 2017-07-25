@@ -18,7 +18,6 @@ test('visit connection', function(assert) {
 test('remove connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('.stromx-accept');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -37,7 +36,6 @@ test('remove connection', function(assert) {
 test('cancel removing connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('.stromx-cancel');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
@@ -102,7 +100,6 @@ test('add connection input -> output', function(assert) {
 test('remove and add connection', function(assert) {
   visit('/streams/2/connections/2/delete');
   click('.stromx-accept');
-  waitForModal();
 
   triggerEvent('a[href="/streams/2/operators/0"] + g.stromx-svg-output g',
                'mousedown');

@@ -109,7 +109,6 @@ test('close stream and save', function(assert) {
   visit('/streams/2');
   click('.stromx-close-stream');
   click('.stromx-accept');
-  waitForModal();
   wait();
 
   andThen(function() {
@@ -125,7 +124,6 @@ test('close stream and do not save', function(assert) {
   visit('/streams/2');
   click('.stromx-close-stream');
   click('.stromx-do-not-accept');
-  waitForModal();
   wait();
 
   andThen(function() {
@@ -141,7 +139,6 @@ test('cancel closing stream', function(assert) {
   visit('/streams/2');
   click('.stromx-close-stream');
   click('.stromx-cancel');
-  waitForModal();
 
   andThen(function() {
     assert.equal(
