@@ -1,4 +1,4 @@
-{{#bs-modal open=open onHidden=(action "close")}}
+{{#bs-modal open=open onHidden=(action dismiss)}}
   <div class="modal-header">
     <button type="button" class="close" {{action "cancel"}} data-dismiss="modal">×</button>
     <h4 class="modal-title">{{title}}</h4>

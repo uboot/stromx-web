@@ -4,9 +4,6 @@ export default Ember.Component.extend({
   showDoNotAccept: Ember.computed.notEmpty('doNotAcceptText'),
   open: true,
   actions: {
-    close: function() {
-      this.sendAction("dismiss");
-    },
     accept: function() {
       this.sendAction("accept");
       this.set('open', false);

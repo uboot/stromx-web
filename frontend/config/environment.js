@@ -44,8 +44,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'api') {
-    ENV.APP.API_HOST = 'http://localhost:8080',
-    ENV.APP.SOCKET_HOST = 'ws://localhost:8080'
+    ENV.APP.API_HOST = 'http://localhost:8080';
+    ENV.APP.SOCKET_HOST = 'ws://localhost:8080';
   }
 
   if (environment === 'production') {
