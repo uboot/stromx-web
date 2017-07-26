@@ -69,11 +69,11 @@
   <div class="col-sm-8">
     <ul class="nav nav-tabs stromx-display-list">
       <li class="{{if isVisible 'active'}}" role="presentation">
-          {{#link-to (query-params view=null)}}Stream{{/link-to}}
+          {{#link-to (query-params view=null) class="stromx-display-stream"}}Stream{{/link-to}}
       </li>
       {{#each model.views key="@index" as |item|}}
         <li class="{{is-active item.id this.view}}" role="presentation">
-          {{#link-to (query-params view=item.id)}}{{item.name}}{{/link-to}}
+          {{#link-to (query-params view=item.id) class="stromx-display-view"}}{{item.name}}{{/link-to}}
         </li>
       {{/each}}
 

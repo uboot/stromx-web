@@ -1,5 +1,3 @@
-/*global $:false */
-
 import Ember from "ember";
 
 export default Ember.Component.extend({
@@ -11,14 +9,14 @@ export default Ember.Component.extend({
     this.sendAction('dragStart', this.start.x, this.start.y);
 
     var _this = this;
-    $('body').mouseup(function () {
-      $('body').off('mousemove');
-      $('body').off('mouseup');
+    Ember.$('body').mouseup(function () {
+      Ember.$('body').off('mousemove');
+      Ember.$('body').off('mouseup');
       _this.sendAction('dragEnd');
       return false;
     });
 
-    $('body').mousemove(function (event) {
+    Ember.$('body').mousemove(function (event) {
       var point = _this.transform(event);
       var start = _this.start;
       _this.sendAction('dragMove', point.x - start.x, point.y - start.y,
