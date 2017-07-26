@@ -1,61 +1,53 @@
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+{{#bs-navbar as |navbar|}}
+  <div class="navbar-header">
+    {{navbar.toggle}}
+
+    <a class="navbar-brand" href="http://www.stromx.org">
+      <img alt="stromx-logo" src="/assets/logo.png">
+    </a>
+  </div>
+  {{#navbar.content}}
+    {{#navbar.nav as |nav|}}
+      {{#nav.item}}
+        {{#nav.link-to "files"}}Files{{/nav.link-to}}
+      {{/nav.item}}
+    {{/navbar.nav}}
+    <form class="navbar-form navbar-left">
+      <button {{action "save"}} class="btn btn-default stromx-save-stream">
+        <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+        Save
       </button>
-      <a class="navbar-brand" href="http://www.stromx.org">
-        <img alt="stromx-logo" src="/assets/logo.png">
-      </a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li>{{#link-to "files"}}Files{{/link-to}}</li>
-      </ul>
-
-      <form class="navbar-form navbar-left">
-        <button {{action "save"}} class="btn btn-default stromx-save-stream">
-          <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-          Save
-        </button>
-        {{#if model.active}}
-          {{#if model.paused}}
-            <button {{action "resume"}} class="btn btn-default stromx-resume-stream">
-              <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-              Resume
-            </button>
-          {{else}}
-            <button {{action "pause"}} class="btn btn-default stromx-pause-stream">
-              <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-              Pause
-            </button>
-          {{/if}}
-          <button {{action "stop"}} class="btn btn-default stromx-stop-stream">
-            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-            Stop
+      {{#if model.active}}
+        {{#if model.paused}}
+          <button {{action "resume"}} class="btn btn-default stromx-resume-stream">
+            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+            Resume
           </button>
         {{else}}
-          <button {{action "start"}} class="btn btn-default stromx-start-stream">
-            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-            Start
+          <button {{action "pause"}} class="btn btn-default stromx-pause-stream">
+            <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+            Pause
           </button>
-          {{#link-to "stream.close" class="btn btn-default stromx-close-stream"}}
-            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            Close
-          {{/link-to}}
         {{/if}}
-      </form>
+        <button {{action "stop"}} class="btn btn-default stromx-stop-stream">
+          <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+          Stop
+        </button>
+      {{else}}
+        <button {{action "start"}} class="btn btn-default stromx-start-stream">
+          <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+          Start
+        </button>
+        {{#link-to "stream.close" class="btn btn-default stromx-close-stream"}}
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          Close
+        {{/link-to}}
+      {{/if}}
+    </form>
 
-      <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+    <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
+  {{/navbar.content}}
+{{/bs-navbar}}
 
 <div class="row">
   <div class="col-sm-4">

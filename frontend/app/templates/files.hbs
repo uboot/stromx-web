@@ -1,28 +1,23 @@
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://www.stromx.org">
-        <img alt="stromx-logo" src="/assets/logo.png">
-      </a>
-    </div>
+{{#bs-navbar as |navbar|}}
+  <div class="navbar-header">
+    {{navbar.toggle}}
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li>{{#link-to 'files.new'}}New File{{/link-to}}</li>
-        <li>{{#link-to 'files.upload'}}Upload File{{/link-to}}</li>
-      </ul>
-      <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+    <a class="navbar-brand" href="http://www.stromx.org">
+      <img alt="stromx-logo" src="/assets/logo.png">
+    </a>
+  </div>
+  {{#navbar.content}}
+    {{#navbar.nav as |nav|}}
+      {{#nav.item}}
+        {{#nav.link-to 'files.new'}}New File{{/nav.link-to}}
+      {{/nav.item}}
+      {{#nav.item}}
+        {{#nav.link-to 'files.upload'}}Upload File{{/nav.link-to}}
+      {{/nav.item}}
+    {{/navbar.nav}}
+    <p class="navbar-text navbar-right"><a href="auth/logout" class="navbar-link">Log out</a></p>
+  {{/navbar.content}}
+{{/bs-navbar}}
 
 <div class="row">
   <div class="col-sm-2"></div>
