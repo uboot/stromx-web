@@ -153,9 +153,9 @@ test('move up', function(assert) {
 
   andThen(function() {
     assert.equal(
-      find('.stromx-observer-row:nth-child(3) a').text().trim(),
+      find('.stromx-observer-row:nth-child(2) a').text().trim(),
       'Output image at Blur the image',
-      'Moving an observer up does not change its position after reload'
+      'Moving an observer up changes its position accordingly'
     );
   });
 });
@@ -168,20 +168,20 @@ test('move up first observer', function(assert) {
     assert.equal(
       find('.stromx-observer-row:nth-child(1) a').text().trim(),
       'Input image at Blur the image',
-      'Moving an observer up does not change its position after reload'
+      'Moving the first observer up does not change its position'
     );
   });
 });
 
 test('move down observer', function(assert) {
   visit('/streams/2/views/1');
-  click('.stromx-observer-row:nth-child(3) .stromx-move-up');
+  click('.stromx-observer-row:nth-child(3) .stromx-move-down');
 
   andThen(function() {
     assert.equal(
-      find('.stromx-observer-row:nth-child(3) a').text().trim(),
+      find('.stromx-observer-row:nth-child(4) a').text().trim(),
       'Output image at Blur the image',
-      'Moving an observer up does not change its position after reload'
+      'Moving an observer down changes its position accordingly'
     );
   });
 });
@@ -194,7 +194,7 @@ test('move down last observer', function(assert) {
     assert.equal(
       find('.stromx-observer-row:nth-child(6) a').text().trim(),
       'Number at Send numbers',
-      'Moving an observer up does not change its position after reload'
+      'Moving the last observer down does not change its position'
     );
   });
 });
