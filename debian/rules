@@ -5,7 +5,7 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
 
 build/stromx-web::
-	python setup.py build
+	python build.py
 
 install/stromx-web::
 	python setup.py install --install-layout=deb --root $(CURDIR)/debian/tmp
