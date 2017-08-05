@@ -19,12 +19,16 @@ if os.path.exists('backend/stromxweb/static'):
     shutil.rmtree('backend/stromxweb/static')
 shutil.copytree('frontend/dist', 'backend/stromxweb/static')
 
-# collect the client file
+# collect the client files
 static_files = []
 for root, dirs, files in os.walk('backend/stromxweb/static', ):
     relative_root = os.path.relpath(root, 'backend/stromxweb')
     paths = [os.path.join(relative_root, f) for f in files]
     static_files.extend(paths)
+
+# collect the example files
+stromx_files = [os.path. join('docker/files', f) for f in
+                os.listdir('docker/files')]
 
 setup(name='stromx-web',
       version='0.3',
@@ -38,6 +42,7 @@ setup(name='stromx-web',
       package_dir={'stromxweb': 'backend/stromxweb'},
       scripts=['backend/scripts/stromx_server_start.py',
                'backend/scripts/stromx_server.py'],
-      data_files=[('/etc/stromx', ['backend/stromx.conf'])],
+      data_files=[('/etc/stromx', ['docker/stromx.conf']),
+                  ('/var/stromx', stromx_files)],
       requires=['tornado(>=4.0)', 'daemon(>=1.5)']
 )
