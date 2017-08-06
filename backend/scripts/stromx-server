@@ -3,13 +3,8 @@
 from daemon import runner
 import signal
 
-import stromxweb
-
 # implement a service (not only a daemon),
 # cf. https://stackoverflow.com/a/30408822
-
-def stopServer(signum, frame):
-    stromxweb.stop()
 
 class App():
     def __init__(self):
@@ -20,7 +15,8 @@ class App():
         self.stderr_path = '/dev/null'
 
     def run(self):
-        signal.signal(signal.SIGTERM, stopServer)
+        import stromxweb
+        signal.signal(signal.SIGTERM, lambda signum, frame: stromxweb.stop())
         stromxweb.start('/etc/stromx/stromx.conf')
 
 app = App()
