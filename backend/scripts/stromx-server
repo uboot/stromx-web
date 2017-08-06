@@ -5,6 +5,9 @@ import signal
 
 import stromxweb
 
+# implement a service (not only a daemon),
+# cf. https://stackoverflow.com/a/30408822
+
 def stopServer(signum, frame):
     stromxweb.stop()
 
