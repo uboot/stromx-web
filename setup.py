@@ -12,8 +12,12 @@ for root, dirs, files in os.walk('backend/stromxweb/static', ):
     static_files.extend(paths)
 
 # collect the example files
-stromx_files = [os.path. join('docker/files', f) for f in
-                os.listdir('docker/files')]
+stromx_files = [os.path.join('backend/files', f) for f in
+                os.listdir('backend/files')]
+
+# collect the data files
+data_files = [os.path.join('backend/data', f) for f in
+              os.listdir('backend/data')]
 
 setup(name='stromx-web',
       version='0.3',
@@ -26,7 +30,8 @@ setup(name='stromx-web',
       package_data={'stromxweb': static_files},
       package_dir={'stromxweb': 'backend/stromxweb'},
       scripts=['backend/scripts/stromx-server'],
-      data_files=[('/etc/stromx', ['docker/stromx.conf']),
-                  ('/var/stromx', stromx_files)],
+      data_files=[('/etc/stromx', ['backend/stromx.conf']),
+                  ('/var/stromx', stromx_files),
+                  ('/usr/share/stromx-web/data/Chessboard', data_files)],
       requires=['tornado(>=4.0)', 'daemon(>=1.5)']
 )

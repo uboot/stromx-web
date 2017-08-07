@@ -19,10 +19,6 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && cd .. \
     && rm -rf stromx-web
 
-ADD stromx.conf /etc/stromx/
-ADD files/*.stromx /var/stromx/
-ADD data/chess*.png /usr/share/stromx-web/data/Chessboard/
-
 VOLUME /var/stromx
 
 EXPOSE 8080
