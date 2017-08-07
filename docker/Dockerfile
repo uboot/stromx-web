@@ -15,7 +15,6 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && cd stromx-web \
     && python build.py \
     && python setup.py install \
-    && mkdir /var/stromx \
     && cd .. \
     && rm -rf stromx-web
 
