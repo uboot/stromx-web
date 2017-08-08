@@ -18,6 +18,7 @@ def _str(value):
 from error import Failed
 
 TEMP_PATH = stromx.runtime.File.tempDir()
+VERSION_STRING = stromx.runtime.versionString()
 
 class Model(object):
     def __init__(self, directory = "", packages = []):

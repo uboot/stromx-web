@@ -15,6 +15,7 @@ import traceback
 
 import model
 from error import Failed
+from version import VERSION_STRING
 
 config = {}
 _USER_COOKIE = 'USER'
@@ -54,7 +55,9 @@ class LoginHandler(BaseHandler):
         if config['LOGIN_SERVICE']:
             loginUrl = "/auth/" + config['LOGIN_SERVICE']
         self.render("login.html", loginUrl = loginUrl,
-                                  trackerId=config['GOOGLE_TRACKER_ID'])
+                                  trackerId=config['GOOGLE_TRACKER_ID'],
+                                  runtimeVersion=model.VERSION_STRING,
+                                  webVersion=VERSION_STRING)
 
 class LogoutHandler(BaseHandler):
     def get(self):
@@ -64,7 +67,8 @@ class LogoutHandler(BaseHandler):
         # interaction (unless they have separately logged out of Google in
         # the meantime).
         self.clear_cookie(_USER_COOKIE)
-        self.render("logout.html", trackerId=config['GOOGLE_TRACKER_ID'])
+        self.render("logout.html",
+                    trackerId=config['GOOGLE_TRACKER_ID'])
 
 class ItemsHandler(BaseHandler):
     # FIXME: disable cross-origin connections by removing the function below
