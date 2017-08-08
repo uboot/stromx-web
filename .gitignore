@@ -4,6 +4,7 @@
 .pydevproject
 .settings
 backend/stromxweb/static
+backend/stromxweb/version.py
 bower_components
 build
 dist

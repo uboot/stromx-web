@@ -55,9 +55,7 @@ class LoginHandler(BaseHandler):
         if config['LOGIN_SERVICE']:
             loginUrl = "/auth/" + config['LOGIN_SERVICE']
         self.render("login.html", loginUrl = loginUrl,
-                                  trackerId=config['GOOGLE_TRACKER_ID'],
-                                  runtimeVersion=model.VERSION_STRING,
-                                  webVersion=VERSION_STRING)
+                                  trackerId=config['GOOGLE_TRACKER_ID'])
 
 class LogoutHandler(BaseHandler):
     def get(self):
@@ -69,6 +67,13 @@ class LogoutHandler(BaseHandler):
         self.clear_cookie(_USER_COOKIE)
         self.render("logout.html",
                     trackerId=config['GOOGLE_TRACKER_ID'])
+
+class VersionHandler(BaseHandler):
+    def get(self):
+        self.render("version.html",
+                    trackerId=config['GOOGLE_TRACKER_ID'],
+                    runtimeVersion=model.VERSION_STRING,
+                    webVersion=VERSION_STRING)
 
 class ItemsHandler(BaseHandler):
     # FIXME: disable cross-origin connections by removing the function below
@@ -220,6 +225,7 @@ def start(configFile):
         (r"/auth/google", AuthHandler),
         (r"/auth/login", LoginHandler),
         (r"/auth/logout", LogoutHandler),
+        (r"/version", VersionHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": assetsDir}),
         (r"/fonts/(.*)", tornado.web.StaticFileHandler, {"path": fontsDir}),
         (r"/api/operatorTemplates", ItemsHandler, 
