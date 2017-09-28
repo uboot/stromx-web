@@ -1,7 +1,4 @@
 module.exports = {
-  globals: {
-    server: true,
-  },
   root: true,
   parserOptions: {
     ecmaVersion: 2017,
@@ -13,9 +10,5 @@ module.exports = {
     es6: true
   },
   rules: {
-  },
-  globals: {
-    server: true,
-    "wait": false
   }
 };
