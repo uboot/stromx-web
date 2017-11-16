@@ -1,3 +1,5 @@
+/* global wait */
+
 import moduleForAcceptance from '../helpers/module-for-acceptance';
 import { test } from 'qunit';
 

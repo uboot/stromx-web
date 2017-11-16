@@ -1,6 +1,6 @@
-import Ember from "ember";
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
   name: '',
   content: '',
   actions: {
@@ -11,7 +11,7 @@ export default Ember.Controller.extend({
     },
     upload: function () {
       var name = this.get('name');
-      var strippedName = name.replace(/^.*[\\\/]/, '');
+      var strippedName = name.replace(/^.*[\\/]/, '');
       var file = this.store.createRecord('file', {
         name: strippedName,
         content: this.get('content')
