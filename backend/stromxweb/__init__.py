@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import httplib
+import http
 import mimetypes
 import os
 import re
