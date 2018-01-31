@@ -156,7 +156,7 @@ def stromxImageToData(stromxData):
     
     # expand the color channel into the row
     if not image.variant().isVariant(stromx.runtime.Variant.MONO_IMAGE):
-        array = array.reshape((rows, cols / 3, 3))
+        array = array.reshape((rows, cols // 3, 3))
     
     # convert to BGR if necessary
     if image.pixelType() == stromx.runtime.Image.PixelType.RGB_24:
@@ -164,7 +164,10 @@ def stromxImageToData(stromxData):
     
     _, jpg = cv2.imencode('.jpg', array)
     values = 'data:image/jpg;base64,{0}'.format(
-                                base64.encodestring(jpg.data).replace("\n", ""))
+        base64.encodebytes(jpg.data.tobytes())
+        .decode()
+        .replace("\n", "")
+    )
     data = {
         'width': image.width(),
         'height': image.height(),
@@ -205,7 +208,10 @@ def stromxMatrixToImage(stromxData):
     image = np.array((matrix + offset) * scaling, dtype = np.ubyte)
     _, jpg = cv2.imencode('.jpg', image)
     values = 'data:image/jpg;base64,{0}'.format(
-                                base64.encodestring(jpg.data).replace("\n", ""))
+        base64.encodebytes(jpg.data.tobytes())
+        .decode()
+        .replace("\n", "")
+    )
     data = {
         'width': image.shape[1],
         'height': image.shape[0],
@@ -229,7 +235,7 @@ def stromxListToData(stromxList, visualization, properties):
 
 def dataToStromxImage(data):
     content = re.sub('data:.*;base64,', '', data['values'], re.MULTILINE)
-    buf = np.frombuffer(base64.decodestring(content), dtype = np.uint8)
+    buf = np.frombuffer(base64.decodebytes(str.encode(content)), dtype = np.uint8)
     array = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED)
     
     if len(array.shape) == 3 and array.shape[2] == 3:
@@ -266,9 +272,9 @@ def dataToStromxFile(data):
     _, extension = os.path.splitext(data['name'])
     tempPath = stromx.runtime.File.tempPath(str(extension))
     
-    with open(tempPath, 'w') as f:
-        f.write(base64.decodestring(content))
-    
+    with open(tempPath, 'wb') as f:
+        f.write(base64.decodebytes(str.encode(content)))
+
     return stromx.runtime.File(tempPath, openMode)
 
 def stromxColorToString(color):

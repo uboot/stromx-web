@@ -1567,6 +1567,8 @@ class ParameterObserver(Observer):
         selector = lambda param: (param.stromxOp == op and
                                   param.stromxId == index)
         parameterModels = filter(selector, self.model.parameters.values())
+
+        parameterModels = list(parameterModels)
         assert(len(parameterModels) == 1)
         return parameterModels[0]
 
@@ -1614,7 +1616,8 @@ class InputObserver(Observer):
             connectorModel = filter(selector, self.model.outputs.values())
         else:
             assert(False)
-            
+
+        connectorModel = list(connectorModel)
         assert(len(connectorModel) == 1)
         return connectorModel[0]
 
@@ -1662,7 +1665,8 @@ class OutputObserver(Observer):
             connectorModel = filter(selector, self.model.outputs.values())
         else:
             assert(False)
-            
+
+        connectorModel = list(connectorModel)
         assert(len(connectorModel) == 1)
         return connectorModel[0]
         
@@ -1774,7 +1778,7 @@ class ConnectorValue(ConnectorValueBase):
                 value.index = self.index
                 self.model.connectorValues.sendValue(value)
         except stromx.runtime.Exception as e:
-            print 'Exception while observing data: {0}'.format(e)
+            print('Exception while observing data: {0}'.format(e))
         
     def delete(self):
         self.__value.deactivate()
