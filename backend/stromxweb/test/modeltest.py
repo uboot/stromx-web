@@ -256,7 +256,7 @@ class FilesTest(unittest.TestCase):
     def testSetOpenFails(self):
         shutil.rmtree('temp', True)
         os.mkdir('temp')
-        with file('temp/invalid.stromx', 'w') as f:
+        with open('temp/invalid.stromx', 'w') as f:
             f.write("nonsense")
         self.model = model.Model('temp', _packages)
         self.files = self.model.files

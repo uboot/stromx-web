@@ -119,7 +119,7 @@ class Items(dict):
     @property
     def data(self):
         name = _resourceName(self.__class__.__name__)
-        itemList = [item.data.values()[0] for item in self.values()]
+        itemList = [next(iter(item.data.values())) for item in self.values()]
         return {name: itemList}
         
     @property
@@ -190,7 +190,7 @@ class Item(object):
         
         for key in self._properties:
             try:
-                if properties.has_key(key):
+                if key in properties:
                     self.__setattr__(key, properties[key])
             except AttributeError:
                 pass
@@ -324,7 +324,7 @@ class File(Item):
         secureName = os.path.basename(secureName)
         secureName = secureName.lstrip('.')
         secureName = secureName.lstrip('.')
-        secureName = secureName.translate(None, '\\')
+        secureName = secureName.replace('\\', '')
         
         if not secureName:
             return ''
@@ -343,8 +343,7 @@ class Streams(Items):
     def findStreamModel(self, stromxStream):
         streamModels = filter(
             lambda stream: stream.stromxStream == stromxStream, self.values())
-        assert(len(streamModels) <= 1)
-        return streamModels[0] if len(streamModels) else None
+        return next(streamModels, None)
     
 class ExceptionObserver(stromx.runtime.ExceptionObserver):
     stream = None
@@ -738,11 +737,11 @@ class Operator(Item):
         
     @property
     def inputs(self):
-        return map(lambda model: model.index, self.__inputs)
+        return [model.index for model in self.__inputs]
         
     @property
     def outputs(self):
-        return map(lambda model: model.index, self.__outputs)
+        return [model.index for model in self.__outputs]
     
     @property
     def stream(self):
@@ -1568,9 +1567,7 @@ class ParameterObserver(Observer):
                                   param.stromxId == index)
         parameterModels = filter(selector, self.model.parameters.values())
 
-        parameterModels = list(parameterModels)
-        assert(len(parameterModels) == 1)
-        return parameterModels[0]
+        return next(parameterModels)
 
 class InputObserver(Observer):
     _properties = Observer._properties + ['input', 'value']
@@ -1617,9 +1614,7 @@ class InputObserver(Observer):
         else:
             assert(False)
 
-        connectorModel = list(connectorModel)
-        assert(len(connectorModel) == 1)
-        return connectorModel[0]
+        return next(connectorModel)
 
 class OutputObserver(Observer):
     _properties = Observer._properties + ['output', 'value']
@@ -1666,9 +1661,7 @@ class OutputObserver(Observer):
         else:
             assert(False)
 
-        connectorModel = list(connectorModel)
-        assert(len(connectorModel) == 1)
-        return connectorModel[0]
+        return next(connectorModel)
         
 class Observers(Items):
     pass
