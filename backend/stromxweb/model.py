@@ -13,7 +13,7 @@ import conversion
 import view
 
 def _str(value):
-    return str(value.encode('utf-8'))
+    return value
 
 from error import Failed
 
@@ -119,7 +119,8 @@ class Items(dict):
     @property
     def data(self):
         name = _resourceName(self.__class__.__name__)
-        itemList = [next(iter(item.data.values())) for item in self.values()]
+        values = sorted(self.values(), key = lambda item: item.index)
+        itemList = [next(iter(item.data.values())) for item in values]
         return {name: itemList}
         
     @property
@@ -231,8 +232,8 @@ class Files(Items):
         content = data["file"].get("content", "")
         if content != "" and  content != None:
             content = re.sub("data:.*;base64,", "", content, re.MULTILINE)
-            with file(f.path, 'w') as streamFile:
-                streamFile.write(base64.decodestring(content))
+            with open(f.path, 'wb') as streamFile:
+                streamFile.write(base64.decodebytes(str.encode(content)))
         else:
             if os.path.exists(f.path):
                 os.remove(f.path)

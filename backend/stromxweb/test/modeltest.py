@@ -287,13 +287,13 @@ class FilesTest(unittest.TestCase):
         
     def testAddNoContent(self):
         self.files.addData({'file': {'name': 'test.stromx'}})
-        self.assertEqual({'files': [_testFile, _parallelFile]},
+        self.assertEqual({'files': [_parallelFile, _testFile]},
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
     def testAddNoneContent(self):
         self.files.addData({'file': {'name': 'test.stromx', 'content': None}})
-        self.assertEqual({'files': [_testFile, _parallelFile]},
+        self.assertEqual({'files': [_parallelFile, _testFile]},
                          self.files.data)
         self.assertFalse(os.path.exists('temp/test.stromx'))
         
@@ -344,7 +344,7 @@ class FilesTest(unittest.TestCase):
     def testAddContent(self):
         self.files.addData({'file': {'name': 'test.stromx',
                                      'content': _content}})
-        self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
+        self.assertEqual({'files': [_parallelFile, _testFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
                                     'temp/test.stromx'))
@@ -364,7 +364,7 @@ class FilesTest(unittest.TestCase):
     def testAddWithInsecurePath(self):
         self.files.addData({'file': {'name': '../test.stromx',
                                      'content': _content}})
-        self.assertEqual({'files': [_testFile, _parallelFile]}, self.files.data)
+        self.assertEqual({'files': [_parallelFile, _testFile]}, self.files.data)
         self.assertTrue(os.path.exists('temp/test.stromx'))
         self.assertTrue(filecmp.cmp('data/stream/0_parallel.stromx',
                                     'temp/test.stromx'))
