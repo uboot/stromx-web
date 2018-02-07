@@ -1144,8 +1144,8 @@ class ParametersTest(unittest.TestCase):
         param = self.model.parameters['1']
         param.set({'parameter': {'currentType': 'input'}})
         
-        self.assertFalse(self.model.parameters.has_key('1'))
-        self.assertTrue(self.model.inputs.has_key('1'))
+        self.assertFalse('1' in self.model.parameters)
+        self.assertTrue('1' in self.model.inputs)
         self.assertTrue(op.data['operator']['inputs'].count('1'))
         
     def testTypeParameter(self):
@@ -1156,7 +1156,7 @@ class ParametersTest(unittest.TestCase):
         param = self.model.parameters['1']
         param.set({'parameter': {'currentType': 'parameter'}})
         
-        self.assertTrue(self.model.parameters.has_key('1'))
+        self.assertTrue('1' in self.model.parameters)
         self.assertTrue(op.data['operator']['parameters'].count('1'))
         self.assertTrue('push', param.data['parameter']['behavior'])
         
@@ -1180,8 +1180,8 @@ class ParametersTest(unittest.TestCase):
         param = self.model.parameters['1']
         param.set({'parameter': {'currentType': 'output'}})
         
-        self.assertFalse(self.model.parameters.has_key('1'))
-        self.assertTrue(self.model.outputs.has_key('1'))
+        self.assertFalse('1' in self.model.parameters)
+        self.assertTrue('1' in self.model.outputs)
         self.assertTrue(op.data['operator']['outputs'].count('1'))
         
     def testSetTypeOutputInput(self):
@@ -1194,7 +1194,7 @@ class ParametersTest(unittest.TestCase):
         self.assertRaises(model.Failed, param.set,
                           {'parameter': {'currentType': 'output'}})
         self.assertEqual(1, len(self.errorSink.errors))
-        self.assertTrue(self.model.parameters.has_key('1'))
+        self.assertTrue('1' in self.model.parameters)
         
     def testDelete(self):
         # create some parameters
@@ -1208,8 +1208,8 @@ class ParametersTest(unittest.TestCase):
         
         self.model.parameters.delete('0')
         
-        self.assertFalse(self.model.parameters.has_key('0'))
-        self.assertFalse(self.model.parameterObservers.has_key('0'))
+        self.assertFalse('0' in self.model.parameters)
+        self.assertFalse('0' in self.model.parameterObservers)
         self.assertFalse('0' in self.model.views['0'].observers)
         
     def __activateExceptionOnParameter(self):
@@ -1392,7 +1392,7 @@ class InputsTest(unittest.TestCase):
         connector.set({'input': {'currentType': 'parameter',
                                  'behavior': 'push'}})
         
-        self.assertFalse(self.model.inputs.has_key('0'))
+        self.assertFalse('0' in self.model.inputs)
         param = self.model.parameters['1']
         self.assertEqual('input', param.data['parameter']['originalType'])
         self.assertEqual('parameter', param.data['parameter']['currentType'])
@@ -1406,15 +1406,15 @@ class InputsTest(unittest.TestCase):
                           {'input': {'currentType': 'parameter',
                                      'behavior': 'persistent'}})
         self.assertEqual(1, len(self.errorSink.errors))
-        self.assertTrue(self.model.inputs.has_key('0'))
-        self.assertFalse(self.model.parameters.has_key('1'))
+        self.assertTrue('0' in self.model.inputs)
+        self.assertFalse('1' in self.model.parameters)
         
     def testSetTypeInput(self):
         self.stream.active = True
         connector = self.model.inputs['0']
         
         connector.set({'input': {'currentType': 'input'}})
-        self.assertTrue(self.model.inputs.has_key('0'))
+        self.assertTrue('0' in self.model.inputs)
         
     def testSetTypePullParameter(self):
         connector = self.model.inputs['0']
@@ -1423,15 +1423,15 @@ class InputsTest(unittest.TestCase):
                           {'input': {'currentType': 'parameter', 
                                      'behavior': 'pull'}})
         self.assertEqual(1, len(self.errorSink.errors))
-        self.assertTrue(self.model.inputs.has_key('0'))
-        self.assertFalse(self.model.parameters.has_key('1'))
+        self.assertTrue('0' in self.model.inputs)
+        self.assertFalse('1' in self.model.parameters)
         
     def testSetTypePersistentParameter(self):
         connector = self.model.inputs['0']
         connector.set({'input': {'currentType': 'parameter',
                                  'behavior': 'persistent'}})
         
-        self.assertFalse(self.model.inputs.has_key('0'))
+        self.assertFalse('0' in self.model.inputs)
         param = self.model.parameters['1']
         self.assertEqual('input', param.data['parameter']['originalType'])
         self.assertEqual('parameter', param.data['parameter']['currentType'])
@@ -1451,8 +1451,8 @@ class InputsTest(unittest.TestCase):
         
         self.model.inputs.delete('0')
         
-        self.assertFalse(self.model.inputs.has_key('0'))
-        self.assertFalse(self.model.inputObservers.has_key('0'))
+        self.assertFalse('0' in self.model.inputs)
+        self.assertFalse('0' in self.model.inputObservers)
         self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
         
@@ -1486,7 +1486,7 @@ class OutputsTest(unittest.TestCase):
         connector.set({'output': {'currentType': 'parameter',
                                   'behavior': 'pull'}})
         
-        self.assertFalse(self.model.outputs.has_key('1'))
+        self.assertFalse('1' in self.model.outputs)
         param = self.model.parameters['1']
         self.assertEqual('parameter', param.data['parameter']['currentType'])
         self.assertEqual('output', param.data['parameter']['originalType'])
@@ -1497,7 +1497,7 @@ class OutputsTest(unittest.TestCase):
         connector.set({'output': {'currentType': 'parameter',
                                   'behavior': 'persistent'}})
         
-        self.assertFalse(self.model.outputs.has_key('1'))
+        self.assertFalse('1' in self.model.outputs)
         param = self.model.parameters['1']
         self.assertEqual('parameter', param.data['parameter']['currentType'])
         self.assertEqual('output', param.data['parameter']['originalType'])
@@ -1517,8 +1517,8 @@ class OutputsTest(unittest.TestCase):
         
         self.model.outputs.delete('0')
         
-        self.assertFalse(self.model.outputs.has_key('0'))
-        self.assertFalse(self.model.outputObservers.has_key('0'))
+        self.assertFalse('0' in self.model.outputs)
+        self.assertFalse('0' in self.model.outputObservers)
         self.assertFalse('0' in self.model.views['0'].observers)
         self.assertEqual(dict(), self.model.connections)
     
@@ -1850,7 +1850,7 @@ class ConnectorValuesTest(unittest.TestCase):
     def testHandlerLines(self):
         self.model.connectorValues.addHandler(self.setValue)
         self.testDataStream.active = True
-        time.sleep(0.1)
+        time.sleep(0.2)
         self.testDataStream.active = False
         
         self.assertEqual('matrix',
