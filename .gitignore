@@ -6,6 +6,7 @@
 .idea
 backend/stromxweb/static
 backend/stromxweb/version.py
+frontend/package-lock.json
 bower_components
 build
 dist

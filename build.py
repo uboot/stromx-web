@@ -10,7 +10,7 @@ VERSION = '0.1.0'
 # try to get the git SHA of this repository
 try:
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-    sha = sha[:6]
+    sha = sha[:6].decode()
     print('Git SHA: {0}'.format(sha))
 except (OSError, subprocess.CalledProcessError):
     print('Failed to obtain git SHA of repository')
