@@ -6,7 +6,7 @@ RUN apt-get update \
     && apt-get install -y software-properties-common \
     && add-apt-repository ppa:stromx-developers/packages \
     && apt-get update \
-    && dpkg-reconfigure -f noninteractive tzdata
+    && dpkg-reconfigure -f noninteractive tzdata \
     && apt-get install -y curl npm python3-tornado python3-daemon python3-opencv python3-stromx libstromx-opencv libstromx-zbar git
 
 RUN git clone https://github.com/uboot/stromx-web.git \
