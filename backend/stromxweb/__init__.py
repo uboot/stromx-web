@@ -13,7 +13,7 @@ import tornado.web
 import tornado.websocket
 import traceback
 
-import model
+from . import model
 from error import Failed
 from version import VERSION_STRING
 
