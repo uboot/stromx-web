@@ -9,8 +9,8 @@ import threading
 
 import stromx.runtime
  
-import conversion
-import view
+from . import conversion
+from . import view
 
 def _str(value):
     return value

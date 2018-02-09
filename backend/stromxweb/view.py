@@ -1,6 +1,6 @@
 import stromx.runtime
 
-import conversion
+from . import conversion
 
 class View(object):
     def __init__(self, stream):
