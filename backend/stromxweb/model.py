@@ -11,11 +11,10 @@ import stromx.runtime
  
 from . import conversion
 from . import view
+from . import error
 
 def _str(value):
     return value
-
-from error import Failed
 
 TEMP_PATH = stromx.runtime.File.tempDir()
 VERSION_STRING = stromx.runtime.versionString()
@@ -145,7 +144,7 @@ class Items(dict):
         item = self.pop(index)
         try:
             item.delete()
-        except Failed as e:
+        except error.Failed as e:
             self[item.index] = item
             raise e
         
@@ -279,7 +278,7 @@ class File(Item):
                 self.__opened = True
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
-                raise Failed()
+                raise error.Failed()
         else:
             self.model.streams.delete(self.__stream.index)
             self.__stream = None
@@ -446,7 +445,7 @@ class Stream(Item):
                 self.__stream.start()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
-                raise Failed()
+                raise error.Failed()
         
         if not value:
             self.__stream.stop()
@@ -628,13 +627,13 @@ class Operators(Items):
                                            _str(data['operator']['type']))
         except stromx.runtime.OperatorAllocationFailed as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
         
         try:
             stromxOp = stream.stromxStream.addOperator(opKernel)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
             
         op = self.addStromxOp(stromxOp, stream)
         op.set(data)
@@ -703,7 +702,7 @@ class Operator(Item):
                 self.__allocateConnectors()
             except stromx.runtime.Exception as e:
                 self.model.errors.addError(e)
-                raise Failed()
+                raise error.Failed()
         else:
             assert(False)          
         
@@ -756,7 +755,7 @@ class Operator(Item):
         if self.__stream.active: 
             self.model.errors.addError('Can not remove operator while stream '
                                        'is active.')
-            raise Failed()
+            raise error.Failed()
         
         self.__removeParameters()
         self.__removeConnectors() 
@@ -765,7 +764,7 @@ class Operator(Item):
             self.__stream.removeOperator(self)
         except stromx.runtime.WrongState as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
         
     def removeInput(self, connector):
         self.__inputs.remove(connector)
@@ -784,18 +783,18 @@ class Operator(Item):
         if self.__stream.active:
             self.model.errors.addError('Can not set connector type while the '
                                        'stream is active')
-            raise Failed()
+            raise error.Failed()
         
         if currentType == 'input':
             if behavior == stromx.runtime.Description.UpdateBehavior.PULL:
                 self.model.errors.addError('Invalid behavior for input')
-                raise Failed()
+                raise error.Failed()
             self.model.inputs.delete(connector.index)
             self.__inputs.remove(connector)
         elif currentType == 'output':
             if behavior == stromx.runtime.Description.UpdateBehavior.PUSH:
                 self.model.errors.addError('Invalid behavior for output')
-                raise Failed()
+                raise error.Failed()
             self.model.outputs.delete(connector.index)
             self.__outputs.remove(connector)
             
@@ -805,7 +804,7 @@ class Operator(Item):
                                     behavior)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
            
         if connector.currentType != 'parameter':   
             parameters = self.model.parameters
@@ -819,18 +818,18 @@ class Operator(Item):
         if self.__stream.active:
             self.model.errors.addError('Can not set parameter type while the '
                                        'stream is active')
-            raise Failed()
+            raise error.Failed()
         
         stromxParam = self.__op.info().parameter(stromxId)
         if connectorType != stromxParam.originalType():
             self.model.errors.addError('Can only set parameter type to its '
                                        'original type')
-            raise Failed()
+            raise error.Failed()
         
         if self.__stream.active:
             self.model.errors.addError('Can not set parameter type while the '
                                        'stream is active')
-            raise Failed()
+            raise error.Failed()
         
         self.model.parameters.delete(parameter.index)
         self.__parameters.remove(parameter)
@@ -839,7 +838,7 @@ class Operator(Item):
             stream.setConnectorType(self.__op, stromxId, connectorType)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
              
         if connectorType == stromx.runtime.Description.Type.OUTPUT:
             outputs = self.model.outputs
@@ -1089,7 +1088,7 @@ class Parameter(Item):
                 return
             
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
     
 class EnumDescriptions(Items):
     def addStromxEnumDescription(self, desc):
@@ -1161,7 +1160,7 @@ class Connection(Item):
             self.__stream.removeConnection(self)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
           
         self.__output.removeConnection(self)
         self.__input.setConnection(None)
@@ -1194,7 +1193,7 @@ class Connections(Items):
                                         inputConnector.stromxId)
         except stromx.runtime.Exception as e:
             self.model.errors.addError(e)
-            raise Failed()
+            raise error.Failed()
             
         connection = self.addConnection(stream, outputConnector, inputConnector)
         return connection.data

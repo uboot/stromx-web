@@ -9,7 +9,7 @@ import re
 import stromx.runtime
 import stromx.cvsupport
 
-from error import Failed
+from . import error
 
 def isNumber(variant):
     if variant.isVariant(stromx.runtime.Variant.INT):
@@ -148,7 +148,7 @@ def stromxImageToData(stromxData):
     # make sure this is an image
     image = stromx.runtime.Image.data_cast(stromxData)
     if not image:
-        raise Failed()
+        raise error.Failed()
         
     array = np.asarray(image.data())
     rows = image.rows()
@@ -180,7 +180,7 @@ def stromxMatrixToData(stromxData):
     # make sure this is a matrix
     matrix = stromx.runtime.Matrix.data_cast(stromxData)
     if not matrix:
-        raise Failed()
+        raise error.Failed()
         
     array = np.asarray(matrix.data())
     
@@ -196,11 +196,11 @@ def stromxMatrixToImage(stromxData):
     # make sure this is a matrix
     stromxMatrix = stromx.runtime.Matrix.data_cast(stromxData)
     if not stromxMatrix:
-        raise Failed()    
+        raise error.Failed()
     
     matrix = np.asarray(stromxMatrix.data())
     if matrix.ndim != 2:
-        raise Failed()
+        raise error.Failed()
     
     offset = -np.min(matrix)
     scaling = 255 / (np.max(matrix) + offset)
@@ -255,7 +255,7 @@ def dataToStromxImage(data):
         imageData = np.asarray(image.data())
         imageData[:, :] = array.reshape(array.shape[0], array.shape[1])
     else:
-        raise Failed()
+        raise error.Failed()
     return image
     
 def dataToStromxMatrix(data, valueType):
