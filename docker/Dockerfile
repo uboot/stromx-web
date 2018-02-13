@@ -15,7 +15,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && cd .. \
     && rm -rf stromx-web
     
-VOLUME /var/stromx
+RUN chmod +w /var/stromx
 
 EXPOSE 8080
 CMD stromx_server_start.py --config /etc/stromx/stromx.conf
