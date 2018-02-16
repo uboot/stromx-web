@@ -14,7 +14,7 @@ RUN git clone https://github.com/uboot/stromx-web.git \
     && python3 setup.py install \
     && cd .. \
     && rm -rf stromx-web \
-    && chmod -R +w /var/stromx
+    && chmod a+rwx -R /var/stromx
 
 EXPOSE 8080
 CMD stromx_server_start.py --config /etc/stromx/stromx.conf
